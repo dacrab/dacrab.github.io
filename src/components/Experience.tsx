@@ -5,6 +5,8 @@ import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import TextAnimation from "./TextAnimation";
 import ParallaxLayer from "./ParallaxLayer";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import ScrollReveal from "./ScrollReveal";
+import SectionBackground from "./SectionBackground";
 
 interface ExperienceItem {
   id: number;
@@ -14,6 +16,99 @@ interface ExperienceItem {
   description: string[];
   skills: string[];
 }
+
+interface TimelineEntryProps {
+  position: 'left' | 'right';
+  date: string;
+  company: string;
+  title: string;
+  description: string[];
+  technologies: string[];
+  isInView: boolean;
+  index: number;
+}
+
+const TimelineEntry = ({ 
+  position, 
+  date, 
+  company, 
+  title, 
+  description, 
+  technologies, 
+  isInView, 
+  index 
+}: TimelineEntryProps) => {
+  return (
+    <div className={`relative flex flex-col md:flex-row items-start gap-x-8`}>
+      {/* Timeline dot */}
+      <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 top-0 flex flex-col items-center z-10">
+        <motion.div 
+          className="w-8 h-8 rounded-full bg-card/40 backdrop-blur-sm border border-accent/30 flex items-center justify-center animate-border-pulse"
+          style={{ animationDelay: `${index * 0.7}s` }}
+          whileHover={{ scale: 1.1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="w-3 h-3 rounded-full bg-accent"></div>
+        </motion.div>
+
+        {/* Time period indicator */}
+        <motion.div
+          className="mt-3 text-xs text-accent font-mono bg-card/20 backdrop-blur-sm border border-accent/10 rounded-full px-3 py-1"
+        >
+          {date}
+        </motion.div>
+      </div>
+
+      {/* Content card */}
+      <div className={`pl-16 md:pl-0 ${position === 'left' ? 'md:pr-16 md:text-right md:self-end md:items-end md:w-1/2' : 'md:pl-16 md:w-1/2 md:ml-auto'}`}>
+        <motion.div 
+          whileHover={{ y: -5 }}
+          transition={{ duration: 0.2 }}
+          className="bg-card/30 backdrop-blur-sm border border-border/30 rounded-lg p-6 hover:border-accent/20 transition-colors duration-300 relative overflow-hidden"
+        >
+          {/* Background decoration for cards */}
+          <div className="absolute -z-10 inset-0 overflow-hidden">
+            <div className={`absolute ${position === 'left' ? '-top-20 -right-20' : '-bottom-20 -left-20'} w-40 h-40 rounded-full bg-accent/5 blur-3xl`}></div>
+            <div className="absolute inset-0 grid-pattern-dots opacity-10"></div>
+          </div>
+
+          <div className="mb-4">
+            <h3 className="text-xl font-bold text-gradient-animated mb-1">{title}</h3>
+            <p className="text-accent/90">{company}</p>
+          </div>
+          
+          <ul className={`list-none space-y-2 mb-4 text-muted ${position === 'left' ? 'md:ml-auto' : ''}`}>
+            {description.map((item, i) => (
+              <li 
+                key={i}
+                className="text-sm relative pl-5 md:pl-5 before:absolute before:left-0 before:top-[0.6em] before:h-1 before:w-1 before:rounded-full before:bg-accent/70"
+              >
+                {item}
+              </li>
+            ))}
+          </ul>
+          
+          <div className={`flex flex-wrap gap-2 mt-4 ${position === 'left' ? 'md:justify-end' : ''}`}>
+            {technologies.map((skill) => (
+              <motion.span
+                key={skill}
+                className="px-2 py-1 bg-card/20 backdrop-blur-sm border border-border/30 rounded-full text-xs"
+                whileHover={{ 
+                  scale: 1.05, 
+                  backgroundColor: "rgba(var(--accent-rgb), 0.1)",
+                  color: "var(--accent)"
+                }}
+                transition={{ duration: 0.2 }}
+              >
+                {skill}
+              </motion.span>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </div>
+  );
+};
 
 const experiences: ExperienceItem[] = [
   {
@@ -70,92 +165,27 @@ export default function Experience() {
   const timelineOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0, 1, 1, 0]);
   const timelineHeight = useTransform(scrollYProgress, [0.1, 0.5], ["0%", "100%"]);
   const contentY = useTransform(scrollYProgress, [0, 0.5], ["20px", "0px"]);
-  const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
-  const gridOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 0.05, 0.05, 0]);
-
+  
   return (
     <section 
       id="experience" 
       ref={ref}
       className="py-20 md:py-32 bg-background relative overflow-hidden"
     >
-      {/* Abstract background */}
-      <div className="absolute inset-0 -z-10">
-        {/* Base gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-card/5 via-background to-background" />
-        
-        {/* Grid patterns */}
-        <motion.div 
-          className="absolute inset-0 grid-pattern-lines"
-          style={{ opacity: gridOpacity }}
-        />
-        
-        <ParallaxLayer speed={-0.1} className="absolute inset-0">
-          <div className="absolute inset-0 grid-pattern-dots opacity-[0.03]" />
-        </ParallaxLayer>
-        
-        {/* Decorative circles */}
-        <ParallaxLayer speed={-0.2}>
-          <motion.div 
-            className="deco-circle absolute top-[15%] right-[10%] w-[25vw] h-[25vw] max-w-[350px] max-h-[350px]"
-            animate={isInView ? {
-              scale: [1, 1.1, 1],
-              opacity: [0.1, 0.2, 0.1],
-            } : {}}
-            transition={{ 
-              duration: 12, 
-              repeat: Infinity,
-              repeatType: "reverse"
-            }}
-          />
-        </ParallaxLayer>
-        
-        <ParallaxLayer speed={0.1}>
-          <motion.div 
-            className="deco-circle absolute bottom-[15%] left-[5%] w-[30vw] h-[30vw] max-w-[400px] max-h-[400px]"
-            animate={isInView ? {
-              scale: [1, 1.05, 1],
-              opacity: [0.05, 0.15, 0.05],
-            } : {}}
-            transition={{ 
-              duration: 15, 
-              repeat: Infinity,
-              repeatType: "reverse"
-            }}
-          />
-        </ParallaxLayer>
-        
-        {/* Diagonal accent lines */}
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div
-            className="absolute top-1/3 left-0 w-full h-px bg-accent/10"
-            style={{ 
-              transform: useTransform(
-                scrollYProgress,
-                [0, 1],
-                ["rotate(-2deg) translateY(0px)", "rotate(-2deg) translateY(40px)"]
-              )
-            }}
-          />
-          <motion.div
-            className="absolute top-2/3 left-0 w-full h-px bg-accent/5"
-            style={{ 
-              transform: useTransform(
-                scrollYProgress,
-                [0, 1],
-                ["rotate(2deg) translateY(0px)", "rotate(2deg) translateY(-40px)"]
-              )
-            }}
-          />
-        </div>
-      </div>
+      {/* Grid-style background with tech theme */}
+      <SectionBackground 
+        variant="grid" 
+        intensity={0.8} 
+        color="gradient-2" 
+        isInView={isInView}
+      />
       
       <div className="container mx-auto px-4 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
-          transition={{ duration: 0.6 }}
+        <ScrollReveal
+          direction="up"
           className="mb-16 text-center"
+          duration={0.6}
+          distance={30}
         >
           <div className="mb-4">
             <TextAnimation 
@@ -176,7 +206,7 @@ export default function Experience() {
             delay={0.4}
             duration={0.3}
           />
-        </motion.div>
+        </ScrollReveal>
 
         {/* Two-column layout - Career visualization */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-12 mb-16">
@@ -311,117 +341,36 @@ export default function Experience() {
           />
         </div>
 
-        {/* Modern Timeline */}
-        <div className="relative max-w-4xl mx-auto">
-          {/* Timeline line */}
-          <motion.div 
-            className="absolute left-[16px] md:left-1/2 top-0 bottom-0 w-[1px] -ml-px md:-ml-[0.5px] z-0 md:translate-x-0"
-            style={{ 
-              height: timelineHeight, 
-              opacity: timelineOpacity,
-              background: "linear-gradient(to bottom, transparent, var(--accent), var(--accent), transparent)",
-            }}
-          />
-
-          {/* Experience items */}
-          <div className="space-y-16">
+        {/* Timeline with cards - implement scroll reveal for the timeline container */}
+        <div className="relative max-w-5xl mx-auto mt-24">
+          {/* Vertical line */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-border/50 z-0"></div>
+          
+          {/* Timeline entries */}
+          <div className="relative z-10">
             {experiences.map((exp, index) => (
-              <motion.div
+              <ScrollReveal
                 key={exp.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 30 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                style={{ y: contentY }}
-                className="relative flex flex-col md:flex-row items-start gap-x-8"
+                direction={index % 2 === 0 ? "left" : "right"}
+                className="mb-20 relative"
+                duration={0.7}
+                delay={0.1 * index}
+                distance={50}
+                threshold={0.1}
               >
-                {/* Timeline dot */}
-                <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 top-0 flex flex-col items-center z-10">
-                  <motion.div 
-                    className="w-8 h-8 rounded-full bg-card/40 backdrop-blur-sm border border-accent/30 flex items-center justify-center animate-border-pulse"
-                    style={{ animationDelay: `${index * 0.7}s` }}
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ duration: 0.3 }}
-                  >
-                    <div className="w-3 h-3 rounded-full bg-accent"></div>
-                  </motion.div>
-
-                  {/* Time period indicator */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 10 }}
-                    transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
-                    className="mt-3 text-xs text-accent font-mono bg-card/20 backdrop-blur-sm border border-accent/10 rounded-full px-3 py-1"
-                  >
-                    {exp.period}
-                  </motion.div>
-                </div>
-
-                {/* Content card */}
-                <div className={`pl-16 md:pl-0 ${index % 2 === 0 ? 'md:pr-16 md:text-right md:self-end md:items-end md:w-1/2' : 'md:pl-16 md:w-1/2 md:ml-auto'}`}>
-                  <motion.div 
-                    whileHover={{ y: -5 }}
-                    transition={{ duration: 0.2 }}
-                    className="bg-card/30 backdrop-blur-sm border border-border/30 rounded-lg p-6 hover:border-accent/20 transition-colors duration-300 relative overflow-hidden"
-                  >
-                    {/* Background decoration for cards */}
-                    <div className="absolute -z-10 inset-0 overflow-hidden">
-                      <div className={`absolute ${index % 2 === 0 ? '-top-20 -right-20' : '-bottom-20 -left-20'} w-40 h-40 rounded-full bg-accent/5 blur-3xl`}></div>
-                      <div className="absolute inset-0 grid-pattern-dots opacity-10"></div>
-                    </div>
-
-                    <div className="mb-4">
-                      <h3 className="text-xl font-bold text-gradient-animated mb-1">{exp.role}</h3>
-                      <p className="text-accent/90">{exp.company}</p>
-                    </div>
-                    
-                    <ul className={`list-none space-y-2 mb-4 text-muted ${index % 2 === 0 ? 'md:ml-auto' : ''}`}>
-                      {exp.description.map((item, i) => (
-                        <li 
-                          key={i}
-                          className="text-sm relative pl-5 md:pl-5 before:absolute before:left-0 before:top-[0.6em] before:h-1 before:w-1 before:rounded-full before:bg-accent/70"
-                        >
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                    
-                    <div className={`flex flex-wrap gap-2 mt-4 ${index % 2 === 0 ? 'md:justify-end' : ''}`}>
-                      {exp.skills.map((skill) => (
-                        <motion.span
-                          key={skill}
-                          className="px-2 py-1 bg-card/20 backdrop-blur-sm border border-border/30 rounded-full text-xs"
-                          whileHover={{ 
-                            scale: 1.05, 
-                            backgroundColor: "rgba(var(--accent-rgb), 0.1)",
-                            color: "var(--accent)"
-                          }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          {skill}
-                        </motion.span>
-                      ))}
-                    </div>
-                  </motion.div>
-                </div>
-              </motion.div>
+                <TimelineEntry
+                  position={index % 2 === 0 ? 'left' : 'right'}
+                  date={exp.period}
+                  company={exp.company}
+                  title={exp.role}
+                  description={exp.description}
+                  technologies={exp.skills}
+                  isInView={isInView}
+                  index={index}
+                />
+              </ScrollReveal>
             ))}
           </div>
-          
-          {/* Timeline end */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="relative mt-16 flex justify-center"
-          >
-            <motion.div 
-              className="w-10 h-10 rounded-full bg-accent/10 backdrop-blur-sm border border-accent/30 flex items-center justify-center animate-pulse"
-              whileHover={{ scale: 1.1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="w-2 h-2 rounded-full bg-accent"></div>
-            </motion.div>
-          </motion.div>
         </div>
       </div>
     </section>

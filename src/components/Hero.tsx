@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import { motion, useScroll, useTransform, useSpring, useMotionValue } from "framer-motion";
+import { useRef, useEffect, useState } from "react";
+import { motion, useScroll, useTransform, useSpring, useMotionValue, AnimatePresence } from "framer-motion";
 import Image from "next/image";
 import TextAnimation from "./TextAnimation";
 import ScrollScene from "./ScrollScene";
@@ -9,6 +9,8 @@ import ParallaxLayer from "./ParallaxLayer";
 
 export default function Hero() {
   const ref = useRef(null);
+  const [showCVDropdown, setShowCVDropdown] = useState(false);
+  
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -31,6 +33,32 @@ export default function Hero() {
     
     return () => clearTimeout(timer);
   }, [pathLength]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!showCVDropdown) return;
+    
+    const handleClickOutside = () => setShowCVDropdown(false);
+    document.addEventListener('click', handleClickOutside);
+    
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [showCVDropdown]);
+
+  const handleCVButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowCVDropdown(!showCVDropdown);
+  };
+
+  const downloadCV = (language: string) => {
+    const filename = language === 'english' ? 'CV_English.pdf' : 'CV_Greek.pdf';
+    const link = document.createElement('a');
+    link.href = `/assets/cv/${filename}`;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setShowCVDropdown(false);
+  };
 
   return (
     <div
@@ -159,6 +187,46 @@ export default function Hero() {
                 >
                   Contact Me
                 </a>
+                
+                {/* CV Download Button with Dropdown */}
+                <div className="relative">
+                  <button 
+                    onClick={handleCVButtonClick}
+                    className="px-6 py-2.5 rounded-lg border border-accent bg-accent/10 text-accent font-medium transition-all duration-300 hover:bg-accent/20 focus:outline-none focus:ring-2 focus:ring-accent/50 focus:ring-offset-2 focus:ring-offset-background flex items-center gap-2"
+                  >
+                    <span>Download CV</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                  
+                  <AnimatePresence>
+                    {showCVDropdown && (
+                      <motion.div 
+                        className="absolute top-full left-0 mt-2 w-full bg-card/90 backdrop-blur-sm border border-border/40 rounded-lg shadow-lg overflow-hidden z-50"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <button 
+                          onClick={() => downloadCV('english')}
+                          className="w-full px-4 py-2.5 text-left text-sm hover:bg-accent/10 transition-colors duration-150 flex items-center gap-2"
+                        >
+                          <span className="text-accent">EN</span>
+                          <span>English Version</span>
+                        </button>
+                        <button 
+                          onClick={() => downloadCV('greek')}
+                          className="w-full px-4 py-2.5 text-left text-sm hover:bg-accent/10 transition-colors duration-150 flex items-center gap-2"
+                        >
+                          <span className="text-accent">GR</span>
+                          <span>Greek Version</span>
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </motion.div>
             </div>
           </motion.div>

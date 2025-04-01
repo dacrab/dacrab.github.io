@@ -6,8 +6,8 @@ import { motion, useInView, useScroll, useTransform, useSpring } from "framer-mo
 // Import modular components
 import SectionHeading from "./SectionHeading";
 import InfoCard from "./InfoCard";
-import ContactBackground from "./ContactBackground";
 import DecoElements from "./DecoElements";
+import SectionBackground from "../SectionBackground";
 
 export default function Contact() {
   const ref = useRef<HTMLElement>(null);
@@ -34,8 +34,13 @@ export default function Contact() {
       ref={ref}
       className="py-20 md:py-32 bg-background relative overflow-hidden"
     >
-      {/* Enhanced abstract background with parallax effects */}
-      <ContactBackground scrollYProgress={scrollYProgress} />
+      {/* Blueprint-style background for Contact section */}
+      <SectionBackground 
+        variant="blueprint" 
+        intensity={0.8} 
+        color="accent-light" 
+        isInView={isInView} 
+      />
       
       <div className="container mx-auto px-4 lg:px-8">
         {/* Section heading with animations */}

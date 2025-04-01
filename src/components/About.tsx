@@ -4,13 +4,164 @@ import { useRef, useEffect, useState } from "react";
 import { motion, useInView, useAnimation, useScroll, useTransform } from "framer-motion";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import TextAnimation from "./TextAnimation";
-import ParallaxLayer from "./ParallaxLayer";
+import ScrollReveal from "./ScrollReveal";
+import StaggerReveal from "./StaggerReveal";
+import { useScrollAnimation } from "../hooks/useScrollAnimation";
+import { fadeIn, staggerContainer, cardAnimation } from "../utils/animations";
+import SectionBackground from "./SectionBackground";
 
-const skills = [
-  "Next.js", "React", "TypeScript", "JavaScript", 
-  "Tailwind CSS", "Node.js", "GraphQL", "REST API",
-  "Responsive Design", "UX/UI", "Git", "CI/CD",
-  "Performance Optimization", "SEO", "Accessibility", "Testing"
+interface Skill {
+  name: string;
+  icon: string;
+  url: string;
+}
+
+// SkillCard component definition moved here before it's used
+function SkillCard({ skill, index, className = "" }: { skill: Skill; index: number; className?: string }) {
+  const [imageError, setImageError] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  
+  // Check if this is a white icon that needs special handling
+  const isWhiteIcon = skill.name === "Next.js" || skill.name === "GitHub" || skill.icon.includes("FFFFFF");
+  
+  return (
+    <motion.a
+      href={skill.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`flex flex-col items-center justify-center p-4 rounded-lg backdrop-blur-sm border transition-all duration-300 group ${className}`}
+      style={{
+        borderColor: isHovered ? 'rgba(var(--accent-rgb), 0.5)' : 'rgba(var(--border-rgb), 0.3)',
+      }}
+      variants={cardAnimation(0.1 + (index * 0.03))}
+      whileHover={{ 
+        y: -8,
+        boxShadow: "0 10px 25px -5px rgba(var(--accent-rgb), 0.2)"
+      }}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
+      whileTap={{ y: 0 }}
+    >
+      <div className="w-12 h-12 flex items-center justify-center mb-3 relative">
+        {/* Glow effect on hover */}
+        <div className="absolute inset-0 rounded-full bg-accent/10 opacity-0 group-hover:opacity-100 blur-lg transition-all duration-300" />
+        
+        {/* Icon container with background for white icons */}
+        <div className={`relative flex items-center justify-center ${isWhiteIcon ? 'p-1.5 icon-container rounded-full shadow-inner' : ''}`}>
+          {/* Icon or fallback */}
+          {!imageError ? (
+            <img 
+              src={skill.icon} 
+              alt={`${skill.name} logo`}
+              width={32} 
+              height={32} 
+              className={`w-8 h-8 object-contain transition-all duration-300 group-hover:scale-125 relative z-10 ${isWhiteIcon ? 'white-icon' : ''}`}
+              loading="lazy"
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <div className="w-8 h-8 flex items-center justify-center text-sm font-bold bg-accent/20 text-foreground rounded-full">
+              {skill.name.slice(0, 2)}
+            </div>
+          )}
+        </div>
+        
+        {/* Animated ring */}
+        <motion.div 
+          className="absolute inset-0 rounded-full border border-accent/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          animate={{ scale: [0.8, 1.2, 0.8] }}
+          transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+        />
+      </div>
+      
+      {/* Skill name with improved visibility */}
+      <span className="text-sm font-medium text-center text-foreground/80 group-hover:text-accent transition-colors duration-300">
+        {skill.name}
+      </span>
+    </motion.a>
+  );
+}
+
+// Group skills by category
+const skillsByCategory = {
+  frontend: [
+    {
+      name: "Next.js",
+      icon: "https://cdn.simpleicons.org/nextdotjs/FFFFFF",
+      url: "https://nextjs.org/"
+    },
+    {
+      name: "TypeScript",
+      icon: "https://cdn.simpleicons.org/typescript/3178C6",
+      url: "https://www.typescriptlang.org/"
+    },
+    {
+      name: "JavaScript",
+      icon: "https://cdn.simpleicons.org/javascript/F7DF1E",
+      url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript"
+    },
+    {
+      name: "Tailwind CSS",
+      icon: "https://cdn.simpleicons.org/tailwindcss/06B6D4",
+      url: "https://tailwindcss.com/"
+    },
+    {
+      name: "Framer Motion",
+      icon: "https://cdn.simpleicons.org/framer/0055FF",
+      url: "https://www.framer.com/motion/"
+    }
+  ],
+  backend: [
+    {
+      name: "Supabase",
+      icon: "https://cdn.simpleicons.org/supabase/3ECF8E",
+      url: "https://supabase.io/"
+    },
+    {
+      name: "Firebase",
+      icon: "https://cdn.simpleicons.org/firebase/FFCA28",
+      url: "https://firebase.google.com/"
+    }
+  ],
+  tools: [
+    {
+      name: "Git",
+      icon: "https://cdn.simpleicons.org/git/F05032",
+      url: "https://git-scm.com/"
+    },
+    {
+      name: "GitHub",
+      icon: "https://cdn.simpleicons.org/github/FFFFFF",
+      url: "https://github.com/"
+    },
+    {
+      name: "VS Code",
+      icon: "https://cdn.simpleicons.org/visualstudiocode/007ACC",
+      url: "https://code.visualstudio.com/"
+    },
+    {
+      name: "Unreal Engine",
+      icon: "https://cdn.simpleicons.org/unrealengine/0E1128",
+      url: "https://www.unrealengine.com/"
+    },
+    {
+      name: "Docker",
+      icon: "https://cdn.simpleicons.org/docker/2496ED",
+      url: "https://www.docker.com/"
+    },
+    {
+      name: "Vercel",
+      icon: "https://cdn.simpleicons.org/vercel/000000",
+      url: "https://vercel.com/"
+    }
+  ]
+};
+
+// For simplicity in the component, concatenate all skills
+const skills: Skill[] = [
+  ...skillsByCategory.frontend,
+  ...skillsByCategory.backend,
+  ...skillsByCategory.tools
 ];
 
 export default function About() {
@@ -25,8 +176,15 @@ export default function About() {
   });
   
   // Transform values based on scroll
-  const gridOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 0.05, 0.05, 0]);
   const contentY = useTransform(scrollYProgress, [0, 0.5], ["10%", "0%"]);
+  
+  // Animation for bio paragraphs using hook
+  const bioAnimation = useScrollAnimation({
+    direction: "up",
+    distance: 30,
+    threshold: 0.2,
+    once: false
+  });
   
   useEffect(() => {
     if (isInView) {
@@ -42,74 +200,21 @@ export default function About() {
       ref={ref}
       className="py-20 md:py-32 bg-background relative overflow-hidden"
     >
-      {/* Abstract background */}
-      <div className="absolute inset-0 -z-10">
-        {/* Grid pattern background */}
-        <motion.div 
-          className="absolute inset-0 grid-pattern-lines"
-          style={{ opacity: gridOpacity }}
-        />
-        
-        {/* Abstract decorative elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div 
-            className="deco-circle absolute top-[15%] right-[10%] w-[30vw] h-[30vw] max-w-[400px] max-h-[400px]"
-            animate={isInView ? {
-              scale: [1, 1.1, 1],
-              opacity: [0.1, 0.3, 0.1],
-            } : {}}
-            transition={{ 
-              duration: 12, 
-              repeat: Infinity,
-              repeatType: "reverse"
-            }}
-          />
-          <motion.div 
-            className="deco-circle absolute bottom-[10%] left-[5%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px]"
-            animate={isInView ? {
-              scale: [1, 1.05, 1],
-              opacity: [0.1, 0.2, 0.1],
-            } : {}}
-            transition={{ 
-              duration: 15, 
-              repeat: Infinity,
-              repeatType: "reverse"
-            }}
-          />
-        </div>
-        
-        {/* Diagonal lines for abstract design */}
-        <div className="absolute inset-0 overflow-hidden">
-          <motion.div
-            className="absolute top-[20%] left-0 w-full h-px bg-border/20"
-            style={{ 
-              transform: useTransform(
-                scrollYProgress,
-                [0, 1],
-                ["rotate(-1deg) translateY(0px)", "rotate(-1deg) translateY(50px)"]
-              )
-            }}
-          />
-          <motion.div
-            className="absolute top-[60%] left-0 w-full h-px bg-border/20"
-            style={{ 
-              transform: useTransform(
-                scrollYProgress,
-                [0, 1],
-                ["rotate(1deg) translateY(0px)", "rotate(1deg) translateY(-30px)"]
-              )
-            }}
-          />
-        </div>
-      </div>
+      {/* Tech-themed background for About section */}
+      <SectionBackground 
+        variant="tech" 
+        intensity={0.7} 
+        color="accent" 
+        isInView={isInView}
+      />
       
       <div className="container mx-auto px-4 lg:px-8">
-        {/* Section heading */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
-          transition={{ duration: 0.6 }}
+        {/* Section heading - Using ScrollReveal */}
+        <ScrollReveal
+          direction="up"
           className="mb-20 text-center"
+          duration={0.6}
+          distance={30}
         >
           <div className="mb-4">
             <TextAnimation 
@@ -130,7 +235,7 @@ export default function About() {
             delay={0.4}
             duration={0.3}
           />
-        </motion.div>
+        </ScrollReveal>
         
         {/* Abstract asymmetrical layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-16 lg:gap-x-8 relative">
@@ -152,11 +257,11 @@ export default function About() {
                 ></motion.div>
                 
                 {/* Actual profile image - replaced with Lottie animation */}
-                <motion.div 
+                <ScrollReveal
+                  direction="left"
+                  duration={0.7}
+                  delay={0.1}
                   className="bg-card/30 backdrop-blur-sm border border-border/30 rounded-xl overflow-hidden relative z-10"
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 30 }}
-                  transition={{ duration: 0.7, delay: 0.1 }}
                 >
                   <div className="aspect-square relative overflow-hidden flex items-center justify-center">
                     <div className="w-full h-full">
@@ -174,7 +279,7 @@ export default function About() {
                     {/* Semi-transparent grid pattern */}
                     <div className="absolute inset-0 grid-pattern-dots opacity-20"></div>
                   </div>
-                </motion.div>
+                </ScrollReveal>
                 
                 {/* Decorative elements */}
                 <motion.div 
@@ -191,12 +296,13 @@ export default function About() {
                 ></motion.div>
               </div>
               
-              {/* Quick stats or highlights */}
-              <motion.div 
+              {/* Quick stats or highlights - Using StaggerReveal */}
+              <StaggerReveal
                 className="mt-8 grid grid-cols-2 gap-4 max-w-md mx-auto lg:mx-0"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
+                duration={0.6}
+                childDelay={0.3}
+                staggerDelay={0.15}
+                childClassName="h-full"
               >
                 <div className="bg-card/20 backdrop-blur-sm border border-border/30 rounded-lg p-4 animate-border-pulse">
                   <div className="text-accent text-xl font-bold">8+</div>
@@ -206,30 +312,24 @@ export default function About() {
                   <div className="text-accent text-xl font-bold">50+</div>
                   <div className="text-sm text-muted">Projects Completed</div>
                 </div>
-              </motion.div>
+              </StaggerReveal>
             </div>
           </motion.div>
           
-          {/* Right column: Bio text and skills */}
+          {/* Right column: Bio text and skills - Using our motion variants */}
           <motion.div 
             className="lg:col-span-7 lg:col-start-6"
             style={{ y: contentY }}
           >
+            {/* Bio section using our useScrollAnimation hook */}
             <motion.div 
-              variants={{
-                hidden: { opacity: 0 },
-                visible: { opacity: 1 }
-              }}
+              ref={bioAnimation.ref}
+              variants={staggerContainer(0.15)}
               initial="hidden"
-              animate={controls}
+              animate={bioAnimation.animate}
               className="space-y-6"
             >
-              <motion.div
-                variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.7, delay: 0.1 } }
-                }}
-              >
+              <motion.div variants={fadeIn("up", 0.1, 0.7)}>
                 <h3 className="text-2xl font-bold mb-4">
                   Senior Web Developer with a passion for creating exceptional digital experiences
                 </h3>
@@ -238,50 +338,48 @@ export default function About() {
                 </p>
               </motion.div>
               
-              <motion.div
-                variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.7, delay: 0.2 } }
-                }}
-              >
+              <motion.div variants={fadeIn("up", 0.2, 0.7)}>
                 <p className="text-muted">
                   I'm passionate about staying at the cutting edge of web technologies and continuously expanding my skills to deliver the best possible user experiences. My focus areas include frontend development with React and Next.js, building scalable backend services, and creating smooth, intuitive UI/UX designs.
                 </p>
               </motion.div>
               
-              {/* Skills section with abstract layout */}
-              <motion.div
-                variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.7, delay: 0.3 } }
-                }}
-                className="pt-6"
-              >
-                <h4 className="text-lg font-semibold mb-6 flex items-center">
-                  <span className="mr-3">Skills & Expertise</span>
-                  <span className="deco-line flex-1"></span>
-                </h4>
+              {/* Skills section - Using our utility functions */}
+              <motion.div variants={fadeIn("up", 0.3, 0.7)}>
+                <h3 className="text-xl font-bold mb-6">
+                  Technical Expertise
+                </h3>
                 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {skills.map((skill, i) => (
-                    <motion.div 
-                      key={skill}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ 
-                        opacity: isInView ? 1 : 0, 
-                        y: isInView ? 0 : 10 
-                      }}
-                      transition={{ 
-                        duration: 0.4, 
-                        delay: 0.5 + (i * 0.05)
-                      }}
-                      className="relative"
-                    >
-                      <div className="bg-card/20 backdrop-blur-sm border border-border/30 rounded-lg py-2 px-3 text-sm text-center">
-                        {skill}
-                      </div>
-                    </motion.div>
-                  ))}
+                <div className="space-y-8">
+                  {/* Frontend */}
+                  <div>
+                    <h4 className="text-lg font-medium text-accent mb-4">Frontend Development</h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                      {skillsByCategory.frontend.map((skill, index) => (
+                        <SkillCard key={skill.name} skill={skill} index={index} className="skill-card-bg" />
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Backend */}
+                  <div>
+                    <h4 className="text-lg font-medium text-accent mb-4">Backend & Database</h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                      {skillsByCategory.backend.map((skill, index) => (
+                        <SkillCard key={skill.name} skill={skill} index={index} className="skill-card-bg" />
+                      ))}
+                    </div>
+                  </div>
+                  
+                  {/* Tools */}
+                  <div>
+                    <h4 className="text-lg font-medium text-accent mb-4">Tools & Platforms</h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+                      {skillsByCategory.tools.map((skill, index) => (
+                        <SkillCard key={skill.name} skill={skill} index={index} className="skill-card-bg" />
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             </motion.div>

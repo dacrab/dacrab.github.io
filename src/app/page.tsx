@@ -6,7 +6,6 @@ import Experience from "@/components/Experience";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import AnimatedBackground from "@/components/AnimatedBackground";
-import ScrollProgress from "@/components/ScrollProgress";
 
 export default function Home() {
   return (
@@ -16,8 +15,6 @@ export default function Home() {
         <AnimatedBackground variant="particles" color="accent" intensity={0.7} />
       </div>
       
-      {/* Scroll Progress Indicator */}
-      <ScrollProgress showPercentage showArrow position="top" />
       
       {/* Content */}
       <Navbar />

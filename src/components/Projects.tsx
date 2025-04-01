@@ -1,9 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { motion, useScroll, useTransform, useInView, AnimatePresence } from "framer-motion";
 import TextAnimation from "./TextAnimation";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { useGitHubProjects } from "@/hooks/useGitHubProjects";
+import { GitHubProjectData } from "@/types/github";
+import SectionBackground from "./SectionBackground";
 
 // Define TypeScript interfaces
 interface Project {
@@ -11,7 +14,6 @@ interface Project {
   title: string;
   description: string;
   tags: string[];
-  image: string;
   link: string;
 }
 
@@ -45,7 +47,6 @@ const PROJECTS: Project[] = [
     title: "Modern E-commerce Platform",
     description: "A full-featured e-commerce solution built with Next.js, featuring dynamic product pages, cart functionality, payment processing, and admin dashboard.",
     tags: ["Next.js", "React", "Stripe", "MongoDB"],
-    image: "/placeholder.jpg",
     link: "#",
   },
   {
@@ -53,7 +54,6 @@ const PROJECTS: Project[] = [
     title: "Creative Portfolio Template",
     description: "A customizable portfolio template for creatives with animations, filtering capabilities, and responsive design for optimal viewing on all devices.",
     tags: ["React", "Framer Motion", "Tailwind CSS", "Vite"],
-    image: "/placeholder.jpg",
     link: "#",
   },
   {
@@ -61,7 +61,6 @@ const PROJECTS: Project[] = [
     title: "Task Management Dashboard",
     description: "A comprehensive task management system with real-time updates, drag-and-drop functionality, team collaboration tools, and performance analytics.",
     tags: ["TypeScript", "React", "Firebase", "Recharts"],
-    image: "/placeholder.jpg",
     link: "#",
   },
   {
@@ -69,7 +68,6 @@ const PROJECTS: Project[] = [
     title: "AI Content Generator",
     description: "An intelligent content creation platform that generates high-quality articles, social media posts, and marketing copy using advanced AI algorithms.",
     tags: ["Python", "TensorFlow", "React", "Node.js"],
-    image: "/placeholder.jpg",
     link: "#",
   },
 ];
@@ -241,12 +239,28 @@ function FeaturedProject({ project, isInView, delay, reversed = false }: Feature
     offset: ["start end", "end start"]
   });
   
-  // Subtle scroll-based animations
-  const translateX = useTransform(
-    scrollYProgress, 
-    [0, 1], 
-    reversed ? ['-5%', '5%'] : ['5%', '-5%']
-  );
+  // Get color based on the first tag/language
+  const getTagColor = () => {
+    if (!project.tags || !project.tags.length) return "var(--accent)";
+    
+    const colorMap: Record<string, string> = {
+      "JavaScript": "#f1e05a",
+      "TypeScript": "#3178c6",
+      "Python": "#3572A5",
+      "HTML": "#e34c26",
+      "CSS": "#563d7c",
+      "React": "#61dafb",
+      "Next.js": "#000000",
+      "Node.js": "#339933",
+      "Java": "#b07219",
+      "Go": "#00ADD8",
+      "Rust": "#dea584",
+      "PHP": "#4F5D95",
+      "Ruby": "#701516"
+    };
+    
+    return colorMap[project.tags[0]] || "var(--accent)";
+  };
   
   return (
     <motion.div
@@ -254,70 +268,93 @@ function FeaturedProject({ project, isInView, delay, reversed = false }: Feature
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 30 }}
       transition={{ duration: 0.8, delay }}
-      className="relative bg-card/10 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden group"
+      className="relative bg-card/10 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden group hover:border-accent/30 transition-all duration-500"
     >
-      <div className={`grid grid-cols-1 lg:grid-cols-2 min-h-[300px] lg:min-h-[400px] ${reversed ? 'lg:grid-flow-dense' : ''}`}>
-        {/* Image section */}
-        <div className={`relative overflow-hidden ${reversed ? 'lg:col-start-2' : ''}`}>
-          <motion.div 
-            className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"
-          />
-          <motion.div
-            className="w-full h-full bg-card/50"
-            style={{ 
-              background: `url(${project.image}) center/cover no-repeat`,
-              x: translateX 
-            }}
+      <div className={`grid grid-cols-1 lg:grid-cols-12 min-h-[200px] ${reversed ? 'lg:grid-flow-dense' : ''}`}>
+        {/* Project Metadata Section */}
+        <div className={`p-8 lg:col-span-4 ${reversed ? 'lg:col-start-9' : 'lg:col-start-1'} relative flex flex-col justify-center`}>
+          <div className="absolute inset-0 bg-gradient-to-r from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          
+          {/* Project number/identifier and minimal decoration */}
+          <div className="mb-6 flex items-center gap-3">
+            <div 
+              className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-mono border-2"
+              style={{ borderColor: `${getTagColor()}33` }}
+            >
+              {String(project.id).padStart(2, '0')}
+            </div>
+            <div className="h-[1px] flex-grow" style={{ background: `linear-gradient(to right, ${getTagColor()}40, transparent)` }}></div>
+          </div>
+          
+          {/* Primary language/tech tag */}
+          {project.tags && project.tags.length > 0 && (
+            <div className="mb-3">
+              <span 
+                className="text-xs uppercase tracking-wider font-medium px-3 py-1 rounded-full"
+                style={{ 
+                  backgroundColor: `${getTagColor()}15`, 
+                  color: getTagColor(),
+                  border: `1px solid ${getTagColor()}30`
+                }}
+              >
+                {project.tags[0]}
+              </span>
+            </div>
+          )}
+          
+          <motion.h3
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
+            transition={{ duration: 0.5, delay: delay + 0.2 }}
+            className="text-xl font-bold mb-3 group-hover:text-accent transition-colors duration-300"
           >
-            {/* Image overlay */}
-            <div className="absolute inset-0 bg-card/30 backdrop-blur-[2px]"></div>
-          </motion.div>
+            {project.title}
+          </motion.h3>
+          
+          <div className="mt-auto">
+            {/* Secondary tags */}
+            <div className="flex flex-wrap gap-2 mt-4 mb-4">
+              {project.tags.slice(1).map(tag => (
+                <span 
+                  key={tag} 
+                  className="text-xs bg-background/50 px-2 py-1 rounded-md border border-border/30 text-muted"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
         
-        {/* Content section */}
-        <div className={`p-6 md:p-8 flex flex-col justify-center ${reversed ? 'lg:col-start-1' : ''}`}>
-          <div className="max-w-xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
-              transition={{ duration: 0.5, delay: delay + 0.2 }}
+        {/* Project Description + Link Section */}
+        <div className={`p-8 border-t lg:border-t-0 ${reversed ? 'lg:border-r' : 'lg:border-l'} border-border/10 lg:col-span-8 ${reversed ? 'lg:col-start-1' : 'lg:col-start-5'} flex flex-col justify-center`}>
+          <motion.p 
+            className="text-muted mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
+            transition={{ duration: 0.5, delay: delay + 0.3 }}
+          >
+            {project.description}
+          </motion.p>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
+            transition={{ duration: 0.5, delay: delay + 0.4 }}
+            className="mt-auto"
+          >
+            <a 
+              href={project.link} 
+              className="inline-flex items-center text-accent hover:text-accent-light transition-colors"
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              <h3 className="text-2xl font-bold mb-3 text-foreground group-hover:text-accent transition-colors duration-300">
-                {project.title}
-              </h3>
-            </motion.div>
-            
-            <motion.p 
-              className="text-muted mb-6"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
-              transition={{ duration: 0.5, delay: delay + 0.3 }}
-            >
-              {project.description}
-            </motion.p>
-            
-            <ProjectTags 
-              tags={project.tags} 
-              isInView={isInView} 
-              delay={delay + 0.4}
-            />
-            
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
-              transition={{ duration: 0.5, delay: delay + 0.5 }}
-            >
-              <a 
-                href={project.link} 
-                className="inline-flex items-center text-accent hover:text-accent-light transition-colors"
-              >
-                <span>View Project</span>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </a>
-            </motion.div>
-          </div>
+              <span className="mr-2">View Project</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M7 17l9.2-9.2M17 17V7H7" />
+              </svg>
+            </a>
+          </motion.div>
         </div>
       </div>
     </motion.div>
@@ -336,101 +373,91 @@ interface ProjectCardProps {
 }
 
 function ProjectCard({ project, isInView, delay, index, isActive, onHover, onLeave }: ProjectCardProps) {
-  const cardRef = useRef(null);
-  const cardProgress = useScroll({
-    target: cardRef,
-    offset: ["start end", "end start"]
-  });
-  
-  const y = useTransform(cardProgress.scrollYProgress, [0, 1], ["5%", "-5%"]);
+  // Get color based on the first tag/language
+  const getTagColor = () => {
+    if (!project.tags || !project.tags.length) return "var(--accent)";
+    
+    const colorMap: Record<string, string> = {
+      "JavaScript": "#f1e05a",
+      "TypeScript": "#3178c6",
+      "Python": "#3572A5",
+      "HTML": "#e34c26",
+      "CSS": "#563d7c",
+      "React": "#61dafb",
+      "Next.js": "#000000",
+      "Node.js": "#339933",
+      "Java": "#b07219",
+      "Go": "#00ADD8",
+      "Rust": "#dea584",
+      "PHP": "#4F5D95",
+      "Ruby": "#701516"
+    };
+    
+    return colorMap[project.tags[0]] || "var(--accent)";
+  };
   
   return (
     <motion.div
-      ref={cardRef}
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 30 }}
       transition={{ duration: 0.7, delay }}
-      className="relative bg-card/10 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden h-full group"
+      className="relative bg-card/10 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden h-full group hover:border-accent/30 transition-all duration-300"
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
     >
-      {/* Card content */}
-      <div className="p-6 md:p-8 flex flex-col h-full">
-        <motion.h3 
-          className="text-xl font-bold mb-3 text-foreground group-hover:text-accent transition-colors duration-300"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 10 }}
-          transition={{ duration: 0.4, delay: delay + 0.1 }}
-        >
+      <div className="p-6 flex flex-col h-full">
+        {/* Top badge */}
+        {project.tags && project.tags.length > 0 && (
+          <div className="mb-4">
+            <span 
+              className="text-xs uppercase tracking-wider font-medium px-2 py-1 rounded-full"
+              style={{ 
+                backgroundColor: `${getTagColor()}15`, 
+                color: getTagColor(),
+                border: `1px solid ${getTagColor()}30`
+              }}
+            >
+              {project.tags[0]}
+            </span>
+          </div>
+        )}
+        
+        <h3 className="text-lg font-bold mb-3 group-hover:text-accent transition-colors duration-300">
           {project.title}
-        </motion.h3>
+        </h3>
         
-        <motion.p 
-          className="text-muted mb-6 flex-grow"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 10 }}
-          transition={{ duration: 0.4, delay: delay + 0.2 }}
-        >
-          {project.description}
-        </motion.p>
+        <p className="text-muted text-sm mb-4 flex-grow">
+          {project.description.length > 120 
+            ? `${project.description.substring(0, 120)}...` 
+            : project.description}
+        </p>
         
-        <ProjectTags 
-          tags={project.tags} 
-          isInView={isInView} 
-          delay={delay + 0.3}
-        />
+        {/* Secondary tags */}
+        <div className="flex flex-wrap gap-1 mb-4">
+          {project.tags.slice(1, 3).map(tag => (
+            <span 
+              key={tag} 
+              className="text-xs bg-background/50 px-1.5 py-0.5 rounded-md border border-border/30 text-muted"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
         
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 10 }}
-          transition={{ duration: 0.4, delay: delay + 0.4 }}
-          className="mt-auto"
-        >
+        <div className="mt-auto pt-3 border-t border-border/10">
           <a 
             href={project.link} 
-            className="inline-flex items-center text-accent hover:text-accent-light transition-colors"
+            target="_blank"
+            rel="noopener noreferrer" 
+            className="inline-flex items-center text-xs text-accent hover:text-accent-light transition-colors"
           >
-            <span>View Project</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+            <span className="mr-1">View Project</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M7 17l9.2-9.2M17 17V7H7" />
             </svg>
           </a>
-        </motion.div>
-        
-        {/* Abstract decorative element */}
-        <motion.div 
-          className="absolute -right-12 -bottom-12 w-40 h-40 rounded-full bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-          style={{ y }}
-        />
+        </div>
       </div>
-    </motion.div>
-  );
-}
-
-// ProjectTags component
-interface ProjectTagsProps {
-  tags: string[];
-  isInView: boolean;
-  delay: number;
-  smallSize?: boolean;
-}
-
-function ProjectTags({ tags, isInView, delay, smallSize = false }: ProjectTagsProps) {
-  return (
-    <motion.div 
-      className="flex flex-wrap gap-2 mb-6"
-      initial={{ opacity: 0, y: smallSize ? 10 : 20 }}
-      animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : smallSize ? 10 : 20 }}
-      transition={{ duration: smallSize ? 0.4 : 0.5, delay }}
-    >
-      {tags.map(tag => (
-        <span 
-          key={tag} 
-          className={`text-xs bg-background/50 border border-border/40 ${smallSize ? 'px-2 py-0.5' : 'px-2.5 py-1'} rounded-md text-muted`}
-        >
-          {tag}
-        </span>
-      ))}
     </motion.div>
   );
 }
@@ -441,144 +468,270 @@ export default function Projects() {
   const isInView = useInView(containerRef, { once: false, amount: 0.2 });
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   
+  // Fetch GitHub projects
+  const { projects: githubProjects, loading, error } = useGitHubProjects("dacrab", {
+    sort: "updated",
+    excludeForks: true,
+    minStars: 0
+  });
+  
+  // State for projects to display
+  const [displayProjects, setDisplayProjects] = useState<Project[]>([]);
+  
+  // Fallback to example projects if there's an error or no GitHub projects
+  const fallbackProjects: Project[] = [
+    {
+      id: 1,
+      title: "Modern E-commerce Platform",
+      description: "A full-featured e-commerce solution built with Next.js, featuring dynamic product pages, cart functionality, payment processing, and admin dashboard.",
+      tags: ["Next.js", "React", "Stripe", "MongoDB"],
+      link: "#",
+    },
+    {
+      id: 2,
+      title: "Creative Portfolio Template",
+      description: "A customizable portfolio template for creatives with animations, filtering capabilities, and responsive design for optimal viewing on all devices.",
+      tags: ["React", "Framer Motion", "Tailwind CSS", "Vite"],
+      link: "#",
+    },
+    {
+      id: 3,
+      title: "Task Management Dashboard",
+      description: "A comprehensive task management system with real-time updates, drag-and-drop functionality, team collaboration tools, and performance analytics.",
+      tags: ["TypeScript", "React", "Firebase", "Recharts"],
+      link: "#",
+    },
+    {
+      id: 4,
+      title: "AI Content Generator",
+      description: "An intelligent content creation platform that generates high-quality articles, social media posts, and marketing copy using advanced AI algorithms.",
+      tags: ["Python", "TensorFlow", "React", "Node.js"],
+      link: "#",
+    },
+  ];
+  
+  // Transform GitHub projects to the Project format and set display projects
+  useEffect(() => {
+    if (loading) return;
+    
+    if (error || githubProjects.length === 0) {
+      console.warn("Using fallback projects due to:", error?.message || "No GitHub projects found");
+      setDisplayProjects(fallbackProjects);
+      return;
+    }
+    
+    // Transform GitHub projects to match the Project interface
+    const formattedProjects: Project[] = githubProjects.map(repo => ({
+      id: repo.id,
+      title: repo.title,
+      description: repo.description,
+      tags: repo.tags,
+      link: repo.link,
+    }));
+    
+    // Use up to 6 GitHub projects
+    setDisplayProjects(formattedProjects.slice(0, 6));
+  }, [githubProjects, loading, error]);
+  
   return (
     <section 
       id="projects" 
       ref={containerRef}
       className="py-20 md:py-32 bg-background relative overflow-hidden"
     >
-      {/* Abstract background */}
-      <BackgroundEffects isInView={isInView} />
+      {/* Professional tech background */}
+      <SectionBackground 
+        variant="code" 
+        intensity={0.8} 
+        color="accent"
+        isInView={isInView}
+      />
       
       <div className="container mx-auto px-4 lg:px-8">
         {/* Section header */}
         <SectionHeader isInView={isInView} />
         
+        {/* Loading State */}
+        {loading && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex justify-center items-center py-20"
+          >
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 border-t-2 border-accent rounded-full animate-spin mb-4"></div>
+              <p className="text-muted">Loading GitHub projects...</p>
+            </div>
+          </motion.div>
+        )}
+        
+        {/* Error State - Enhanced with more detailed error messages */}
+        {error && !loading && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-red-500/10 border border-red-500/20 rounded-lg p-6 mb-8 text-center max-w-3xl mx-auto"
+          >
+            <h3 className="text-xl font-bold mb-2 text-red-500">GitHub API Error</h3>
+            
+            {error.message.includes("rate limit exceeded") ? (
+              <>
+                <p className="text-muted mb-4">
+                  We've hit GitHub's rate limits. This typically happens when making too many requests without authentication.
+                </p>
+                <div className="bg-card/30 p-4 rounded-lg text-left mb-4 text-sm font-mono overflow-auto">
+                  <p>{error.message}</p>
+                </div>
+                <p className="text-sm text-muted mb-2">To fix this issue:</p>
+                <ul className="text-sm text-muted list-disc list-inside text-left max-w-md mx-auto">
+                  <li>Generate a GitHub personal access token</li>
+                  <li>Add it to your .env.local file as GITHUB_ACCESS_TOKEN</li>
+                  <li>Restart your development server</li>
+                </ul>
+              </>
+            ) : error.message.includes("not found") ? (
+              <>
+                <p className="text-muted mb-2">The GitHub username could not be found.</p>
+                <p className="text-sm text-muted">Check your NEXT_PUBLIC_GITHUB_USERNAME value in .env.local</p>
+              </>
+            ) : (
+              <p className="text-muted">
+                {error.message || "An unexpected error occurred while fetching your GitHub projects."}
+              </p>
+            )}
+            
+            <p className="text-muted text-sm mt-4">Displaying example projects instead.</p>
+          </motion.div>
+        )}
+        
         {/* Project grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          {/* First row: Large featured project */}
-          <div className="lg:col-span-12">
-            <FeaturedProject 
-              project={PROJECTS[0]} 
-              isInView={isInView}
-              delay={0.2}
-            />
+        {!loading && displayProjects.length > 0 && (
+          <div className="grid grid-cols-1 gap-8">
+            {/* Featured projects section with Lottie */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              {/* Left column: First two featured projects */}
+              <div className="lg:col-span-8 space-y-8">
+                {/* First featured project */}
+                {displayProjects.length > 0 && (
+                  <FeaturedProject 
+                    project={displayProjects[0]} 
+                    isInView={isInView}
+                    delay={0.2}
+                  />
+                )}
+                
+                {/* Second featured project */}
+                {displayProjects.length > 1 && (
+                  <FeaturedProject 
+                    project={displayProjects[1]} 
+                    isInView={isInView}
+                    delay={0.3}
+                    reversed
+                  />
+                )}
+              </div>
+              
+              {/* Right column: Lottie Animation */}
+              <div className="lg:col-span-4">
+                <motion.div 
+                  className="sticky top-32 bg-card/10 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden h-full group hover:border-accent/30 transition-all duration-500"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 30 }}
+                  transition={{ duration: 0.8, delay: 0.4 }}
+                >
+                  <div className="p-6 h-full flex flex-col">
+                    {/* Lottie Animation */}
+                    <div className="flex-grow relative overflow-hidden flex items-center justify-center py-4">
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                      
+                      <motion.div 
+                        className="w-full h-80 relative"
+                        whileHover={{ scale: 1.03 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <DotLottieReact
+                          src="https://lottie.host/89786656-4880-42e7-9f18-82895c67895a/37mBlD7a1R.lottie"
+                          loop
+                          autoplay
+                          className="w-full h-full"
+                        />
+                        
+                        {/* Subtle glow effect behind animation */}
+                        <div className="absolute inset-0 -z-10 bg-accent/5 blur-xl rounded-full transform scale-75"></div>
+                      </motion.div>
+                    </div>
+                    
+                    {/* "Discuss Your Project" button */}
+                    <div className="mt-4 text-center">
+                      <motion.a
+                        href="#contact"
+                        className="inline-flex items-center px-4 py-2 rounded-lg border border-accent text-accent hover:bg-accent hover:text-white transition-all duration-300"
+                        whileHover={{ y: -3 }}
+                        whileTap={{ y: 0 }}
+                      >
+                        <span>Discuss Your Project</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2">
+                          <path d="M7 17l9.2-9.2M17 17V7H7" />
+                        </svg>
+                      </motion.a>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </div>
+            
+            {/* Additional projects grid */}
+            {displayProjects.length > 2 && (
+              <div className="mt-16">
+                <motion.h3
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
+                  transition={{ duration: 0.5, delay: 0.9 }}
+                  className="text-xl font-bold mb-6 text-center"
+                >
+                  More Projects
+                </motion.h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {displayProjects.slice(2).map((project, index) => (
+                    <ProjectCard 
+                      key={project.id}
+                      project={project} 
+                      isInView={isInView}
+                      delay={1.0 + (index * 0.1)}
+                      index={index + 2}
+                      isActive={activeIndex === (index + 2)}
+                      onHover={() => setActiveIndex(index + 2)}
+                      onLeave={() => setActiveIndex(null)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-
-          {/* Innovation Spotlight Section with Lottie Animation */}
-          <InnovationSpotlight isInView={isInView} delay={0.4} />
-          
-          {/* Second row: Two side-by-side projects */}
-          <div className="lg:col-span-6">
-            <ProjectCard 
-              project={PROJECTS[1]} 
-              isInView={isInView}
-              delay={0.6}
-              index={1}
-              isActive={activeIndex === 1}
-              onHover={() => setActiveIndex(1)}
-              onLeave={() => setActiveIndex(null)}
-            />
-          </div>
-          
-          <div className="lg:col-span-6">
-            <ProjectCard 
-              project={PROJECTS[2]} 
-              isInView={isInView}
-              delay={0.7}
-              index={2}
-              isActive={activeIndex === 2}
-              onHover={() => setActiveIndex(2)}
-              onLeave={() => setActiveIndex(null)}
-            />
-          </div>
-          
-          {/* Third row: Featured project (reversed layout) */}
-          <div className="lg:col-span-12 mt-8">
-            <FeaturedProject 
-              project={PROJECTS[3]} 
-              isInView={isInView}
-              delay={0.8}
-              reversed
-            />
-          </div>
-        </div>
+        )}
         
         {/* View all projects button */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
-          transition={{ duration: 0.6, delay: 1 }}
-          className="mt-14 text-center"
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="mt-16 text-center"
         >
           <a 
-            href="#" 
+            href="https://github.com/dacrab" 
             className="inline-flex items-center px-6 py-3 rounded-lg border border-border bg-card/20 hover:bg-card/30 hover:border-accent/50 transition-all duration-300 text-muted hover:text-foreground focus:outline-none focus:ring-2 focus:ring-accent/30 focus:ring-offset-2 focus:ring-offset-background"
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            <span>View All Projects</span>
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+            <span>View All Projects on GitHub</span>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
             </svg>
           </a>
         </motion.div>
       </div>
     </section>
-  );
-}
-
-// Background effects component
-function BackgroundEffects({ isInView }: { isInView: boolean }) {
-  return (
-    <div className="absolute inset-0 -z-10">
-      {/* Gradient layers */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-background"></div>
-      
-      {/* Abstract grid pattern */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: isInView ? 0.05 : 0 }}
-        transition={{ duration: 1.5 }}
-        className="absolute inset-0"
-      >
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `linear-gradient(var(--border) 0.5px, transparent 0.5px), 
-                            linear-gradient(to right, var(--border) 0.5px, transparent 0.5px)`,
-            backgroundSize: '50px 50px',
-          }}/>
-        </div>
-      </motion.div>
-      
-      {/* Animated background shapes */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div 
-          className="absolute -left-[10%] top-[20%] w-[40%] h-[40%] rounded-full bg-gradient-2/5 blur-[80px]"
-          animate={isInView ? {
-            y: [0, 30, 0],
-            opacity: [0, 0.4, 0],
-          } : {}}
-          transition={{ 
-            duration: 20, 
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
-        />
-        <motion.div 
-          className="absolute right-[10%] bottom-[10%] w-[30%] h-[30%] rounded-full bg-gradient-1/5 blur-[100px]"
-          animate={isInView ? {
-            x: [0, -20, 0],
-            opacity: [0, 0.5, 0],
-          } : {}}
-          transition={{ 
-            duration: 15, 
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
-        />
-      </div>
-    </div>
   );
 }
 
@@ -602,7 +755,7 @@ function SectionHeader({ isInView }: { isInView: boolean }) {
       <div className="w-24 h-0.5 bg-accent mx-auto mb-6"></div>
       
       <TextAnimation 
-        text="A selection of my recent work spanning web applications, interactive experiences, and digital platforms." 
+        text="A selection of my recent work spanning web applications, interactive experiences, and digital platforms."
         variant="split" 
         className="text-muted max-w-2xl mx-auto"
         delay={0.4}

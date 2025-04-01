@@ -2,9 +2,21 @@
 
 import { MotionValue, motion, useTransform } from "framer-motion";
 import ParallaxLayer from "../ParallaxLayer";
+import { useMemo } from "react";
 
 interface ContactBackgroundProps {
   scrollYProgress: MotionValue<number>;
+}
+
+interface Particle {
+  width: string;
+  height: string;
+  left: string;
+  top: string;
+  animationY: number;
+  animationX: number;
+  duration: number;
+  delay: number;
 }
 
 export default function ContactBackground({ scrollYProgress }: ContactBackgroundProps) {
@@ -12,6 +24,50 @@ export default function ContactBackground({ scrollYProgress }: ContactBackground
   const gridOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 0.08, 0.08, 0]);
   const pathLength = useTransform(scrollYProgress, [0.3, 0.6], [0, 1]);
   const pathOpacity = useTransform(scrollYProgress, [0.1, 0.2, 0.8, 0.9], [0, 0.3, 0.3, 0]);
+
+  // Generate stable particle properties using useMemo
+  const particles = useMemo<Particle[]>(() => {
+    return Array.from({ length: 15 }).map(() => ({
+      width: `${Math.random() * 8 + 2}px`,
+      height: `${Math.random() * 8 + 2}px`,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+      animationY: Math.random() * 80 - 40,
+      animationX: Math.random() * 40 - 20,
+      duration: Math.random() * 15 + 15,
+      delay: Math.random() * 10
+    }));
+  }, []);
+
+  // SVG path configurations
+  const svgPaths = [
+    { 
+      path: "M0,40 C20,35 50,70 100,40", 
+      stroke: "var(--accent)", 
+      width: 0.2, 
+      dash: "1 3", 
+      yAnim: [0, 5, 0], 
+      duration: 15 
+    },
+    { 
+      path: "M0,60 C40,90 60,30 100,60", 
+      stroke: "var(--accent-light)", 
+      width: 0.15, 
+      dash: "1 4", 
+      yAnim: [0, -8, 0], 
+      duration: 18, 
+      delay: 2 
+    },
+    { 
+      path: "M0,20 C30,50 70,10 100,30", 
+      stroke: "var(--accent-foreground)", 
+      width: 0.1, 
+      dash: "2 4", 
+      yAnim: [0, 10, 0], 
+      duration: 20, 
+      delay: 5 
+    }
+  ];
 
   return (
     <div className="absolute inset-0 -z-10">
@@ -64,29 +120,29 @@ export default function ContactBackground({ scrollYProgress }: ContactBackground
         />
       </div>
       
-      {/* Floating particles - subtle background effect */}
+      {/* Floating particles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 15 }).map((_, i) => (
+        {particles.map((particle, i) => (
           <motion.div
             key={i}
             className="absolute rounded-full bg-accent/5"
             style={{
-              width: Math.random() * 8 + 2 + "px",
-              height: Math.random() * 8 + 2 + "px",
-              left: Math.random() * 100 + "%",
-              top: Math.random() * 100 + "%",
+              width: particle.width,
+              height: particle.height,
+              left: particle.left,
+              top: particle.top,
               filter: "blur(1px)"
             }}
             animate={{
-              y: [0, Math.random() * 80 - 40],
-              x: [0, Math.random() * 40 - 20],
+              y: [0, particle.animationY],
+              x: [0, particle.animationX],
               opacity: [0, 0.3, 0],
               scale: [0, 1, 0],
             }}
             transition={{
-              duration: Math.random() * 15 + 15,
+              duration: particle.duration,
               repeat: Infinity,
-              delay: Math.random() * 10,
+              delay: particle.delay,
               ease: "easeInOut"
             }}
           />
@@ -176,11 +232,7 @@ export default function ContactBackground({ scrollYProgress }: ContactBackground
         fill="none"
         style={{ zIndex: -1 }}
       >
-        {[
-          { path: "M0,40 C20,35 50,70 100,40", stroke: "var(--accent)", width: 0.2, dash: "1 3", yAnim: [0, 5, 0], duration: 15 },
-          { path: "M0,60 C40,90 60,30 100,60", stroke: "var(--accent-light)", width: 0.15, dash: "1 4", yAnim: [0, -8, 0], duration: 18, delay: 2 },
-          { path: "M0,20 C30,50 70,10 100,30", stroke: "var(--accent-foreground)", width: 0.1, dash: "2 4", yAnim: [0, 10, 0], duration: 20, delay: 5 }
-        ].map((item, i) => (
+        {svgPaths.map((item, i) => (
           <motion.path
             key={i}
             d={item.path}
@@ -205,4 +257,4 @@ export default function ContactBackground({ scrollYProgress }: ContactBackground
       </svg>
     </div>
   );
-} 
+}
