@@ -473,3 +473,8 @@ body {
   transform: translateY(0);
 }
 
+/* Custom z-indices for our backgrounds */
+.-z-15 {
+  z-index: -15;
+}
+

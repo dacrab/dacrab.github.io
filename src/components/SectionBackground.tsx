@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { useRef, useEffect } from "react";
+import { motion, useScroll, useTransform, useInView, useAnimation } from "framer-motion";
 
 interface SectionBackgroundProps {
   variant?: "code" | "tech" | "grid" | "blueprint";
@@ -19,9 +19,10 @@ export default function SectionBackground({
   const containerRef = useRef<HTMLDivElement>(null);
   const localIsInView = useInView(containerRef, { once: false, amount: 0.2 });
   const effectiveIsInView = isInView || localIsInView;
+  const controls = useAnimation();
   
-  // Normalize intensity value to allow higher visibility (0.1 to 0.5)
-  const normalizedIntensity = 0.1 + (intensity * 0.4);
+  // Normalize intensity value for better visibility (0.2 to 0.8)
+  const normalizedIntensity = 0.2 + (intensity * 0.6);
 
   // Get scroll progress for parallax effects
   const { scrollYProgress } = useScroll({
@@ -34,6 +35,28 @@ export default function SectionBackground({
   const y2 = useTransform(scrollYProgress, [0, 1], ["0%", "-15%"]);
   const rotate1 = useTransform(scrollYProgress, [0, 1], [0, 5]);
   const rotate2 = useTransform(scrollYProgress, [0, 1], [0, -3]);
+
+  // Animate elements when they come into view
+  useEffect(() => {
+    if (effectiveIsInView) {
+      controls.start("visible");
+    } else {
+      controls.start("hidden");
+    }
+  }, [effectiveIsInView, controls]);
+  
+  // Shared animation variants for elements
+  const elementVariants = {
+    hidden: { opacity: 0, scale: 0.9 },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      transition: { 
+        duration: 1.2,
+        ease: "easeOut"
+      }
+    }
+  };
   
   // Render different background patterns based on variant
   const renderBackgroundElements = () => {
@@ -55,17 +78,11 @@ export default function SectionBackground({
                     opacity: normalizedIntensity * 2,
                     rotate: Math.floor(Math.random() * 45 - 22.5),
                   }}
-                  animate={{
-                    opacity: [
-                      normalizedIntensity * 1.5, 
-                      normalizedIntensity * 3,
-                      normalizedIntensity * 1.5
-                    ],
-                  }}
+                  variants={elementVariants}
+                  initial="hidden"
+                  animate={controls}
                   transition={{
-                    duration: 5 + i,
-                    repeat: Infinity,
-                    repeatType: "reverse",
+                    delay: 0.1 * i,
                   }}
                 >
                   {['{', '}', '()', '[]', '<>', '//', '/*', '*/', '=>', '&&', '||', '++', '=='][i % 13]}
@@ -83,51 +100,40 @@ export default function SectionBackground({
                     background: `linear-gradient(to right, var(--${color})/40, transparent)`,
                     opacity: normalizedIntensity * 1.5,
                   }}
-                  animate={{
-                    width: [
-                      `${Math.floor(Math.random() * 20 + 15)}%`, 
-                      `${Math.floor(Math.random() * 40 + 20)}%`,
-                      `${Math.floor(Math.random() * 20 + 15)}%`
-                    ],
-                    opacity: [
-                      normalizedIntensity * 1, 
-                      normalizedIntensity * 2,
-                      normalizedIntensity * 1
-                    ],
-                  }}
+                  variants={elementVariants}
+                  initial="hidden"
+                  animate={controls}
                   transition={{
-                    duration: 8 + i * 2,
-                    repeat: Infinity,
-                    repeatType: "reverse",
+                    delay: 0.1 * i,
                   }}
                 />
               ))}
             </div>
             
-            {/* Gradient orbs */}
+            {/* Gradient orbs with smoother transitions */}
             <motion.div 
-              className={`absolute top-[20%] right-[10%] w-[35%] h-[40%] rounded-full bg-${color}/20 blur-[100px]`}
-              style={{ y: y1, opacity: normalizedIntensity * 3 }}
-              animate={{
-                scale: [1, 1.2, 1],
+              className="absolute top-[20%] right-[10%] w-[35%] h-[40%] rounded-full blur-[100px]"
+              style={{ 
+                y: y1, 
+                opacity: normalizedIntensity * 3,
+                background: `radial-gradient(circle at center, var(--${color})/30 0%, transparent 70%)` 
               }}
-              transition={{ 
-                duration: 20, 
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
+              variants={elementVariants}
+              initial="hidden"
+              animate={controls}
+              transition={{ delay: 0.3 }}
             />
             <motion.div 
-              className={`absolute bottom-[15%] left-[20%] w-[40%] h-[35%] rounded-full bg-${color}-light/20 blur-[100px]`}
-              style={{ y: y2, opacity: normalizedIntensity * 3 }}
-              animate={{
-                scale: [1, 1.1, 1],
+              className="absolute bottom-[15%] left-[20%] w-[40%] h-[35%] rounded-full blur-[100px]"
+              style={{ 
+                y: y2, 
+                opacity: normalizedIntensity * 3,
+                background: `radial-gradient(circle at center, var(--${color}-light)/25 0%, transparent 70%)` 
               }}
-              transition={{ 
-                duration: 15, 
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
+              variants={elementVariants}
+              initial="hidden"
+              animate={controls}
+              transition={{ delay: 0.5 }}
             />
           </>
         );
@@ -147,20 +153,13 @@ export default function SectionBackground({
                     top: `${Math.floor(Math.random() * 80 + 10)}%`,
                     left: `${Math.floor(Math.random() * 80 + 10)}%`,
                     color: `var(--${color})`,
-                    opacity: normalizedIntensity * 0.5,
+                    opacity: normalizedIntensity * 0.6,
                   }}
-                  animate={{
-                    y: [0, Math.random() * 30 - 15, 0],
-                    opacity: [
-                      normalizedIntensity * 0.5, 
-                      normalizedIntensity * 0.8,
-                      normalizedIntensity * 0.5
-                    ],
-                  }}
+                  variants={elementVariants}
+                  initial="hidden"
+                  animate={controls}
                   transition={{
-                    duration: 10 + i * 2,
-                    repeat: Infinity,
-                    repeatType: "reverse",
+                    delay: 0.07 * i,
                   }}
                 >
                   {icon}
@@ -180,18 +179,11 @@ export default function SectionBackground({
                     opacity: normalizedIntensity * 1.2,
                     rotate: i % 2 === 0 ? 1 : -1,
                   }}
-                  animate={{
-                    opacity: [
-                      normalizedIntensity * 0.8, 
-                      normalizedIntensity * 1.5,
-                      normalizedIntensity * 0.8
-                    ],
-                  }}
+                  variants={elementVariants}
+                  initial="hidden"
+                  animate={controls}
                   transition={{
-                    duration: 8 + i,
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                    delay: i * 0.5,
+                    delay: 0.2 + (i * 0.1),
                   }}
                 />
               ))}
@@ -205,18 +197,11 @@ export default function SectionBackground({
                     background: `linear-gradient(to bottom, transparent 0%, var(--${color})/30 30%, var(--${color})/30 70%, transparent 100%)`,
                     opacity: normalizedIntensity * 1,
                   }}
-                  animate={{
-                    opacity: [
-                      normalizedIntensity * 0.7, 
-                      normalizedIntensity * 1.3,
-                      normalizedIntensity * 0.7
-                    ],
-                  }}
+                  variants={elementVariants}
+                  initial="hidden"
+                  animate={controls}
                   transition={{
-                    duration: 10 + i,
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                    delay: i * 0.7,
+                    delay: 0.3 + (i * 0.1),
                   }}
                 />
               ))}
@@ -233,54 +218,46 @@ export default function SectionBackground({
               ].map((pos, i) => (
                 <motion.div
                   key={`node-${i}`}
-                  className={`absolute w-4 h-4 rounded-full bg-${color}/50`}
+                  className="absolute w-4 h-4 rounded-full"
                   style={{ 
                     top: `${pos.top}%`,
                     left: `${pos.left}%`,
                     opacity: normalizedIntensity * 2,
+                    backgroundColor: `var(--${color})/50`,
                     boxShadow: `0 0 15px 2px var(--${color})/30`
                   }}
-                  animate={{
-                    scale: [1, 1.5, 1],
-                    opacity: [
-                      normalizedIntensity * 2, 
-                      normalizedIntensity * 4,
-                      normalizedIntensity * 2
-                    ],
-                  }}
+                  variants={elementVariants}
+                  initial="hidden"
+                  animate={controls}
                   transition={{
-                    duration: 5 + i,
-                    repeat: Infinity,
-                    repeatType: "reverse",
+                    delay: 0.4 + (i * 0.08),
                   }}
                 />
               ))}
             </div>
             
-            {/* Add some gradient blobs for more visual appeal */}
+            {/* Gradient blobs for visual appeal */}
             <motion.div 
-              className={`absolute top-[30%] right-[20%] w-[30%] h-[30%] rounded-full bg-${color}/15 blur-[80px]`}
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.2, 0.4, 0.2],
+              className="absolute top-[30%] right-[20%] w-[30%] h-[30%] rounded-full blur-[80px]"
+              style={{
+                background: `radial-gradient(circle at center, var(--${color})/20 0%, transparent 70%)`,
+                opacity: normalizedIntensity * 2,
               }}
-              transition={{ 
-                duration: 15, 
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
+              variants={elementVariants}
+              initial="hidden"
+              animate={controls}
+              transition={{ delay: 0.6 }}
             />
             <motion.div 
-              className={`absolute bottom-[20%] left-[25%] w-[25%] h-[25%] rounded-full bg-${color}-light/15 blur-[80px]`}
-              animate={{
-                scale: [1, 1.1, 1],
-                opacity: [0.15, 0.3, 0.15],
+              className="absolute bottom-[20%] left-[25%] w-[25%] h-[25%] rounded-full blur-[80px]"
+              style={{
+                background: `radial-gradient(circle at center, var(--${color}-light)/15 0%, transparent 70%)`,
+                opacity: normalizedIntensity * 2,
               }}
-              transition={{ 
-                duration: 20, 
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
+              variants={elementVariants}
+              initial="hidden"
+              animate={controls}
+              transition={{ delay: 0.7 }}
             />
           </>
         );
@@ -290,95 +267,75 @@ export default function SectionBackground({
           <>
             {/* Abstract grid pattern */}
             <motion.div
-              className="absolute inset-0 grid-pattern-lines"
+              className="absolute inset-0"
               style={{ 
                 opacity: normalizedIntensity * 0.7,
                 rotate: rotate1,
+                backgroundImage: `linear-gradient(var(--border)/20 0.5px, transparent 0.5px), linear-gradient(to right, var(--border)/20 0.5px, transparent 0.5px)`,
                 backgroundSize: '30px 30px',
               }}
-              animate={{
-                scale: [1, 1.05, 0.98, 1],
-              }}
-              transition={{ 
-                duration: 20, 
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
+              variants={elementVariants}
+              initial="hidden"
+              animate={controls}
             />
             
             <motion.div
-              className="absolute inset-0 grid-pattern-dots"
+              className="absolute inset-0"
               style={{ 
                 opacity: normalizedIntensity * 0.5,
                 rotate: rotate2,
+                backgroundImage: `radial-gradient(circle at 1px 1px, var(--border)/30 1px, transparent 0)`,
                 backgroundSize: '25px 25px'
               }}
-              animate={{
-                scale: [1, 1.03, 0.99, 1],
-              }}
-              transition={{ 
-                duration: 25, 
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
+              variants={elementVariants}
+              initial="hidden"
+              animate={controls}
+              transition={{ delay: 0.2 }}
             />
             
             {/* Accent floating elements */}
             <motion.div 
-              className={`absolute top-[30%] right-[20%] w-[20vw] h-[20vw] max-w-[300px] max-h-[300px] rounded-full border-2 border-${color}/30`}
+              className="absolute top-[30%] right-[20%] w-[20vw] h-[20vw] max-w-[300px] max-h-[300px] rounded-full border-2"
               style={{ 
                 opacity: normalizedIntensity * 1.2,
                 rotate: rotate1,
                 y: y1,
+                borderColor: `var(--${color})/30`,
                 boxShadow: `0 0 30px 5px var(--${color})/10`,
               }}
-              animate={{
-                scale: [1, 1.1, 1],
-                borderColor: [`var(--${color})/20`, `var(--${color})/40`, `var(--${color})/20`],
-              }}
-              transition={{ 
-                duration: 15, 
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
+              variants={elementVariants}
+              initial="hidden"
+              animate={controls}
+              transition={{ delay: 0.3 }}
             />
             
             <motion.div 
-              className={`absolute bottom-[20%] left-[15%] w-[15vw] h-[15vw] max-w-[250px] max-h-[250px] border-3 border-${color}/20`}
+              className="absolute bottom-[20%] left-[15%] w-[15vw] h-[15vw] max-w-[250px] max-h-[250px] border-3"
               style={{ 
                 opacity: normalizedIntensity * 1.1,
                 rotate: rotate2,
                 y: y2,
                 borderRadius: '30% 70% 70% 30% / 30% 30% 70% 70%',
+                borderColor: `var(--${color})/20`,
                 boxShadow: `0 0 25px 3px var(--${color})/15`,
               }}
-              animate={{
-                borderRadius: [
-                  '30% 70% 70% 30% / 30% 30% 70% 70%',
-                  '50% 50% 20% 80% / 25% 80% 20% 75%',
-                  '30% 70% 70% 30% / 30% 30% 70% 70%'
-                ],
-                borderColor: [`var(--${color})/20`, `var(--${color})/40`, `var(--${color})/20`],
-              }}
-              transition={{ 
-                duration: 18, 
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
+              variants={elementVariants}
+              initial="hidden"
+              animate={controls}
+              transition={{ delay: 0.4 }}
             />
             
-            {/* Add a gradient background blob */}
+            {/* Gradient background blob */}
             <motion.div 
-              className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] rounded-full bg-${color}/10 blur-[120px]`}
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.1, 0.25, 0.1],
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50%] h-[50%] rounded-full blur-[120px]"
+              style={{
+                background: `radial-gradient(circle at center, var(--${color})/15 0%, transparent 70%)`,
+                opacity: normalizedIntensity * 2,
               }}
-              transition={{ 
-                duration: 20, 
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
+              variants={elementVariants}
+              initial="hidden"
+              animate={controls}
+              transition={{ delay: 0.5 }}
             />
           </>
         );
@@ -386,15 +343,17 @@ export default function SectionBackground({
       case "blueprint":
         return (
           <>
-            {/* Blueprint-style background with grid and technical elements */}
+            {/* Blueprint-style background with grid */}
             <motion.div 
               className="absolute inset-0"
               style={{
-                backgroundImage: `linear-gradient(var(--border)/20 0.5px, transparent 0.5px), 
-                                linear-gradient(to right, var(--border)/20 0.5px, transparent 0.5px)`,
+                backgroundImage: `linear-gradient(var(--border)/20 0.5px, transparent 0.5px), linear-gradient(to right, var(--border)/20 0.5px, transparent 0.5px)`,
                 backgroundSize: '20px 20px',
                 opacity: normalizedIntensity * 0.8,
               }}
+              variants={elementVariants}
+              initial="hidden"
+              animate={controls}
             />
             
             {/* Circular elements like gears */}
@@ -406,30 +365,25 @@ export default function SectionBackground({
               return (
                 <motion.div
                   key={`gear-${i}`}
-                  className={`absolute border-2 border-${color}/30 rounded-full`}
+                  className="absolute border-2 rounded-full"
                   style={{
                     width: size,
                     height: size,
                     top: `${top}%`,
                     left: `${left}%`,
                     opacity: normalizedIntensity * 1.2,
+                    borderColor: `var(--${color})/30`,
                     boxShadow: `0 0 20px 2px var(--${color})/15`
                   }}
-                  animate={{
-                    rotate: [0, 360],
-                    scale: [1, 1.05, 0.98, 1],
-                    borderColor: [`var(--${color})/20`, `var(--${color})/40`, `var(--${color})/20`],
-                  }}
-                  transition={{
-                    rotate: { duration: 40 + (i * 10), repeat: Infinity, ease: "linear" },
-                    scale: { duration: 20, repeat: Infinity, repeatType: "reverse" },
-                    borderColor: { duration: 8, repeat: Infinity, repeatType: "reverse" }
-                  }}
+                  variants={elementVariants}
+                  initial="hidden"
+                  animate={controls}
+                  transition={{ delay: 0.1 * i }}
                 >
-                  <div className={`absolute inset-4 border border-${color}/40 rounded-full`}></div>
-                  <div className={`absolute inset-8 border border-${color}/30 rounded-full`}></div>
-                  <div className={`absolute inset-0 flex items-center justify-center`}>
-                    <div className={`w-4 h-4 rounded-full bg-${color}/30`}></div>
+                  <div className="absolute inset-4 border rounded-full" style={{ borderColor: `var(--${color})/40` }}></div>
+                  <div className="absolute inset-8 border rounded-full" style={{ borderColor: `var(--${color})/30` }}></div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: `var(--${color})/30` }}></div>
                   </div>
                 </motion.div>
               );
@@ -439,73 +393,41 @@ export default function SectionBackground({
             {[20, 50, 80].map((pos, i) => (
               <motion.div
                 key={`measure-h-${i}`}
-                className={`absolute h-[2px] left-0 w-full flex items-center justify-around bg-${color}/20`}
+                className="absolute h-[2px] left-0 w-full flex items-center justify-around"
                 style={{ 
                   top: `${pos}%`,
                   opacity: normalizedIntensity * 1,
+                  backgroundColor: `var(--${color})/20`,
                 }}
-                animate={{
-                  opacity: [normalizedIntensity * 0.7, normalizedIntensity * 1.3, normalizedIntensity * 0.7]
-                }}
-                transition={{
-                  duration: 10 + (i * 2),
-                  repeat: Infinity,
-                  repeatType: "reverse"
-                }}
+                variants={elementVariants}
+                initial="hidden"
+                animate={controls}
+                transition={{ delay: 0.3 + (i * 0.1) }}
               >
                 {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((tick) => (
                   <motion.div
                     key={`tick-h-${i}-${tick}`}
-                    className={`w-[2px] h-3 bg-${color}/40`}
+                    className="w-[2px] h-3"
                     style={{
                       opacity: normalizedIntensity * 1.2,
+                      backgroundColor: `var(--${color})/40`,
                     }}
                   />
                 ))}
               </motion.div>
             ))}
             
-            {[30, 70].map((pos, i) => (
-              <motion.div
-                key={`measure-v-${i}`}
-                className={`absolute w-[2px] top-0 h-full flex flex-col items-center justify-around bg-${color}/20`}
-                style={{ 
-                  left: `${pos}%`,
-                  opacity: normalizedIntensity * 1,
-                }}
-                animate={{
-                  opacity: [normalizedIntensity * 0.7, normalizedIntensity * 1.3, normalizedIntensity * 0.7]
-                }}
-                transition={{
-                  duration: 12 + (i * 2),
-                  repeat: Infinity,
-                  repeatType: "reverse"
-                }}
-              >
-                {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((tick) => (
-                  <motion.div
-                    key={`tick-v-${i}-${tick}`}
-                    className={`h-[2px] w-3 bg-${color}/40`}
-                    style={{
-                      opacity: normalizedIntensity * 1.2,
-                    }}
-                  />
-                ))}
-              </motion.div>
-            ))}
-            
-            {/* Add some gradient blobs for more depth */}
+            {/* Gradient blob for depth */}
             <motion.div 
-              className={`absolute top-1/3 right-1/4 w-[35%] h-[35%] rounded-full bg-${color}/15 blur-[100px]`}
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.1, 0.25, 0.1],
+              className="absolute top-1/3 right-1/4 w-[35%] h-[35%] rounded-full blur-[100px]"
+              style={{
+                background: `radial-gradient(circle at center, var(--${color})/20 0%, transparent 70%)`,
+                opacity: normalizedIntensity * 2,
               }}
-              transition={{ 
-                duration: 18, 
-                repeat: Infinity,
-                repeatType: "reverse"
-              }}
+              variants={elementVariants}
+              initial="hidden"
+              animate={controls}
+              transition={{ delay: 0.7 }}
             />
           </>
         );
@@ -516,12 +438,23 @@ export default function SectionBackground({
   };
 
   return (
-    <div ref={containerRef} className="absolute inset-0 -z-10 overflow-hidden">
+    <motion.div 
+      ref={containerRef} 
+      className="absolute inset-0 overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.7 }}
+    >
       {/* Base gradient layer */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-background"></div>
+      <motion.div 
+        className="absolute inset-0 bg-gradient-to-b from-background via-background to-background"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.9 }}
+        transition={{ duration: 1 }}
+      />
       
       {/* Render background elements based on variant */}
       {effectiveIsInView && renderBackgroundElements()}
-    </div>
+    </motion.div>
   );
-} 
+}
