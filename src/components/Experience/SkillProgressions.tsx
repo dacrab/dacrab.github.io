@@ -110,9 +110,9 @@ export default function SkillProgressions({ isInView }: SkillProgressionsProps) 
           className="mt-6 pt-6 border-t border-border/30"
         >
           <p className="text-sm text-muted">
-            My career trajectory reflects a continuous commitment to technical excellence, collaborative innovation, 
-            and delivering exceptional user experiences. Specializing in modern frontend architecture with React and 
-            Next.js, I combine creative problem-solving with meticulous attention to detail.
+            As a junior developer, I&apos;m passionate about expanding my technical skills and growing in the field of web development. 
+            I&apos;m enthusiastic about learning modern frontend technologies like React and Next.js, and I approach each project as an opportunity 
+            to improve my abilities. My focus is on writing clean, maintainable code while developing responsive and user-friendly interfaces.
           </p>
         </motion.div>
       </div>

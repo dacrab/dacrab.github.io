@@ -22,8 +22,8 @@ export default function LottieVisualization({ isInView }: LottieVisualizationPro
           animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : -10 }}
           transition={{ duration: 0.5, delay: 0.3 }}
         >
-          <h3 className="text-xl font-bold text-gradient-animated">Career Visualization</h3>
-          <p className="text-sm text-muted mt-1">Interactive representation of skills growth</p>
+          <h3 className="text-xl font-bold text-gradient-animated">Developer Journey</h3>
+          <p className="text-sm text-muted mt-1">Visual overview of my growing skills</p>
         </motion.div>
         
         {/* Lottie animation with enhanced styling */}
@@ -107,13 +107,13 @@ export default function LottieVisualization({ isInView }: LottieVisualizationPro
             transition={{ duration: 0.2 }}
           >
             <NumberCounter
-              end={8}
+              end={1}
               duration={2}
               delay={0.7}
               suffix="+"
               isInView={isInView}
             />
-            <div className="text-xs text-muted">Years</div>
+            <div className="text-xs text-muted">Year</div>
           </motion.div>
           <motion.div 
             className="bg-card/20 backdrop-blur-sm border border-border/30 rounded-lg py-3 px-2"
@@ -125,7 +125,7 @@ export default function LottieVisualization({ isInView }: LottieVisualizationPro
             transition={{ duration: 0.2 }}
           >
             <NumberCounter
-              end={20}
+              end={15}
               duration={2}
               delay={0.9}
               suffix="+"
@@ -143,7 +143,7 @@ export default function LottieVisualization({ isInView }: LottieVisualizationPro
             transition={{ duration: 0.2 }}
           >
             <NumberCounter
-              end={15}
+              end={10}
               duration={2}
               delay={1.1}
               suffix="+"

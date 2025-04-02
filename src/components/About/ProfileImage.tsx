@@ -84,13 +84,13 @@ export default function ProfileImage({ contentY }: ProfileImageProps) {
             transition={{ duration: 0.2 }}
           >
             <NumberCounter
-              end={8}
+              end={1}
               duration={2}
               delay={0.7}
               suffix="+"
               className="text-accent text-xl font-bold"
             />
-            <div className="text-sm text-muted">Years Experience</div>
+            <div className="text-sm text-muted">Year Experience</div>
           </motion.div>
           <motion.div 
             className="bg-card/20 backdrop-blur-sm border border-border/30 rounded-lg p-4 animate-border-pulse"
@@ -103,7 +103,7 @@ export default function ProfileImage({ contentY }: ProfileImageProps) {
             transition={{ duration: 0.2 }}
           >
             <NumberCounter
-              end={50}
+              end={15}
               duration={2}
               delay={0.9}
               suffix="+"

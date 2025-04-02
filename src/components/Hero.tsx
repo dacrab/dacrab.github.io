@@ -7,6 +7,12 @@ import TextAnimation from "./TextAnimation";
 export default function Hero() {
   const ref = useRef(null);
   const [showCVDropdown, setShowCVDropdown] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // Mark component as mounted (client-side only)
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -66,7 +72,7 @@ export default function Hero() {
       <motion.div 
         className="absolute inset-0 z-0"
         style={{ 
-          backgroundImage: `radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0)`,
+          backgroundImage: `radial-gradient(circle at 1px 1px, var(--accent) 1px, transparent 0)`,
           backgroundSize: '50px 50px',
           opacity: gridOpacity,
           scale: gridScale,
@@ -86,44 +92,51 @@ export default function Hero() {
         }}
       />
       
-      {/* Floating particles */}
+      {/* Floating particles with client-side only randomization */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={`particle-${i}`}
-            className="absolute w-1 h-1 rounded-full bg-accent/20"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`
-            }}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ 
-              x: [
-                Math.random() * 50 - 25, 
-                Math.random() * 50 - 25, 
-                Math.random() * 50 - 25
-              ],
-              y: [
-                Math.random() * 50 - 25, 
-                Math.random() * 50 - 25, 
-                Math.random() * 50 - 25
-              ],
-              opacity: [0, 0.4, 0],
-              scale: [0, 1, 0]
-            }}
-            transition={{
-              duration: 10 + Math.random() * 10,
-              repeat: Infinity,
-              delay: Math.random() * 5
-            }}
-          />
-        ))}
+        {[...Array(15)].map((_, i) => {
+          // Deterministic initial positions based on index
+          const leftPos = `${(i * 6.5) % 100}%`;
+          const topPos = `${(i * 7) % 100}%`;
+          
+          return (
+            <motion.div
+              key={`particle-${i}`}
+              className="absolute w-1 h-1 rounded-full bg-accent/20"
+              initial={{ 
+                opacity: 0, 
+                scale: 0,
+                left: leftPos,
+                top: topPos
+              }}
+              animate={isMounted ? { 
+                x: [
+                  ((i % 3) * 20) - 25, 
+                  (((i + 1) % 3) * 20) - 25, 
+                  ((i % 3) * 20) - 25
+                ],
+                y: [
+                  ((i % 4) * 15) - 25, 
+                  (((i + 2) % 4) * 15) - 25, 
+                  ((i % 4) * 15) - 25
+                ],
+                opacity: [0, 0.4, 0],
+                scale: [0, 1, 0]
+              } : {}}
+              transition={isMounted ? {
+                duration: 10 + (i % 10),
+                repeat: Infinity,
+                delay: i % 5
+              } : {}}
+            />
+          );
+        })}
       </div>
       
       {/* Enhanced asymmetrical background shapes */}
       <div className="absolute inset-0 -z-10">
         <motion.div 
-          className="absolute -left-[20%] top-[10%] w-[60%] h-[55%] rounded-full bg-gradient-1/10 blur-[120px]"
+          className="absolute -left-[20%] top-[10%] w-[60%] h-[55%] rounded-full bg-accent/10 blur-[120px]"
           style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "10%"]) }}
           initial={{ opacity: 0 }}
           animate={{ 
@@ -137,7 +150,7 @@ export default function Hero() {
           }}
         />
         <motion.div 
-          className="absolute right-[10%] bottom-[10%] w-[50%] h-[50%] rounded-full bg-gradient-2/10 blur-[120px]"
+          className="absolute right-[10%] bottom-[10%] w-[50%] h-[50%] rounded-full bg-accent/10 blur-[120px]"
           style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "-15%"]) }}
           initial={{ opacity: 0 }}
           animate={{ 
@@ -153,7 +166,7 @@ export default function Hero() {
           }}
         />
         <motion.div 
-          className="absolute left-[40%] top-[60%] w-[30%] h-[30%] rounded-full bg-gradient-3/10 blur-[100px]"
+          className="absolute left-[40%] top-[60%] w-[30%] h-[30%] rounded-full bg-accent/10 blur-[100px]"
           style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]) }}
           initial={{ opacity: 0 }}
           animate={{ 
@@ -289,7 +302,7 @@ export default function Hero() {
                   }}
                 >
                   <TextAnimation 
-                    text="Senior Web Developer"
+                    text="Junior Web Developer"
                     variant="reveal"
                     className="block text-4xl md:text-5xl lg:text-6xl font-bold"
                     delay={0.1}
@@ -305,7 +318,7 @@ export default function Hero() {
                 transition={{ duration: 0.6, delay: 1.3 }}
               >
                 <TextAnimation 
-                  text="Crafting modern, high-performance web experiences with Next.js, TypeScript, and Tailwind CSS. Specializing in sleek UI/UX design with cutting-edge animations."
+                  text="Crafting modern web experiences with Next.js, TypeScript, and Tailwind CSS. Passionate about learning UI/UX design and cutting-edge animations."
                   variant="split"
                   className="text-base md:text-lg"
                   delay={0.1}
@@ -357,14 +370,44 @@ export default function Hero() {
                           onClick={() => downloadCV('english')}
                           className="w-full px-4 py-2.5 text-left text-sm hover:bg-accent/10 transition-colors duration-150 flex items-center gap-2"
                         >
-                          <span className="text-accent">EN</span>
+                          <svg 
+                            className="h-4 w-6 rounded-sm shadow-sm" 
+                            viewBox="0 0 640 480" 
+                            aria-hidden="true"
+                          >
+                            <g fillRule="evenodd">
+                              <g strokeWidth="1pt">
+                                <path fill="#bd3d44" d="M0 0h972.8v39.4H0zm0 78.8h972.8v39.4H0zm0 78.7h972.8v39.4H0zm0 78.8h972.8v39.4H0zm0 78.8h972.8v39.4H0zm0 78.7h972.8v39.4H0z" transform="scale(.9375)"/>
+                                <path fill="#fff" d="M0 39.4h972.8v39.4H0zm0 78.8h972.8v39.3H0zm0 78.7h972.8v39.4H0zm0 78.8h972.8v39.4H0zm0 78.8h972.8v39.4H0zm0 78.7h972.8v39.4H0z" transform="scale(.9375)"/>
+                              </g>
+                              <path fill="#192f5d" d="M0 0h389.1v275.7H0z" transform="scale(.9375)"/>
+                              <path fill="#fff" d="M32.4 11.8L36 22.7h11.4l-9.2 6.7 3.5 11-9.3-6.8-9.2 6.7 3.5-10.9-9.3-6.7H29zm64.9 0l3.5 10.9h11.4l-9.2 6.7 3.5 11-9.2-6.8-9.3 6.7 3.5-10.9-9.2-6.7h11.4zm64.8 0l3.6 10.9H177l-9.2 6.7 3.5 10.9-9.3-6.8-9.2 6.7 3.5-10.9-9.3-6.7h11.5zm64.9 0l3.5 10.9H242l-9.3 6.7 3.6 11-9.3-6.8-9.3 6.7 3.6-10.9-9.3-6.7h11.4zm64.8 0l3.6 10.9h11.4l-9.2 6.7 3.5 10.9-9.3-6.8-9.2 6.7 3.5-10.9-9.3-6.7h11.4zm64.9 0l3.5 10.9h11.5l-9.3 6.7 3.6 10.9-9.3-6.8-9.3 6.7 3.6-10.9-9.3-6.7h11.5zM64.9 39.4l3.5 10.9h11.5L70.6 57 74 67.9l-9-6.7-9.3 6.7L59 57l-9-6.7h11.4zm64.8 0l3.6 10.9h11.4l-9.3 6.7 3.6 10.9-9.3-6.7-9.3 6.7L124 57l-9.3-6.7h11.5zm64.9 0l3.5 10.9h11.5l-9.3 6.7 3.5 10.9-9.2-6.7-9.3 6.7 3.5-10.9-9.2-6.7H191zm64.8 0l3.6 10.9h11.4l-9.2 6.7 3.5 10.9-9.3-6.8-9.2 6.7 3.5-10.9-9.3-6.7H256zm64.9 0l3.5 10.9h11.5L330 57l3.5 10.9-9.2-6.7-9.3 6.7 3.5-10.9-9.2-6.7h11.4zM32.4 66.9L36 78h11.4l-9.2 6.7 3.5 10.9-9.3-6.8-9.2 6.8 3.5-11-9.3-6.7H29zm64.9 0l3.5 11h11.5l-9.3 6.7 3.5 10.9-9.2-6.8-9.3 6.8 3.5-11-9.2-6.7h11.4zm64.8 0l3.6 11H177l-9.2 6.7 3.5 10.9-9.3-6.8-9.2 6.8 3.5-11-9.3-6.7h11.5zm64.9 0l3.5 11H242l-9.3 6.7 3.6 10.9-9.3-6.8-9.3 6.8 3.6-11-9.3-6.7h11.4zm64.8 0l3.6 11h11.4l-9.2 6.7 3.5 10.9-9.3-6.8-9.2 6.8 3.5-11-9.2-6.7h11.4zm64.9 0l3.5 11h11.5l-9.3 6.7 3.6 10.9-9.3-6.8-9.3 6.8 3.6-11-9.3-6.7h11.5zM64.9 94.5l3.5 10.9h11.5l-9.3 6.7 3.5 11-9.2-6.8-9.3 6.7 3.5-10.9-9.2-6.7h11.4zm64.8 0l3.6 10.9h11.4l-9.3 6.7 3.6 11-9.3-6.8-9.3 6.7 3.6-10.9-9.3-6.7h11.5zm64.9 0l3.5 10.9h11.5l-9.3 6.7 3.5 11-9.2-6.8-9.3 6.7 3.5-10.9-9.2-6.7H191zm64.8 0l3.6 10.9h11.4l-9.2 6.7 3.5 11-9.3-6.8-9.2 6.7 3.5-10.9-9.3-6.7H256zm64.9 0l3.5 10.9h11.5l-9.3 6.7 3.5 11-9.2-6.8-9.3 6.7 3.5-10.9-9.2-6.7h11.4zM32.4 122.1L36 133h11.4l-9.2 6.7 3.5 11-9.3-6.8-9.2 6.7 3.5-10.9-9.3-6.7H29zm64.9 0l3.5 10.9h11.5l-9.3 6.7 3.5 10.9-9.2-6.7-9.3 6.7 3.5-10.9-9.2-6.7h11.4zm64.8 0l3.6 10.9H177l-9.2 6.7 3.5 10.9-9.3-6.7-9.2 6.7 3.5-10.9-9.3-6.7h11.5zm64.9 0l3.5 10.9H242l-9.3 6.7 3.6 10.9-9.3-6.7-9.3 6.7 3.6-10.9-9.3-6.7h11.4zm64.8 0l3.6 10.9h11.4l-9.2 6.7 3.5 10.9-9.3-6.7-9.2 6.7 3.5-10.9-9.2-6.7h11.4zm64.9 0l3.5 10.9h11.5l-9.3 6.7 3.6 10.9-9.3-6.7-9.3 6.7 3.6-10.9-9.3-6.7h11.5zM64.9 149.7l3.5 10.9h11.5l-9.3 6.7 3.5 10.9-9.2-6.8-9.3 6.8 3.5-11-9.2-6.7h11.4zm64.8 0l3.6 10.9h11.4l-9.3 6.7 3.6 10.9-9.3-6.8-9.3 6.8 3.6-11-9.3-6.7h11.5zm64.9 0l3.5 10.9h11.5l-9.3 6.7 3.5 10.9-9.2-6.8-9.3 6.8 3.5-11-9.2-6.7H191zm64.8 0l3.6 10.9h11.4l-9.2 6.7 3.5 11-9.3-6.8-9.2 6.8 3.5-11-9.3-6.7H256zm64.9 0l3.5 10.9h11.5l-9.3 6.7 3.5 10.9-9.2-6.8-9.3 6.8 3.5-11-9.2-6.7h11.4zM32.4 177.2l3.6 11h11.4l-9.2 6.7 3.5 10.8-9.3-6.7-9.2 6.7 3.5-10.9-9.3-6.7H29zm64.9 0l3.5 11h11.5l-9.3 6.7 3.6 10.8-9.3-6.7-9.3 6.7 3.6-10.9-9.3-6.7h11.4zm64.8 0l3.6 11H177l-9.2 6.7 3.5 10.8-9.3-6.7-9.2 6.7 3.5-10.9-9.3-6.7h11.5zm64.9 0l3.5 11H242l-9.3 6.7 3.6 10.8-9.3-6.7-9.3 6.7 3.6-10.9-9.3-6.7h11.4zm64.8 0l3.6 11h11.4l-9.2 6.7 3.5 10.8-9.3-6.7-9.2 6.7 3.5-10.9-9.2-6.7h11.4zm64.9 0l3.5 11h11.5l-9.3 6.7 3.6 10.8-9.3-6.7-9.3 6.7 3.6-10.9-9.3-6.7h11.5zM64.9 204.8l3.5 10.9h11.5l-9.3 6.7 3.5 11-9.2-6.8-9.3 6.7 3.5-10.9-9.2-6.7h11.4zm64.8 0l3.6 10.9h11.4l-9.3 6.7 3.6 11-9.3-6.8-9.3 6.7 3.6-10.9-9.3-6.7h11.5zm64.9 0l3.5 10.9h11.5l-9.3 6.7 3.5 11-9.2-6.8-9.3 6.7 3.5-10.9-9.2-6.7H191zm64.8 0l3.6 10.9h11.4l-9.2 6.7 3.5 11-9.3-6.8-9.2 6.7 3.5-10.9-9.3-6.7H256zm64.9 0l3.5 10.9h11.5l-9.3 6.7 3.5 11-9.2-6.8-9.3 6.7 3.5-10.9-9.2-6.7h11.4z" transform="scale(.9375)"/>
+                            </g>
+                          </svg>
                           <span>English Version</span>
                         </button>
                         <button 
                           onClick={() => downloadCV('greek')}
                           className="w-full px-4 py-2.5 text-left text-sm hover:bg-accent/10 transition-colors duration-150 flex items-center gap-2"
                         >
-                          <span className="text-accent">GR</span>
+                          <svg 
+                            className="h-4 w-6 rounded-sm shadow-sm" 
+                            viewBox="0 0 640 480" 
+                            aria-hidden="true"
+                          >
+                            <path fill="#0d5eaf" d="M0 0h640v53.3H0z"/>
+                            <path fill="#fff" d="M0 53.3h640v53.4H0z"/>
+                            <path fill="#0d5eaf" d="M0 106.7h640V160H0z"/>
+                            <path fill="#fff" d="M0 160h640v53.3H0z"/>
+                            <path fill="#0d5eaf" d="M0 213.3h640v53.4H0z"/>
+                            <path fill="#fff" d="M0 266.7h640V320H0z"/>
+                            <path fill="#0d5eaf" d="M0 320h640v53.3H0z"/>
+                            <path fill="#fff" d="M0 373.3h640v53.4H0z"/>
+                            <path fill="#0d5eaf" d="M0 426.7h640V480H0z"/>
+                            <path fill="#0d5eaf" d="M0 0h213.3v240H0z"/>
+                            <path fill="#fff" d="M0 80h213.3v80H0z"/>
+                            <path fill="#fff" d="M80 0h53.3v240H80z"/>
+                          </svg>
                           <span>Greek Version</span>
                         </button>
                       </motion.div>
@@ -400,7 +443,8 @@ export default function Hero() {
                   cx="250" 
                   cy="250" 
                   r="180" 
-                  stroke="var(--border)" 
+                  stroke="var(--accent)" 
+                  strokeOpacity="0.15"
                   strokeWidth="0.5" 
                   strokeDasharray="4 4"
                   initial={{ opacity: 0 }}
@@ -419,7 +463,8 @@ export default function Hero() {
                   cx="250" 
                   cy="250" 
                   r="120" 
-                  stroke="var(--border)" 
+                  stroke="var(--accent)" 
+                  strokeOpacity="0.25"
                   strokeWidth="0.5"
                   initial={{ opacity: 0 }}
                   animate={{ 
@@ -528,7 +573,8 @@ export default function Hero() {
                 <motion.text 
                   x="320" 
                   y="180" 
-                  fill="var(--muted)" 
+                  fill="var(--accent)" 
+                  fillOpacity="0.6"
                   fontFamily="var(--font-geist-mono)" 
                   fontSize="10"
                   initial={{ opacity: 0, width: 0 }}
@@ -546,7 +592,8 @@ export default function Hero() {
                 <motion.text 
                   x="140" 
                   y="320" 
-                  fill="var(--muted)" 
+                  fill="var(--accent)" 
+                  fillOpacity="0.6"
                   fontFamily="var(--font-geist-mono)" 
                   fontSize="10"
                   initial={{ opacity: 0, width: 0 }}
@@ -663,18 +710,18 @@ export default function Hero() {
           }}
           className="flex flex-col items-center"
         >
-          <div className="text-xs text-muted/70 mb-2">Scroll</div>
+          <div className="text-xs text-accent/70 mb-2">Scroll</div>
           <motion.div
             animate={{ opacity: [0.5, 1, 0.5] }}
             transition={{ repeat: Infinity, duration: 1.5 }}
           >
             <svg width="16" height="24" viewBox="0 0 16 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="1" y="1" width="14" height="22" rx="7" stroke="currentColor" strokeWidth="1" strokeOpacity="0.4" />
+              <rect x="1" y="1" width="14" height="22" rx="7" stroke="var(--accent)" strokeWidth="1" strokeOpacity="0.4" />
               <motion.circle 
                 cx="8" 
                 cy="8" 
                 r="3" 
-                fill="currentColor"
+                fill="var(--accent)"
                 animate={{ y: [0, 8, 0] }}
                 transition={{ 
                   repeat: Infinity, 

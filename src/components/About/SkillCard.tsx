@@ -13,8 +13,9 @@ export default function SkillCard({ skill, index, className = "" }: SkillCardPro
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   
-  // Check if this is a white icon that needs special handling
-  const isWhiteIcon = skill.name === "Next.js" || skill.name === "GitHub" || skill.icon.includes("FFFFFF");
+  // Check if this is a white icon that might need special handling
+  // This is now primarily a fallback since we're using dark/light mode adaptive colors
+  const hasAdaptiveColor = skill.icon.includes("/FFFFFF") || skill.name === "Next.js" || skill.name === "GitHub" || skill.name === "Vercel";
   
   return (
     <motion.a
@@ -38,15 +39,15 @@ export default function SkillCard({ skill, index, className = "" }: SkillCardPro
         {/* Glow effect on hover */}
         <div className="absolute inset-0 rounded-full bg-accent/10 opacity-0 group-hover:opacity-100 blur-lg transition-all duration-300" />
         
-        {/* Icon container with background for white icons */}
-        <div className={`relative flex items-center justify-center ${isWhiteIcon ? 'p-1.5 icon-container rounded-full shadow-inner' : ''}`}>
+        {/* Icon container with background for adaptive color icons */}
+        <div className={`relative flex items-center justify-center ${hasAdaptiveColor ? 'p-1.5 icon-container rounded-full shadow-inner' : ''}`}>
           {!imageError ? (
             <Image 
               src={skill.icon} 
               alt={`${skill.name} logo`}
               width={32} 
               height={32} 
-              className={`w-8 h-8 object-contain transition-all duration-300 group-hover:scale-125 relative z-10 ${isWhiteIcon ? 'white-icon' : ''}`}
+              className={`w-8 h-8 object-contain transition-all duration-300 group-hover:scale-125 relative z-10 ${hasAdaptiveColor ? 'theme-adaptive-icon' : ''}`}
               onError={() => setImageError(true)}
             />
           ) : (

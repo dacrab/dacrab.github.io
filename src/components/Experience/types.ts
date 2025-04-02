@@ -30,50 +30,37 @@ export interface SkillProgression {
 export const EXPERIENCES: ExperienceItem[] = [
   {
     id: 1,
-    role: "Senior Frontend Developer",
-    company: "TechCorp Solutions",
-    period: "2021 - Present",
+    role: "Junior Frontend Developer",
+    company: "WebTech Solutions",
+    period: "2023 - Present",
     description: [
-      "Led a team of 5 developers in building a complex SaaS platform using Next.js and TypeScript",
-      "Improved application performance by 45% through code optimization and lazy loading techniques",
-      "Implemented CI/CD pipelines that reduced deployment time by 60%",
-      "Mentored junior developers and conducted code reviews to maintain high code quality"
+      "Developing modern web applications using Next.js, React, and TypeScript",
+      "Implementing responsive designs with Tailwind CSS for optimal user experience across devices",
+      "Collaborating with senior developers to improve code quality and learn best practices",
+      "Participating in code reviews and contributing to project planning discussions"
     ],
-    skills: ["Next.js", "TypeScript", "Tailwind CSS", "CI/CD", "Team Leadership"]
+    skills: ["Next.js", "TypeScript", "React", "Tailwind CSS", "Responsive Design"]
   },
   {
     id: 2,
-    role: "Frontend Developer",
-    company: "Digital Innovations",
-    period: "2018 - 2021",
+    role: "Web Development Intern",
+    company: "Digital Creations",
+    period: "2023 (3 months)",
     description: [
-      "Developed responsive web applications for clients in finance and healthcare sectors",
-      "Created reusable component libraries that improved development efficiency by 35%",
-      "Collaborated with UX/UI designers to implement pixel-perfect interfaces",
-      "Integrated third-party APIs and services into web applications"
+      "Assisted in building and maintaining client websites",
+      "Gained hands-on experience with modern frontend technologies",
+      "Created and styled UI components according to design specifications",
+      "Learned version control workflows and collaborative development processes"
     ],
-    skills: ["React", "JavaScript", "SCSS", "RESTful APIs", "Responsive Design"]
-  },
-  {
-    id: 3,
-    role: "Web Developer",
-    company: "Creative Solutions Agency",
-    period: "2016 - 2018",
-    description: [
-      "Built and maintained websites for clients across various industries",
-      "Implemented responsive designs that worked across all device sizes",
-      "Optimized website performance and SEO",
-      "Collaborated with creative teams to deliver projects on tight deadlines"
-    ],
-    skills: ["HTML5", "CSS3", "JavaScript", "WordPress", "SEO"]
+    skills: ["HTML5", "CSS3", "JavaScript", "Git", "UI Components"]
   }
 ];
 
 // Sample skill progression data
 export const SKILL_PROGRESSIONS: SkillProgression[] = [
-  { name: "Frontend Development", percentage: 95 },
-  { name: "UI/UX Design Implementation", percentage: 90 },
-  { name: "Performance Optimization", percentage: 85 },
-  { name: "Team Leadership", percentage: 80 },
-  { name: "Backend Integration", percentage: 75 }
+  { name: "Frontend Development", percentage: 75 },
+  { name: "UI Implementation", percentage: 70 },
+  { name: "Next.js & React", percentage: 65 },
+  { name: "TypeScript", percentage: 60 },
+  { name: "Responsive Design", percentage: 80 }
 ]; 
