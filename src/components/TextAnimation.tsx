@@ -33,6 +33,8 @@ export default function TextAnimation({
   }, [text]);
   
   useEffect(() => {
+    const currentRef = ref.current; // Store ref value in a variable
+    
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -45,12 +47,12 @@ export default function TextAnimation({
       { threshold: 0.2 }
     );
     
-    if (ref.current) {
-      observer.observe(ref.current);
+    if (currentRef) {
+      observer.observe(currentRef);
     }
     
     return () => {
-      if (ref.current) observer.disconnect();
+      if (currentRef) observer.disconnect();
     };
   }, [once]);
 
@@ -60,20 +62,22 @@ export default function TextAnimation({
       <motion.div
         ref={ref}
         className={`inline-block ${className}`}
-        initial={{ opacity: 1 }}
+        initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
+        transition={{ duration: 0.3, delay }}
       >
         {characters.map((char, index) => (
           <motion.span
             key={`${char}-${index}`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            initial={{ clipPath: "inset(0 100% 0 0)" }}
+            animate={isVisible ? { clipPath: "inset(0 0 0 0)" } : { clipPath: "inset(0 100% 0 0)" }}
             transition={{
               duration: duration,
               delay: delay + index * 0.04,
               ease: [0.215, 0.61, 0.355, 1]
             }}
             className="inline-block"
+            style={{ willChange: "clip-path" }}
           >
             {char === " " ? <span>&nbsp;</span> : char}
           </motion.span>

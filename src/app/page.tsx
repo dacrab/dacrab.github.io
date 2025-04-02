@@ -13,6 +13,8 @@ import SectionBackground from "@/components/SectionBackground";
 
 // Define section types for type safety
 type SectionType = "hero" | "about" | "projects" | "experience" | "contact" | null;
+// Define background variant type to match SectionBackground component
+type BackgroundVariant = "code" | "tech" | "grid" | "blueprint";
 
 export default function Home() {
   // Create refs for each section
@@ -32,26 +34,8 @@ export default function Home() {
   // State to track the current active section for smoother transitions
   const [activeSection, setActiveSection] = useState<SectionType>("hero");
   
-  // Debug state to help track section visibility (can be removed in production)
-  const [debug, setDebug] = useState({
-    hero: false,
-    about: false,
-    projects: false,
-    experience: false,
-    contact: false
-  });
-
   // Update active section based on which section is most in view
   useEffect(() => {
-    // Update debug state
-    setDebug({
-      hero: heroInView,
-      about: aboutInView,
-      projects: projectsInView,
-      experience: experienceInView,
-      contact: contactInView
-    });
-    
     // Set active section with a slight debounce to avoid flicker
     const timer = setTimeout(() => {
       if (heroInView) setActiveSection("hero");
@@ -65,7 +49,7 @@ export default function Home() {
   }, [heroInView, aboutInView, projectsInView, experienceInView, contactInView]);
 
   // Background configuration for each section
-  const backgroundConfig = {
+  const backgroundConfig: Record<Exclude<SectionType, null>, {variant: BackgroundVariant, intensity: number, color: string}> = {
     hero: { variant: "grid", intensity: 0.6, color: "accent" },
     about: { variant: "tech", intensity: 0.7, color: "accent" },
     projects: { variant: "code", intensity: 0.8, color: "accent" },
@@ -102,7 +86,7 @@ export default function Home() {
               transition={{ duration: 1.2 }}
             >
               <SectionBackground 
-                variant={backgroundConfig[activeSection].variant as any}
+                variant={backgroundConfig[activeSection].variant}
                 intensity={backgroundConfig[activeSection].intensity} 
                 color={backgroundConfig[activeSection].color}
                 isInView={true} 

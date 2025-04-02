@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useScroll } from "framer-motion";
+import { motion } from "framer-motion";
 import { ProjectBaseProps, getTagColor } from "./types";
 
 interface FeaturedProjectProps extends ProjectBaseProps {
@@ -13,10 +13,6 @@ export default function FeaturedProject({
   reversed = false 
 }: FeaturedProjectProps) {
   const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
   
   return (
     <motion.div
@@ -24,7 +20,7 @@ export default function FeaturedProject({
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 30 }}
       transition={{ duration: 0.8, delay }}
-      className="relative bg-card/10 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden group hover:border-accent/30 transition-all duration-500"
+      className="relative bg-card/10 backdrop-blur-sm border-2 border-border rounded-xl overflow-hidden group hover:border-accent/50 hover:shadow-[0_0_15px_rgba(var(--accent-rgb),0.15)] transition-all duration-500"
     >
       <div className={`grid grid-cols-1 lg:grid-cols-12 min-h-[200px] ${reversed ? 'lg:grid-flow-dense' : ''}`}>
         {/* Project Metadata Section */}

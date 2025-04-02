@@ -1,8 +1,7 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, RefObject } from "react";
 import { useInView, useAnimation, useScroll, useTransform } from "framer-motion";
-import { useScrollAnimation } from "../hooks/useScrollAnimation";
 
 // Import extracted components
 import SectionHeader from "./About/SectionHeader";
@@ -10,7 +9,7 @@ import ProfileImage from "./About/ProfileImage";
 import BioSection from "./About/BioSection";
 
 export default function About() {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: false, amount: 0.2 });
   const controls = useAnimation();
   
@@ -20,15 +19,10 @@ export default function About() {
     offset: ["start end", "end start"]
   });
   
-  const contentY = useTransform(scrollYProgress, [0, 0.5], ["10%", "0%"]);
+  const contentY = useTransform(scrollYProgress, [0, 0.5], [10, 0]);
   
   // Bio paragraphs animation
-  const bioAnimation = useScrollAnimation({
-    direction: "up",
-    distance: 30,
-    threshold: 0.2,
-    once: false
-  });
+  const bioRef = useRef<HTMLDivElement>(null);
   
   // Control animations based on view state
   useEffect(() => {
@@ -57,8 +51,8 @@ export default function About() {
           {/* Right column: Bio and skills */}
           <BioSection 
             contentY={contentY} 
-            bioRef={bioAnimation.ref}
-            bioAnimate={bioAnimation.animate}
+            bioRef={bioRef as RefObject<HTMLDivElement>}
+            bioAnimate={controls}
           />
         </div>
       </div>

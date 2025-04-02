@@ -1,13 +1,13 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, MotionValue } from "framer-motion";
 import ContactMethod from "./ContactMethod";
 import SocialLink from "./SocialLink";
 import { contactMethods, socialLinks } from "./contactData";
 
 interface InfoCardProps {
   isInView: boolean;
-  contentY: any;
+  contentY: MotionValue<number>;
 }
 
 export default function InfoCard({ isInView, contentY }: InfoCardProps) {
@@ -132,14 +132,12 @@ export default function InfoCard({ isInView, contentY }: InfoCardProps) {
             initial="hidden"
             animate={isInView ? "show" : "hidden"}
           >
-            {socialLinks.map((social, i) => (
+            {socialLinks.map((social) => (
               <SocialLink
                 key={social.name}
                 name={social.name}
                 url={social.url}
                 icon={social.icon}
-                index={i}
-                isInView={isInView}
               />
             ))}
           </motion.div>

@@ -42,10 +42,6 @@ export default function FloatingElement({
     [intensity * -10, intensity * 10]
   );
   
-  // Transform for the subtle floating animation
-  const baseFloatY = useMotionValue(0);
-  const baseFloatX = useMotionValue(0);
-  
   useEffect(() => {
     if (!ref.current) return;
     

@@ -12,8 +12,6 @@ export default function ProjectCard({
   project, 
   isInView, 
   delay, 
-  index, 
-  isActive, 
   onHover, 
   onLeave 
 }: ProjectCardProps) {
@@ -22,7 +20,7 @@ export default function ProjectCard({
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 30 }}
       transition={{ duration: 0.7, delay }}
-      className="relative bg-card/10 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden h-full group hover:border-accent/30 transition-all duration-300"
+      className="relative bg-card/10 backdrop-blur-sm border-2 border-border rounded-xl overflow-hidden h-full group hover:border-accent/50 hover:shadow-[0_0_15px_rgba(var(--accent-rgb),0.15)] transition-all duration-300"
       onMouseEnter={onHover}
       onMouseLeave={onLeave}
     >

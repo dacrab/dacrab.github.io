@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { Skill } from "./types";
 
 interface SkillCardProps {
@@ -40,13 +41,12 @@ export default function SkillCard({ skill, index, className = "" }: SkillCardPro
         {/* Icon container with background for white icons */}
         <div className={`relative flex items-center justify-center ${isWhiteIcon ? 'p-1.5 icon-container rounded-full shadow-inner' : ''}`}>
           {!imageError ? (
-            <img 
+            <Image 
               src={skill.icon} 
               alt={`${skill.name} logo`}
               width={32} 
               height={32} 
               className={`w-8 h-8 object-contain transition-all duration-300 group-hover:scale-125 relative z-10 ${isWhiteIcon ? 'white-icon' : ''}`}
-              loading="lazy"
               onError={() => setImageError(true)}
             />
           ) : (

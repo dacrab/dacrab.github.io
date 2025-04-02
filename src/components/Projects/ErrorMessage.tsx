@@ -16,7 +16,7 @@ export default function ErrorMessage({ error }: ErrorMessageProps) {
       {error.message.includes("rate limit exceeded") ? (
         <>
           <p className="text-muted mb-4">
-            We've hit GitHub's rate limits. This typically happens when making too many requests without authentication.
+            We&apos;ve hit GitHub&apos;s rate limits. This typically happens when making too many requests without authentication.
           </p>
           <div className="bg-card/30 p-4 rounded-lg text-left mb-4 text-sm font-mono overflow-auto">
             <p>{error.message}</p>

@@ -1,10 +1,11 @@
-import { motion } from "framer-motion";
+import { motion, MotionValue } from "framer-motion";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import ScrollReveal from "../ScrollReveal";
 import StaggerReveal from "../StaggerReveal";
+import NumberCounter from "../Experience/NumberCounter";
 
 interface ProfileImageProps {
-  contentY: any; // motion value
+  contentY: MotionValue<number>; // motion value
 }
 
 export default function ProfileImage({ contentY }: ProfileImageProps) {
@@ -73,14 +74,43 @@ export default function ProfileImage({ contentY }: ProfileImageProps) {
           staggerDelay={0.15}
           childClassName="h-full"
         >
-          <div className="bg-card/20 backdrop-blur-sm border border-border/30 rounded-lg p-4 animate-border-pulse">
-            <div className="text-accent text-xl font-bold">8+</div>
+          <motion.div 
+            className="bg-card/20 backdrop-blur-sm border border-border/30 rounded-lg p-4 animate-border-pulse"
+            whileHover={{ 
+              y: -5, 
+              boxShadow: "0 10px 25px -5px rgba(var(--accent-rgb), 0.15)",
+              borderColor: "rgba(var(--accent-rgb), 0.3)"
+            }}
+            transition={{ duration: 0.2 }}
+          >
+            <NumberCounter
+              end={8}
+              duration={2}
+              delay={0.7}
+              suffix="+"
+              className="text-accent text-xl font-bold"
+            />
             <div className="text-sm text-muted">Years Experience</div>
-          </div>
-          <div className="bg-card/20 backdrop-blur-sm border border-border/30 rounded-lg p-4 animate-border-pulse" style={{ animationDelay: '1s' }}>
-            <div className="text-accent text-xl font-bold">50+</div>
+          </motion.div>
+          <motion.div 
+            className="bg-card/20 backdrop-blur-sm border border-border/30 rounded-lg p-4 animate-border-pulse"
+            style={{ animationDelay: '1s' }}
+            whileHover={{ 
+              y: -5, 
+              boxShadow: "0 10px 25px -5px rgba(var(--accent-rgb), 0.15)",
+              borderColor: "rgba(var(--accent-rgb), 0.3)"
+            }}
+            transition={{ duration: 0.2 }}
+          >
+            <NumberCounter
+              end={50}
+              duration={2}
+              delay={0.9}
+              suffix="+"
+              className="text-accent text-xl font-bold"
+            />
             <div className="text-sm text-muted">Projects Completed</div>
-          </div>
+          </motion.div>
         </StaggerReveal>
       </div>
     </motion.div>

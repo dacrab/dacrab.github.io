@@ -7,7 +7,6 @@ import { Project, DEFAULT_PROJECTS, transformGitHubToProjects } from "./Projects
 
 // Import extracted components
 import SectionHeader from "./Projects/SectionHeader";
-import InnovationSpotlight from "./Projects/InnovationSpotlight";
 import FeaturedProject from "./Projects/FeaturedProject";
 import ProjectCard from "./Projects/ProjectCard";
 import LottiePanel from "./Projects/LottiePanel";
@@ -95,9 +94,6 @@ export default function Projects() {
                 <LottiePanel isInView={isInView} delay={0.4} />
               </div>
             </div>
-            
-            {/* Innovation spotlight section */}
-            <InnovationSpotlight isInView={isInView} delay={0.5} />
             
             {/* Additional projects grid */}
             {displayProjects.length > 2 && (

@@ -1,11 +1,11 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, MotionValue } from "framer-motion";
 import { useEffect, useState } from "react";
 
 interface DecoElementsProps {
   isInView: boolean;
-  springRotateRight: any;
+  springRotateRight: MotionValue<number>;
 }
 
 export default function DecoElements({ isInView, springRotateRight }: DecoElementsProps) {

@@ -7,16 +7,12 @@ interface SocialLinkProps {
   name: string;
   url: string;
   icon: ReactNode;
-  index: number;
-  isInView: boolean;
 }
 
 export default function SocialLink({
   name,
   url,
   icon,
-  index,
-  isInView,
 }: SocialLinkProps) {
   // Item variants for staggered animation from parent
   const itemVariants = {

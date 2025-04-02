@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ReactNode, useRef } from "react";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -15,7 +15,7 @@ interface ScrollRevealProps {
   rootMargin?: string;
   threshold?: number; 
   once?: boolean;
-  style?: Record<string, any>;
+  style?: Record<string, unknown>;
   viewport?: { amount?: number; once?: boolean };
 }
 

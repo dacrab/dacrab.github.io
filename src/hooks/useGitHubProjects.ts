@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { GitHubProjectData, GitHubRepo } from "@/types/github";
 import { transformReposToProjects } from "@/services/github";
 
@@ -32,7 +32,7 @@ export function useGitHubProjects(
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -71,11 +71,11 @@ export function useGitHubProjects(
     } finally {
       setLoading(false);
     }
-  };
+  }, [username, options?.sort, options?.direction, options?.minStars, options?.excludeForks]);
 
   useEffect(() => {
     fetchProjects();
-  }, [username, options?.sort, options?.direction, options?.minStars, options?.excludeForks]);
+  }, [fetchProjects]);
 
   return {
     projects,

@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useRef, useState, useEffect } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 
 interface ScrollSceneProps {
@@ -22,7 +22,6 @@ export default function ScrollScene({
 }: ScrollSceneProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [isHovered, setIsHovered] = useState(false);
   
   // Get scroll progress for transform effects
@@ -49,25 +48,6 @@ export default function ScrollScene({
     [0, 0.5, 1],
     [depth * -50, 0, depth * -50]
   );
-  
-  // Update dimensions on resize
-  useEffect(() => {
-    if (!containerRef.current) return;
-    
-    const updateDimensions = () => {
-      if (containerRef.current) {
-        const { width, height } = containerRef.current.getBoundingClientRect();
-        setDimensions({ width, height });
-      }
-    };
-    
-    updateDimensions();
-    window.addEventListener('resize', updateDimensions);
-    
-    return () => {
-      window.removeEventListener('resize', updateDimensions);
-    };
-  }, []);
   
   // Handle mouse movement for 3D effect
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {

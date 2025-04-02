@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useInView, Transition, Variants } from "framer-motion";
+import { useInView, Variants } from "framer-motion";
 
 export interface ScrollAnimationOptions {
   direction?: "up" | "down" | "left" | "right" | "none";

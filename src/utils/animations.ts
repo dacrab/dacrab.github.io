@@ -52,7 +52,7 @@ export const fadeIn = (
 /**
  * Creates a reveal animation for sections or large elements
  */
-export const revealSection = (delay: number = 0, once: boolean = true): Variants => {
+export const revealSection = (delay: number = 0): Variants => {
   return {
     hidden: { 
       opacity: 0, 

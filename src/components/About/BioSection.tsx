@@ -1,11 +1,11 @@
-import { motion } from "framer-motion";
+import { motion, MotionValue, AnimationControls } from "framer-motion";
 import { SKILLS_BY_CATEGORY } from "./types";
 import SkillCard from "./SkillCard";
 
 interface BioSectionProps {
-  contentY: any; // motion value
-  bioRef: any; // reference
-  bioAnimate: any; // animation controls
+  contentY: MotionValue<number>; // motion value
+  bioRef: React.RefObject<HTMLDivElement>; // reference
+  bioAnimate: AnimationControls; // animation controls
 }
 
 // Animation variants
@@ -58,7 +58,7 @@ export default function BioSection({ contentY, bioRef, bioAnimate }: BioSectionP
         
         <motion.div variants={fadeIn("up", 0.2, 0.7)}>
           <p className="text-muted">
-            I'm passionate about staying at the cutting edge of web technologies and continuously expanding my skills to deliver the best possible user experiences. My focus areas include frontend development with React and Next.js, building scalable backend services, and creating smooth, intuitive UI/UX designs.
+            I&apos;m passionate about staying at the cutting edge of web technologies and continuously expanding my skills to deliver the best possible user experiences. My focus areas include frontend development with React and Next.js, building scalable backend services, and creating smooth, intuitive UI/UX designs.
           </p>
         </motion.div>
         

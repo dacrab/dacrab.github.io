@@ -20,9 +20,9 @@ export default function Contact() {
   });
   
   // Transform values for animations
-  const contentY = useTransform(scrollYProgress, [0, 0.5], ["10%", "0%"]);
-  const rotateLeft = useTransform(scrollYProgress, [0, 1], ["0deg", "-5deg"]);
-  const rotateRight = useTransform(scrollYProgress, [0, 1], ["0deg", "5deg"]);
+  const contentY = useTransform(scrollYProgress, [0, 0.5], [10, 0]);
+  const rotateLeft = useTransform(scrollYProgress, [0, 1], [0, -5]);
+  const rotateRight = useTransform(scrollYProgress, [0, 1], [0, 5]);
   
   // Spring animations for smoother effects
   const springRotateLeft = useSpring(rotateLeft, { stiffness: 80, damping: 20 });
