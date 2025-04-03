@@ -19,6 +19,10 @@ export interface ProjectBaseProps {
   project: Project;
   isInView: boolean;
   delay: number;
+  isActive?: boolean;
+  onHover?: () => void;
+  onLeave?: () => void;
+  index?: number;
 }
 
 // Color mapping for project tags

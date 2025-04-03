@@ -33,9 +33,9 @@ export default function Logo({ onClick, className = "", size = "md", showFullNam
   
   // Size mapping
   const sizeClasses = {
-    sm: "text-lg",
-    md: "text-xl",
-    lg: "text-2xl"
+    sm: "text-xl",
+    md: "text-2xl",
+    lg: "text-3xl"
   };
   
   const logoVariants = {
@@ -112,14 +112,14 @@ export default function Logo({ onClick, className = "", size = "md", showFullNam
         <div className="flex items-baseline">
           {/* VK letter mark with animation */}
           <motion.span 
-            className="text-foreground font-extrabold"
+            className="text-foreground font-extrabold font-cursive text-125"
             variants={letterVariants}
             custom={0}
           >
             V
           </motion.span>
           <motion.span 
-            className="text-foreground font-extrabold"
+            className="text-foreground font-extrabold font-cursive text-125"
             variants={letterVariants}
             custom={1}
           >
@@ -153,7 +153,7 @@ export default function Logo({ onClick, className = "", size = "md", showFullNam
       
       {/* First name with letter animation */}
       <div className="ml-2 flex items-baseline">
-        <div className="flex">
+        <div className="flex font-cursive text-125">
           {['V', 'a', 'g', 'g', 'e', 'l', 'i', 's'].map((letter, i) => (
             <motion.span
               key={`first-${letter}-${i}`}
@@ -176,7 +176,7 @@ export default function Logo({ onClick, className = "", size = "md", showFullNam
             >
               &nbsp;
             </motion.span>
-            <div className="flex">
+            <div className="flex font-cursive text-125">
               {['K', 'a', 'v', 'o', 'u', 'r', 'a', 's'].map((letter, i) => (
                 <motion.span
                   key={`last-${letter}-${i}`}

@@ -34,8 +34,7 @@ export default function SocialLink({
       href={url}
       variants={itemVariants}
       whileHover={{ 
-        scale: 1.15,
-        boxShadow: "0 0 12px rgba(var(--accent-rgb), 0.3)",
+        scale: 1.1,
         transition: {
           type: "spring",
           stiffness: 400,
@@ -52,15 +51,45 @@ export default function SocialLink({
           duration: 0.1
         }
       }}
-      className="w-11 h-11 rounded-full bg-card/30 backdrop-blur-sm border border-border/30 flex items-center justify-center transition-colors duration-100 hover:bg-accent/10 hover:border-accent"
+      className="w-14 h-14 rounded-full backdrop-blur-md border border-border/30 flex items-center justify-center relative overflow-hidden group"
+      style={{ background: "rgba(var(--card-rgb), 0.3)" }}
       aria-label={name}
+      target="_blank"
+      rel="noopener noreferrer"
     >
+      {/* Background hover effect */}
+      <motion.div 
+        className="absolute inset-0 bg-gradient-to-br from-accent/20 to-accent-dark/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{ borderRadius: 'inherit' }}
+      />
+      
+      {/* Radial gradient glow effect */}
       <motion.div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-all duration-500"
+        style={{
+          background: "radial-gradient(circle at center, rgba(var(--accent-rgb), 0.15) 0%, transparent 70%)",
+          borderRadius: 'inherit'
+        }}
+        animate={{
+          scale: [0.8, 1.2, 0.8],
+        }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          repeatType: "mirror"
+        }}
+      />
+      
+      {/* Icon with animated hover */}
+      <motion.div
+        className="relative z-10"
         initial={{ rotate: 0 }}
         whileHover={{ 
           rotate: [0, -5, 5, 0],
+          scale: 1.1,
+          color: 'var(--accent)',
           transition: {
-            duration: 0.3,
+            duration: 0.5,
             ease: "easeInOut"
           }
         }}

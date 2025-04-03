@@ -26,12 +26,27 @@ export default function ProfileImage({ contentY }: ProfileImageProps) {
             transition={{ duration: 4, repeat: Infinity }}
           ></motion.div>
           
+          {/* Decorative elements */}
+          <motion.div 
+            className="absolute -top-6 -right-6 w-16 h-16 rounded-full border border-border/40 z-0"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1, rotate: 360 }}
+            transition={{ duration: 1.5, delay: 0.8, ease: "easeOut" }}
+          ></motion.div>
+          
+          <motion.div 
+            className="absolute -bottom-5 -left-5 w-12 h-12 rounded-full bg-accent/10 z-0"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.6 }}
+          ></motion.div>
+          
           {/* Lottie animation profile */}
           <ScrollReveal
             direction="left"
             duration={0.7}
             delay={0.1}
-            className="bg-card/30 backdrop-blur-sm border border-border/30 rounded-xl overflow-hidden relative z-10"
+            className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden relative z-10 shadow-lg hover:shadow-xl transition-all duration-500"
           >
             <div className="aspect-square relative overflow-hidden flex items-center justify-center">
               <div className="w-full h-full">
@@ -48,34 +63,23 @@ export default function ProfileImage({ contentY }: ProfileImageProps) {
               
               {/* Grid pattern */}
               <div className="absolute inset-0 grid-pattern-dots opacity-20"></div>
+              
+              {/* Subtle glow effect behind animation */}
+              <div className="absolute inset-0 -z-10 bg-accent/5 blur-2xl rounded-full transform scale-90"></div>
             </div>
           </ScrollReveal>
-          
-          {/* Decorative elements */}
-          <motion.div 
-            className="absolute -bottom-6 -right-6 w-12 h-12 rounded-full border border-border"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.5 }}
-          ></motion.div>
-          <motion.div 
-            className="absolute -top-4 -left-4 w-8 h-8 rounded-full bg-accent/10"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.6 }}
-          ></motion.div>
         </div>
         
         {/* Stats highlights */}
         <StaggerReveal
-          className="mt-8 grid grid-cols-2 gap-4 max-w-md mx-auto lg:mx-0"
+          className="mt-8 grid grid-cols-2 gap-6 max-w-md mx-auto lg:mx-0"
           duration={0.6}
           childDelay={0.3}
           staggerDelay={0.15}
           childClassName="h-full"
         >
           <motion.div 
-            className="bg-card/20 backdrop-blur-sm border border-border/30 rounded-lg p-4 animate-border-pulse"
+            className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-lg p-5 shadow-md hover:shadow-lg transition-all duration-300"
             whileHover={{ 
               y: -5, 
               boxShadow: "0 10px 25px -5px rgba(var(--accent-rgb), 0.15)",
@@ -88,13 +92,13 @@ export default function ProfileImage({ contentY }: ProfileImageProps) {
               duration={2}
               delay={0.7}
               suffix="+"
-              className="text-accent text-xl font-bold"
+              className="text-accent text-2xl font-bold"
             />
-            <div className="text-sm text-muted">Year Experience</div>
+            <div className="text-sm text-muted mt-1">Year Experience</div>
           </motion.div>
+          
           <motion.div 
-            className="bg-card/20 backdrop-blur-sm border border-border/30 rounded-lg p-4 animate-border-pulse"
-            style={{ animationDelay: '1s' }}
+            className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-lg p-5 shadow-md hover:shadow-lg transition-all duration-300"
             whileHover={{ 
               y: -5, 
               boxShadow: "0 10px 25px -5px rgba(var(--accent-rgb), 0.15)",
@@ -107,9 +111,9 @@ export default function ProfileImage({ contentY }: ProfileImageProps) {
               duration={2}
               delay={0.9}
               suffix="+"
-              className="text-accent text-xl font-bold"
+              className="text-accent text-2xl font-bold"
             />
-            <div className="text-sm text-muted">Projects Completed</div>
+            <div className="text-sm text-muted mt-1">Projects Completed</div>
           </motion.div>
         </StaggerReveal>
       </div>

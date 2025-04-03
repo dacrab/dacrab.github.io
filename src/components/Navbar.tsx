@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import Logo from "./Logo";
 import GlowEffect from "./GlowEffect";
@@ -19,6 +19,8 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState("home");
   const [scrolled, setScrolled] = useState(false);
   const { scrollY } = useScroll();
+  const isClickNavigating = useRef(false);
+  const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const toggleMenu = useCallback(() => setIsOpen(prev => !prev), []);
   
@@ -38,6 +40,9 @@ export default function Navbar() {
   useEffect(() => {
     const updateScrollState = (y: number) => {
       setScrolled(y > 20);
+      
+      // Don't update active section if click navigation is in progress
+      if (isClickNavigating.current) return;
       
       const sections = document.querySelectorAll('section[id]');
       const scrollPosition = y + window.innerHeight / 3;
@@ -65,10 +70,36 @@ export default function Navbar() {
     
     if (targetElement) {
       if (isOpen) setIsOpen(false);
+      
+      // Set active section immediately to prevent double animation
       setActiveSection(targetId);
+      
+      // Set flag to prevent scroll events from changing activeSection during navigation
+      isClickNavigating.current = true;
+      
+      // Clear any existing timers
+      if (clickTimerRef.current) {
+        clearTimeout(clickTimerRef.current);
+      }
+      
+      // Scroll to the target element
       targetElement.scrollIntoView({ behavior: 'smooth' });
+      
+      // Reset flag after navigation animation is likely complete
+      clickTimerRef.current = setTimeout(() => {
+        isClickNavigating.current = false;
+      }, 1000); // 1 second should cover most smooth scrolling animations
     }
   }, [isOpen]);
+
+  // Clean up timers on unmount
+  useEffect(() => {
+    return () => {
+      if (clickTimerRef.current) {
+        clearTimeout(clickTimerRef.current);
+      }
+    };
+  }, []);
 
   // Navbar styles
   const navbarStyle = {
@@ -81,50 +112,59 @@ export default function Navbar() {
   };
 
   // Render navigation items with optimized hover behavior
-  const renderNavItem = (item: typeof NAV_ITEMS[0], index: number, isMobile = false) => (
-    <motion.div
-      key={item.label}
-      initial={{ opacity: 0, [isMobile ? 'x' : 'y']: isMobile ? -20 : -10 }}
-      animate={{ opacity: 1, [isMobile ? 'x' : 'y']: 0 }}
-      transition={{ delay: index * 0.1 + (isMobile ? 0 : 0.3) }}
-      className="relative" // Add relative positioning
-    >
-      <a
-        href={item.href}
-        onClick={(e) => handleNavClick(e, item.href)}
-        className={`${isMobile ? 'block py-3 px-4 rounded-lg my-1' : 'px-4 py-2 rounded-lg relative'} 
-          transition-all duration-300 ${
-          activeSection === item.href.substring(1)
-            ? isMobile ? "bg-accent/10 text-accent" : "text-accent"
-            : isMobile ? "hover:bg-accent/5" : "text-foreground hover:text-accent"
-        }`}
+  const renderNavItem = (item: typeof NAV_ITEMS[0], index: number, isMobile = false) => {
+    const isActive = activeSection === item.href.substring(1);
+    
+    return (
+      <motion.div
+        key={item.label}
+        initial={{ opacity: 0, [isMobile ? 'x' : 'y']: isMobile ? -20 : -10 }}
+        animate={{ opacity: 1, [isMobile ? 'x' : 'y']: 0 }}
+        transition={{ delay: index * 0.1 + (isMobile ? 0 : 0.3) }}
+        className="relative"
       >
-        {!isMobile && activeSection === item.href.substring(1) && (
-          <motion.span
-            layoutId="navIndicator"
-            className="absolute inset-0 bg-accent/10 rounded-lg -z-10"
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          />
-        )}
-        
-        {/* Hover effect using animate presence */}
-        {!isMobile && (
-          <motion.span
-            className="absolute bottom-0.5 left-0 right-0 h-0.5 bg-accent/40 rounded"
-            initial={{ scaleX: 0, opacity: 0 }}
-            whileHover={{ scaleX: 1, opacity: 1 }}
-            transition={{ duration: 0.2 }}
-            style={{ 
-              originX: 0.5,
-              display: activeSection === item.href.substring(1) ? 'none' : 'block'
-            }}
-          />
-        )}
-        
-        {item.label}
-      </a>
-    </motion.div>
-  );
+        <a
+          href={item.href}
+          onClick={(e) => handleNavClick(e, item.href)}
+          className={`${isMobile ? 'block py-3 px-4 rounded-lg my-1' : 'px-4 py-2 rounded-lg relative'} 
+            transition-all duration-300 ${
+            isActive
+              ? isMobile ? "bg-accent/10 text-accent" : "text-accent"
+              : isMobile ? "hover:bg-accent/5" : "text-foreground hover:text-accent"
+          }`}
+        >
+          {!isMobile && isActive && (
+            <motion.span
+              layoutId="navIndicator"
+              className="absolute inset-0 bg-accent/10 rounded-lg -z-10"
+              transition={{ 
+                type: "spring", 
+                stiffness: 300, 
+                damping: 30,
+                // Important: only animate on layoutId changes, not on subsequent renders
+                layout: {
+                  duration: 0.3
+                }
+              }}
+            />
+          )}
+          
+          {/* Hover effect using animate presence */}
+          {!isMobile && !isActive && (
+            <motion.span
+              className="absolute bottom-0.5 left-0 right-0 h-0.5 bg-accent/40 rounded"
+              initial={{ scaleX: 0, opacity: 0 }}
+              whileHover={{ scaleX: 1, opacity: 1 }}
+              transition={{ duration: 0.2 }}
+              style={{ originX: 0.5 }}
+            />
+          )}
+          
+          {item.label}
+        </a>
+      </motion.div>
+    );
+  };
 
   return (
     <motion.header 

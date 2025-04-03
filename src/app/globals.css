@@ -39,6 +39,7 @@
   --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-cursive: var(--font-dancing-script);
 }
 
 @media (prefers-color-scheme: light) {
@@ -488,5 +489,10 @@ body {
 /* Custom z-indices for our backgrounds */
 .-z-15 {
   z-index: -15;
+}
+
+/* Custom font sizing */
+.text-125 {
+  font-size: 125%;
 }
 

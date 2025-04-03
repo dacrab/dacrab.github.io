@@ -8,114 +8,119 @@ interface SkillProgressionsProps {
 
 export default function SkillProgressions({ isInView }: SkillProgressionsProps) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 30 }}
-      animate={{ opacity: isInView ? 1 : 0, x: isInView ? 0 : 30 }}
-      transition={{ duration: 0.8, delay: 0.4 }}
-      className="w-full h-full flex flex-col justify-center order-1 lg:order-2"
-    >
-      <div className="bg-card/10 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden p-6 md:p-8 relative">
-        {/* Background decoration */}
-        <motion.div 
-          className="absolute -z-10 top-0 right-0 w-32 h-32 rounded-full bg-accent/5 blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{
-            duration: 4,
-            repeat: Infinity,
-            repeatType: "reverse",
-            ease: "easeInOut"
-          }}
-        />
-        
-        <motion.h3 
-          className="text-xl font-bold text-gradient-animated mb-4"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 10 }}
-          transition={{ duration: 0.5, delay: 0.5 }}
-        >
-          Key Expertise
-        </motion.h3>
-        
-        {/* Skill progression bars */}
-        <div className="space-y-6">
-          {SKILL_PROGRESSIONS.map((skill, index) => (
-            <motion.div
-              key={skill.name}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 10 }}
-              transition={{ duration: 0.5, delay: 0.5 + (index * 0.1) }}
-              whileHover={{ 
-                x: 5,
-                transition: { duration: 0.2 }
-              }}
-            >
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-sm font-medium flex items-center gap-1">
-                  <motion.span
-                    animate={{
-                      rotate: isInView ? [0, 5, 0, -5, 0] : 0
-                    }}
-                    transition={{
-                      duration: 0.5,
-                      delay: 1.2 + (index * 0.2),
-                      ease: "easeInOut"
-                    }}
-                    className="inline-block"
-                  >
-                    ✦
-                  </motion.span>
+    <div className="h-full flex flex-col justify-between">
+      <motion.h3 
+        className="text-2xl md:text-3xl font-bold mb-6"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 10 }}
+        transition={{ duration: 0.5 }}
+      >
+        <span className="text-gradient">Key Expertise</span>
+      </motion.h3>
+      
+      <motion.p
+        className="text-muted max-w-lg mb-8"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: isInView ? 0.9 : 0, y: isInView ? 0 : 10 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+      >
+        My focus areas span across frontend development with an emphasis on modern technologies and responsive design principles.
+      </motion.p>
+      
+      {/* Skill progression bars */}
+      <div className="space-y-6 mb-8">
+        {SKILL_PROGRESSIONS.map((skill, index) => (
+          <motion.div
+            key={skill.name}
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: isInView ? 1 : 0, x: isInView ? 0 : -20 }}
+            transition={{ duration: 0.5, delay: 0.2 + (index * 0.1) }}
+            className="group"
+          >
+            <div className="flex justify-between items-center mb-2">
+              <motion.div 
+                className="flex items-center"
+                whileHover={{ x: 3 }}
+                transition={{ duration: 0.2 }}
+              >
+                <motion.div
+                  className="w-1.5 h-1.5 rounded-full bg-accent mr-2"
+                  animate={{
+                    scale: [1, 1.5, 1],
+                    opacity: [0.7, 1, 0.7]
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                    delay: index * 0.5
+                  }}
+                />
+                <span className="text-base font-medium group-hover:text-accent transition-colors duration-300">
                   {skill.name}
                 </span>
-                <NumberCounter
-                  end={skill.percentage}
-                  duration={1.5}
-                  delay={0.7 + (index * 0.1)}
-                  suffix="%"
-                  isInView={isInView}
-                  className="text-xs text-accent font-semibold"
+              </motion.div>
+              
+              <NumberCounter
+                end={skill.percentage}
+                duration={1.2}
+                delay={0.4 + (index * 0.15)}
+                suffix="%"
+                isInView={isInView}
+                className="text-sm font-semibold text-accent/90"
+              />
+            </div>
+            
+            {/* New progress bar implementation */}
+            <div className="w-full h-2 rounded-full overflow-hidden bg-card/30 backdrop-blur-sm border border-border/20">
+              <motion.div 
+                className="h-full rounded-full"
+                style={{
+                  background: "linear-gradient(to right, var(--accent-dark), var(--accent))"
+                }}
+                initial={{ width: 0 }}
+                animate={{ width: isInView ? `${skill.percentage}%` : 0 }}
+                transition={{ 
+                  duration: 1, 
+                  delay: 0.5 + (index * 0.15),
+                  ease: "easeOut" 
+                }}
+              >
+                <motion.div
+                  className="absolute top-0 h-full w-full"
+                  style={{
+                    background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)",
+                    backgroundSize: "200% 100%",
+                    left: 0
+                  }}
+                  animate={{
+                    backgroundPosition: isInView ? ["100% 0%", "0% 0%", "-100% 0%"] : "100% 0%"
+                  }}
+                  transition={{
+                    duration: 1.5,
+                    delay: 1 + (index * 0.2),
+                    ease: "easeInOut"
+                  }}
                 />
-              </div>
-              <div className="w-full bg-card/30 rounded-full h-2.5 overflow-hidden">
-                <motion.div 
-                  className="bg-accent h-full rounded-full relative"
-                  initial={{ width: 0 }}
-                  animate={{ width: isInView ? `${skill.percentage}%` : 0 }}
-                  transition={{ duration: 1, delay: 0.7 + (index * 0.1) }}
-                >
-                  {/* Animated glow effect */}
-                  <motion.div
-                    className="absolute right-0 top-0 h-full w-4 bg-white/20 blur-[1px]"
-                    animate={{
-                      x: isInView ? [-20, 0] : -20
-                    }}
-                    transition={{
-                      duration: 0.8,
-                      delay: 1.5 + (index * 0.1)
-                    }}
-                  />
-                </motion.div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-        
-        {/* Professional approach */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
-          transition={{ duration: 0.5, delay: 1 }}
-          className="mt-6 pt-6 border-t border-border/30"
-        >
-          <p className="text-sm text-muted">
-            As a junior developer, I&apos;m passionate about expanding my technical skills and growing in the field of web development. 
-            I&apos;m enthusiastic about learning modern frontend technologies like React and Next.js, and I approach each project as an opportunity 
-            to improve my abilities. My focus is on writing clean, maintainable code while developing responsive and user-friendly interfaces.
-          </p>
-        </motion.div>
+              </motion.div>
+            </div>
+          </motion.div>
+        ))}
       </div>
-    </motion.div>
+      
+      {/* Professional approach */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 15 }}
+        transition={{ duration: 0.5, delay: 0.8 }}
+        className="mt-auto pt-6 border-t border-border/30"
+      >
+        <h4 className="text-lg font-semibold mb-3 text-gradient">Professional Approach</h4>
+        <p className="text-sm text-muted">
+          As a developer, I focus on creating clean, maintainable code while delivering responsive and user-friendly interfaces. 
+          I approach each project with enthusiasm and a commitment to excellence, constantly expanding my skills in modern web development technologies.
+        </p>
+      </motion.div>
+    </div>
   );
 } 

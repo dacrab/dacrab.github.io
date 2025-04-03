@@ -8,134 +8,56 @@ interface TimelineProps {
 }
 
 export default function Timeline({ isInView }: TimelineProps) {
-  // Section title animation variants
-  const titleVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut"
-      }
-    }
-  };
-
-  // Line underscore animation variants
-  const lineVariants = {
-    hidden: { opacity: 0, width: 0 },
-    visible: {
-      opacity: 1,
-      width: "4rem",
-      transition: {
-        duration: 0.6,
-        ease: [0.65, 0, 0.35, 1]
-      }
-    }
-  };
-
-  // Timeline dots animation variants
-  const dotsVariant = {
-    hidden: { opacity: 0, scale: 0 },
-    visible: (delay: number) => ({
-      opacity: [0, 1, 0.7],
-      scale: [0, 1.3, 1],
-      transition: {
-        duration: 0.5,
-        delay: delay,
-        ease: "easeOut"
-      }
-    })
-  };
-
   return (
-    <>
-      <div className="my-12 text-center">
+    <motion.div
+      className="max-w-6xl mx-auto rounded-2xl overflow-hidden border border-border/20 shadow-xl backdrop-blur-sm p-8 md:p-12"
+      style={{ background: "rgba(var(--card-rgb), 0.6)" }}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 30 }}
+      transition={{ duration: 0.7, delay: 0.2 }}
+    >
+      <div className="text-center mb-12">
         <motion.h3
-          variants={titleVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="text-2xl font-bold mb-2 relative inline-block"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : -10 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="text-2xl md:text-3xl font-bold mb-4 inline-block text-gradient"
         >
           Career Timeline
-          <motion.span 
-            className="absolute -z-10 inset-0 bg-accent/5 blur-xl rounded-full"
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ 
-              opacity: isInView ? [0, 0.6, 0.3] : 0,
-              scale: isInView ? [0.5, 1.2, 1] : 0.5,
-            }}
-            transition={{ duration: 1.5, delay: 0.2 }}
-          />
         </motion.h3>
+        
         <motion.div
-          variants={lineVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="h-0.5 bg-gradient-to-r from-transparent via-accent to-transparent mx-auto mb-4"
+          className="h-0.5 w-20 bg-accent/50 mx-auto mb-6"
+          initial={{ width: 0, opacity: 0 }}
+          animate={{ width: isInView ? 80 : 0, opacity: isInView ? 1 : 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
         />
+        
         <motion.p
           initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: isInView ? 0.7 : 0, y: isInView ? 0 : 10 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="text-sm text-muted max-w-md mx-auto"
+          animate={{ opacity: isInView ? 0.8 : 0, y: isInView ? 0 : 10 }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          className="text-muted max-w-xl mx-auto"
         >
-          A chronological journey through my professional experience
+          A chronological journey through my professional experience and skill development in web development
         </motion.p>
       </div>
 
       {/* Timeline with cards */}
-      <div className="relative max-w-5xl mx-auto mt-24">
+      <div className="relative max-w-5xl mx-auto mt-20">
         {/* Vertical line */}
         <motion.div 
-          className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-accent/50 to-accent/20 z-0"
+          className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-accent/60 to-accent/20"
           initial={{ height: 0, opacity: 0 }}
           animate={{ 
             height: isInView ? "100%" : 0,
             opacity: isInView ? 1 : 0
           }}
           transition={{ 
-            height: { duration: 1.4, delay: 0.4, ease: [0.16, 1, 0.3, 1] },
-            opacity: { duration: 0.6, delay: 0.4 }
+            height: { duration: 1.2, delay: 0.6, ease: "easeOut" },
+            opacity: { duration: 0.6, delay: 0.6 }
           }}
         />
-        
-        {/* Main timeline dots (fixed positions) */}
-        {EXPERIENCES.map((_, i) => (
-          <motion.div
-            key={`main-dot-${i}`}
-            custom={0.4 + (i * 0.15)}
-            variants={dotsVariant}
-            initial="hidden"
-            animate={isInView ? "visible" : "hidden"}
-            className="absolute left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-accent z-0"
-            style={{ 
-              top: `${(i / (EXPERIENCES.length - 1)) * 100}%`,
-              boxShadow: "0 0 10px rgba(var(--accent-rgb), 0.5)"
-            }}
-          />
-        ))}
-        
-        {/* Animated floating dots along the timeline */}
-        {[0.15, 0.3, 0.45, 0.6, 0.75, 0.9].map((position, i) => (
-          <motion.div
-            key={`floating-dot-${i}`}
-            className="absolute left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-accent/70 z-0"
-            style={{ top: `${position * 100}%` }}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ 
-              opacity: isInView ? [0, 0.7, 0] : 0, 
-              scale: isInView ? [0, 1, 0] : 0,
-              y: isInView ? [0, -30] : 0
-            }}
-            transition={{ 
-              duration: 3, 
-              delay: 1.5 + (i * 0.3),
-              repeat: Infinity,
-              repeatDelay: 3 + (i * 0.5)
-            }}
-          />
-        ))}
         
         {/* Timeline entries */}
         <div className="relative z-10">
@@ -143,10 +65,10 @@ export default function Timeline({ isInView }: TimelineProps) {
             <ScrollReveal
               key={exp.id}
               direction={index % 2 === 0 ? "left" : "right"}
-              className="mb-20 relative"
+              className="mb-16 md:mb-20 relative"
               duration={0.7}
-              delay={0.3 + (0.15 * index)}
-              distance={60}
+              delay={0.6 + (0.15 * index)}
+              distance={40}
               threshold={0.1}
             >
               <TimelineEntry
@@ -165,16 +87,15 @@ export default function Timeline({ isInView }: TimelineProps) {
         
         {/* Timeline end marker */}
         <motion.div
-          className="absolute left-1/2 -translate-x-1/2 bottom-0 w-8 h-8 rounded-full border-2 border-accent/50 flex items-center justify-center z-10 bg-card/30 backdrop-blur-sm"
-          initial={{ opacity: 0, scale: 0, y: -20 }}
+          className="absolute left-1/2 -translate-x-1/2 -bottom-2 w-10 h-10 rounded-full border border-accent/50 flex items-center justify-center bg-card/30 backdrop-blur-sm shadow-lg z-10"
+          initial={{ opacity: 0, scale: 0 }}
           animate={{ 
             opacity: isInView ? 1 : 0, 
-            scale: isInView ? 1 : 0,
-            y: isInView ? 0 : -20
+            scale: isInView ? 1 : 0
           }}
           transition={{ 
             duration: 0.7, 
-            delay: 1.5,
+            delay: 1.2,
             ease: "backOut"
           }}
         >
@@ -182,12 +103,7 @@ export default function Timeline({ isInView }: TimelineProps) {
             className="w-3 h-3 bg-accent rounded-full"
             animate={{
               scale: [1, 1.5, 1],
-              opacity: [0.7, 1, 0.7],
-              boxShadow: [
-                "0 0 0 rgba(var(--accent-rgb), 0)",
-                "0 0 15px rgba(var(--accent-rgb), 0.5)",
-                "0 0 0 rgba(var(--accent-rgb), 0)"
-              ]
+              opacity: [0.7, 1, 0.7]
             }}
             transition={{
               duration: 2,
@@ -195,30 +111,8 @@ export default function Timeline({ isInView }: TimelineProps) {
               repeatType: "reverse"
             }}
           />
-          
-          {/* Radiating pulse effects */}
-          {[0, 1, 2].map((i) => (
-            <motion.div
-              key={`pulse-${i}`}
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-accent/30"
-              initial={{ width: 8, height: 8, opacity: 0 }}
-              animate={{ 
-                width: ["8px", "50px"],
-                height: ["8px", "50px"],
-                opacity: [0, 0.5, 0],
-                x: "-50%",
-                y: "-50%"
-              }}
-              transition={{
-                duration: 2,
-                delay: i * 0.7,
-                repeat: Infinity,
-                ease: "easeOut"
-              }}
-            />
-          ))}
         </motion.div>
       </div>
-    </>
+    </motion.div>
   );
 } 
