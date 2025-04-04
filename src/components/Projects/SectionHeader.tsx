@@ -1,24 +1,36 @@
 import { motion } from "framer-motion";
 import TextAnimation from "../TextAnimation";
+import { useMemo } from "react";
 
 interface SectionHeaderProps {
   isInView: boolean;
 }
 
 export default function SectionHeader({ isInView }: SectionHeaderProps) {
+  // Generate deterministic values for dots using useMemo
+  const dotStyles = useMemo(() => {
+    return Array.from({ length: 36 }).map((_, i) => {
+      // Use index-based calculations instead of Math.random()
+      const opacityBase = ((i % 5) + 1) / 5; // Will give values between 0.2 and 1.0
+      const scaleBase = ((i % 4) + 2) / 6;   // Will give values between 0.33 and 0.83
+      
+      return {
+        opacity: opacityBase * 0.5 + 0.5,
+        transform: `scale(${scaleBase})`
+      };
+    });
+  }, []); // Empty dependency array means this runs once
+
   return (
     <div className="mb-16 text-center relative">
       {/* Decorative dots */}
       <div className="absolute left-1/2 -translate-x-1/2 top-0 -translate-y-1/2 opacity-20">
         <div className="w-44 h-16 grid grid-cols-12 grid-rows-3 gap-1.5">
-          {Array.from({ length: 36 }).map((_, i) => (
+          {dotStyles.map((style, i) => (
             <div 
               key={i} 
               className="rounded-full bg-accent/60"
-              style={{
-                opacity: Math.random() * 0.5 + 0.5,
-                transform: `scale(${Math.random() * 0.5 + 0.5})`
-              }}
+              style={style}
             />
           ))}
         </div>

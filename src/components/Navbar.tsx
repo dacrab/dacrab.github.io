@@ -180,7 +180,13 @@ export default function Navbar() {
         <nav className="flex items-center justify-between">
           {/* Logo using new component */}
           <div className="relative">
-            <GlowEffect color="accent" intensity={0.2} size={1.3} pulseEffect={true}>
+            <GlowEffect 
+              color="accent" 
+              intensity={0.2} 
+              size={1.3} 
+              pulseEffect={true}
+              shape="blob" 
+            >
               <Logo 
                 size={scrolled ? "sm" : "md"} 
                 showFullName={!scrolled}
