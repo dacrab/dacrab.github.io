@@ -30,37 +30,25 @@ export interface SkillProgression {
 export const EXPERIENCES: ExperienceItem[] = [
   {
     id: 1,
-    role: "Junior Frontend Developer",
-    company: "WebTech Solutions",
-    period: "2023 - Present",
-    description: [
-      "Developing modern web applications using Next.js, React, and TypeScript",
-      "Implementing responsive designs with Tailwind CSS for optimal user experience across devices",
-      "Collaborating with senior developers to improve code quality and learn best practices",
-      "Participating in code reviews and contributing to project planning discussions"
-    ],
-    skills: ["Next.js", "TypeScript", "React", "Tailwind CSS", "Responsive Design"]
-  },
-  {
-    id: 2,
     role: "Web Development Intern",
     company: "Digital Creations",
-    period: "2023 (3 months)",
+    period: "October 1st, 2023 - March 31st, 2024",
     description: [
-      "Assisted in building and maintaining client websites",
-      "Gained hands-on experience with modern frontend technologies",
-      "Created and styled UI components according to design specifications",
-      "Learned version control workflows and collaborative development processes"
+      "Developed three custom WordPress sites with responsive design and custom functionality",
+      "Built two modern websites (Argicon.gr and DesignDash.gr) for architecture and construction firms using Next.js, TypeScript, and TailwindCSS",
+      "Created Proteas - a comprehensive warehouse management system for sports facilities with role-based access control, using Next.js, Supabase, and TypeScript",
+      "Implemented responsive designs, multi-language support, and modern UI components across all projects",
+      "Applied version control with Git and followed collaborative development workflows"
     ],
-    skills: ["HTML5", "CSS3", "JavaScript", "Git", "UI Components"]
+    skills: ["Next.js", "React", "TypeScript", "TailwindCSS", "WordPress", "Supabase", "Git", "Framer Motion", "i18n", "Responsive Design"]
   }
 ];
 
 // Sample skill progression data
 export const SKILL_PROGRESSIONS: SkillProgression[] = [
-  { name: "Frontend Development", percentage: 75 },
-  { name: "UI Implementation", percentage: 70 },
-  { name: "Next.js & React", percentage: 65 },
-  { name: "TypeScript", percentage: 60 },
-  { name: "Responsive Design", percentage: 80 }
+  { name: "Next.js & React", percentage: 85 },
+  { name: "TypeScript", percentage: 80 },
+  { name: "TailwindCSS", percentage: 85 },
+  { name: "Responsive Design", percentage: 85 },
+  { name: "WordPress", percentage: 75 }
 ]; 

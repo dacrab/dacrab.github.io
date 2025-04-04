@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useMemo } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useGitHubProjects } from "@/hooks/useGitHubProjects";
 import { Project, DEFAULT_PROJECTS, transformGitHubToProjects } from "./Projects/types";
@@ -37,8 +37,26 @@ export default function Projects() {
     minStars: 0
   });
   
-  // State for projects to display
-  const [displayProjects, setDisplayProjects] = useState<Project[]>([]);
+  // Custom projects to display for client sites with absolute priority
+  const customProjects = useMemo(() => [
+    {
+      id: 91,
+      title: "Argicon.gr",
+      description: "A professional website for a technical construction company showcasing their services, projects portfolio, and expertise in infrastructure development with a modern, responsive design.",
+      tags: ["TypeScript", "Next.js", "Tailwind CSS", "React"],
+      link: "https://argicon.gr",
+    },
+    {
+      id: 92,
+      title: "DesignDash.gr",
+      description: "A comprehensive digital platform for a technical construction firm featuring project galleries, technical specifications, and service offerings with an emphasis on engineering excellence.",
+      tags: ["TypeScript", "Next.js", "Tailwind CSS", "React"],
+      link: "https://designdash.gr",
+    },
+  ], []); // Empty dependency array means this will only be calculated once
+  
+  // Original projects from GitHub API or fallback
+  const [originalProjects, setOriginalProjects] = useState<Project[]>([]);
   
   // Transform GitHub projects to our Project format on data change
   useEffect(() => {
@@ -46,7 +64,7 @@ export default function Projects() {
     
     if (error || githubProjects.length === 0) {
       console.warn("Using fallback projects due to:", error?.message || "No GitHub projects found");
-      setDisplayProjects(DEFAULT_PROJECTS);
+      setOriginalProjects(DEFAULT_PROJECTS);
       return;
     }
     
@@ -54,8 +72,13 @@ export default function Projects() {
     const formattedProjects = transformGitHubToProjects(githubProjects);
     
     // Use up to 6 GitHub projects
-    setDisplayProjects(formattedProjects.slice(0, 6));
+    setOriginalProjects(formattedProjects.slice(0, 6));
   }, [githubProjects, loading, error]);
+  
+  // Combine custom projects with original projects
+  const displayProjects = useMemo(() => {
+    return [...customProjects, ...originalProjects];
+  }, [originalProjects, customProjects]);
   
   return (
     <section 
@@ -114,24 +137,20 @@ export default function Projects() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                   {/* Left column: First two featured projects */}
                   <div className="lg:col-span-8 space-y-8">
-                    {/* First featured project */}
-                    {displayProjects.length > 0 && (
-                      <FeaturedProject 
-                        project={displayProjects[0]} 
-                        isInView={isInView}
-                        delay={0.2}
-                      />
-                    )}
+                    {/* First featured project - Argicon.gr */}
+                    <FeaturedProject 
+                      project={customProjects[0]} 
+                      isInView={isInView}
+                      delay={0.2}
+                    />
                     
-                    {/* Second featured project */}
-                    {displayProjects.length > 1 && (
-                      <FeaturedProject 
-                        project={displayProjects[1]} 
-                        isInView={isInView}
-                        delay={0.3}
-                        reversed
-                      />
-                    )}
+                    {/* Second featured project - DesignDash.gr */}
+                    <FeaturedProject 
+                      project={customProjects[1]} 
+                      isInView={isInView}
+                      delay={0.3}
+                      reversed
+                    />
                   </div>
                   
                   {/* Right column: Lottie Animation */}
@@ -143,7 +162,7 @@ export default function Projects() {
             </motion.div>
             
             {/* Additional projects grid - keep this section mostly intact */}
-            {displayProjects.length > 2 && (
+            {originalProjects.length > 0 && (
               <div className="mt-16">
                 <motion.h3
                   initial={{ opacity: 0, y: 20 }}
@@ -155,7 +174,7 @@ export default function Projects() {
                 </motion.h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {displayProjects.slice(2).map((project, index) => (
+                  {originalProjects.map((project, index) => (
                     <ProjectCard 
                       key={project.id}
                       project={project} 

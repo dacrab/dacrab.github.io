@@ -1,87 +1,172 @@
-# Portfolio Website with GitHub Integration
+# 🚀 Modern Portfolio Website
 
-This is a modern portfolio website built with Next.js, TypeScript, Tailwind CSS, and Framer Motion. It features an elegant and interactive design with dynamic GitHub project integration.
+A professional portfolio website built with cutting-edge technologies, featuring elegant animations, responsive design, and dynamic GitHub repository integration.
 
-## Features
+![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black)
+![React](https://img.shields.io/badge/React-19.0.0-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.7.2-blue)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0.0-38B2AC)
+![Framer Motion](https://img.shields.io/badge/Framer_Motion-12.6.2-purple)
 
-- **Responsive Design**: Looks great on all devices from mobile to desktop
-- **Animated UI**: Smooth animations and transitions powered by Framer Motion
-- **GitHub Integration**: Automatically displays your GitHub repositories as projects
-- **Dynamic Theming**: Visual elements adapt to project languages and technologies
-- **Image-less Design**: Uses creative dynamic elements instead of static images
-- **SEO Optimized**: Built with best practices for search engine visibility
+## ✨ Features
 
-## Getting Started
+- **📱 Fully Responsive Design**: Optimized for all devices from mobile to desktop
+- **🎭 Stunning Animations**: Smooth transitions and eye-catching effects powered by Framer Motion
+- **💻 GitHub Integration**: Automatically fetches and displays repositories as showcased projects
+- **🔄 Dynamic Project Showcase**: Featured projects section with custom projects and auto-populated GitHub repositories
+- **🌟 Interactive UI Elements**: Engaging user experience with hover effects and responsive interactions
+- **🌙 Modern Aesthetics**: Clean, contemporary design using Tailwind CSS and custom styling
+- **🖌️ Custom Animation System**: Sophisticated animation utilities for consistent motion across the site
+- **🎨 Lottie Animation Support**: Integration with Lottie for engaging vector animations
+- **👁️ Intersection Observer**: Elements animate as they enter the viewport for a dynamic experience
+- **🔍 SEO Optimized**: Meta tags and semantic structure for improved search engine visibility
 
-First, set up your GitHub username and token in the environment variables:
+## 🔥 Featured Projects
 
-1. Create or modify the `.env.local` file in the root directory
-2. Set your GitHub username: `NEXT_PUBLIC_GITHUB_USERNAME=your-username`
-3. **Important**: Add a GitHub token to avoid API rate limits:
-   - Generate a token at https://github.com/settings/tokens
-   - Only the `public_repo` scope is needed for public repositories
-   - Add to `.env.local`: `GITHUB_ACCESS_TOKEN=your_token_here`
+The portfolio showcases my most significant projects, including:
 
-Then, run the development server:
+### 🏢 Argicon.gr
+A sophisticated technical construction company website built with Next.js, TypeScript, and Tailwind CSS, featuring multi-language support, responsive design, and elegant animations.
+
+### 🎨 DesignDash.gr
+A comprehensive platform for a technical construction firm with project galleries, technical specifications, and service offerings.
+
+### 📊 Proteas Dashboard
+A warehouse management system for sports facilities with role-based access control, built with Next.js, Supabase, and TypeScript.
+
+## 🛠️ Technologies Used
+
+- **[Next.js 15.2.4](https://nextjs.org/)**: React framework with optimized rendering and routing
+- **[React 19.0.0](https://react.dev/)**: UI library for building component-based interfaces
+- **[TypeScript 5.7.2](https://www.typescriptlang.org/)**: Type safety and enhanced developer experience
+- **[Tailwind CSS 4.0.0](https://tailwindcss.com/)**: Utility-first CSS framework for rapid UI development
+- **[Framer Motion 12.6.2](https://www.framer.com/motion/)**: Animation library for fluid transitions
+- **[@lottiefiles/dotlottie-react](https://github.com/LottieFiles/dotlottie-react)**: Lottie animation player
+- **[React Intersection Observer](https://github.com/thebuilder/react-intersection-observer)**: Intersection detection for scroll animations
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js (18.x or later)
+- npm or yarn
+
+### Installation
+
+1. **Clone the repository:**
+
+```bash
+git clone https://github.com/yourusername/portfolio.git
+cd portfolio
+```
+
+2. **Install dependencies:**
+
+```bash
+npm install
+# or
+yarn install
+```
+
+3. **Set up environment variables:**
+
+Create a `.env.local` file in the root directory:
+
+```
+NEXT_PUBLIC_GITHUB_USERNAME=your-github-username
+GITHUB_ACCESS_TOKEN=your-github-token
+```
+
+4. **Run the development server:**
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. **Open [http://localhost:3000](http://localhost:3000)** to see your portfolio
 
-## GitHub API Integration
+## 📂 Project Structure
 
-This portfolio uses a secure approach to integrate with GitHub:
+```
+src/
+├── app/                 # Next.js App Router components
+│   ├── api/             # API routes, including GitHub integration
+│   ├── layout.tsx       # Root layout with metadata and fonts
+│   ├── page.tsx         # Main homepage
+│   └── globals.css      # Global styles and animations
+├── components/          # Reusable UI components
+│   ├── About/           # About section components
+│   ├── Contact/         # Contact form and information
+│   ├── Experience/      # Work experience timeline
+│   ├── Hero/            # Hero section elements
+│   ├── Navbar/          # Navigation components
+│   ├── Projects/        # Project showcase components
+│   └── ui/              # UI primitives and shared elements
+├── hooks/               # Custom React hooks
+│   └── useGitHubProjects.ts  # GitHub data fetching
+├── utils/               # Utility functions
+│   └── animations.ts    # Animation helpers
+└── types/               # TypeScript type definitions
+```
 
-### Secure API Route
+## 🌐 GitHub Integration
 
-Instead of making GitHub API calls directly from the client (which would expose any tokens), we use a Next.js API route that acts as a secure proxy:
+This portfolio features secure GitHub integration to showcase your repositories:
 
-- Client-side code requests data from `/api/github` route
-- Server-side API route uses the GitHub token securely
-- This prevents token exposure in client-side code
-- Better error handling for rate limits and other GitHub API issues
+### How it works
 
-### Troubleshooting GitHub Integration
+1. The `useGitHubProjects` hook fetches repository data through a secure server-side API route
+2. Projects are transformed and displayed in the "More Projects" section
+3. Featured projects (custom websites you've built) are showcased at the top
 
-If you see a "GitHub API error: 403" message, it likely means you've hit GitHub's rate limits. To fix this:
+### Troubleshooting
 
-1. Generate a GitHub personal access token at https://github.com/settings/tokens
-2. Add it to your `.env.local` file: `GITHUB_ACCESS_TOKEN=your_token_here`
-3. Restart your development server
+If you encounter GitHub API rate limits:
 
-For other GitHub integration issues:
-- Check that your GitHub username is correct in `.env.local`
-- Ensure your token has the necessary permissions (public_repo is sufficient)
-- Check the browser console and server logs for detailed error messages
+1. Generate a token at https://github.com/settings/tokens
+2. Add it to your `.env.local` file
+3. Restart the development server
 
-## Customization
+## 🎨 Customization
 
-You can customize the GitHub integration by modifying the following files:
+### Featured Projects
 
-- `src/app/api/github/route.ts`: Server-side API route that securely calls GitHub
-- `src/services/github.ts`: Data transformation and utility functions
-- `src/hooks/useGitHubProjects.ts`: React hook that manages data fetching
-- `src/components/Projects.tsx`: How projects are displayed
+Edit the `customProjects` array in `src/components/Projects.tsx` to showcase your own work:
 
-You can change the filtering options, sorting, and display logic in these files.
+```typescript
+const customProjects = useMemo(() => [
+  {
+    id: 91,
+    title: "Your Project",
+    description: "Description of your amazing project",
+    tags: ["TypeScript", "Next.js", "Tailwind CSS", "React"],
+    link: "https://yourproject.com",
+  },
+  // Add more projects
+], []);
+```
 
-## Learn More
+### Styling
 
-To learn more about Next.js, take a look at the following resources:
+This project uses Tailwind CSS for styling. Customize the theme in `tailwind.config.js`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📱 Responsive Design
 
-## Deploy on Vercel
+The portfolio is fully responsive with optimized layouts for:
+- Mobile devices (< 640px)
+- Tablets (640px - 1024px)
+- Desktops (> 1024px)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📄 License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [Next.js](https://nextjs.org/) - The React framework for production
+- [Framer Motion](https://www.framer.com/motion/) - Animation library
+- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
+- [Lottie Files](https://lottiefiles.com/) - Beautiful animations
+- [Google Fonts](https://fonts.google.com/) - Typography
