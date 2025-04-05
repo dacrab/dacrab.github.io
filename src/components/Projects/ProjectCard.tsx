@@ -9,35 +9,38 @@ export default function ProjectCard({
   onHover,
   onLeave,
 }: ProjectBaseProps) {
+  const primaryTag = project.tags?.[0];
+  const primaryTagColor = primaryTag ? getTagColor(primaryTag) : '';
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
       transition={{ duration: 0.5, delay }}
       className={`group bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden hover:border-accent/30 transition-all duration-300 flex flex-col h-full shadow-sm hover:shadow-lg ${isActive ? 'ring-2 ring-accent/40' : ''}`}
-      onMouseEnter={() => onHover && onHover()}
-      onMouseLeave={() => onLeave && onLeave()}
+      onMouseEnter={() => onHover?.()}
+      onMouseLeave={() => onLeave?.()}
     >
       {/* Card header */}
       <div className="p-5 border-b border-border/20 flex items-center justify-between">
         {/* Primary tag */}
-        {project.tags && project.tags.length > 0 && (
+        {primaryTag && (
           <span 
             className="text-xs uppercase tracking-wider font-medium px-3 py-1 rounded-full"
             style={{ 
-              backgroundColor: `${getTagColor(project.tags[0])}15`, 
-              color: getTagColor(project.tags[0]),
-              border: `1px solid ${getTagColor(project.tags[0])}30`
+              backgroundColor: `${primaryTagColor}15`, 
+              color: primaryTagColor,
+              border: `1px solid ${primaryTagColor}30`
             }}
           >
-            {project.tags[0]}
+            {primaryTag}
           </span>
         )}
         
         {/* Project ID */}
         <div 
           className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium border border-accent/30 bg-card/50 shadow-sm"
-          style={{ color: getTagColor(project.tags[0]) }}
+          style={{ color: primaryTagColor }}
         >
           {String(project.id).padStart(2, '0')}
         </div>
@@ -65,7 +68,7 @@ export default function ProjectCard({
         
         {/* Secondary tags */}
         <div className="flex flex-wrap gap-1.5 mt-auto">
-          {project.tags.slice(1, 4).map(tag => (
+          {project.tags?.slice(1, 4).map(tag => (
             <span 
               key={tag} 
               className="text-xs px-2 py-0.5 rounded-md border border-border/20 bg-card/40 text-muted"

@@ -10,18 +10,18 @@ interface BioSectionProps {
 }
 
 // Animation variants
-const staggerContainer = (staggerDelay: number) => ({
+const staggerContainer = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: staggerDelay
+      staggerChildren: 0.15
     }
   }
-});
+};
 
-const fadeIn = (direction: "up" | "down", delay: number, duration: number) => ({
+const fadeIn = (delay: number) => ({
   hidden: {
-    y: direction === "up" ? 20 : -20,
+    y: 20,
     opacity: 0
   },
   visible: {
@@ -29,7 +29,20 @@ const fadeIn = (direction: "up" | "down", delay: number, duration: number) => ({
     opacity: 1,
     transition: {
       delay,
-      duration
+      duration: 0.7
+    }
+  }
+});
+
+const cardAnimation = (delay: number) => ({
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.5,
+      delay,
+      ease: "easeOut"
     }
   }
 });
@@ -62,27 +75,53 @@ export default function BioSection({ contentY, bioRef, bioAnimate }: BioSectionP
     };
     
     calculateAge();
-    // Recalculate on birthday if component stays mounted across dates
-    const intervalId = setInterval(calculateAge, 1000 * 60 * 60 * 24); // Check daily
-    
-    return () => clearInterval(intervalId);
+    return () => {}; // No cleanup needed for a one-time calculation
   }, []);
+  
+  // Render a skill category row
+  const renderSkillCategory = (category: keyof typeof SKILLS_BY_CATEGORY, label: string) => (
+    <div className="flex items-center gap-2">
+      <span className="text-accent text-sm font-medium bg-accent/5 px-2 py-1 rounded-md border border-accent/10 w-28 flex-shrink-0">{label}:</span>
+      <div className="flex flex-wrap gap-2">
+        {SKILLS_BY_CATEGORY[category].map((skill, index) => (
+          <div key={skill.name} className="inline-flex">
+            <motion.a
+              href={skill.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 py-1 px-2 rounded-md bg-card/50 border border-border/30 hover:border-accent/30 transition-all duration-300 group"
+              variants={cardAnimation(0.1 + (index * 0.02))}
+              whileHover={{ y: -2, boxShadow: "0 4px 10px -2px rgba(var(--accent-rgb), 0.15)" }}
+            >
+              <Image 
+                src={skill.icon} 
+                alt={`${skill.name} logo`}
+                width={18} 
+                height={18} 
+                className="w-4 h-4 object-contain transition-all duration-300 group-hover:scale-110"
+              />
+              <span className="text-xs font-medium group-hover:text-accent transition-colors duration-300">{skill.name}</span>
+            </motion.a>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
   
   return (
     <motion.div 
       className="lg:col-span-7 lg:col-start-6"
       style={{ y: contentY }}
     >
-      {/* Bio section */}
       <motion.div 
         ref={bioRef}
-        variants={staggerContainer(0.15)}
+        variants={staggerContainer}
         initial="hidden"
         animate={bioAnimate}
         className="space-y-8"
       >
         <motion.div 
-          variants={fadeIn("up", 0.1, 0.7)}
+          variants={fadeIn(0.1)}
           className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl p-6 shadow-md"
         >
           <h3 className="text-2xl font-bold mb-4 relative inline-block">
@@ -96,7 +135,7 @@ export default function BioSection({ contentY, bioRef, bioAnimate }: BioSectionP
         </motion.div>
         
         <motion.div 
-          variants={fadeIn("up", 0.2, 0.7)}
+          variants={fadeIn(0.2)}
           className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl p-6 shadow-md"
         >
           <p className="text-muted leading-relaxed">
@@ -104,9 +143,8 @@ export default function BioSection({ contentY, bioRef, bioAnimate }: BioSectionP
           </p>
         </motion.div>
         
-        {/* Skills section - More compact */}
         <motion.div 
-          variants={fadeIn("up", 0.3, 0.7)}
+          variants={fadeIn(0.3)}
           className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl p-6 shadow-md"
         >
           <h3 className="text-xl font-bold mb-4 relative inline-block">
@@ -114,110 +152,13 @@ export default function BioSection({ contentY, bioRef, bioAnimate }: BioSectionP
             <span className="absolute -bottom-1 left-0 h-1 w-16 bg-accent/10 rounded-sm"></span>
           </h3>
           
-          <div className="space-y-4">
-            {/* Combined all skill categories in a more compact grid */}
-            <div className="space-y-3">
-              {/* Frontend row */}
-              <div className="flex items-center gap-2">
-                <span className="text-accent text-sm font-medium bg-accent/5 px-2 py-1 rounded-md border border-accent/10 w-28 flex-shrink-0">Frontend:</span>
-                <div className="flex flex-wrap gap-2">
-                  {SKILLS_BY_CATEGORY.frontend.map((skill, index) => (
-                    <div key={skill.name} className="inline-flex">
-                      <motion.a
-                        href={skill.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 py-1 px-2 rounded-md bg-card/50 border border-border/30 hover:border-accent/30 transition-all duration-300 group"
-                        variants={cardAnimation(0.1 + (index * 0.02))}
-                        whileHover={{ y: -2, boxShadow: "0 4px 10px -2px rgba(var(--accent-rgb), 0.15)" }}
-                      >
-                        <Image 
-                          src={skill.icon} 
-                          alt={`${skill.name} logo`}
-                          width={18} 
-                          height={18} 
-                          className="w-4 h-4 object-contain transition-all duration-300 group-hover:scale-110"
-                        />
-                        <span className="text-xs font-medium group-hover:text-accent transition-colors duration-300">{skill.name}</span>
-                      </motion.a>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Backend row */}
-              <div className="flex items-center gap-2">
-                <span className="text-accent text-sm font-medium bg-accent/5 px-2 py-1 rounded-md border border-accent/10 w-28 flex-shrink-0">Backend:</span>
-                <div className="flex flex-wrap gap-2">
-                  {SKILLS_BY_CATEGORY.backend.map((skill, index) => (
-                    <div key={skill.name} className="inline-flex">
-                      <motion.a
-                        href={skill.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 py-1 px-2 rounded-md bg-card/50 border border-border/30 hover:border-accent/30 transition-all duration-300 group"
-                        variants={cardAnimation(0.1 + (index * 0.02))}
-                        whileHover={{ y: -2, boxShadow: "0 4px 10px -2px rgba(var(--accent-rgb), 0.15)" }}
-                      >
-                        <Image 
-                          src={skill.icon} 
-                          alt={`${skill.name} logo`}
-                          width={18} 
-                          height={18} 
-                          className="w-4 h-4 object-contain transition-all duration-300 group-hover:scale-110"
-                        />
-                        <span className="text-xs font-medium group-hover:text-accent transition-colors duration-300">{skill.name}</span>
-                      </motion.a>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Tools row */}
-              <div className="flex items-center gap-2">
-                <span className="text-accent text-sm font-medium bg-accent/5 px-2 py-1 rounded-md border border-accent/10 w-28 flex-shrink-0">Tools:</span>
-                <div className="flex flex-wrap gap-2">
-                  {SKILLS_BY_CATEGORY.tools.map((skill, index) => (
-                    <div key={skill.name} className="inline-flex">
-                      <motion.a
-                        href={skill.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 py-1 px-2 rounded-md bg-card/50 border border-border/30 hover:border-accent/30 transition-all duration-300 group"
-                        variants={cardAnimation(0.1 + (index * 0.02))}
-                        whileHover={{ y: -2, boxShadow: "0 4px 10px -2px rgba(var(--accent-rgb), 0.15)" }}
-                      >
-                        <Image 
-                          src={skill.icon} 
-                          alt={`${skill.name} logo`}
-                          width={18} 
-                          height={18} 
-                          className="w-4 h-4 object-contain transition-all duration-300 group-hover:scale-110"
-                        />
-                        <span className="text-xs font-medium group-hover:text-accent transition-colors duration-300">{skill.name}</span>
-                      </motion.a>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+          <div className="space-y-3">
+            {renderSkillCategory('frontend', 'Frontend')}
+            {renderSkillCategory('backend', 'Backend')}
+            {renderSkillCategory('tools', 'Tools')}
           </div>
         </motion.div>
       </motion.div>
     </motion.div>
   );
 }
-
-// Animation helper
-const cardAnimation = (delay: number) => ({
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: {
-      duration: 0.5,
-      delay,
-      ease: "easeOut"
-    }
-  }
-}); 

@@ -7,13 +7,12 @@ interface ScrollRevealProps {
   children: ReactNode;
   direction?: "up" | "down" | "left" | "right" | "none";
   className?: string;
-  distance?: number; // Distance to travel
+  distance?: number;
   duration?: number;
   delay?: number;
   staggerChildren?: boolean;
   staggerDelay?: number;
-  rootMargin?: string;
-  threshold?: number; 
+  threshold?: number;
   once?: boolean;
   style?: Record<string, unknown>;
   viewport?: { amount?: number; once?: boolean };
@@ -21,9 +20,6 @@ interface ScrollRevealProps {
 
 /**
  * ScrollReveal - A component that reveals its children with a sleek animation when scrolled into view.
- * 
- * This uses framer-motion's useInView hook to detect when the component is in the viewport,
- * and then animates the children into view with a fade and translation effect.
  */
 export default function ScrollReveal({
   children,
@@ -42,35 +38,27 @@ export default function ScrollReveal({
   const ref = useRef(null);
   const isInView = useInView(ref, { 
     amount: viewport?.amount || threshold, 
-    once: viewport?.once !== undefined ? viewport.once : once 
+    once: viewport?.once ?? once 
   });
 
-  // Determine initial positions based on direction
-  const getInitialPosition = () => {
-    switch (direction) {
-      case "up":
-        return { opacity: 0, y: distance };
-      case "down":
-        return { opacity: 0, y: -distance };
-      case "left":
-        return { opacity: 0, x: -distance };
-      case "right":
-        return { opacity: 0, x: distance };
-      case "none":
-        return { opacity: 0 };
-      default:
-        return { opacity: 0, y: distance };
+  // Calculate animation properties based on direction
+  const getAnimationProps = () => {
+    // Define the types explicitly to include x and y properties
+    const initialProps: { opacity: number; x?: number; y?: number } = { opacity: 0 };
+    const finalProps: { opacity: number; x?: number; y?: number } = { opacity: 1 };
+    
+    if (direction !== "none") {
+      const axis = direction === "left" || direction === "right" ? "x" : "y";
+      const value = distance * (direction === "right" || direction === "up" ? 1 : -1);
+      
+      initialProps[axis] = value;
+      finalProps[axis] = 0;
     }
+    
+    return { initialProps, finalProps };
   };
 
-  // Get final position
-  const getFinalPosition = () => {
-    return direction === "left" || direction === "right" 
-      ? { opacity: 1, x: 0 } 
-      : direction === "none" 
-        ? { opacity: 1 } 
-        : { opacity: 1, y: 0 };
-  };
+  const { initialProps, finalProps } = getAnimationProps();
 
   // Container variant for staggered animations
   const containerVariants = {
@@ -86,9 +74,9 @@ export default function ScrollReveal({
 
   // Item variants for staggered children
   const itemVariants = {
-    hidden: getInitialPosition(),
+    hidden: initialProps,
     show: {
-      ...getFinalPosition(),
+      ...finalProps,
       transition: {
         type: "spring",
         stiffness: 260,
@@ -99,18 +87,17 @@ export default function ScrollReveal({
     },
   };
 
-  // For non-staggered animations, use the motion component directly
   if (!staggerChildren) {
     return (
       <motion.div
         ref={ref}
         className={className}
-        initial={getInitialPosition()}
-        animate={isInView ? getFinalPosition() : getInitialPosition()}
+        initial={initialProps}
+        animate={isInView ? finalProps : initialProps}
         transition={{
           duration,
           delay,
-          ease: [0.25, 0.1, 0.25, 1], // Custom ease for smooth animation
+          ease: [0.25, 0.1, 0.25, 1],
         }}
         style={style}
       >
@@ -119,7 +106,6 @@ export default function ScrollReveal({
     );
   }
 
-  // For staggered animations, use variants
   return (
     <motion.div
       ref={ref}
@@ -136,4 +122,4 @@ export default function ScrollReveal({
       ))}
     </motion.div>
   );
-} 
+}

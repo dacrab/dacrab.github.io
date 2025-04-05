@@ -18,6 +18,10 @@ export default function ContactMethod({
   index,
   isInView,
 }: ContactMethodProps) {
+  // Base animation delay calculation
+  const baseDelay = 0.3;
+  const delayIncrement = 0.12;
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 15 }}
@@ -27,7 +31,7 @@ export default function ContactMethod({
       }}
       transition={{ 
         duration: 0.6, 
-        delay: 0.3 + (index * 0.12) 
+        delay: baseDelay + (index * delayIncrement) 
       }}
       className="group"
     >
@@ -46,15 +50,13 @@ export default function ContactMethod({
           <motion.div 
             className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             animate={{
-              boxShadow: index % 2 === 0 ? 
-                ['inset 0 0 0px rgba(var(--accent-rgb), 0)', 'inset 0 0 20px rgba(var(--accent-rgb), 0.15)', 'inset 0 0 0px rgba(var(--accent-rgb), 0)'] :
-                ['inset 0 0 0px rgba(var(--accent-rgb), 0)', 'inset 0 0 15px rgba(var(--accent-rgb), 0.1)', 'inset 0 0 0px rgba(var(--accent-rgb), 0)']
+              boxShadow: `inset 0 0 ${index % 2 === 0 ? '20px rgba(var(--accent-rgb), 0.15)' : '15px rgba(var(--accent-rgb), 0.1)'}`
             }}
             transition={{ 
-              duration: 4,
+              duration: 2,
               repeat: Infinity,
               repeatType: "reverse",
-              delay: index * 2
+              delay: index
             }}
           />
           
@@ -65,22 +67,17 @@ export default function ContactMethod({
             animate={{ scale: 1 }}
             transition={{ 
               duration: 0.5,
-              delay: 0.4 + (index * 0.15)
+              delay: baseDelay + 0.1 + (index * delayIncrement)
             }}
-            whileHover={{ 
-              scale: 1.1,
-              transition: { duration: 0.2 }
-            }}
+            whileHover={{ scale: 1.1 }}
           >
             <motion.div
-              animate={{ 
-                color: ['var(--foreground)', 'var(--accent)', 'var(--foreground)']
-              }}
+              animate={{ color: ['var(--foreground)', 'var(--accent)', 'var(--foreground)'] }}
               transition={{ 
-                duration: 6, 
+                duration: 4, 
                 repeat: Infinity,
                 repeatType: 'reverse',
-                delay: index * 3
+                delay: index
               }}
             >
               {icon}
@@ -95,7 +92,7 @@ export default function ContactMethod({
             animate={{ opacity: isInView ? 0.8 : 0 }}
             transition={{ 
               duration: 0.5,
-              delay: 0.5 + (index * 0.12)
+              delay: baseDelay + 0.2 + (index * delayIncrement)
             }}
           >
             <h4 className="text-sm text-muted mb-1 group-hover:text-accent/80 transition-colors duration-300">{title}</h4>
@@ -106,7 +103,7 @@ export default function ContactMethod({
             animate={{ x: isInView ? 0 : -10, opacity: isInView ? 1 : 0 }}
             transition={{ 
               duration: 0.4,
-              delay: 0.6 + (index * 0.12)
+              delay: baseDelay + 0.3 + (index * delayIncrement)
             }}
           >
             <p className="text-lg font-medium group-hover:text-accent transition-colors duration-300">{value}</p>
@@ -115,4 +112,4 @@ export default function ContactMethod({
       </div>
     </motion.div>
   );
-} 
+}

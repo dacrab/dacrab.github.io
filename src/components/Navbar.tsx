@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useScroll } from "framer-motion";
 import Logo from "./Logo";
 import GlowEffect from "./GlowEffect";
@@ -22,7 +22,7 @@ export default function Navbar() {
   const isClickNavigating = useRef(false);
   const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const toggleMenu = useCallback(() => setIsOpen(prev => !prev), []);
+  const toggleMenu = () => setIsOpen(prev => !prev);
   
   // Handle window resize
   useEffect(() => {
@@ -41,56 +41,55 @@ export default function Navbar() {
     const updateScrollState = (y: number) => {
       setScrolled(y > 20);
       
-      // Don't update active section if click navigation is in progress
       if (isClickNavigating.current) return;
       
       const sections = document.querySelectorAll('section[id]');
       const scrollPosition = y + window.innerHeight / 3;
       
-      sections.forEach(section => {
+      for (const section of sections) {
         const sectionElement = section as HTMLElement;
         const sectionTop = sectionElement.offsetTop;
-        const sectionHeight = sectionElement.offsetHeight;
+        const sectionBottom = sectionTop + sectionElement.offsetHeight;
         
-        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+        if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
           setActiveSection(section.id);
+          break;
         }
-      });
+      }
     };
 
-    const unsubscribe = scrollY.onChange(updateScrollState);
-    return unsubscribe;
+    return scrollY.onChange(updateScrollState);
   }, [scrollY]);
 
   // Handle navigation click
-  const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     const targetId = href.substring(1);
     const targetElement = document.getElementById(targetId);
     
-    if (targetElement) {
-      if (isOpen) setIsOpen(false);
-      
-      // Set active section immediately to prevent double animation
-      setActiveSection(targetId);
-      
-      // Set flag to prevent scroll events from changing activeSection during navigation
-      isClickNavigating.current = true;
-      
-      // Clear any existing timers
-      if (clickTimerRef.current) {
-        clearTimeout(clickTimerRef.current);
-      }
-      
-      // Scroll to the target element
-      targetElement.scrollIntoView({ behavior: 'smooth' });
-      
-      // Reset flag after navigation animation is likely complete
-      clickTimerRef.current = setTimeout(() => {
-        isClickNavigating.current = false;
-      }, 1000); // 1 second should cover most smooth scrolling animations
+    if (!targetElement) return;
+    
+    if (isOpen) setIsOpen(false);
+    
+    // Set active section immediately
+    setActiveSection(targetId);
+    
+    // Prevent scroll events from changing activeSection during navigation
+    isClickNavigating.current = true;
+    
+    // Clear any existing timers
+    if (clickTimerRef.current) {
+      clearTimeout(clickTimerRef.current);
     }
-  }, [isOpen]);
+    
+    // Scroll to target
+    targetElement.scrollIntoView({ behavior: 'smooth' });
+    
+    // Reset flag after animation completes
+    clickTimerRef.current = setTimeout(() => {
+      isClickNavigating.current = false;
+    }, 1000);
+  };
 
   // Clean up timers on unmount
   useEffect(() => {
@@ -111,7 +110,7 @@ export default function Navbar() {
     opacity: scrolled ? 0.9 : 1,
   };
 
-  // Render navigation items with optimized hover behavior
+  // Render navigation items
   const renderNavItem = (item: typeof NAV_ITEMS[0], index: number, isMobile = false) => {
     const isActive = activeSection === item.href.substring(1);
     
@@ -141,15 +140,11 @@ export default function Navbar() {
                 type: "spring", 
                 stiffness: 300, 
                 damping: 30,
-                // Important: only animate on layoutId changes, not on subsequent renders
-                layout: {
-                  duration: 0.3
-                }
+                layout: { duration: 0.3 }
               }}
             />
           )}
           
-          {/* Hover effect using animate presence */}
           {!isMobile && !isActive && (
             <motion.span
               className="absolute bottom-0.5 left-0 right-0 h-0.5 bg-accent/40 rounded"
@@ -178,7 +173,7 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-4 lg:px-8">
         <nav className="flex items-center justify-between">
-          {/* Logo using new component */}
+          {/* Logo */}
           <div className="relative">
             <GlowEffect 
               color="accent" 
@@ -210,10 +205,7 @@ export default function Navbar() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.8, type: "spring" }}
-              whileHover={{ 
-                scale: 1.05,
-                transition: { duration: 0.2 } 
-              }}
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
             >
               <a
@@ -227,29 +219,27 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button
-              onClick={toggleMenu}
-              className="text-foreground p-2 rounded-lg hover:bg-accent/10 transition-colors"
+          <button
+            onClick={toggleMenu}
+            className="md:hidden text-foreground p-2 rounded-lg hover:bg-accent/10 transition-colors"
+          >
+            <svg 
+              width="24" 
+              height="24" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              xmlns="http://www.w3.org/2000/svg"
+              className={`transform transition-transform duration-300 ${isOpen ? "rotate-90" : ""}`}
             >
-              <svg 
-                width="24" 
-                height="24" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                xmlns="http://www.w3.org/2000/svg"
-                className={`transform transition-transform duration-300 ${isOpen ? "rotate-90" : ""}`}
-              >
-                <path 
-                  d={isOpen ? "M18 6L6 18M6 6L18 18" : "M4 6H20M4 12H20M4 18H20"} 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </button>
-          </div>
+              <path 
+                d={isOpen ? "M18 6L6 18M6 6L18 18" : "M4 6H20M4 12H20M4 18H20"} 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
         </nav>
       </div>
 

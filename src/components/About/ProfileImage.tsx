@@ -5,10 +5,21 @@ import StaggerReveal from "../StaggerReveal";
 import NumberCounter from "../Experience/NumberCounter";
 
 interface ProfileImageProps {
-  contentY: MotionValue<number>; // motion value
+  contentY: MotionValue<number>;
 }
 
 export default function ProfileImage({ contentY }: ProfileImageProps) {
+  // Animation constants
+  const frameAnimation = {
+    borderColor: ['rgba(var(--accent-rgb), 0.1)', 'rgba(var(--accent-rgb), 0.3)', 'rgba(var(--accent-rgb), 0.1)']
+  };
+  
+  const hoverAnimation = {
+    y: -5, 
+    boxShadow: "0 10px 25px -5px rgba(var(--accent-rgb), 0.15)",
+    borderColor: "rgba(var(--accent-rgb), 0.3)"
+  };
+
   return (
     <motion.div 
       className="lg:col-span-5 lg:col-start-1 relative"
@@ -20,9 +31,7 @@ export default function ProfileImage({ contentY }: ProfileImageProps) {
           {/* Abstract frame */}
           <motion.div 
             className="absolute inset-0 border border-border/40 rounded-xl -m-3 z-0"
-            animate={{ 
-              borderColor: ['rgba(var(--accent-rgb), 0.1)', 'rgba(var(--accent-rgb), 0.3)', 'rgba(var(--accent-rgb), 0.1)'] 
-            }}
+            animate={frameAnimation}
             transition={{ duration: 4, repeat: Infinity }}
           ></motion.div>
           
@@ -78,13 +87,10 @@ export default function ProfileImage({ contentY }: ProfileImageProps) {
           staggerDelay={0.15}
           childClassName="h-full"
         >
+          {/* Experience stat */}
           <motion.div 
             className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-lg p-5 shadow-md hover:shadow-lg transition-all duration-300"
-            whileHover={{ 
-              y: -5, 
-              boxShadow: "0 10px 25px -5px rgba(var(--accent-rgb), 0.15)",
-              borderColor: "rgba(var(--accent-rgb), 0.3)"
-            }}
+            whileHover={hoverAnimation}
             transition={{ duration: 0.2 }}
           >
             <NumberCounter
@@ -97,13 +103,10 @@ export default function ProfileImage({ contentY }: ProfileImageProps) {
             <div className="text-sm text-muted mt-1">Year Experience</div>
           </motion.div>
           
+          {/* Projects stat */}
           <motion.div 
             className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-lg p-5 shadow-md hover:shadow-lg transition-all duration-300"
-            whileHover={{ 
-              y: -5, 
-              boxShadow: "0 10px 25px -5px rgba(var(--accent-rgb), 0.15)",
-              borderColor: "rgba(var(--accent-rgb), 0.3)"
-            }}
+            whileHover={hoverAnimation}
             transition={{ duration: 0.2 }}
           >
             <NumberCounter
@@ -119,4 +122,4 @@ export default function ProfileImage({ contentY }: ProfileImageProps) {
       </div>
     </motion.div>
   );
-} 
+}

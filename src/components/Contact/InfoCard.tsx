@@ -11,6 +11,27 @@ interface InfoCardProps {
 }
 
 export default function InfoCard({ isInView, contentY }: InfoCardProps) {
+  // Animation variants
+  const textAnimation = {
+    hidden: { x: -10, opacity: 0 },
+    visible: (delay: number) => ({
+      x: 0,
+      opacity: 1,
+      transition: { duration: 0.5, delay }
+    })
+  };
+  
+  const socialLinksAnimation = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+        delayChildren: 0.5
+      }
+    }
+  };
+
   return (
     <motion.div 
       className="md:col-span-6"
@@ -39,57 +60,14 @@ export default function InfoCard({ isInView, contentY }: InfoCardProps) {
           }
         }}
       >
-        {/* Abstract background shapes with animation */}
-        <div className="absolute -z-10 inset-0 overflow-hidden">
-          <motion.div 
-            className="absolute -top-20 -right-20 w-60 h-60 bg-accent/5 rounded-full blur-3xl"
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.1, 0.2, 0.1],
-              x: [0, 10, 0],
-              y: [0, -10, 0],
-            }}
-            transition={{
-              duration: 15,
-              repeat: Infinity,
-              repeatType: "reverse"
-            }}
-          />
-          <motion.div 
-            className="absolute -bottom-20 -left-20 w-60 h-60 bg-gradient-2/5 rounded-full blur-3xl"
-            animate={{
-              scale: [1, 1.3, 1],
-              opacity: [0.05, 0.15, 0.05],
-              x: [0, -5, 0],
-              y: [0, 5, 0],
-            }}
-            transition={{
-              duration: 18,
-              repeat: Infinity,
-              repeatType: "reverse",
-              delay: 3
-            }}
-          />
-          <motion.div 
-            className="absolute inset-0 grid-pattern-dots opacity-20"
-            animate={{
-              opacity: [0.15, 0.25, 0.15],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              repeatType: "reverse"
-            }}
-          />
-        </div>
-        
         {/* Contact methods */}
         <div className="mb-10">
           <motion.h3 
             className="text-xl font-semibold mb-6 text-gradient"
-            initial={{ x: -10, opacity: 0 }}
-            animate={{ x: isInView ? 0 : -10, opacity: isInView ? 1 : 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            variants={textAnimation}
+            custom={0.2}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
           >
             Get in Touch
           </motion.h3>
@@ -111,24 +89,16 @@ export default function InfoCard({ isInView, contentY }: InfoCardProps) {
         <div>
           <motion.h3 
             className="text-xl font-semibold mb-6 text-gradient"
-            initial={{ x: -10, opacity: 0 }}
-            animate={{ x: isInView ? 0 : -10, opacity: isInView ? 1 : 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
+            variants={textAnimation}
+            custom={0.4}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
           >
             Follow Me
           </motion.h3>
           <motion.div 
             className="flex flex-wrap gap-4"
-            variants={{
-              hidden: { opacity: 0 },
-              show: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.08,
-                  delayChildren: 0.5
-                }
-              }
-            }}
+            variants={socialLinksAnimation}
             initial="hidden"
             animate={isInView ? "show" : "hidden"}
           >
@@ -145,4 +115,4 @@ export default function InfoCard({ isInView, contentY }: InfoCardProps) {
       </motion.div>
     </motion.div>
   );
-} 
+}

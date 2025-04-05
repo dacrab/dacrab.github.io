@@ -25,7 +25,6 @@ export default function GlowEffect({
   shape = "circle",
 }: GlowEffectProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const glowRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
   
@@ -34,42 +33,41 @@ export default function GlowEffect({
     if (!containerRef.current || !followCursor) return;
     
     const rect = containerRef.current.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
-    
-    setPosition({ x, y });
+    setPosition({
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top
+    });
   };
   
   // Set glow to center when not following cursor
   useEffect(() => {
     if (!followCursor && containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
-      setPosition({ x: rect.width / 2, y: rect.height / 2 });
+      setPosition({ 
+        x: rect.width / 2, 
+        y: rect.height / 2 
+      });
     }
   }, [followCursor]);
   
   // Get shape styles based on the shape prop
   const getShapeStyles = () => {
+    const baseStyle = {
+      background: `radial-gradient(circle, var(--${color}) 0%, transparent 70%)`
+    };
+    
     switch (shape) {
       case "square":
-        return {
-          borderRadius: "10%",
-          background: `radial-gradient(circle, var(--${color}) 0%, transparent 70%)`,
-        };
+        return { ...baseStyle, borderRadius: "10%" };
       case "blob":
-        return {
-          // More extreme blob shape with multiple pseudo-random border radius values
-          background: `radial-gradient(circle, var(--${color}) 0%, transparent 70%)`,
-          // No border-radius here - we'll use the SVG mask instead
-        };
+        return baseStyle; // No border-radius - using SVG mask instead
       case "circle":
       default:
-        return {
-          borderRadius: "50%",
-          background: `radial-gradient(circle, var(--${color}) 0%, transparent 70%)`,
-        };
+        return { ...baseStyle, borderRadius: "50%" };
     }
   };
+  
+  const blurAmount = shape === "blob" ? size * 40 : size * 30;
   
   return (
     <motion.div
@@ -115,9 +113,8 @@ export default function GlowEffect({
         </svg>
       )}
       
-      {/* Glow effect */}
+      {/* Main glow effect */}
       <motion.div
-        ref={glowRef}
         className="pointer-events-none absolute -z-10"
         animate={{
           opacity: isHovered ? intensity : 0,
@@ -140,15 +137,13 @@ export default function GlowEffect({
           height: size * 200,
           willChange: "opacity, transform",
           ...getShapeStyles(),
-          filter: shape === "blob" 
-            ? `blur(${size * 40}px)` 
-            : `blur(${size * 30}px)`,
+          filter: `blur(${blurAmount}px)`,
           maskImage: shape === "blob" ? "url(#blob-mask)" : "none",
           WebkitMaskImage: shape === "blob" ? "url(#blob-mask)" : "none",
         }}
       />
       
-      {/* Extra blob layers for more organic feel */}
+      {/* Extra blob layers for more organic feel - only rendered when needed */}
       {shape === "blob" && isHovered && (
         <>
           <motion.div
@@ -229,4 +224,4 @@ export default function GlowEffect({
       {children}
     </motion.div>
   );
-} 
+}

@@ -36,7 +36,7 @@ export default function SectionBackground({
   const rotate1 = useTransform(scrollYProgress, [0, 1], [0, 5]);
   const rotate2 = useTransform(scrollYProgress, [0, 1], [0, -3]);
 
-  // Animate elements when they come into view
+  // Use useEffect to call controls.start() after component has mounted
   useEffect(() => {
     if (effectiveIsInView) {
       controls.start("visible");

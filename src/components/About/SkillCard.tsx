@@ -13,19 +13,34 @@ export default function SkillCard({ skill, index, className = "" }: SkillCardPro
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   
-  // Check if this is a white icon that might need special handling
-  const hasAdaptiveColor = skill.icon.includes("/FFFFFF") || skill.name === "Next.js" || skill.name === "GitHub" || skill.name === "Vercel";
+  // Check if this is a light-colored icon that needs special handling
+  const hasAdaptiveColor = skill.icon.includes("/FFFFFF") || 
+                          ["Next.js", "GitHub", "Vercel"].includes(skill.name);
+  
+  // Animation variants
+  const cardAnimation = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.5,
+        delay: 0.1 + (index * 0.03),
+        ease: "easeOut"
+      }
+    }
+  };
   
   return (
     <motion.a
       href={skill.url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`flex flex-col items-center justify-center p-4 rounded-lg backdrop-blur-sm border border-border/40 bg-card/30 transition-all duration-300 group ${className}`}
+      className={`flex flex-col items-center justify-center p-4 rounded-lg backdrop-blur-sm border bg-card/30 transition-all duration-300 group ${className}`}
       style={{
         borderColor: isHovered ? 'rgba(var(--accent-rgb), 0.5)' : 'rgba(var(--border-rgb), 0.3)',
       }}
-      variants={cardAnimation(0.1 + (index * 0.03))}
+      variants={cardAnimation}
       whileHover={{ 
         y: -5,
         boxShadow: "0 8px 20px -4px rgba(var(--accent-rgb), 0.2)"
@@ -38,15 +53,15 @@ export default function SkillCard({ skill, index, className = "" }: SkillCardPro
         {/* Glow effect on hover */}
         <motion.div 
           className="absolute inset-0 rounded-full bg-accent/10 blur-lg transition-all duration-300" 
-          initial={{ opacity: 0, scale: 0.8 }}
           animate={{ 
             opacity: isHovered ? 0.8 : 0,
             scale: isHovered ? 1.2 : 0.8 
           }}
+          initial={{ opacity: 0, scale: 0.8 }}
           transition={{ duration: 0.4 }}
         />
         
-        {/* Icon container with background for adaptive color icons */}
+        {/* Icon container */}
         <div className={`relative flex items-center justify-center ${hasAdaptiveColor ? 'p-1.5 icon-container rounded-full shadow-inner' : ''}`}>
           {!imageError ? (
             <Image 
@@ -67,11 +82,11 @@ export default function SkillCard({ skill, index, className = "" }: SkillCardPro
         {/* Animated ring */}
         <motion.div 
           className="absolute inset-0 rounded-full border border-accent/40"
-          initial={{ opacity: 0, scale: 0.6 }}
           animate={{ 
             opacity: isHovered ? 1 : 0,
             scale: isHovered ? [0.8, 1.2, 0.8] : 0.6 
           }}
+          initial={{ opacity: 0, scale: 0.6 }}
           transition={{ 
             opacity: { duration: 0.3 },
             scale: { duration: 2, repeat: Infinity, repeatType: "reverse" }
@@ -92,17 +107,3 @@ export default function SkillCard({ skill, index, className = "" }: SkillCardPro
     </motion.a>
   );
 }
-
-// Animation helper
-const cardAnimation = (delay: number) => ({
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: {
-      duration: 0.5,
-      delay,
-      ease: "easeOut"
-    }
-  }
-}); 

@@ -49,10 +49,7 @@ export default function Timeline({ isInView }: TimelineProps) {
         <motion.div 
           className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-accent/60 to-accent/20"
           initial={{ height: 0, opacity: 0 }}
-          animate={{ 
-            height: isInView ? "100%" : 0,
-            opacity: isInView ? 1 : 0
-          }}
+          animate={{ height: isInView ? "100%" : 0, opacity: isInView ? 1 : 0 }}
           transition={{ 
             height: { duration: 1.2, delay: 0.6, ease: "easeOut" },
             opacity: { duration: 0.6, delay: 0.6 }
@@ -61,43 +58,42 @@ export default function Timeline({ isInView }: TimelineProps) {
         
         {/* Timeline entries */}
         <div className="relative z-10">
-          {EXPERIENCES.map((exp, index) => (
-            <ScrollReveal
-              key={exp.id}
-              direction={index % 2 === 0 ? "left" : "right"}
-              className="mb-16 md:mb-20 relative"
-              duration={0.7}
-              delay={0.6 + (0.15 * index)}
-              distance={40}
-              threshold={0.1}
-            >
-              <TimelineEntry
-                position={index % 2 === 0 ? 'left' : 'right'}
-                date={exp.period}
-                company={exp.company}
-                title={exp.role}
-                description={exp.description}
-                technologies={exp.skills}
-                isInView={isInView}
-                index={index}
-              />
-            </ScrollReveal>
-          ))}
+          {EXPERIENCES.map((exp, index) => {
+            const isLeft = index % 2 === 0;
+            const direction = isLeft ? "left" : "right";
+            const position = isLeft ? "left" : "right";
+            
+            return (
+              <ScrollReveal
+                key={exp.id}
+                direction={direction}
+                className="mb-16 md:mb-20 relative"
+                duration={0.7}
+                delay={0.6 + (0.15 * index)}
+                distance={40}
+                threshold={0.1}
+              >
+                <TimelineEntry
+                  position={position}
+                  date={exp.period}
+                  company={exp.company}
+                  title={exp.role}
+                  description={exp.description}
+                  technologies={exp.skills}
+                  isInView={isInView}
+                  index={index}
+                />
+              </ScrollReveal>
+            );
+          })}
         </div>
         
         {/* Timeline end marker */}
         <motion.div
           className="absolute left-1/2 -translate-x-1/2 -bottom-2 w-10 h-10 rounded-full border border-accent/50 flex items-center justify-center bg-card/30 backdrop-blur-sm shadow-lg z-10"
           initial={{ opacity: 0, scale: 0 }}
-          animate={{ 
-            opacity: isInView ? 1 : 0, 
-            scale: isInView ? 1 : 0
-          }}
-          transition={{ 
-            duration: 0.7, 
-            delay: 1.2,
-            ease: "backOut"
-          }}
+          animate={{ opacity: isInView ? 1 : 0, scale: isInView ? 1 : 0 }}
+          transition={{ duration: 0.7, delay: 1.2, ease: "backOut" }}
         >
           <motion.div 
             className="w-3 h-3 bg-accent rounded-full"
@@ -115,4 +111,4 @@ export default function Timeline({ isInView }: TimelineProps) {
       </div>
     </motion.div>
   );
-} 
+}

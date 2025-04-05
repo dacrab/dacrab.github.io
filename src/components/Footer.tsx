@@ -7,12 +7,6 @@ export default function Footer() {
 
   return (
     <footer className="bg-background relative overflow-hidden border-t border-border">
-      {/* Animated gradient elements */}
-      <div className="absolute inset-0 -z-10 opacity-20">
-        <div className="absolute bottom-0 left-1/4 w-1/3 aspect-square bg-accent-light/30 rounded-full filter blur-[100px] animate-pulse" style={{ animationDuration: '8s' }}></div>
-        <div className="absolute top-0 right-1/4 w-1/4 aspect-square bg-accent/30 rounded-full filter blur-[100px] animate-pulse" style={{ animationDuration: '10s', animationDelay: '1s' }}></div>
-      </div>
-
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-12">
           {/* About column */}

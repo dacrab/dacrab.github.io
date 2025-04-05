@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState, useEffect, useMemo } from "react";
+import { useRef, useState, useMemo } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useGitHubProjects } from "@/hooks/useGitHubProjects";
-import { Project, DEFAULT_PROJECTS, transformGitHubToProjects } from "./Projects/types";
+import { DEFAULT_PROJECTS, transformGitHubToProjects } from "./Projects/types";
 import SectionBackground from "./SectionBackground";
 
 // Import extracted components
@@ -37,7 +37,7 @@ export default function Projects() {
     minStars: 0
   });
   
-  // Custom projects to display for client sites with absolute priority
+  // Custom featured projects
   const customProjects = useMemo(() => [
     {
       id: 91,
@@ -53,32 +53,22 @@ export default function Projects() {
       tags: ["TypeScript", "Next.js", "Tailwind CSS", "React"],
       link: "https://designdash.gr",
     },
-  ], []); // Empty dependency array means this will only be calculated once
+  ], []);
   
-  // Original projects from GitHub API or fallback
-  const [originalProjects, setOriginalProjects] = useState<Project[]>([]);
-  
-  // Transform GitHub projects to our Project format on data change
-  useEffect(() => {
-    if (loading) return;
-    
-    if (error || githubProjects.length === 0) {
-      console.warn("Using fallback projects due to:", error?.message || "No GitHub projects found");
-      setOriginalProjects(DEFAULT_PROJECTS);
-      return;
+  // Process GitHub projects
+  const originalProjects = useMemo(() => {
+    if (loading || (error && githubProjects.length === 0)) {
+      return error || githubProjects.length === 0 ? DEFAULT_PROJECTS : [];
     }
     
-    // Transform GitHub projects to match the Project interface
-    const formattedProjects = transformGitHubToProjects(githubProjects);
-    
-    // Use up to 6 GitHub projects
-    setOriginalProjects(formattedProjects.slice(0, 6));
+    return transformGitHubToProjects(githubProjects).slice(0, 6);
   }, [githubProjects, loading, error]);
   
-  // Combine custom projects with original projects
-  const displayProjects = useMemo(() => {
-    return [...customProjects, ...originalProjects];
-  }, [originalProjects, customProjects]);
+  // Combine all projects for display
+  const displayProjects = useMemo(() => 
+    [...customProjects, ...originalProjects], 
+    [originalProjects, customProjects]
+  );
   
   return (
     <section 
@@ -161,7 +151,7 @@ export default function Projects() {
               </div>
             </motion.div>
             
-            {/* Additional projects grid - keep this section mostly intact */}
+            {/* Additional projects grid */}
             {originalProjects.length > 0 && (
               <div className="mt-16">
                 <motion.h3

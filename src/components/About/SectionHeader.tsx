@@ -1,25 +1,7 @@
 import TextAnimation from "../TextAnimation";
 import ScrollReveal from "../ScrollReveal";
-import { useMemo } from "react";
 
 export default function SectionHeader() {
-  // Generate fixed decorative dot patterns on the client side only
-  // This prevents hydration mismatch between server and client
-  const decorativeDots = useMemo(() => {
-    return Array.from({ length: 36 }).map((_, i) => {
-      // Use deterministic values based on index
-      const opacityBase = 0.5;
-      const opacityVariation = ((i % 7) / 10) + 0.1;
-      const scaleBase = 0.5;
-      const scaleVariation = ((i % 5) / 10) + 0.1;
-      
-      return {
-        opacity: opacityBase + opacityVariation,
-        scale: scaleBase + scaleVariation
-      };
-    });
-  }, []);
-  
   return (
     <ScrollReveal
       direction="up"
@@ -27,22 +9,6 @@ export default function SectionHeader() {
       duration={0.6}
       distance={30}
     >
-      {/* Decorative dots */}
-      <div className="absolute left-1/2 -translate-x-1/2 top-0 -translate-y-1/2 opacity-20">
-        <div className="w-44 h-16 grid grid-cols-12 grid-rows-3 gap-1.5">
-          {decorativeDots.map((dot, i) => (
-            <div 
-              key={i} 
-              className="rounded-full bg-accent/60"
-              style={{
-                opacity: dot.opacity,
-                transform: `scale(${dot.scale})`
-              }}
-            />
-          ))}
-        </div>
-      </div>
-      
       <div className="relative inline-block mb-4">
         <TextAnimation 
           text="About Me" 
@@ -65,4 +31,4 @@ export default function SectionHeader() {
       </div>
     </ScrollReveal>
   );
-} 
+}

@@ -10,16 +10,16 @@ export default function SectionHeader({ isInView }: SectionHeaderProps) {
   // Generate deterministic values for dots using useMemo
   const dotStyles = useMemo(() => {
     return Array.from({ length: 36 }).map((_, i) => {
-      // Use index-based calculations instead of Math.random()
-      const opacityBase = ((i % 5) + 1) / 5; // Will give values between 0.2 and 1.0
-      const scaleBase = ((i % 4) + 2) / 6;   // Will give values between 0.33 and 0.83
+      // Simple deterministic calculations based on index
+      const opacity = 0.5 + ((i % 5) / 10);  // Values between 0.5 and 0.9
+      const scale = 0.3 + ((i % 4) / 10);    // Values between 0.3 and 0.7
       
       return {
-        opacity: opacityBase * 0.5 + 0.5,
-        transform: `scale(${scaleBase})`
+        opacity,
+        transform: `scale(${scale})`
       };
     });
-  }, []); // Empty dependency array means this runs once
+  }, []);
 
   return (
     <div className="mb-16 text-center relative">

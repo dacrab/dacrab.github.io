@@ -39,24 +39,6 @@ export default function StaggerReveal({
   const ref = useRef(null);
   const isInView = useInView(ref, { amount: threshold, once });
 
-  // Get initial position based on direction
-  const getInitialPosition = () => {
-    switch (direction) {
-      case "up":
-        return { opacity: 0, y: distance };
-      case "down":
-        return { opacity: 0, y: -distance };
-      case "left":
-        return { opacity: 0, x: -distance };
-      case "right":
-        return { opacity: 0, x: distance };
-      case "none":
-        return { opacity: 0, scale: 0.95 };
-      default:
-        return { opacity: 0, y: distance };
-    }
-  };
-
   // Container variants for parent
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
@@ -71,7 +53,16 @@ export default function StaggerReveal({
 
   // Child variants for individual items
   const childVariants: Variants = {
-    hidden: getInitialPosition(),
+    hidden: (() => {
+      switch (direction) {
+        case "up": return { opacity: 0, y: distance };
+        case "down": return { opacity: 0, y: -distance };
+        case "left": return { opacity: 0, x: -distance };
+        case "right": return { opacity: 0, x: distance };
+        case "none": return { opacity: 0, scale: 0.95 };
+        default: return { opacity: 0, y: distance };
+      }
+    })(),
     visible: {
       opacity: 1,
       x: 0,
@@ -102,4 +93,4 @@ export default function StaggerReveal({
       ))}
     </motion.div>
   );
-} 
+}

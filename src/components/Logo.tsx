@@ -16,22 +16,16 @@ export default function Logo({ onClick, className = "", size = "md", showFullNam
   
   useEffect(() => {
     setMounted(true);
-    // Get initial window width
     setWindowWidth(window.innerWidth);
     
-    // Update window width on resize
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-    
+    const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   
-  // Determine if we should show the full name
-  const shouldShowFullName = showFullName && windowWidth >= 1024; // Only on large screens
+  // Only show full name on large screens when requested
+  const shouldShowFullName = showFullName && windowWidth >= 1024;
   
-  // Size mapping
   const sizeClasses = {
     sm: "text-xl",
     md: "text-2xl",
@@ -42,15 +36,10 @@ export default function Logo({ onClick, className = "", size = "md", showFullNam
     hidden: { opacity: 0 },
     visible: { 
       opacity: 1,
-      transition: { 
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 }
     },
     hover: {
-      transition: {
-        staggerChildren: 0.05
-      }
+      transition: { staggerChildren: 0.05 }
     }
   };
   
@@ -90,9 +79,7 @@ export default function Logo({ onClick, className = "", size = "md", showFullNam
     hover: {
       scale: 1.2,
       rotate: [0, 10, -10, 0],
-      transition: {
-        duration: 0.5
-      }
+      transition: { duration: 0.5 }
     }
   };
   
@@ -156,7 +143,7 @@ export default function Logo({ onClick, className = "", size = "md", showFullNam
         <div className="flex font-cursive text-125">
           {['V', 'a', 'g', 'g', 'e', 'l', 'i', 's'].map((letter, i) => (
             <motion.span
-              key={`first-${letter}-${i}`}
+              key={i}
               className="inline-block"
               variants={letterVariants}
               custom={i + 3}
@@ -179,7 +166,7 @@ export default function Logo({ onClick, className = "", size = "md", showFullNam
             <div className="flex font-cursive text-125">
               {['K', 'a', 'v', 'o', 'u', 'r', 'a', 's'].map((letter, i) => (
                 <motion.span
-                  key={`last-${letter}-${i}`}
+                  key={i}
                   className="inline-block text-foreground/70"
                   variants={letterVariants}
                   custom={i + 12}
@@ -193,4 +180,4 @@ export default function Logo({ onClick, className = "", size = "md", showFullNam
       </div>
     </motion.a>
   );
-} 
+}

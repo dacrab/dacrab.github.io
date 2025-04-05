@@ -7,22 +7,34 @@ interface LottieVisualizationProps {
 }
 
 export default function LottieVisualization({ isInView }: LottieVisualizationProps) {
+  // Common animation variants
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 10 },
+    visible: (delay: number) => ({
+      opacity: 1, 
+      y: 0,
+      transition: { duration: 0.5, delay }
+    })
+  };
+
   return (
     <div className="h-full flex flex-col justify-between">
       <motion.h3 
         className="text-2xl md:text-3xl font-bold mb-4"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 10 }}
-        transition={{ duration: 0.5 }}
+        variants={fadeInUp}
+        custom={0}
+        initial="hidden"
+        animate={isInView ? "visible" : "hidden"}
       >
         <span className="text-gradient">Developer Journey</span>
       </motion.h3>
       
       <motion.p
         className="text-muted max-w-lg mb-6"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: isInView ? 0.9 : 0, y: isInView ? 0 : 10 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
+        variants={fadeInUp}
+        custom={0.1}
+        initial="hidden"
+        animate={isInView ? "visible" : "hidden"}
       >
         A visual representation of my growth and experience in web development
       </motion.p>
@@ -31,7 +43,7 @@ export default function LottieVisualization({ isInView }: LottieVisualizationPro
       <div className="relative w-full aspect-square max-w-sm mx-auto mb-8">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: isInView ? 1 : 0, scale: isInView ? 1 : 0.9 }}
+          animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
           transition={{ 
             type: "spring",
             stiffness: 300,
@@ -67,28 +79,13 @@ export default function LottieVisualization({ isInView }: LottieVisualizationPro
       {/* Experience stats with number counter */}
       <motion.div 
         initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 15 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
         transition={{ duration: 0.6, delay: 0.5 }}
         className="grid grid-cols-3 gap-4"
       >
-        <StatsCard 
-          value={1}
-          label="Year"
-          delay={0.6}
-          isInView={isInView}
-        />
-        <StatsCard 
-          value={15}
-          label="Projects"
-          delay={0.7}
-          isInView={isInView}
-        />
-        <StatsCard 
-          value={10}
-          label="Skills"
-          delay={0.8}
-          isInView={isInView}
-        />
+        <StatsCard value={1} label="Year" delay={0.6} isInView={isInView} />
+        <StatsCard value={15} label="Projects" delay={0.7} isInView={isInView} />
+        <StatsCard value={10} label="Skills" delay={0.8} isInView={isInView} />
       </motion.div>
     </div>
   );

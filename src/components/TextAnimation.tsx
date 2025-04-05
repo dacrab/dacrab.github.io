@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
 
 interface TextAnimationProps {
   text: string;
@@ -23,39 +23,12 @@ export default function TextAnimation({
   color = "gradient-1"
 }: TextAnimationProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-  const [characters, setCharacters] = useState<string[]>([]);
-  const [wordArray, setWordArray] = useState<string[]>([]);
+  const isInView = useInView(ref, { amount: 0.2, once });
   
-  useEffect(() => {
-    setCharacters(text.split(""));
-    setWordArray(text.split(" "));
-  }, [text]);
+  // Split text into characters and words only when needed
+  const characters = text.split("");
+  const wordArray = text.split(" ");
   
-  useEffect(() => {
-    const currentRef = ref.current; // Store ref value in a variable
-    
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          if (once) observer.disconnect();
-        } else if (!once) {
-          setIsVisible(false);
-        }
-      },
-      { threshold: 0.2 }
-    );
-    
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-    
-    return () => {
-      if (currentRef) observer.disconnect();
-    };
-  }, [once]);
-
   // Character by character animation
   if (variant === "char-by-char") {
     return (
@@ -70,7 +43,7 @@ export default function TextAnimation({
           <motion.span
             key={`${char}-${index}`}
             initial={{ clipPath: "inset(0 100% 0 0)" }}
-            animate={isVisible ? { clipPath: "inset(0 0 0 0)" } : { clipPath: "inset(0 100% 0 0)" }}
+            animate={isInView ? { clipPath: "inset(0 0 0 0)" } : { clipPath: "inset(0 100% 0 0)" }}
             transition={{
               duration: duration,
               delay: delay + index * 0.04,
@@ -99,7 +72,7 @@ export default function TextAnimation({
           <motion.span
             key={`${word}-${index}`}
             initial={{ opacity: 0, y: 20, display: "inline-block" }}
-            animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{
               duration: duration,
               delay: delay + index * 0.1,
@@ -120,7 +93,7 @@ export default function TextAnimation({
       <div ref={ref} className={`relative overflow-hidden ${className}`}>
         <motion.div
           initial={{ width: "0%" }}
-          animate={isVisible ? { width: "100%" } : { width: "0%" }}
+          animate={isInView ? { width: "100%" } : { width: "0%" }}
           transition={{
             duration: duration * text.length * 0.08,
             delay,
@@ -146,7 +119,7 @@ export default function TextAnimation({
         <motion.span
           initial={{ backgroundPosition: "0% 50%" }}
           animate={
-            isVisible ? { backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] } : { backgroundPosition: "0% 50%" }
+            isInView ? { backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] } : { backgroundPosition: "0% 50%" }
           }
           transition={{
             duration: duration * 5,
@@ -168,7 +141,7 @@ export default function TextAnimation({
     <div ref={ref} className={`relative overflow-hidden ${className}`}>
       <motion.div
         initial={{ y: "100%", opacity: 0 }}
-        animate={isVisible ? { y: "0%", opacity: 1 } : { y: "100%", opacity: 0 }}
+        animate={isInView ? { y: "0%", opacity: 1 } : { y: "100%", opacity: 0 }}
         transition={{
           duration,
           delay,
@@ -179,4 +152,4 @@ export default function TextAnimation({
       </motion.div>
     </div>
   );
-} 
+}

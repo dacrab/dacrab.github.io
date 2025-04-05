@@ -9,11 +9,6 @@ export interface Project {
   link: string;
 }
 
-// Map of tech stacks to their descriptions
-export interface TechDescription {
-  [key: string]: string;
-}
-
 // Common props for project components
 export interface ProjectBaseProps {
   project: Project;
@@ -27,8 +22,6 @@ export interface ProjectBaseProps {
 
 // Color mapping for project tags
 export const getTagColor = (tag: string): string => {
-  if (!tag) return "var(--accent)";
-  
   const colorMap: Record<string, string> = {
     "JavaScript": "#f1e05a",
     "TypeScript": "#3178c6",
@@ -45,7 +38,7 @@ export const getTagColor = (tag: string): string => {
     "Ruby": "#701516"
   };
   
-  return colorMap[tag] || "var(--accent)";
+  return tag ? colorMap[tag] || "var(--accent)" : "var(--accent)";
 };
 
 // Transforms GitHub project data to our Project interface
@@ -93,7 +86,7 @@ export const DEFAULT_PROJECTS: Project[] = [
   },
 ];
 
-// Technology data with descriptions
+// Technology data
 export const TECHNOLOGIES = [
   "React",
   "Next.js",
@@ -103,11 +96,12 @@ export const TECHNOLOGIES = [
   "WebGL"
 ];
 
-export const TECH_DESCRIPTIONS: TechDescription = {
+// Technology descriptions
+export const TECH_DESCRIPTIONS: Record<string, string> = {
   "React": "Building interactive UIs with component-based architecture for efficient development and maintenance.",
   "Next.js": "Leveraging server-side rendering and static generation for optimal performance and SEO.",
   "TypeScript": "Ensuring type safety and improved developer experience with static typing.",
   "TailwindCSS": "Creating custom, responsive designs with utility-first CSS for rapid development.",
   "Framer Motion": "Implementing fluid animations and interactive elements that enhance user experience.",
   "WebGL": "Creating immersive 3D experiences and visualizations directly in the browser."
-}; 
+};
