@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useScroll } from "framer-motion";
 import Logo from "./Logo";
 import GlowEffect from "./GlowEffect";
 
-// Constants
+// Navigation items
 const NAV_ITEMS = [
   { label: "Home", href: "#home" },
   { label: "About", href: "#about" },
@@ -15,16 +15,20 @@ const NAV_ITEMS = [
 ];
 
 export default function Navbar() {
+  // State
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
   const [scrolled, setScrolled] = useState(false);
-  const { scrollY } = useScroll();
+  
+  // Refs
   const isClickNavigating = useRef(false);
   const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  const toggleMenu = () => setIsOpen(prev => !prev);
   
-  // Handle window resize
+  // Hooks
+  const { scrollY } = useScroll();
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  
+  // Close mobile menu on window resize
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768 && isOpen) {
@@ -36,7 +40,7 @@ export default function Navbar() {
     return () => window.removeEventListener("resize", handleResize);
   }, [isOpen]);
 
-  // Handle scroll events
+  // Update active section on scroll
   useEffect(() => {
     const updateScrollState = (y: number) => {
       setScrolled(y > 20);
@@ -61,7 +65,18 @@ export default function Navbar() {
     return scrollY.onChange(updateScrollState);
   }, [scrollY]);
 
-  // Handle navigation click
+  // Clean up timers on unmount
+  useEffect(() => {
+    return () => {
+      if (clickTimerRef.current) {
+        clearTimeout(clickTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Handlers
+  const toggleMenu = () => setIsOpen(prev => !prev);
+  
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     const targetId = href.substring(1);
@@ -69,6 +84,7 @@ export default function Navbar() {
     
     if (!targetElement) return;
     
+    // Close mobile menu first
     if (isOpen) setIsOpen(false);
     
     // Set active section immediately
@@ -82,77 +98,77 @@ export default function Navbar() {
       clearTimeout(clickTimerRef.current);
     }
     
-    // Scroll to target
-    targetElement.scrollIntoView({ behavior: 'smooth' });
-    
-    // Reset flag after animation completes
-    clickTimerRef.current = setTimeout(() => {
-      isClickNavigating.current = false;
-    }, 1000);
+    // Small delay to allow mobile menu to close before scrolling
+    setTimeout(() => {
+      window.scrollTo({
+        top: targetElement.offsetTop - 80, // Offset for navbar height
+        behavior: 'smooth'
+      });
+      
+      // Reset flag after animation completes
+      clickTimerRef.current = setTimeout(() => {
+        isClickNavigating.current = false;
+      }, 1000);
+    }, isOpen ? 300 : 0);
   };
 
-  // Clean up timers on unmount
-  useEffect(() => {
-    return () => {
-      if (clickTimerRef.current) {
-        clearTimeout(clickTimerRef.current);
-      }
-    };
-  }, []);
-
-  // Navbar styles
+  // Styles
   const navbarStyle = {
     backgroundColor: scrolled ? 'var(--card)' : 'transparent',
-    backdropFilter: scrolled ? 'blur(12px)' : 'none',
-    WebkitBackdropFilter: scrolled ? 'blur(12px)' : 'none',
+    backdropFilter: scrolled ? 'blur(10px)' : 'none',
+    WebkitBackdropFilter: scrolled ? 'blur(10px)' : 'none',
     borderBottom: scrolled ? '1px solid var(--border)' : 'none',
-    boxShadow: scrolled ? '0 4px 20px rgba(var(--foreground-rgb), 0.05)' : 'none',
-    opacity: scrolled ? 0.9 : 1,
+    boxShadow: scrolled ? '0 2px 10px rgba(var(--foreground-rgb), 0.05)' : 'none',
+    opacity: scrolled ? 0.95 : 1,
+    transition: 'all 0.25s ease-out'
   };
 
-  // Render navigation items
+  const animationProps = {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    transition: { duration: isMobile ? 0.2 : 0.3 }
+  };
+
+  // Component rendering functions
   const renderNavItem = (item: typeof NAV_ITEMS[0], index: number, isMobile = false) => {
     const isActive = activeSection === item.href.substring(1);
+    const delay = isMobile ? 0.05 * index : 0.1 * index;
+    const prefersReducedMotion = typeof window !== 'undefined' && 
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     
     return (
       <motion.div
         key={item.label}
-        initial={{ opacity: 0, [isMobile ? 'x' : 'y']: isMobile ? -20 : -10 }}
-        animate={{ opacity: 1, [isMobile ? 'x' : 'y']: 0 }}
-        transition={{ delay: index * 0.1 + (isMobile ? 0 : 0.3) }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay, duration: 0.2 }}
         className="relative"
       >
         <a
           href={item.href}
           onClick={(e) => handleNavClick(e, item.href)}
-          className={`${isMobile ? 'block py-3 px-4 rounded-lg my-1' : 'px-4 py-2 rounded-lg relative'} 
-            transition-all duration-300 ${
+          className={`${isMobile ? 'block py-2.5 px-4 rounded-lg my-1' : 'px-4 py-2 rounded-lg relative'} 
+            transition-all duration-200 ${
             isActive
               ? isMobile ? "bg-accent/10 text-accent" : "text-accent"
               : isMobile ? "hover:bg-accent/5" : "text-foreground hover:text-accent"
           }`}
         >
-          {!isMobile && isActive && (
+          {!isMobile && isActive && !prefersReducedMotion && (
             <motion.span
               layoutId="navIndicator"
               className="absolute inset-0 bg-accent/10 rounded-lg -z-10"
               transition={{ 
                 type: "spring", 
-                stiffness: 300, 
-                damping: 30,
-                layout: { duration: 0.3 }
+                stiffness: 200, 
+                damping: 25,
+                duration: 0.2
               }}
             />
           )}
           
-          {!isMobile && !isActive && (
-            <motion.span
-              className="absolute bottom-0.5 left-0 right-0 h-0.5 bg-accent/40 rounded"
-              initial={{ scaleX: 0, opacity: 0 }}
-              whileHover={{ scaleX: 1, opacity: 1 }}
-              transition={{ duration: 0.2 }}
-              style={{ originX: 0.5 }}
-            />
+          {!isMobile && isActive && prefersReducedMotion && (
+            <span className="absolute inset-0 bg-accent/10 rounded-lg -z-10" />
           )}
           
           {item.label}
@@ -163,12 +179,11 @@ export default function Navbar() {
 
   return (
     <motion.header 
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled ? "py-3" : "py-5"
+      className={`fixed top-0 left-0 w-full z-50 transition-all duration-250 ${
+        scrolled ? "py-2.5" : "py-4"
       }`}
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5 }}
+      {...animationProps}
+      transition={{ duration: 0.3 }}
       style={navbarStyle}
     >
       <div className="container mx-auto px-4 lg:px-8">
@@ -177,9 +192,9 @@ export default function Navbar() {
           <div className="relative">
             <GlowEffect 
               color="accent" 
-              intensity={0.2} 
-              size={1.3} 
-              pulseEffect={true}
+              intensity={0.15} 
+              size={1.2} 
+              pulseEffect={!isMobile}
               shape="blob" 
             >
               <Logo 
@@ -202,11 +217,11 @@ export default function Navbar() {
             
             {/* CTA Button */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.8, type: "spring" }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5, duration: 0.3 }}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
             >
               <a
                 href="#contact"
@@ -222,6 +237,7 @@ export default function Navbar() {
           <button
             onClick={toggleMenu}
             className="md:hidden text-foreground p-2 rounded-lg hover:bg-accent/10 transition-colors"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
           >
             <svg 
               width="24" 
@@ -229,7 +245,8 @@ export default function Navbar() {
               viewBox="0 0 24 24" 
               fill="none" 
               xmlns="http://www.w3.org/2000/svg"
-              className={`transform transition-transform duration-300 ${isOpen ? "rotate-90" : ""}`}
+              className="transition-transform duration-200"
+              style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}
             >
               <path 
                 d={isOpen ? "M18 6L6 18M6 6L18 18" : "M4 6H20M4 12H20M4 18H20"} 
@@ -250,8 +267,8 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden overflow-hidden bg-card/80 backdrop-blur-md border border-border mx-4 mt-2 rounded-xl shadow-lg"
+            transition={{ duration: 0.25 }}
+            className="md:hidden overflow-hidden bg-card/90 backdrop-blur-md border border-border mx-4 mt-2 rounded-xl shadow-md"
           >
             <div className="px-4 py-2">
               {NAV_ITEMS.map((item, index) => renderNavItem(item, index, true))}
@@ -259,10 +276,10 @@ export default function Navbar() {
               <motion.a
                 href="#contact"
                 onClick={(e) => handleNavClick(e, "#contact")}
-                className="block py-3 px-4 mt-3 mb-1 bg-accent text-white rounded-lg text-center"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.5 }}
+                className="block py-2.5 px-4 mt-3 mb-1 bg-accent text-white rounded-lg text-center"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3, duration: 0.2 }}
                 whileTap={{ scale: 0.98 }}
               >
                 Hire Me
