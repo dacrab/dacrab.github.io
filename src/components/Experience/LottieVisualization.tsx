@@ -1,26 +1,28 @@
 import { motion } from "framer-motion";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import NumberCounter from "./NumberCounter";
+import { memo } from "react";
 
 interface LottieVisualizationProps {
   isInView: boolean;
 }
 
-export default function LottieVisualization({ isInView }: LottieVisualizationProps) {
-  // Common animation variants
+// Memoize the component to prevent unnecessary re-renders
+const LottieVisualization = memo(function LottieVisualization({ isInView }: LottieVisualizationProps) {
+  // Simplified animation variants for better mobile performance
   const fadeInUp = {
-    hidden: { opacity: 0, y: 10 },
+    hidden: { opacity: 0, y: 8 },
     visible: (delay: number) => ({
       opacity: 1, 
       y: 0,
-      transition: { duration: 0.5, delay }
+      transition: { duration: 0.4, delay }
     })
   };
 
   return (
     <div className="h-full flex flex-col justify-between">
       <motion.h3 
-        className="text-2xl md:text-3xl font-bold mb-4"
+        className="text-2xl md:text-3xl font-bold mb-3"
         variants={fadeInUp}
         custom={0}
         initial="hidden"
@@ -30,7 +32,7 @@ export default function LottieVisualization({ isInView }: LottieVisualizationPro
       </motion.h3>
       
       <motion.p
-        className="text-muted max-w-lg mb-6"
+        className="text-muted max-w-lg mb-5"
         variants={fadeInUp}
         custom={0.1}
         initial="hidden"
@@ -39,18 +41,16 @@ export default function LottieVisualization({ isInView }: LottieVisualizationPro
         A visual representation of my growth and experience in web development
       </motion.p>
       
-      {/* Lottie animation with enhanced styling */}
-      <div className="relative w-full aspect-square max-w-sm mx-auto mb-8">
+      {/* Lottie animation - simplified for mobile */}
+      <div className="relative w-full aspect-square max-w-sm mx-auto mb-6">
         <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
           transition={{ 
-            type: "spring",
-            stiffness: 300,
-            damping: 15,
-            delay: 0.3
+            duration: 0.5,
+            delay: 0.2
           }}
-          whileHover={{ scale: 1.03 }}
+          whileHover={{ scale: 1.02 }}
           className="w-full h-full"
         >
           <DotLottieReact
@@ -61,35 +61,29 @@ export default function LottieVisualization({ isInView }: LottieVisualizationPro
           />
         </motion.div>
         
-        {/* Subtle glow effects */}
+        {/* Subtle glow effect - simplified and hidden on mobile */}
         <motion.div 
-          className="absolute inset-0 -z-10 rounded-full bg-accent/10 blur-3xl opacity-60"
-          animate={{
-            scale: [0.8, 1.1, 0.8],
-            opacity: [0.4, 0.6, 0.4]
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            repeatType: "mirror"
-          }}
+          className="absolute inset-0 -z-10 rounded-full bg-accent/10 blur-2xl opacity-40 hidden md:block"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isInView ? 0.4 : 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
         />
       </div>
       
-      {/* Experience stats with number counter */}
+      {/* Experience stats with number counter - simplified */}
       <motion.div 
-        initial={{ opacity: 0, y: 15 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 15 }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-        className="grid grid-cols-3 gap-4"
+        initial={{ opacity: 0, y: 10 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+        className="grid grid-cols-3 gap-3"
       >
-        <StatsCard value={1} label="Year" delay={0.6} isInView={isInView} />
-        <StatsCard value={15} label="Projects" delay={0.7} isInView={isInView} />
-        <StatsCard value={10} label="Skills" delay={0.8} isInView={isInView} />
+        <StatsCard value={1} label="Year" delay={0.5} isInView={isInView} />
+        <StatsCard value={15} label="Projects" delay={0.55} isInView={isInView} />
+        <StatsCard value={10} label="Skills" delay={0.6} isInView={isInView} />
       </motion.div>
     </div>
   );
-}
+});
 
 interface StatsCardProps {
   value: number;
@@ -98,36 +92,35 @@ interface StatsCardProps {
   isInView: boolean;
 }
 
-function StatsCard({ value, label, delay, isInView }: StatsCardProps) {
+// Memoize StatsCard for better performance
+const StatsCard = memo(function StatsCard({ value, label, delay, isInView }: StatsCardProps) {
   return (
     <motion.div 
-      className="bg-card/30 backdrop-blur-sm border border-border/30 rounded-xl py-4 px-3 text-center relative overflow-hidden group"
+      className="bg-card/30 backdrop-blur-sm border border-border/30 rounded-xl py-3 px-2 text-center relative overflow-hidden group"
       whileHover={{ 
-        y: -5, 
+        y: -2, 
         borderColor: "rgba(var(--accent-rgb), 0.3)"
       }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.2 }}
     >
-      {/* Background highlight */}
-      <motion.div
-        className="absolute inset-0 -z-10 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100"
-        transition={{ duration: 0.3 }}
+      {/* Simplified background highlight */}
+      <div 
+        className="absolute inset-0 -z-10 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200"
       />
       
       <NumberCounter
         end={value}
-        duration={1.5}
+        duration={1}
         delay={delay}
         suffix="+"
         isInView={isInView}
-        className="text-xl md:text-2xl font-bold text-accent"
+        className="text-xl font-bold text-accent"
       />
-      <motion.div 
-        className="text-sm text-muted mt-1 group-hover:text-accent/80"
-        transition={{ duration: 0.3 }}
-      >
+      <div className="text-xs md:text-sm text-muted mt-1 group-hover:text-accent/80 transition-colors duration-200">
         {label}
-      </motion.div>
+      </div>
     </motion.div>
   );
-} 
+});
+
+export default LottieVisualization; 

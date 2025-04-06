@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, memo } from 'react';
 import { motion } from 'framer-motion';
 
 interface NumberCounterProps {
@@ -10,7 +10,8 @@ interface NumberCounterProps {
   className?: string;
 }
 
-export default function NumberCounter({
+// Memoize the component to prevent unnecessary re-renders
+const NumberCounter = memo(function NumberCounter({
   end,
   duration,
   delay = 0,
@@ -25,7 +26,7 @@ export default function NumberCounter({
     // Reset counter when not in view
     if (!isInView) {
       setCount(0);
-      return;
+      return () => cancelAnimationFrame(animationRef.current);
     }
     
     const startTime = Date.now() + delay * 1000;
@@ -43,7 +44,7 @@ export default function NumberCounter({
       const progress = Math.min(elapsed / (duration * 1000), 1);
       
       // Simple easing function for smoother animation
-      const easedProgress = progress * (2 - progress);
+      const easedProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
       const currentCount = Math.floor(easedProgress * end);
       
       setCount(currentCount);
@@ -61,18 +62,20 @@ export default function NumberCounter({
     return () => cancelAnimationFrame(animationRef.current);
   }, [end, duration, delay, isInView]);
   
+  // Simplified animation for better mobile performance
   return (
     <motion.div
       className={className}
-      initial={{ opacity: 0, scale: 0.8 }}
+      initial={{ opacity: 0 }}
       animate={{ 
-        opacity: isInView ? 1 : 0, 
-        scale: isInView ? 1 : 0.8,
-        y: isInView ? 0 : 10
+        opacity: isInView ? 1 : 0,
+        y: isInView ? 0 : 5
       }}
-      transition={{ duration: 0.4, delay }}
+      transition={{ duration: 0.3, delay }}
     >
       {count}{suffix}
     </motion.div>
   );
-}
+});
+
+export default NumberCounter;

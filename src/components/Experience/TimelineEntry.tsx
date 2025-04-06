@@ -1,158 +1,152 @@
 import { motion } from "framer-motion";
-import { TimelineEntryProps } from "./types";
-import NumberCounter from "./NumberCounter";
+import { memo } from "react";
 
-export default function TimelineEntry({ 
-  position, 
-  date, 
-  company, 
-  title, 
-  description, 
-  technologies, 
-  isInView, 
-  index 
+export interface TimelineEntryProps {
+  position: "left" | "right";
+  desktopPosition?: "left" | "right"; // Added for responsive positioning
+  date: string;
+  company: string;
+  title: string;
+  description: string[];
+  technologies: string[];
+  isInView: boolean;
+  index: number;
+}
+
+// Memoize the component to prevent unnecessary re-renders
+const TimelineEntry = memo(function TimelineEntry({
+  position,
+  desktopPosition,
+  date,
+  company,
+  title,
+  description,
+  technologies,
+  isInView,
+  index
 }: TimelineEntryProps) {
-  // Common animation props
-  const fadeIn = (delay: number) => ({
-    initial: { opacity: 0 },
-    animate: { opacity: isInView ? 1 : 0 },
-    transition: { duration: 0.4, delay: delay + (index * 0.1) }
-  });
+  // Use desktop position (if provided) for md+ screens, otherwise use position
+  const effectivePosition = desktopPosition || position;
   
-  const slideIn = (delay: number, direction: number = 0) => ({
-    initial: { opacity: 0, x: direction },
-    animate: { opacity: isInView ? 1 : 0, x: isInView ? 0 : direction },
-    transition: { duration: 0.4, delay: delay + (index * 0.1) }
-  });
+  // Base styling for responsive approach - always right aligned on mobile
+  // Only use left/right positioning on desktop screens
+  const containerClasses = `relative flex flex-row items-start
+    ${effectivePosition === "left" ? "md:flex-row-reverse" : ""}
+    mb-2
+  `;
 
-  const isLeftPosition = position === 'left';
-  const positionClasses = isLeftPosition 
-    ? 'md:pr-16 md:text-right md:self-end md:items-end md:w-1/2' 
-    : 'md:pl-16 md:w-1/2 md:ml-auto';
+  const contentClasses = `
+    bg-card/40 backdrop-blur-sm rounded-lg border border-border/20
+    shadow-sm p-4 md:p-5 flex-grow 
+    ml-6 md:ml-0 md:mr-0
+    ${effectivePosition === "left" ? "md:ml-6" : "md:mr-6"}
+    relative
+  `;
 
+  // Dot indicator styles - adaptive for mobile
+  const dotClasses = `
+    absolute z-10
+    left-0 md:left-auto
+    ${effectivePosition === "left" ? "md:right-0" : "md:left-0"}
+    top-2 md:top-5
+    w-3 h-3 md:w-4 md:h-4 rounded-full bg-accent/20 border border-accent/50
+    flex items-center justify-center
+    transform md:translate-x-0
+    ${effectivePosition === "left" ? "md:translate-x-1/2" : "md:translate-x-[-50%]"}
+  `;
+
+  // Date indicator styles - hidden on mobile, visible in desktop
+  const dateClasses = `
+    hidden md:flex items-center
+    min-w-[130px] md:w-[160px]
+    ${effectivePosition === "left" ? "justify-start" : "justify-end"}
+    text-sm md:text-base text-muted
+  `;
+  
+  // Mobile date display - visible only on mobile at the top of the card
+  const mobileDateClasses = `
+    inline-block md:hidden 
+    text-xs text-muted
+    mb-2 bg-card/50 px-2 py-0.5 rounded
+  `;
+
+  // Simplified delay calculation for better mobile performance
+  const delayBase = 0.2;
+  const delayStep = Math.min(index, 3) * 0.05;
+  
   return (
-    <div className="relative flex flex-col md:flex-row items-start gap-x-8">
-      {/* Timeline center point */}
-      <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 top-0 flex flex-col items-center z-10">
-        <motion.div 
-          className="w-10 h-10 rounded-full bg-card backdrop-blur-sm border border-accent/40 flex items-center justify-center shadow-md"
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: isInView ? 1 : 0, opacity: isInView ? 1 : 0 }}
-          transition={{ 
-            type: "spring",
-            stiffness: 300,
-            damping: 15,
-            delay: 0.2 + (index * 0.1)
-          }}
-        >
-          <NumberCounter
-            end={index + 1}
-            duration={1}
-            delay={0.3 + (index * 0.15)}
-            isInView={isInView}
-            className="text-accent font-bold"
-          />
-        </motion.div>
-
-        {/* Date display */}
+    <motion.div className={containerClasses}>
+      {/* Timeline entry dot/marker */}
+      <div className={dotClasses}>
         <motion.div
-          className="mt-3 text-xs font-medium bg-accent/10 backdrop-blur-sm border border-accent/20 rounded-full px-3 py-1 shadow-sm"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 10 }}
-          transition={{ duration: 0.4, delay: 0.3 + (index * 0.1) }}
-        >
-          {date}
-        </motion.div>
+          className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-accent"
+          initial={{ scale: 0 }}
+          animate={{ scale: isInView ? 1 : 0 }}
+          transition={{ duration: 0.3, delay: delayBase + delayStep }}
+        />
+      </div>
+
+      {/* Desktop date display */}
+      <div className={dateClasses}>
+        <span>{date}</span>
       </div>
 
       {/* Content card */}
-      <div className={`pl-16 md:pl-0 ${positionClasses}`}>
-        <motion.div 
-          className="bg-card/40 backdrop-blur-sm border border-border/30 rounded-xl p-6 md:p-8 shadow-lg relative overflow-hidden group"
-          initial={{ opacity: 0, x: isLeftPosition ? 20 : -20 }}
-          animate={{ opacity: isInView ? 1 : 0, x: isInView ? 0 : (isLeftPosition ? 20 : -20) }}
-          transition={{ 
-            type: "spring",
-            stiffness: 300,
-            damping: 20,
-            delay: 0.3 + (index * 0.1)
-          }}
-          whileHover={{ 
-            y: -5,
-            boxShadow: "0 15px 30px -10px rgba(var(--accent-rgb), 0.15)",
-            borderColor: "rgba(var(--accent-rgb), 0.3)",
-            transition: { duration: 0.3 }
-          }}
+      <div className={contentClasses}>
+        {/* Mobile date display */}
+        <span className={mobileDateClasses}>{date}</span>
+        
+        <motion.h4
+          className="text-base md:text-lg font-bold mb-1"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isInView ? 1 : 0 }}
+          transition={{ duration: 0.3, delay: delayBase + 0.1 + delayStep }}
         >
-          {/* Card content */}
-          <div className="relative z-10">
-            <motion.div 
-              {...fadeIn(0.4)}
-              className="mb-4"
+          {title}
+        </motion.h4>
+
+        <motion.h5
+          className="text-sm md:text-base text-accent mb-3"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isInView ? 1 : 0 }}
+          transition={{ duration: 0.3, delay: delayBase + 0.15 + delayStep }}
+        >
+          {company}
+        </motion.h5>
+
+        <motion.div
+          className="text-muted text-sm space-y-2 mb-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isInView ? 1 : 0 }}
+          transition={{ duration: 0.3, delay: delayBase + 0.2 + delayStep }}
+        >
+          {description.map((paragraph, i) => (
+            <p key={i} className="flex items-start">
+              <span className="text-accent mr-2 text-lg leading-tight">•</span>
+              <span>{paragraph}</span>
+            </p>
+          ))}
+        </motion.div>
+
+        {/* Technology tags */}
+        <motion.div
+          className="flex flex-wrap gap-1.5"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isInView ? 1 : 0 }}
+          transition={{ duration: 0.3, delay: delayBase + 0.25 + delayStep }}
+        >
+          {technologies.map((tech) => (
+            <span
+              key={tech}
+              className="text-xs px-2 py-0.5 rounded-md border border-border/20 bg-card/40 text-muted"
             >
-              <h3 className="text-xl font-bold text-gradient mb-1">{title}</h3>
-              <p className="text-accent/90 font-medium">{company}</p>
-            </motion.div>
-            
-            {/* Description points */}
-            <ul className="list-none space-y-2 mb-6 text-muted">
-              {description.map((item, i) => (
-                <motion.li 
-                  key={i}
-                  className="relative pl-6 text-sm group"
-                  {...slideIn(0.5 + (i * 0.08), isLeftPosition ? 10 : -10)}
-                >
-                  <motion.div 
-                    className="absolute left-0 top-[0.45em] w-3 h-3 rounded-full bg-accent/10 border border-accent/20 group-hover:bg-accent/20 transition-colors duration-300"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: isInView ? 1 : 0 }}
-                    transition={{ duration: 0.3, delay: 0.5 + (index * 0.1) + (i * 0.1) }}
-                  >
-                    <motion.div 
-                      className="absolute inset-1 rounded-full bg-accent/40"
-                      initial={{ scale: 0 }}
-                      animate={{ scale: isInView ? 1 : 0 }}
-                      transition={{ duration: 0.4, delay: 0.55 + (index * 0.1) + (i * 0.1) }}
-                    />
-                  </motion.div>
-                  <span className="group-hover:text-foreground transition-colors duration-300">{item}</span>
-                </motion.li>
-              ))}
-            </ul>
-            
-            {/* Technologies */}
-            <motion.div 
-              {...fadeIn(0.6)}
-              className={`flex flex-wrap gap-2 ${isLeftPosition ? 'md:justify-end' : ''}`}
-            >
-              {technologies.map((skill, i) => (
-                <motion.span
-                  key={skill}
-                  className="px-3 py-1 bg-accent/10 backdrop-blur-sm border border-accent/20 rounded-full text-xs font-medium shadow-sm"
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: isInView ? 1 : 0, scale: isInView ? 1 : 0.8 }}
-                  transition={{ duration: 0.3, delay: 0.7 + (i * 0.05) }}
-                  whileHover={{ 
-                    scale: 1.05, 
-                    backgroundColor: "rgba(var(--accent-rgb), 0.2)",
-                    y: -2
-                  }}
-                >
-                  {skill}
-                </motion.span>
-              ))}
-            </motion.div>
-          </div>
-          
-          {/* Background gradient effect */}
-          <motion.div 
-            className="absolute inset-0 -z-10 bg-gradient-to-br from-transparent to-accent/5"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-          />
+              {tech}
+            </span>
+          ))}
         </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
-}
+});
+
+export default TimelineEntry;

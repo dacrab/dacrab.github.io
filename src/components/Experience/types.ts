@@ -11,6 +11,7 @@ export interface ExperienceItem {
 // Timeline entry props interface
 export interface TimelineEntryProps {
   position: 'left' | 'right';
+  desktopPosition?: 'left' | 'right';
   date: string;
   company: string;
   title: string;

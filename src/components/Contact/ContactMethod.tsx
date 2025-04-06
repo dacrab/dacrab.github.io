@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, memo } from "react";
 import { motion } from "framer-motion";
 
 interface ContactMethodProps {
@@ -11,105 +11,90 @@ interface ContactMethodProps {
   isInView: boolean;
 }
 
-export default function ContactMethod({
+// Memoize the component to prevent unnecessary re-renders
+const ContactMethod = memo(function ContactMethod({
   title,
   value,
   icon,
   index,
   isInView,
 }: ContactMethodProps) {
-  // Base animation delay calculation
-  const baseDelay = 0.3;
-  const delayIncrement = 0.12;
+  // Simplified animation timing for better performance
+  const baseDelay = 0.2;
+  const delayIncrement = 0.1;
+  const delay = baseDelay + (Math.min(index, 2) * delayIncrement); // Cap delay for better mobile
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ 
         opacity: isInView ? 1 : 0, 
-        y: isInView ? 0 : 15 
+        y: isInView ? 0 : 10 
       }}
       transition={{ 
-        duration: 0.6, 
-        delay: baseDelay + (index * delayIncrement) 
+        duration: 0.5, 
+        delay
       }}
       className="group"
     >
-      <div className="flex items-center gap-5">
-        {/* Icon container with hover effect */}
+      <div className="flex items-center gap-4">
+        {/* Icon container with simplified hover effect */}
         <motion.div 
-          className="flex-shrink-0 w-14 h-14 rounded-xl backdrop-blur-md border border-border/20 flex items-center justify-center relative overflow-hidden"
+          className="flex-shrink-0 w-12 h-12 rounded-xl backdrop-blur-md border border-border/20 flex items-center justify-center relative overflow-hidden"
           style={{ background: "rgba(var(--card-rgb), 0.4)" }}
           whileHover={{ 
             scale: 1.05, 
             borderColor: 'var(--accent)',
-            transition: { duration: 0.3 }
+            transition: { duration: 0.2 }
           }}
         >
-          {/* Subtle glow effect on hover */}
+          {/* Subtle glow effect on hover - simplified */}
           <motion.div 
-            className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            animate={{
-              boxShadow: `inset 0 0 ${index % 2 === 0 ? '20px rgba(var(--accent-rgb), 0.15)' : '15px rgba(var(--accent-rgb), 0.1)'}`
-            }}
-            transition={{ 
-              duration: 2,
-              repeat: Infinity,
-              repeatType: "reverse",
-              delay: index
-            }}
+            className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
           />
           
-          {/* Icon with subtle animation */}
+          {/* Icon with simple animation */}
           <motion.div
-            className="relative z-10"
-            initial={{ scale: 0.9 }}
+            className="relative z-10 text-foreground group-hover:text-accent transition-colors duration-200"
+            initial={{ scale: 0.95 }}
             animate={{ scale: 1 }}
             transition={{ 
-              duration: 0.5,
-              delay: baseDelay + 0.1 + (index * delayIncrement)
+              duration: 0.4,
+              delay: delay + 0.1
             }}
             whileHover={{ scale: 1.1 }}
           >
-            <motion.div
-              animate={{ color: ['var(--foreground)', 'var(--accent)', 'var(--foreground)'] }}
-              transition={{ 
-                duration: 4, 
-                repeat: Infinity,
-                repeatType: 'reverse',
-                delay: index
-              }}
-            >
-              {icon}
-            </motion.div>
+            {icon}
           </motion.div>
         </motion.div>
         
-        {/* Text content with hover effects */}
+        {/* Text content with simplified animations */}
         <div className="flex-1">
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: isInView ? 0.8 : 0 }}
             transition={{ 
-              duration: 0.5,
-              delay: baseDelay + 0.2 + (index * delayIncrement)
+              duration: 0.4,
+              delay: delay + 0.1
             }}
           >
-            <h4 className="text-sm text-muted mb-1 group-hover:text-accent/80 transition-colors duration-300">{title}</h4>
+            <h4 className="text-sm text-muted mb-1 group-hover:text-accent/80 transition-colors duration-200">{title}</h4>
           </motion.div>
           
           <motion.div
-            initial={{ x: -10, opacity: 0 }}
-            animate={{ x: isInView ? 0 : -10, opacity: isInView ? 1 : 0 }}
+            initial={{ x: -5, opacity: 0 }}
+            animate={{ x: isInView ? 0 : -5, opacity: isInView ? 1 : 0 }}
             transition={{ 
-              duration: 0.4,
-              delay: baseDelay + 0.3 + (index * delayIncrement)
+              duration: 0.3,
+              delay: delay + 0.2
             }}
           >
-            <p className="text-lg font-medium group-hover:text-accent transition-colors duration-300">{value}</p>
+            <p className="text-lg font-medium group-hover:text-accent transition-colors duration-200">{value}</p>
           </motion.div>
         </div>
       </div>
     </motion.div>
   );
-}
+});
+
+export default ContactMethod;

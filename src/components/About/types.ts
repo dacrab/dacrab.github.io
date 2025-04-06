@@ -5,10 +5,10 @@ export interface Skill {
   url: string;
 }
 
+export type SkillCategoryKey = 'frontend' | 'backend' | 'tools';
+
 export interface SkillCategory {
-  frontend: Skill[];
-  backend: Skill[];
-  tools: Skill[];
+  [key: string]: Skill[];
 }
 
 // Skill data organized by category
@@ -32,4 +32,7 @@ export const SKILLS_BY_CATEGORY: SkillCategory = {
     { name: "Docker", icon: "https://cdn.simpleicons.org/docker/2496ED", url: "https://www.docker.com/" },
     { name: "Vercel", icon: "https://cdn.simpleicons.org/vercel/000000/FFFFFF", url: "https://vercel.com/" }
   ]
-}; 
+};
+
+// Light icons that need special treatment in dark/light mode
+export const ADAPTIVE_COLOR_ICONS = ["Next.js", "GitHub", "Vercel"]; 

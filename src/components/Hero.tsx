@@ -263,7 +263,10 @@ export default function Hero() {
   };
 
   const downloadCV = (language: string) => {
-    const filename = language === 'english' ? 'CV_English.pdf' : 'CV_Greek.pdf';
+    const filename = language === 'english' 
+      ? 'CV_Vaggelis_Kavouras_English.pdf' 
+      : 'CV_Vaggelis_Kavouras_Greek.pdf';
+    
     const link = document.createElement('a');
     link.href = `/assets/cv/${filename}`;
     link.download = filename;
@@ -326,7 +329,7 @@ export default function Hero() {
                 transition={{ duration: 0.6, delay: 0.1 }}
               >
                 <TextAnimation 
-                  text="Hello, I'm a"
+                  text="Hello, I'm"
                   variant="typewriter"
                   className="inline-block"
                   delay={0.5}
@@ -342,7 +345,7 @@ export default function Hero() {
                   transition={{ duration: 0.7, delay: 0.8 }}
                 >
                   <TextAnimation 
-                    text="Junior Web Developer"
+                    text="Vaggelis Kavouras"
                     variant="reveal"
                     className="block text-4xl md:text-5xl lg:text-6xl font-bold"
                     delay={0.1}
@@ -359,7 +362,7 @@ export default function Hero() {
                 transition={{ duration: 0.6, delay: 1.3 }}
               >
                 <TextAnimation 
-                  text="Crafting modern web experiences with Next.js, TypeScript, and Tailwind CSS. Passionate about learning UI/UX design and cutting-edge animations."
+                  text="Junior Web Developer.Crafting modern web experiences with Next.js, TypeScript, and Tailwind CSS. Passionate about learning UI/UX design and cutting-edge animations."
                   variant="split"
                   className="text-base md:text-lg"
                   delay={0.1}

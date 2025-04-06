@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, memo } from "react";
 import { motion } from "framer-motion";
 import { ProjectBaseProps, getTagColor } from "./types";
 
@@ -6,26 +6,28 @@ interface FeaturedProjectProps extends ProjectBaseProps {
   reversed?: boolean;
 }
 
-export default function FeaturedProject({ 
+// Memoize the component to prevent unnecessary re-renders
+const FeaturedProject = memo(function FeaturedProject({ 
   project, 
   isInView, 
   delay, 
-  reversed = false 
+  reversed = false,
+  index = 0
 }: FeaturedProjectProps) {
   const containerRef = useRef(null);
   
-  // Common animation props
+  // Simplified animation props with delay capping for better mobile performance
   const fadeIn = (delayOffset: number = 0) => ({
-    initial: { opacity: 0, y: 10 },
-    animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : 10 },
-    transition: { duration: 0.5, delay: delay + delayOffset }
+    initial: { opacity: 0, y: 8 },
+    animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : 8 },
+    transition: { duration: 0.4, delay: delay + delayOffset + (Math.min(index, 2) * 0.05) }
   });
   
   // Layout classes based on reversed prop
   const layoutClasses = {
     grid: `grid grid-cols-1 lg:grid-cols-12 ${reversed ? 'lg:grid-flow-dense' : ''}`,
-    metaSection: `p-6 md:p-8 lg:col-span-4 ${reversed ? 'lg:col-start-9' : 'lg:col-start-1'} relative flex flex-col justify-between`,
-    contentSection: `p-6 md:p-8 border-t lg:border-t-0 ${reversed ? 'lg:border-r' : 'lg:border-l'} border-border/20 lg:col-span-8 ${reversed ? 'lg:col-start-1' : 'lg:col-start-5'} bg-card/20 flex flex-col justify-between`
+    metaSection: `p-5 md:p-6 lg:col-span-4 ${reversed ? 'lg:col-start-9' : 'lg:col-start-1'} relative flex flex-col justify-between`,
+    contentSection: `p-5 md:p-6 border-t lg:border-t-0 ${reversed ? 'lg:border-r' : 'lg:border-l'} border-border/20 lg:col-span-8 ${reversed ? 'lg:col-start-1' : 'lg:col-start-5'} bg-card/20 flex flex-col justify-between`
   };
   
   // Primary tag color
@@ -36,21 +38,21 @@ export default function FeaturedProject({
   return (
     <motion.div
       ref={containerRef}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 20 }}
-      transition={{ duration: 0.7, delay }}
-      className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden group hover:border-accent/30 transition-all duration-500 shadow-md hover:shadow-xl relative"
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 15 }}
+      transition={{ duration: 0.5, delay }}
+      className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden group hover:border-accent/30 transition-all duration-300 shadow-md relative"
     >
       <div className={layoutClasses.grid}>
         {/* Project Metadata Section */}
         <div className={layoutClasses.metaSection}>
-          {/* Background highlight */}
-          <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          {/* Simplified background highlight */}
+          <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           
           {/* Project number with dot */}
-          <div className="mb-6 flex items-center gap-3">
+          <div className="mb-5 flex items-center gap-3">
             <div 
-              className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium border border-accent/30 bg-card/50 shadow-sm"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium border border-accent/30 bg-card/50"
               style={primaryTagColor ? { color: primaryTagColor } : undefined}
             >
               {String(project.id).padStart(2, '0')}
@@ -63,9 +65,9 @@ export default function FeaturedProject({
           
           {/* Primary language/tech tag */}
           {primaryTagColor && (
-            <div className="mb-4">
+            <div className="mb-3">
               <span 
-                className="text-xs uppercase tracking-wider font-medium px-3 py-1 rounded-full"
+                className="text-xs uppercase tracking-wider font-medium px-2.5 py-0.5 rounded-full"
                 style={{ 
                   backgroundColor: `${primaryTagColor}15`, 
                   color: primaryTagColor,
@@ -78,19 +80,19 @@ export default function FeaturedProject({
           )}
           
           <motion.h3
-            {...fadeIn(0.2)}
-            className="text-xl font-bold mb-4 group-hover:text-accent transition-colors duration-300"
+            {...fadeIn(0.1)}
+            className="text-lg md:text-xl font-bold mb-3 group-hover:text-accent transition-colors duration-200"
           >
             {project.title}
           </motion.h3>
           
           <div className="mt-auto">
-            {/* Secondary tags */}
-            <div className="flex flex-wrap gap-2 mt-4">
+            {/* Secondary tags - limited to 3 */}
+            <div className="flex flex-wrap gap-1.5 mt-3">
               {project.tags.slice(1, 4).map(tag => (
                 <span 
                   key={tag} 
-                  className="text-xs px-2 py-1 rounded-md border border-border/20 bg-card/40 text-muted shadow-sm"
+                  className="text-xs px-2 py-0.5 rounded-md border border-border/20 bg-card/40 text-muted"
                 >
                   {tag}
                 </span>
@@ -102,23 +104,23 @@ export default function FeaturedProject({
         {/* Project Description + Link Section */}
         <div className={layoutClasses.contentSection}>
           <motion.p 
-            className="text-muted mb-6"
-            {...fadeIn(0.3)}
+            className="text-muted mb-5 text-sm md:text-base"
+            {...fadeIn(0.2)}
           >
             {project.description}
           </motion.p>
           
           <motion.div
-            {...fadeIn(0.4)}
+            {...fadeIn(0.3)}
             className="mt-auto"
           >
             <a 
               href={project.link} 
-              className="inline-flex items-center px-4 py-2 rounded-lg bg-accent/10 text-accent hover:bg-accent/20 transition-colors border border-accent/20 shadow-sm group-hover:shadow-md"
+              className="inline-flex items-center px-3 py-1.5 rounded-lg bg-accent/10 text-accent hover:bg-accent/20 transition-colors border border-accent/20 text-sm font-medium"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span className="mr-2 font-medium">View Project</span>
+              <span className="mr-2">View Project</span>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M7 17l9.2-9.2M17 17V7H7" />
               </svg>
@@ -128,4 +130,6 @@ export default function FeaturedProject({
       </div>
     </motion.div>
   );
-}
+});
+
+export default FeaturedProject;
