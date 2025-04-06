@@ -60,14 +60,6 @@ const LottieVisualization = memo(function LottieVisualization({ isInView }: Lott
             className="w-full h-full"
           />
         </motion.div>
-        
-        {/* Subtle glow effect - simplified and hidden on mobile */}
-        <motion.div 
-          className="absolute inset-0 -z-10 rounded-full bg-accent/10 blur-2xl opacity-40 hidden md:block"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isInView ? 0.4 : 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-        />
       </div>
       
       {/* Experience stats with number counter - simplified */}
@@ -103,11 +95,6 @@ const StatsCard = memo(function StatsCard({ value, label, delay, isInView }: Sta
       }}
       transition={{ duration: 0.2 }}
     >
-      {/* Simplified background highlight */}
-      <div 
-        className="absolute inset-0 -z-10 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-      />
-      
       <NumberCounter
         end={value}
         duration={1}

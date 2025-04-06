@@ -5,6 +5,9 @@ const DEFAULT_USERNAME = "dacrab";
 const USERNAME = process.env.NEXT_PUBLIC_GITHUB_USERNAME || DEFAULT_USERNAME;
 const CACHE_DURATION = 3600; // Cache for 1 hour
 
+// Memory cache to avoid redundant API calls
+const repoCache = new Map<string, { data: GitHubRepo[], timestamp: number }>();
+
 /**
  * Fetches repositories for a GitHub user
  * 
@@ -18,6 +21,16 @@ export async function fetchGitHubRepos(
   sort: "updated" | "created" | "pushed" | "full_name" = "updated",
   direction: "asc" | "desc" = "desc"
 ): Promise<GitHubRepo[]> {
+  // Create cache key based on parameters
+  const cacheKey = `${username}-${sort}-${direction}`;
+  
+  // Check memory cache first
+  const cached = repoCache.get(cacheKey);
+  const now = Date.now();
+  if (cached && (now - cached.timestamp) < CACHE_DURATION * 1000) {
+    return cached.data;
+  }
+  
   try {
     const headers: HeadersInit = { Accept: "application/vnd.github.v3+json" };
     
@@ -35,41 +48,52 @@ export async function fetchGitHubRepos(
       }
     );
 
-    // Handle rate limiting
+    // Handle rate limiting more efficiently
     if (response.status === 403 && response.headers.get('X-RateLimit-Remaining') === '0') {
       const resetTime = response.headers.get('X-RateLimit-Reset');
-      const resetDate = resetTime 
-        ? new Date(parseInt(resetTime) * 1000).toLocaleTimeString() 
-        : 'unknown time';
-      
-      throw new Error(`GitHub API rate limit exceeded. Try again after ${resetDate} or add a personal access token.`);
+      throw new Error(`GitHub API rate limit exceeded. Reset at ${resetTime ? new Date(parseInt(resetTime) * 1000).toISOString() : 'unknown time'}`);
     }
 
     // Handle other errors
     if (!response.ok) {
-      if (response.status === 404) {
-        throw new Error(`GitHub user '${username}' not found. Please check the username.`);
-      }
-      throw new Error(`GitHub API error: ${response.status} - ${response.statusText}`);
+      throw new Error(response.status === 404 
+        ? `GitHub user '${username}' not found` 
+        : `GitHub API error: ${response.status}`);
     }
 
-    return await response.json();
+    const data = await response.json();
+    
+    // Update memory cache
+    repoCache.set(cacheKey, { data, timestamp: now });
+    
+    return data;
   } catch (error) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error("Failed to fetch GitHub repositories. Please try again later.");
+    console.error("GitHub API error:", error instanceof Error ? error.message : String(error));
+    throw error instanceof Error ? error : new Error("GitHub API request failed");
   }
 }
 
+// Memoization for transformed projects
+const projectsCache = new Map<string, GitHubProjectData[]>();
+
 /**
  * Transforms GitHub repositories into project format
+ * with memoization for better performance
  * 
  * @param repos Array of GitHub repositories
  * @returns Array of formatted project data
  */
 export function transformReposToProjects(repos: GitHubRepo[]): GitHubProjectData[] {
-  return repos
+  // Create cache key based on repo IDs to ensure uniqueness
+  const cacheKey = repos.map(r => r.id).sort().join('-');
+  
+  // Return cached result if available
+  if (projectsCache.has(cacheKey)) {
+    return projectsCache.get(cacheKey)!;
+  }
+  
+  // Process repos and transform to projects
+  const projects = repos
     .filter(repo => !repo.fork && !repo.archived && repo.description)
     .map(repo => ({
       id: repo.id,
@@ -81,22 +105,39 @@ export function transformReposToProjects(repos: GitHubRepo[]): GitHubProjectData
       language: repo.language || "Unknown",
       fork: repo.fork
     }));
+  
+  // Cache the result
+  projectsCache.set(cacheKey, projects);
+  
+  return projects;
 }
+
+// Reuse a string lookup cache for commonly repeated operations
+const nameFormatCache = new Map<string, string>();
 
 /**
  * Converts repository name from kebab-case to Title Case
+ * with memoization for frequently accessed names
  */
 function formatRepoName(name: string): string {
-  return name
+  if (nameFormatCache.has(name)) {
+    return nameFormatCache.get(name)!;
+  }
+  
+  const formatted = name
     .split("-")
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+    
+  nameFormatCache.set(name, formatted);
+  return formatted;
 }
 
 /**
  * Gets tags for a repository based on topics, language and features
  */
 function getTags(repo: GitHubRepo): string[] {
+  // Pre-allocate array with expected capacity
   const tags: string[] = [];
   
   // Add language as first tag if it exists
@@ -104,11 +145,24 @@ function getTags(repo: GitHubRepo): string[] {
     tags.push(repo.language);
   }
   
-  // Add up to 3 GitHub topics
+  // Add up to 3 GitHub topics if they exist
   if (repo.topics?.length > 0) {
-    tags.push(...repo.topics.slice(0, 3));
+    // Use length-aware loop instead of slice for better performance
+    const topicsLength = Math.min(repo.topics.length, 3);
+    for (let i = 0; i < topicsLength; i++) {
+      tags.push(repo.topics[i]);
+    }
   }
   
   // Ensure at least one tag
   return tags.length > 0 ? tags : ["Code"];
+}
+
+/**
+ * Clear caches - useful for testing or forced refreshes
+ */
+export function clearGitHubCaches(): void {
+  repoCache.clear();
+  projectsCache.clear();
+  nameFormatCache.clear();
 }

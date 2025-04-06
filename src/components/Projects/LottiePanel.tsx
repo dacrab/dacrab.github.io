@@ -24,8 +24,6 @@ const LottiePanel = memo(function LottiePanel({ isInView, delay }: LottiePanelPr
         
         {/* Lottie Animation - simplified for mobile */}
         <div className="flex-grow relative overflow-hidden flex items-center justify-center py-3">
-          <div className="absolute inset-0 bg-gradient-to-br from-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          
           <motion.div 
             className="w-full h-72 relative"
             whileHover={{ scale: 1.02 }}
@@ -37,9 +35,6 @@ const LottiePanel = memo(function LottiePanel({ isInView, delay }: LottiePanelPr
               autoplay
               className="w-full h-full"
             />
-            
-            {/* Simplified glow effect hidden on mobile */}
-            <div className="absolute inset-0 -z-10 bg-accent/5 blur-2xl rounded-full transform scale-90 hidden md:block"></div>
           </motion.div>
         </div>
         

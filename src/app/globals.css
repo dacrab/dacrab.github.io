@@ -26,6 +26,12 @@
   --gradient-3: #d946ef;
   --gradient-4: #ec4899;
   
+  /* RGB values for gradients to use in transparent backgrounds */
+  --gradient-1-rgb: 99, 102, 241;
+  --gradient-2-rgb: 139, 92, 246;
+  --gradient-3-rgb: 217, 70, 239;
+  --gradient-4-rgb: 236, 72, 153;
+  
   /* Skill card background - dark theme */
   --skill-card-bg: #24242e;
 }
@@ -174,6 +180,43 @@ body {
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+/* Background animation utilities */
+.animate-float-slow {
+  animation: float 8s ease-in-out infinite;
+}
+
+.animate-float-x {
+  animation: floatX 10s ease-in-out infinite;
+}
+
+.animate-float-diagonal {
+  animation: floatDiagonal 12s ease-in-out infinite;
+}
+
+@keyframes floatX {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-15px);
+  }
+}
+
+@keyframes floatDiagonal {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(10px, -10px);
+  }
+  50% {
+    transform: translate(0, -20px);
+  }
+  75% {
+    transform: translate(-10px, -10px);
+  }
 }
 
 /* Container utilities */
@@ -488,7 +531,7 @@ body {
 
 /* Custom z-indices for our backgrounds */
 .-z-15 {
-  z-index: -15;
+  z-index: -5;
 }
 
 /* Custom font sizing */

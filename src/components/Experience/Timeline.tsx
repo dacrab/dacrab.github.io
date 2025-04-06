@@ -45,11 +45,34 @@ const Timeline = memo(function Timeline({ isInView }: TimelineProps) {
         </motion.p>
       </div>
 
-      {/* Timeline with cards - redesigned for better mobile experience */}
+      {/* Timeline with cards - redesigned for desktop alignment */}
       <div className="relative max-w-5xl mx-auto mt-10 md:mt-14">
-        {/* Vertical line - visible on all devices but styled differently */}
+        {/* Desktop grid container to ensure proper alignment */}
+        <div className="hidden md:grid md:grid-cols-[160px_1fr_160px] md:mx-auto">
+          {/* Left spacer */}
+          <div></div>
+          
+          {/* Center line container */}
+          <div className="relative">
+            {/* Vertical line - centered precisely */}
+            <motion.div 
+              className="absolute inset-0 mx-auto w-px bg-gradient-to-b from-transparent via-accent/60 to-accent/20"
+              style={{ left: "50%" }}
+              initial={{ height: 0 }}
+              animate={{ height: isInView ? "100%" : 0 }}
+              transition={{ 
+                height: { duration: 0.8, delay: 0.4, ease: "easeOut" }
+              }}
+            />
+          </div>
+          
+          {/* Right spacer */}
+          <div></div>
+        </div>
+        
+        {/* Mobile vertical line - visible only on small screens */}
         <motion.div 
-          className="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-0.5 md:w-px bg-gradient-to-b from-transparent via-accent/60 to-accent/20"
+          className="absolute md:hidden left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-accent/60 to-accent/20"
           initial={{ height: 0 }}
           animate={{ height: isInView ? "100%" : 0 }}
           transition={{ 
@@ -77,7 +100,7 @@ const Timeline = memo(function Timeline({ isInView }: TimelineProps) {
                 direction={direction}
                 className="mb-8 md:mb-12 relative"
                 duration={0.5}
-                delay={0.3 + (0.08 * Math.min(index, 3))} // Cap delay for performance
+                delay={0.3 + (0.08 * Math.min(index, 3))}
                 distance={20}
                 threshold={0.1}
               >
@@ -97,26 +120,50 @@ const Timeline = memo(function Timeline({ isInView }: TimelineProps) {
           })}
         </div>
         
-        {/* Timeline end marker - simplified and responsive */}
-        <motion.div
-          className="absolute left-4 md:left-1/2 md:-translate-x-1/2 -bottom-2 w-6 h-6 md:w-8 md:h-8 rounded-full border border-accent/50 flex items-center justify-center bg-card/30 backdrop-blur-sm shadow-md z-10"
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: isInView ? 1 : 0, scale: isInView ? 1 : 0 }}
-          transition={{ duration: 0.5, delay: 0.8 }}
-        >
-          <motion.div 
-            className="w-2 h-2 md:w-2.5 md:h-2.5 bg-accent rounded-full"
-            animate={{
-              scale: [1, 1.2, 1],
-              opacity: [0.7, 1, 0.7]
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              repeatType: "reverse"
-            }}
-          />
-        </motion.div>
+        {/* Timeline end marker with better positioning */}
+        <div className="relative">
+          {/* Mobile end marker */}
+          <motion.div
+            className="md:hidden absolute left-4 -bottom-2 w-6 h-6 rounded-full border border-accent/50 flex items-center justify-center bg-card/30 backdrop-blur-sm shadow-md z-10"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: isInView ? 1 : 0, scale: isInView ? 1 : 0 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+          >
+            <motion.div 
+              className="w-2 h-2 bg-accent rounded-full"
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.7, 1, 0.7]
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                repeatType: "reverse"
+              }}
+            />
+          </motion.div>
+          
+          {/* Desktop end marker - centered in grid */}
+          <motion.div
+            className="hidden md:flex absolute left-1/2 -translate-x-1/2 -bottom-2 w-8 h-8 rounded-full border border-accent/50 items-center justify-center bg-card/30 backdrop-blur-sm shadow-md z-10"
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: isInView ? 1 : 0, scale: isInView ? 1 : 0 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+          >
+            <motion.div 
+              className="w-2.5 h-2.5 bg-accent rounded-full"
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.7, 1, 0.7]
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                repeatType: "reverse"
+              }}
+            />
+          </motion.div>
+        </div>
       </div>
     </motion.div>
   );

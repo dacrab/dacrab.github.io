@@ -3,6 +3,11 @@
 import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform, useSpring, AnimatePresence, MotionValue } from "framer-motion";
 import TextAnimation from "./TextAnimation";
+import {
+  dropdownAnimation,
+  fadeIn,
+  textVariant
+} from "@/utils/animations";
 
 // CV dropdown component
 const CVDropdown = ({ isOpen, onDownload }: { isOpen: boolean; onDownload: (lang: string) => void }) => (
@@ -10,10 +15,10 @@ const CVDropdown = ({ isOpen, onDownload }: { isOpen: boolean; onDownload: (lang
     {isOpen && (
       <motion.div 
         className="absolute top-full left-0 mt-2 w-full bg-card/90 backdrop-blur-sm border border-border/40 rounded-lg shadow-lg overflow-hidden z-50"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.2 }}
+        variants={dropdownAnimation}
+        initial="hidden"
+        animate="visible"
+        exit="exit"
       >
         <button 
           onClick={() => onDownload('english')}
@@ -78,8 +83,18 @@ const AbstractGraphic = ({ pathLength }: { pathLength: MotionValue<number> }) =>
       strokeWidth="0.5" 
       strokeDasharray="4 4"
       initial={{ opacity: 0 }}
-      animate={{ opacity: 0.6 }}
-      transition={{ duration: 2, delay: 1.5 }}
+      animate={{ 
+        opacity: 0.6,
+        y: [0, -5, 0, 5, 0],
+        rotate: [0, 1, 0, -1, 0],
+        scale: [1, 1.02, 1, 0.98, 1],
+        transition: {
+          opacity: { duration: 2, delay: 1.5 },
+          y: { repeat: Infinity, duration: 15, ease: "easeInOut" },
+          rotate: { repeat: Infinity, duration: 20, ease: "easeInOut" },
+          scale: { repeat: Infinity, duration: 12, ease: "easeInOut" }
+        }
+      }}
     />
     <motion.circle 
       cx="250" 
@@ -89,8 +104,18 @@ const AbstractGraphic = ({ pathLength }: { pathLength: MotionValue<number> }) =>
       strokeOpacity="0.25"
       strokeWidth="0.5"
       initial={{ opacity: 0 }}
-      animate={{ opacity: 0.8 }}
-      transition={{ duration: 2, delay: 1.8 }}
+      animate={{ 
+        opacity: 0.8,
+        y: [0, -3, 0, 3, 0],
+        rotate: [0, -2, 0, 2, 0],
+        scale: [1, 1.03, 1, 0.97, 1],
+        transition: {
+          opacity: { duration: 2, delay: 1.8 },
+          y: { repeat: Infinity, duration: 12, ease: "easeInOut" },
+          rotate: { repeat: Infinity, duration: 18, ease: "easeInOut" },
+          scale: { repeat: Infinity, duration: 10, ease: "easeInOut" }
+        }
+      }}
     />
     
     {/* Animated signature path */}
@@ -119,6 +144,15 @@ const AbstractGraphic = ({ pathLength }: { pathLength: MotionValue<number> }) =>
         opacity: useTransform(pathLength, [0, 1], [0, 0.3])
       }}
       filter="blur(4px)"
+      animate={{
+        strokeOpacity: [0.3, 0.4, 0.3, 0.2, 0.3],
+        strokeWidth: [6, 7, 6, 5, 6],
+        transition: {
+          repeat: Infinity,
+          duration: 8,
+          ease: "easeInOut"
+        }
+      }}
     />
     
     {/* Accent points */}
@@ -127,18 +161,82 @@ const AbstractGraphic = ({ pathLength }: { pathLength: MotionValue<number> }) =>
       cy="150" 
       r="5" 
       fill="var(--accent)"
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{ duration: 0.5, delay: 2.2 }}
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ 
+        scale: 1, 
+        opacity: 1,
+        transition: {
+          scale: { type: "spring", stiffness: 260, damping: 20, delay: 2.2 },
+          opacity: { duration: 0.5, delay: 2.2 }
+        }
+      }}
+      whileInView={{
+        scale: [1, 1.2, 1, 0.9, 1],
+        opacity: [1, 0.85, 1],
+        transition: {
+          repeat: Infinity,
+          duration: 4,
+          ease: "easeInOut"
+        }
+      }}
     />
     <motion.circle 
       cx="250" 
       cy="350" 
       r="5" 
       fill="var(--accent)"
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
-      transition={{ duration: 0.5, delay: 2.5 }}
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ 
+        scale: 1, 
+        opacity: 1,
+        transition: {
+          scale: { type: "spring", stiffness: 260, damping: 20, delay: 2.5 },
+          opacity: { duration: 0.5, delay: 2.5 }
+        }
+      }}
+      whileInView={{
+        scale: [1, 0.9, 1, 1.2, 1],
+        opacity: [1, 0.9, 1],
+        transition: {
+          repeat: Infinity,
+          duration: 5,
+          ease: "easeInOut"
+        }
+      }}
+    />
+    
+    {/* Additional decorative elements */}
+    <motion.circle
+      cx="175"
+      cy="200"
+      r="3"
+      fill="var(--accent)"
+      fillOpacity="0.6"
+      initial={{ opacity: 0 }}
+      animate={{
+        opacity: 0.6,
+        scale: [1, 1.3, 1, 0.8, 1],
+        transition: {
+          opacity: { duration: 1, delay: 2.8 },
+          scale: { repeat: Infinity, duration: 6, ease: "easeInOut" }
+        }
+      }}
+    />
+    <motion.circle
+      cx="325"
+      cy="300"
+      r="2.5"
+      fill="var(--accent)"
+      fillOpacity="0.6"
+      initial={{ opacity: 0 }}
+      animate={{
+        opacity: 0.6,
+        scale: [1, 0.8, 1, 1.3, 1],
+        transition: {
+          opacity: { duration: 1, delay: 3.0 },
+          scale: { repeat: Infinity, duration: 7, ease: "easeInOut" }
+        }
+      }}
     />
   </motion.svg>
 );
@@ -152,15 +250,31 @@ const TechKeywords = ({ scrollYProgress }: { scrollYProgress: MotionValue<number
       animate={{ opacity: 0.7, y: 0 }}
       transition={{ duration: 0.8, delay: 3.2 }}
       style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]) }}
+      whileInView={{
+        boxShadow: ["0 0 0 rgba(147, 51, 234, 0)", "0 0 5px rgba(147, 51, 234, 0.3)", "0 0 0 rgba(147, 51, 234, 0)"],
+        transition: {
+          repeat: Infinity,
+          duration: 4,
+          ease: "easeInOut"
+        }
+      }}
     >
       Next.js
     </motion.div>
     <motion.div
       className="absolute bottom-[20%] left-[20%] font-mono text-xs text-accent/70 backdrop-blur-sm px-2 py-1 rounded-full bg-card/10 border border-accent/5"
-      initial={{ opacity: 0, y: -20 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 0.7, y: 0 }}
       transition={{ duration: 0.8, delay: 3.4 }}
       style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "50%"]) }}
+      whileInView={{
+        boxShadow: ["0 0 0 rgba(37, 99, 235, 0)", "0 0 5px rgba(37, 99, 235, 0.3)", "0 0 0 rgba(37, 99, 235, 0)"],
+        transition: {
+          repeat: Infinity,
+          duration: 4.5,
+          ease: "easeInOut"
+        }
+      }}
     >
       React
     </motion.div>
@@ -170,6 +284,14 @@ const TechKeywords = ({ scrollYProgress }: { scrollYProgress: MotionValue<number
       animate={{ opacity: 0.7, y: 0 }}
       transition={{ duration: 0.8, delay: 3.6 }}
       style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]) }}
+      whileInView={{
+        boxShadow: ["0 0 0 rgba(147, 51, 234, 0)", "0 0 5px rgba(147, 51, 234, 0.3)", "0 0 0 rgba(147, 51, 234, 0)"],
+        transition: {
+          repeat: Infinity,
+          duration: 5,
+          ease: "easeInOut"
+        }
+      }}
     >
       TypeScript
     </motion.div>
@@ -178,14 +300,30 @@ const TechKeywords = ({ scrollYProgress }: { scrollYProgress: MotionValue<number
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 0.7, y: 0 }}
       transition={{ duration: 0.8, delay: 3.8 }}
+      whileInView={{
+        boxShadow: ["0 0 0 rgba(37, 99, 235, 0)", "0 0 5px rgba(37, 99, 235, 0.3)", "0 0 0 rgba(37, 99, 235, 0)"],
+        transition: {
+          repeat: Infinity,
+          duration: 4.2,
+          ease: "easeInOut"
+        }
+      }}
     >
       Tailwind
     </motion.div>
     <motion.div
       className="absolute top-[80%] right-[40%] font-mono text-xs text-accent/70 backdrop-blur-sm px-2 py-1 rounded-full bg-card/10 border border-accent/5"
-      initial={{ opacity: 0, y: -20 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 0.7, y: 0 }}
       transition={{ duration: 0.8, delay: 4.0 }}
+      whileInView={{
+        boxShadow: ["0 0 0 rgba(147, 51, 234, 0)", "0 0 5px rgba(147, 51, 234, 0.3)", "0 0 0 rgba(147, 51, 234, 0)"],
+        transition: {
+          repeat: Infinity,
+          duration: 4.8,
+          ease: "easeInOut"
+        }
+      }}
     >
       Framer Motion
     </motion.div>
@@ -201,11 +339,7 @@ const ScrollIndicator = ({ scrollYProgress }: { scrollYProgress: MotionValue<num
     transition={{ delay: 3.5, duration: 1 }}
     style={{ opacity: useTransform(scrollYProgress, [0, 0.2], [1, 0]) }}
   >
-    <motion.div
-      animate={{ y: [0, 8, 0] }}
-      transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-      className="flex flex-col items-center"
-    >
+    <div className="flex flex-col items-center">
       <div className="text-xs text-accent/70 mb-2">Scroll</div>
       <svg width="16" height="24" viewBox="0 0 16 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect x="1" y="1" width="14" height="22" rx="7" stroke="var(--accent)" strokeWidth="1" strokeOpacity="0.4" />
@@ -214,11 +348,17 @@ const ScrollIndicator = ({ scrollYProgress }: { scrollYProgress: MotionValue<num
           cy="8" 
           r="3" 
           fill="var(--accent)"
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+          animate={{ 
+            y: [0, 8, 0],
+            transition: { 
+              repeat: Infinity, 
+              duration: 2, 
+              ease: "easeInOut" 
+            }
+          }}
         />
       </svg>
-    </motion.div>
+    </div>
   </motion.div>
 );
 
@@ -291,8 +431,18 @@ export default function Hero() {
           opacity: gridOpacity
         }}
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.7 }}
-        transition={{ duration: 1.5 }}
+        animate={{ 
+          opacity: [0, 0.7],
+          transition: { duration: 1.5 }
+        }}
+        whileInView={{
+          backgroundSize: ["50px 50px", "51px 51px", "50px 50px", "49px 49px", "50px 50px"],
+          transition: {
+            repeat: Infinity,
+            duration: 20,
+            ease: "easeInOut"
+          }
+        }}
       />
       
       {/* Background shapes */}
@@ -303,6 +453,15 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.5 }}
           transition={{ duration: 1.5, delay: 0.5 }}
+          whileInView={{
+            opacity: [0.5, 0.6, 0.5, 0.4, 0.5],
+            scale: [1, 1.05, 1, 0.95, 1],
+            transition: {
+              repeat: Infinity,
+              duration: 15,
+              ease: "easeInOut"
+            }
+          }}
         />
         <motion.div 
           className="absolute right-[10%] bottom-[10%] w-[50%] h-[50%] rounded-full bg-accent/10 blur-[120px]"
@@ -310,6 +469,15 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.5 }}
           transition={{ duration: 1.5, delay: 1 }}
+          whileInView={{
+            opacity: [0.5, 0.4, 0.5, 0.6, 0.5],
+            scale: [1, 0.95, 1, 1.05, 1],
+            transition: {
+              repeat: Infinity,
+              duration: 18,
+              ease: "easeInOut"
+            }
+          }}
         />
       </div>
 
@@ -324,9 +492,9 @@ export default function Hero() {
               {/* Introduction text */}
               <motion.div 
                 className="mb-2 text-accent text-base md:text-lg tracking-wide"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
+                variants={fadeIn("up", 0.1, 0.6)}
+                initial="hidden"
+                animate="visible"
               >
                 <TextAnimation 
                   text="Hello, I'm"
@@ -340,9 +508,9 @@ export default function Hero() {
               {/* Main headline */}
               <div className="mb-6 lg:mb-8">
                 <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, delay: 0.8 }}
+                  variants={fadeIn("up", 0.8, 0.7)}
+                  initial="hidden"
+                  animate="visible"
                 >
                   <TextAnimation 
                     text="Vaggelis Kavouras"
@@ -350,6 +518,8 @@ export default function Hero() {
                     className="block text-4xl md:text-5xl lg:text-6xl font-bold"
                     delay={0.1}
                     duration={0.5}
+                    emoji="👋"
+                    emojiAnimation="wave"
                   />
                 </motion.div>
               </div>
@@ -357,9 +527,9 @@ export default function Hero() {
               {/* Description text */}
               <motion.div
                 className="max-w-2xl text-muted mb-8 lg:mb-12"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 1.3 }}
+                variants={textVariant(1.3)}
+                initial="hidden"
+                animate="visible"
               >
                 <TextAnimation 
                   text="Junior Web Developer.Crafting modern web experiences with Next.js, TypeScript, and Tailwind CSS. Passionate about learning UI/UX design and cutting-edge animations."
@@ -373,9 +543,9 @@ export default function Hero() {
               {/* Action buttons */}
               <motion.div 
                 className="flex flex-wrap gap-3 md:gap-4"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 1.8 }}
+                variants={fadeIn("up", 1.8, 0.5)}
+                initial="hidden"
+                animate="visible"
               >
                 <a 
                   href="#projects" 

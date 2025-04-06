@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useMemo } from "react";
 import { useInView, Variants } from "framer-motion";
 
 export interface ScrollAnimationOptions {
@@ -16,8 +16,13 @@ export interface ScrollAnimationOptions {
   };
 }
 
+// Cache for common transition configurations
+const cachedTransitions = new Map<string, object>();
+
 /**
  * Custom hook for scroll-triggered animations
+ * Optimized for performance with memoization
+ * 
  * @param options Configuration options for animations
  * @returns Object containing refs and animation properties
  */
@@ -36,8 +41,28 @@ export function useScrollAnimation(options: ScrollAnimationOptions = {}) {
   const ref = useRef(null);
   const isInView = useInView(ref, { amount: threshold, once });
 
-  // Determine the initial and animate states based on direction
-  const getInitialProps = () => {
+  // Memoize transition config to prevent recreation on each render
+  const transitionConfig = useMemo(() => {
+    const cacheKey = `${duration}-${delay}-${springConfig.stiffness}-${springConfig.damping}-${springConfig.mass ?? 1}`;
+    
+    if (cachedTransitions.has(cacheKey)) {
+      return cachedTransitions.get(cacheKey);
+    }
+    
+    const config = {
+      type: "spring",
+      ...springConfig,
+      duration,
+      delay,
+      ease,
+    };
+    
+    cachedTransitions.set(cacheKey, config);
+    return config;
+  }, [duration, delay, ease, springConfig]);
+
+  // Memoize initial props based on direction to prevent object recreations
+  const initialProps = useMemo(() => {
     switch (direction) {
       case "up":
         return { opacity: 0, y: distance };
@@ -52,33 +77,28 @@ export function useScrollAnimation(options: ScrollAnimationOptions = {}) {
       default:
         return { opacity: 0, y: distance };
     }
-  };
+  }, [direction, distance]);
 
-  const getAnimateProps = () => {
+  // Memoize animate props to prevent object recreations
+  const animateProps = useMemo(() => {
     return direction === "left" || direction === "right"
       ? { opacity: 1, x: 0 }
       : direction === "none"
         ? { opacity: 1 }
         : { opacity: 1, y: 0 };
-  };
+  }, [direction]);
 
-  // Create the animation variants
-  const variants: Variants = {
-    hidden: getInitialProps(),
+  // Memoize variants to prevent recreation on each render
+  const variants = useMemo<Variants>(() => ({
+    hidden: initialProps,
     visible: {
-      ...getAnimateProps(),
-      transition: {
-        type: "spring",
-        ...springConfig,
-        duration,
-        delay,
-        ease,
-      },
+      ...animateProps,
+      transition: transitionConfig,
     },
-  };
+  }), [initialProps, animateProps, transitionConfig]);
 
-  // Define stagger variants for container elements
-  const containerVariants: Variants = {
+  // Memoize container variants to prevent recreation
+  const containerVariants = useMemo<Variants>(() => ({
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -87,25 +107,29 @@ export function useScrollAnimation(options: ScrollAnimationOptions = {}) {
         delayChildren: delay,
       },
     },
-  };
+  }), [delay]);
 
-  return {
+  // Memoize the entire return object to prevent recreations
+  return useMemo(() => ({
     ref,
     isInView,
     variants,
     containerVariants,
     initial: "hidden",
     animate: isInView ? "visible" : "hidden",
-    transition: {
-      type: "spring",
-      ...springConfig,
-      duration,
-      delay,
-      ease,
-    },
+    transition: transitionConfig,
     // Helper function for direct style prop animations
     style: isInView
-      ? { ...getAnimateProps(), transition: `all ${duration}s ${delay}s` }
-      : getInitialProps(),
-  };
+      ? { ...animateProps, transition: `all ${duration}s ${delay}s` }
+      : initialProps,
+  }), [
+    isInView, 
+    variants, 
+    containerVariants, 
+    transitionConfig, 
+    animateProps, 
+    initialProps, 
+    duration, 
+    delay
+  ]);
 } 

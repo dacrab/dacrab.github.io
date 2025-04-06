@@ -29,8 +29,39 @@ const Experience = memo(function Experience() {
       id="experience" 
       ref={ref}
       className="py-16 md:py-28 relative overflow-hidden" // Reduced padding for mobile
-    >      
-    
+    >
+      {/* Accent glow effects */}
+      <motion.div 
+        className="absolute top-[15%] left-[50%] w-[40%] h-[35%] rounded-full bg-accent/15 blur-[150px] opacity-0"
+        animate={{ 
+          opacity: isInView ? 0.5 : 0,
+          x: isInView ? [-50, -60, -55, -45, -50] : -50, // subtle side-to-side movement
+        }}
+        transition={{ 
+          opacity: { duration: 1.8 },
+          x: { 
+            repeat: Infinity,
+            duration: 20,
+            ease: "easeInOut" 
+          }
+        }}
+      />
+      <motion.div 
+        className="absolute bottom-[25%] right-[10%] w-[30%] h-[40%] rounded-full bg-accent/20 blur-[120px] opacity-0"
+        animate={{ 
+          opacity: isInView ? 0.6 : 0,
+          scale: isInView ? [1, 1.15, 1, 0.9, 1] : 0.9,
+        }}
+        transition={{ 
+          opacity: { duration: 1.5, delay: 0.5 },
+          scale: { 
+            repeat: Infinity,
+            duration: 18,
+            ease: "easeInOut" 
+          }
+        }}
+      />
+
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         {/* Section header */}
         <SectionHeader />
@@ -43,10 +74,23 @@ const Experience = memo(function Experience() {
             scale 
           }}
         >
-          <div className="backdrop-blur-sm rounded-xl overflow-hidden border border-border/20 shadow-lg" // Reduced shadow and border radius for better performance
+          <div className="backdrop-blur-sm rounded-xl overflow-hidden border border-border/20 shadow-lg relative" // Reduced shadow and border radius for better performance
                style={{ background: "rgba(var(--card-rgb), 0.6)" }}>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+            {/* Card glow effect */}
+            <motion.div 
+              className="absolute inset-0 bg-accent/5 opacity-0"
+              animate={{ 
+                opacity: isInView ? [0, 0.8, 0] : 0,
+              }}
+              transition={{ 
+                repeat: Infinity,
+                duration: 8,
+                ease: "easeInOut" 
+              }}
+            />
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 relative z-10">
               {/* Left column: Lottie Visualization */}
               <div className="p-5 md:p-8 border-b lg:border-b-0 lg:border-r border-border/20"> {/* Reduced padding for mobile */}
                 <LottieVisualization isInView={isInView} />

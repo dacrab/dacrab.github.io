@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, RefObject, memo } from "react";
-import { useInView, useAnimation, useScroll, useTransform } from "framer-motion";
+import { useInView, useAnimation, useScroll, useTransform, motion } from "framer-motion";
 
 // Import extracted components
 import SectionHeader from "./About/SectionHeader";
@@ -41,7 +41,39 @@ const About = memo(function About() {
       ref={ref}
       className="py-16 md:py-28 relative overflow-hidden" // Reduced padding for mobile
     >
-      <div className="container mx-auto px-4 lg:px-8">
+      {/* Accent glow effects */}
+      <motion.div 
+        className="absolute top-1/4 -left-[10%] w-[35%] h-[40%] rounded-full bg-accent/20 blur-[120px] opacity-0"
+        animate={{ 
+          opacity: isInView ? 0.5 : 0,
+          scale: isInView ? [1, 1.1, 1, 0.95, 1] : 0.8,
+        }}
+        transition={{ 
+          opacity: { duration: 1.5 },
+          scale: { 
+            repeat: Infinity,
+            duration: 15,
+            ease: "easeInOut" 
+          }
+        }}
+      />
+      <motion.div 
+        className="absolute bottom-1/4 -right-[5%] w-[25%] h-[30%] rounded-full bg-accent/15 blur-[100px] opacity-0"
+        animate={{ 
+          opacity: isInView ? 0.4 : 0,
+          scale: isInView ? [1, 0.9, 1, 1.05, 1] : 0.8,
+        }}
+        transition={{ 
+          opacity: { duration: 1.5, delay: 0.3 },
+          scale: { 
+            repeat: Infinity,
+            duration: 12,
+            ease: "easeInOut" 
+          }
+        }}
+      />
+
+      <div className="container mx-auto px-4 lg:px-8 relative z-10">
         {/* Section heading */}
         <SectionHeader />
         
