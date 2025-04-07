@@ -11,22 +11,15 @@ import BioSection from "./About/BioSection";
 
 // Memoize the component to prevent unnecessary re-renders
 const About = memo(function About() {
+  // Refs and hooks
   const ref = useRef<HTMLDivElement>(null);
+  const bioRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
   const isInView = useInView(ref, { once: false, amount: isMobile ? 0.05 : 0.1 });
   const controls = useAnimation();
-  
-  // Track if component has ever been visible - for lazy loading
   const [hasBeenVisible, setHasBeenVisible] = useState(false);
   
-  // Only perform expensive animations/calculations after component has been visible once
-  useEffect(() => {
-    if (isInView && !hasBeenVisible) {
-      setHasBeenVisible(true);
-    }
-  }, [isInView, hasBeenVisible]);
-  
-  // Simplified scroll animation with reduced performance impact
+  // Scroll animations
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
@@ -35,18 +28,20 @@ const About = memo(function About() {
   // Optimized transform with fewer interpolation points
   const contentY = useTransform(scrollYProgress, [0, 0.5], [isMobile ? 3 : 5, 0]);
   
-  // Bio paragraphs animation
-  const bioRef = useRef<HTMLDivElement>(null);
+  // Track if component has been visible for lazy loading
+  useEffect(() => {
+    if (isInView && !hasBeenVisible) {
+      setHasBeenVisible(true);
+    }
+  }, [isInView, hasBeenVisible]);
   
   // Control animations based on view state
   useEffect(() => {
     if (isInView) {
       controls.start("visible");
-    } else {
-      // Don't reset to hidden for better performance when scrolling quickly
-      if (!hasBeenVisible) {
-        controls.start("hidden");
-      }
+    } else if (!hasBeenVisible) {
+      // Only reset to hidden if never been visible before
+      controls.start("hidden");
     }
   }, [isInView, controls, hasBeenVisible]);
   
@@ -56,15 +51,15 @@ const About = memo(function About() {
       ref={ref}
       className="py-16 md:py-28 relative overflow-hidden"
     >
-      {/* Only render complex animations when component has been visible at least once */}
+      {/* Render background effects only after first visibility */}
       {hasBeenVisible && (
         <>
-          {/* Accent glow effects - optimized for performance */}
+          {/* Left accent glow */}
           <motion.div 
             className="absolute top-1/4 -left-[10%] w-[35%] h-[40%] rounded-full bg-accent/20 blur-[120px] opacity-0"
             animate={{ 
               opacity: isInView ? (isMobile ? 0.3 : 0.5) : 0,
-              scale: isInView ? [1, 1.1, 1] : 0.8, // Simplified animation keyframes
+              scale: isInView ? [1, 1.1, 1] : 0.8,
             }}
             transition={{ 
               opacity: { duration: isMobile ? 1.2 : 1.5 },
@@ -72,15 +67,17 @@ const About = memo(function About() {
                 repeat: Infinity,
                 duration: isMobile ? 18 : 15,
                 ease: "easeInOut",
-                repeatType: "mirror" // More efficient than full cycle
+                repeatType: "mirror"
               }
             }}
           />
+          
+          {/* Right accent glow */}
           <motion.div 
             className="absolute bottom-1/4 -right-[5%] w-[25%] h-[30%] rounded-full bg-accent/15 blur-[100px] opacity-0"
             animate={{ 
               opacity: isInView ? (isMobile ? 0.25 : 0.4) : 0,
-              scale: isInView ? [1, 0.95, 1] : 0.8, // Simplified animation keyframes
+              scale: isInView ? [1, 0.95, 1] : 0.8,
             }}
             transition={{ 
               opacity: { duration: isMobile ? 1.2 : 1.5, delay: isMobile ? 0.2 : 0.3 },
@@ -88,7 +85,7 @@ const About = memo(function About() {
                 repeat: Infinity,
                 duration: isMobile ? 15 : 12,
                 ease: "easeInOut",
-                repeatType: "mirror" // More efficient than full cycle
+                repeatType: "mirror"
               }
             }}
           />
@@ -117,7 +114,7 @@ const About = memo(function About() {
   );
 });
 
-// Add display name for better debugging in dev tools
+// Add display name for better debugging
 About.displayName = 'About';
 
 export default About;

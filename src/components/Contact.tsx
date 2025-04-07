@@ -19,40 +19,28 @@ const Contact = memo(function Contact() {
   // State to track if component has ever been visible - for lazy loading
   const [hasBeenVisible, setHasBeenVisible] = useState(false);
   
-  // Only perform expensive animations/calculations after component has been visible once
   useEffect(() => {
     if (isInView && !hasBeenVisible) {
       setHasBeenVisible(true);
     }
   }, [isInView, hasBeenVisible]);
   
-  // Simplified scroll animation with optimized transform values
+  // Optimized scroll animation
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
   });
   
-  // Optimized transform values with fewer interpolation points
-  const opacity = useTransform(
-    scrollYProgress, 
-    [0, 0.2, 0.8, 1], 
-    [0.4, 1, 1, 0.8]
-  );
-  const scale = useTransform(
-    scrollYProgress, 
-    [0, 0.2, 0.8, 1], 
-    [0.99, 1, 1, 0.99]
-  );
+  // Simplified transform values with fewer interpolation points
+  const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.4, 1, 1, 0.8]);
+  const scale = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.99, 1, 1, 0.99]);
   
-  // Prepare staggered animation variants for social links
+  // Animation variants for social links
   const socialVariants = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
-      transition: { 
-        staggerChildren: 0.03, 
-        delayChildren: 0.2 
-      }
+      transition: { staggerChildren: 0.03, delayChildren: 0.2 }
     }
   };
   
@@ -62,15 +50,15 @@ const Contact = memo(function Contact() {
       ref={ref}
       className="py-16 md:py-28 relative overflow-hidden"
     >
-      {/* Only render complex animations if component has been visible at least once */}
+      {/* Render background effects only when needed */}
       {hasBeenVisible && (
         <>
-          {/* Accent glow effects - optimized for performance */}
+          {/* Top-left accent glow */}
           <motion.div 
             className="absolute top-0 left-0 w-[25%] h-[30%] rounded-full bg-accent/20 blur-[100px] opacity-0"
             animate={{ 
               opacity: isInView ? 0.4 : 0,
-              y: isInView ? [0, 10, 0] : 0, // Simplified animation keyframes
+              y: isInView ? [0, 10, 0] : 0,
             }}
             transition={{ 
               opacity: { duration: 1.2 },
@@ -78,15 +66,16 @@ const Contact = memo(function Contact() {
                 repeat: Infinity,
                 duration: 16,
                 ease: "easeInOut",
-                repeatType: "mirror" // More efficient than full cycle
+                repeatType: "mirror"
               }
             }}
           />
+          {/* Bottom-right accent glow */}
           <motion.div 
             className="absolute bottom-[10%] right-[5%] w-[35%] h-[40%] rounded-full bg-accent/15 blur-[150px] opacity-0"
             animate={{ 
               opacity: isInView ? 0.5 : 0,
-              scale: isInView ? [1, 1.05, 1] : 0.9, // Simplified animation keyframes
+              scale: isInView ? [1, 1.05, 1] : 0.9,
             }}
             transition={{ 
               opacity: { duration: 1.5, delay: 0.2 },
@@ -94,7 +83,7 @@ const Contact = memo(function Contact() {
                 repeat: Infinity,
                 duration: 14,
                 ease: "easeInOut",
-                repeatType: "mirror" // More efficient than full cycle
+                repeatType: "mirror"
               }
             }}
           />
@@ -109,13 +98,12 @@ const Contact = memo(function Contact() {
         <motion.div 
           className="max-w-6xl mx-auto"
           style={{ opacity, scale }}
-          // Use layout='position' to optimize rendering
           layout="position"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 backdrop-blur-sm rounded-xl overflow-hidden border border-border/20 shadow-lg relative"
                style={{ background: "rgba(var(--card-rgb), 0.6)" }}>
             
-            {/* Subtle inner glow effect - only render if component has been visible */}
+            {/* Inner glow effect */}
             {hasBeenVisible && (
               <motion.div
                 className="absolute inset-0 border-[1px] border-accent/10 rounded-xl opacity-0"
@@ -131,7 +119,7 @@ const Contact = memo(function Contact() {
                   repeat: Infinity,
                   duration: 10,
                   ease: "easeInOut",
-                  repeatType: "mirror" // More efficient than full cycle
+                  repeatType: "mirror"
                 }}
               />
             )}
@@ -245,7 +233,7 @@ const Contact = memo(function Contact() {
                       repeat: Infinity,
                       duration: 2,
                       ease: "easeInOut",
-                      repeatType: "mirror" // More efficient than full cycle
+                      repeatType: "mirror"
                     }}
                   ></motion.div>
                   <span className="text-xs text-accent">Available for new projects</span>
@@ -255,7 +243,7 @@ const Contact = memo(function Contact() {
           </div>
         </motion.div>
         
-        {/* Footer note - simplified */}
+        {/* Footer note */}
         <motion.div
           className="mt-12 text-center"
           initial={{ opacity: 0 }}
@@ -282,7 +270,7 @@ const Contact = memo(function Contact() {
   );
 });
 
-// Add display name for better debugging in dev tools
+// Add display name for better debugging
 Contact.displayName = 'Contact';
 
 export default Contact;
