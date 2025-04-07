@@ -13,7 +13,7 @@ import BioSection from "./About/BioSection";
 const About = memo(function About() {
   const ref = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
-  const isInView = useInView(ref, { once: false, amount: isMobile ? 0.05 : 0.1 }); // Even lower threshold for mobile for earlier animation
+  const isInView = useInView(ref, { once: false, amount: isMobile ? 0.05 : 0.1 });
   const controls = useAnimation();
   
   // Track if component has ever been visible - for lazy loading
@@ -26,13 +26,13 @@ const About = memo(function About() {
     }
   }, [isInView, hasBeenVisible]);
   
-  // Simplified scroll animation
+  // Simplified scroll animation with reduced performance impact
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
   });
   
-  // Reduced transform value for better mobile performance
+  // Optimized transform with fewer interpolation points
   const contentY = useTransform(scrollYProgress, [0, 0.5], [isMobile ? 3 : 5, 0]);
   
   // Bio paragraphs animation
@@ -43,32 +43,36 @@ const About = memo(function About() {
     if (isInView) {
       controls.start("visible");
     } else {
-      controls.start("hidden");
+      // Don't reset to hidden for better performance when scrolling quickly
+      if (!hasBeenVisible) {
+        controls.start("hidden");
+      }
     }
-  }, [isInView, controls]);
+  }, [isInView, controls, hasBeenVisible]);
   
   return (
     <section 
       id="about"
       ref={ref}
-      className="py-16 md:py-28 relative overflow-hidden" // Reduced padding for mobile
+      className="py-16 md:py-28 relative overflow-hidden"
     >
       {/* Only render complex animations when component has been visible at least once */}
       {hasBeenVisible && (
         <>
-          {/* Accent glow effects */}
+          {/* Accent glow effects - optimized for performance */}
           <motion.div 
             className="absolute top-1/4 -left-[10%] w-[35%] h-[40%] rounded-full bg-accent/20 blur-[120px] opacity-0"
             animate={{ 
               opacity: isInView ? (isMobile ? 0.3 : 0.5) : 0,
-              scale: isInView ? [1, 1.1, 1, 0.95, 1] : 0.8,
+              scale: isInView ? [1, 1.1, 1] : 0.8, // Simplified animation keyframes
             }}
             transition={{ 
               opacity: { duration: isMobile ? 1.2 : 1.5 },
               scale: { 
                 repeat: Infinity,
                 duration: isMobile ? 18 : 15,
-                ease: "easeInOut" 
+                ease: "easeInOut",
+                repeatType: "mirror" // More efficient than full cycle
               }
             }}
           />
@@ -76,14 +80,15 @@ const About = memo(function About() {
             className="absolute bottom-1/4 -right-[5%] w-[25%] h-[30%] rounded-full bg-accent/15 blur-[100px] opacity-0"
             animate={{ 
               opacity: isInView ? (isMobile ? 0.25 : 0.4) : 0,
-              scale: isInView ? [1, 0.9, 1, 1.05, 1] : 0.8,
+              scale: isInView ? [1, 0.95, 1] : 0.8, // Simplified animation keyframes
             }}
             transition={{ 
               opacity: { duration: isMobile ? 1.2 : 1.5, delay: isMobile ? 0.2 : 0.3 },
               scale: { 
                 repeat: Infinity,
                 duration: isMobile ? 15 : 12,
-                ease: "easeInOut" 
+                ease: "easeInOut",
+                repeatType: "mirror" // More efficient than full cycle
               }
             }}
           />
@@ -95,7 +100,7 @@ const About = memo(function About() {
         <SectionHeader isMobile={isMobile} />
         
         {/* Main content layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-12 lg:gap-x-8 relative"> {/* Reduced gap for mobile */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-12 lg:gap-x-8 relative">
           {/* Left column: Profile image and stats */}
           <ProfileImage contentY={contentY} isMobile={isMobile} />
           
@@ -111,5 +116,8 @@ const About = memo(function About() {
     </section>
   );
 });
+
+// Add display name for better debugging in dev tools
+About.displayName = 'About';
 
 export default About;

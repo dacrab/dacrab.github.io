@@ -14,7 +14,7 @@ import Timeline from "./Experience/Timeline";
 const Experience = memo(function Experience() {
   const ref = useRef(null);
   const isMobile = useIsMobile();
-  const isInView = useInView(ref, { once: false, amount: isMobile ? 0.05 : 0.1 }); // Even lower threshold for mobile for earlier animation
+  const isInView = useInView(ref, { once: false, amount: isMobile ? 0.05 : 0.1 });
   
   // State to track if component has ever been visible
   // This helps with lazy loading optimizations
@@ -33,32 +33,33 @@ const Experience = memo(function Experience() {
     offset: ["start end", "end start"]
   });
   
-  // Simplified transform values with reduced range for better mobile performance
-  const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [isMobile ? 0.3 : 0.2, 1, 1, isMobile ? 0.3 : 0.2]);
-  const scale = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [isMobile ? 0.995 : 0.99, 1, 1, isMobile ? 0.995 : 0.99]);
+  // Simplified transform values with fewer interpolation points
+  const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.3, 1, 1, 0.3]);
+  const scale = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.995, 1, 1, 0.995]);
   
   return (
     <section 
       id="experience" 
       ref={ref}
-      className="py-16 md:py-28 relative overflow-hidden" // Reduced padding for mobile
+      className="py-16 md:py-28 relative overflow-hidden"
     >
       {/* Only render complex animations if component has been visible at least once */}
       {hasBeenVisible && (
         <>
-          {/* Accent glow effects */}
+          {/* Accent glow effects - optimized for performance */}
           <motion.div 
             className="absolute top-[15%] left-[50%] w-[40%] h-[35%] rounded-full bg-accent/15 blur-[150px] opacity-0"
             animate={{ 
               opacity: isInView ? (isMobile ? 0.3 : 0.5) : 0,
-              x: isInView ? [-50, -60, -55, -45, -50] : -50, // subtle side-to-side movement
+              x: isInView ? [-50, -55, -50] : -50, // Simplified motion path
             }}
             transition={{ 
               opacity: { duration: isMobile ? 1.5 : 1.8 },
               x: { 
                 repeat: Infinity,
                 duration: isMobile ? 25 : 20,
-                ease: "easeInOut" 
+                ease: "easeInOut",
+                repeatType: "mirror" // More efficient than full cycle
               }
             }}
           />
@@ -66,14 +67,15 @@ const Experience = memo(function Experience() {
             className="absolute bottom-[25%] right-[10%] w-[30%] h-[40%] rounded-full bg-accent/20 blur-[120px] opacity-0"
             animate={{ 
               opacity: isInView ? (isMobile ? 0.4 : 0.6) : 0,
-              scale: isInView ? [1, 1.15, 1, 0.9, 1] : 0.9,
+              scale: isInView ? [1, 1.1, 1] : 0.9, // Simplified keyframes
             }}
             transition={{ 
               opacity: { duration: isMobile ? 1.2 : 1.5, delay: isMobile ? 0.3 : 0.5 },
               scale: { 
                 repeat: Infinity,
                 duration: isMobile ? 22 : 18,
-                ease: "easeInOut" 
+                ease: "easeInOut",
+                repeatType: "mirror" // More efficient than full cycle
               }
             }}
           />
@@ -86,13 +88,15 @@ const Experience = memo(function Experience() {
 
         {/* Main content with professional card layout */}
         <motion.div 
-          className="max-w-6xl mx-auto mb-16" // Reduced margin for mobile
+          className="max-w-6xl mx-auto mb-16"
           style={{ 
             opacity,
             scale 
           }}
+          // Use layout='position' to optimize rendering
+          layout="position"
         >
-          <div className="backdrop-blur-sm rounded-xl overflow-hidden border border-border/20 shadow-lg relative" // Reduced shadow and border radius for better performance
+          <div className="backdrop-blur-sm rounded-xl overflow-hidden border border-border/20 shadow-lg relative"
                style={{ background: "rgba(var(--card-rgb), 0.6)" }}>
             
             {/* Card glow effect - only render if visible at least once */}
@@ -105,19 +109,20 @@ const Experience = memo(function Experience() {
                 transition={{ 
                   repeat: Infinity,
                   duration: isMobile ? 10 : 8,
-                  ease: "easeInOut" 
+                  ease: "easeInOut",
+                  repeatType: "mirror" // More efficient than full cycle 
                 }}
               />
             )}
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 relative z-10">
               {/* Left column: Lottie Visualization */}
-              <div className="p-5 md:p-8 border-b lg:border-b-0 lg:border-r border-border/20"> {/* Reduced padding for mobile */}
+              <div className="p-5 md:p-8 border-b lg:border-b-0 lg:border-r border-border/20">
                 <LottieVisualization isInView={isInView} isMobile={isMobile} />
               </div>
               
               {/* Right column: Skill Progressions */}
-              <div className="p-5 md:p-8"> {/* Reduced padding for mobile */}
+              <div className="p-5 md:p-8">
                 <SkillProgressions isInView={isInView} isMobile={isMobile} />
               </div>
             </div>
@@ -130,5 +135,8 @@ const Experience = memo(function Experience() {
     </section>
   );
 });
+
+// Add display name for better debugging in dev tools
+Experience.displayName = 'Experience';
 
 export default Experience; 

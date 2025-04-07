@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import NumberCounter from "./NumberCounter";
-import { memo } from "react";
+import { memo, useState, useEffect, useRef } from "react";
 
 interface LottieVisualizationProps {
   isInView: boolean;
@@ -10,6 +10,22 @@ interface LottieVisualizationProps {
 
 // Memoize the component to prevent unnecessary re-renders
 const LottieVisualization = memo(function LottieVisualization({ isInView, isMobile }: LottieVisualizationProps) {
+  const [shouldRenderLottie, setShouldRenderLottie] = useState(false);
+  const hasRenderedOnce = useRef(false);
+  
+  // Only load Lottie when component comes into view and track if it has rendered at least once
+  useEffect(() => {
+    if (isInView && !hasRenderedOnce.current) {
+      // Small delay to prioritize other UI elements
+      const timer = setTimeout(() => {
+        setShouldRenderLottie(true);
+        hasRenderedOnce.current = true;
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isInView]);
+
   // Simplified animation variants for better mobile performance
   const fadeInUp = {
     hidden: { opacity: 0, y: isMobile ? 5 : 8 },
@@ -42,7 +58,7 @@ const LottieVisualization = memo(function LottieVisualization({ isInView, isMobi
         A visual representation of my growth and experience in web development
       </motion.p>
       
-      {/* Lottie animation - simplified for mobile */}
+      {/* Lottie animation - optimized loading */}
       <div className="relative w-full aspect-square max-w-sm mx-auto mb-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
@@ -54,12 +70,18 @@ const LottieVisualization = memo(function LottieVisualization({ isInView, isMobi
           whileHover={{ scale: isMobile ? 1.01 : 1.02 }}
           className="w-full h-full"
         >
-          <DotLottieReact
-            src="https://lottie.host/bf490252-846e-457c-a7db-c2dcf327442e/81l4tBdw6P.lottie"
-            loop
-            autoplay
-            className="w-full h-full"
-          />
+          {shouldRenderLottie ? (
+            <DotLottieReact
+              src="https://lottie.host/bf490252-846e-457c-a7db-c2dcf327442e/81l4tBdw6P.lottie"
+              loop={!isMobile} // Disable looping on mobile to reduce CPU usage
+              autoplay
+              className="w-full h-full"
+            />
+          ) : (
+            <div className="w-full h-full bg-card/40 rounded-lg animate-pulse flex items-center justify-center">
+              <div className="w-12 h-12 border-2 border-accent/30 border-t-accent rounded-full animate-spin"></div>
+            </div>
+          )}
         </motion.div>
       </div>
       

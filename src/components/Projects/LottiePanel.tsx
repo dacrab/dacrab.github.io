@@ -23,13 +23,15 @@ const LottiePanel = memo(function LottiePanel({ isInView, delay, isMobile = fals
     }
   }, []);
   
-  // Customize load behavior based on device capabilities
+  // Only load Lottie when component is visible and not on a low-end mobile device
   const shouldLoadLottie = isInView && (!isMobile || !isLowEndDevice);
   
   // Lazy load the Lottie animation only when the component is visible and device can handle it
+  // Setting preload to false to save resources when not needed
   const { isLottieReady, animationSource } = useLazyLottie(
     shouldLoadLottie, 
-    'https://lottie.host/89786656-4880-42e7-9f18-82895c67895a/37mBlD7a1R.lottie'
+    'https://lottie.host/89786656-4880-42e7-9f18-82895c67895a/37mBlD7a1R.lottie',
+    false // Disable preloading to improve initial load performance
   );
   
   // Simpler animation transition for mobile
@@ -104,9 +106,9 @@ const LottiePanel = memo(function LottiePanel({ isInView, delay, isMobile = fals
                   className="w-full h-full"
                 />
               ) : (
-                // Simplified loading spinner
+                // Simplified loading spinner with reduced animation complexity
                 <div className="w-full h-full flex items-center justify-center">
-                  <div className="w-8 h-8 border-t-2 border-accent/30 rounded-full animate-spin"></div>
+                  <div className="w-8 h-8 border-t-2 border-accent/30 rounded-full animate-spin" style={{ animationDuration: '1.5s' }}></div>
                 </div>
               )
             )}

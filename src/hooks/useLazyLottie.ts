@@ -8,6 +8,10 @@ const lottieCache = new Map<string, string>();
 // Initialize preloading status tracker
 const preloadStatus = new Map<string, boolean>();
 
+// Track active animations to limit concurrent loads
+let activeLoads = 0;
+const MAX_CONCURRENT_LOADS = 2;
+
 /**
  * Custom hook to lazily load Lottie animations to reduce initial page load
  * @param shouldLoad Condition to start loading the animation (e.g., based on component visibility)
@@ -19,23 +23,54 @@ export function useLazyLottie(shouldLoad: boolean, source: string, preload: bool
   const [isLottieReady, setIsLottieReady] = useState(false);
   const [animationSource, setAnimationSource] = useState<string | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const mountedRef = useRef(true);
+  
+  // Clean up function to ensure we don't update state after unmount
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
   
   // Function to load the animation resource, wrapped in useCallback
   const loadLottieAnimation = useCallback(() => {
     // Check if already cached
     if (lottieCache.has(source)) {
-      setAnimationSource(lottieCache.get(source) || null);
-      setIsLottieReady(true);
+      if (mountedRef.current) {
+        setAnimationSource(lottieCache.get(source) || null);
+        setIsLottieReady(true);
+      }
+      return;
+    }
+    
+    // Check if we should queue this load due to too many concurrent loads
+    if (activeLoads >= MAX_CONCURRENT_LOADS) {
+      timerRef.current = setTimeout(() => {
+        if (mountedRef.current) {
+          loadLottieAnimation();
+        }
+      }, 300 * (activeLoads - MAX_CONCURRENT_LOADS + 1)); // Progressive backoff
       return;
     }
     
     // Start loading with a small delay to prioritize critical rendering
+    activeLoads++;
+    
     timerRef.current = setTimeout(() => {
-      setAnimationSource(source);
-      setIsLottieReady(true);
+      if (mountedRef.current) {
+        setAnimationSource(source);
+        setIsLottieReady(true);
+        
+        // Cache the animation source
+        lottieCache.set(source, source);
+      }
       
-      // Cache the animation source
-      lottieCache.set(source, source);
+      // Decrement active loads
+      activeLoads = Math.max(0, activeLoads - 1);
     }, 300);
   }, [source]);
   
@@ -75,16 +110,24 @@ export function useLazyLottie(shouldLoad: boolean, source: string, preload: bool
     const idleCallback = requestIdleCallbackFunc(
       () => {
         if (!isLottieReady && !shouldLoad) {
-          // Prefetch the animation in the background
-          fetch(source)
-            .then(() => {
-              // Just cache the URL, the actual animation will be loaded when needed
-              lottieCache.set(source, source);
-            })
-            .catch(() => {
-              // Clear preload status on error
-              preloadStatus.delete(source);
-            });
+          // Only preload if we're under the concurrent load limit
+          if (activeLoads < MAX_CONCURRENT_LOADS) {
+            // Prefetch the animation in the background
+            fetch(source)
+              .then(() => {
+                // Just cache the URL, the actual animation will be loaded when needed
+                if (mountedRef.current) {
+                  lottieCache.set(source, source);
+                }
+              })
+              .catch(() => {
+                // Clear preload status on error
+                preloadStatus.delete(source);
+              });
+          } else {
+            // Clear preload status if we're at capacity, so it can be tried again later
+            preloadStatus.delete(source);
+          }
         }
       },
       { timeout: 2000 } // 2 second timeout

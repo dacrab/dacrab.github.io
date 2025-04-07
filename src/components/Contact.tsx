@@ -14,7 +14,7 @@ import SocialLink from "./Contact/SocialLink";
 const Contact = memo(function Contact() {
   const ref = useRef<HTMLElement>(null);
   const isMobile = useIsMobile();
-  const isInView = useInView(ref, { once: false, amount: isMobile ? 0.05 : 0.1 }); // Reduced threshold for earlier animation
+  const isInView = useInView(ref, { once: false, amount: isMobile ? 0.05 : 0.1 });
   
   // State to track if component has ever been visible - for lazy loading
   const [hasBeenVisible, setHasBeenVisible] = useState(false);
@@ -26,61 +26,75 @@ const Contact = memo(function Contact() {
     }
   }, [isInView, hasBeenVisible]);
   
-  // Simplified scroll animation setup with reduced transform values
+  // Simplified scroll animation with optimized transform values
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
   });
   
-  // Very simplified transform values for better mobile performance
+  // Optimized transform values with fewer interpolation points
   const opacity = useTransform(
     scrollYProgress, 
     [0, 0.2, 0.8, 1], 
-    [isMobile ? 0.4 : 0.3, 1, 1, isMobile ? 0.9 : 0.8]
+    [0.4, 1, 1, 0.8]
   );
   const scale = useTransform(
     scrollYProgress, 
     [0, 0.2, 0.8, 1], 
-    [isMobile ? 0.99 : 0.98, 1, 1, isMobile ? 0.995 : 0.99]
+    [0.99, 1, 1, 0.99]
   );
+  
+  // Prepare staggered animation variants for social links
+  const socialVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { 
+        staggerChildren: 0.03, 
+        delayChildren: 0.2 
+      }
+    }
+  };
   
   return (
     <section
       id="contact"
       ref={ref}
-      className="py-16 md:py-28 relative overflow-hidden" // Removed bg-background class
+      className="py-16 md:py-28 relative overflow-hidden"
     >
       {/* Only render complex animations if component has been visible at least once */}
       {hasBeenVisible && (
         <>
-          {/* Accent glow effects */}
+          {/* Accent glow effects - optimized for performance */}
           <motion.div 
             className="absolute top-0 left-0 w-[25%] h-[30%] rounded-full bg-accent/20 blur-[100px] opacity-0"
             animate={{ 
-              opacity: isInView ? (isMobile ? 0.3 : 0.4) : 0,
-              y: isInView ? [0, 10, 0] : 0,
+              opacity: isInView ? 0.4 : 0,
+              y: isInView ? [0, 10, 0] : 0, // Simplified animation keyframes
             }}
             transition={{ 
-              opacity: { duration: isMobile ? 1.2 : 1.5 },
+              opacity: { duration: 1.2 },
               y: { 
                 repeat: Infinity,
-                duration: isMobile ? 20 : 16,
-                ease: "easeInOut" 
+                duration: 16,
+                ease: "easeInOut",
+                repeatType: "mirror" // More efficient than full cycle
               }
             }}
           />
           <motion.div 
             className="absolute bottom-[10%] right-[5%] w-[35%] h-[40%] rounded-full bg-accent/15 blur-[150px] opacity-0"
             animate={{ 
-              opacity: isInView ? (isMobile ? 0.4 : 0.6) : 0,
-              scale: isInView ? [1, 1.1, 1, 0.95, 1] : 0.9,
+              opacity: isInView ? 0.5 : 0,
+              scale: isInView ? [1, 1.05, 1] : 0.9, // Simplified animation keyframes
             }}
             transition={{ 
-              opacity: { duration: isMobile ? 1.5 : 2, delay: isMobile ? 0.2 : 0.3 },
+              opacity: { duration: 1.5, delay: 0.2 },
               scale: { 
                 repeat: Infinity,
-                duration: isMobile ? 18 : 14,
-                ease: "easeInOut" 
+                duration: 14,
+                ease: "easeInOut",
+                repeatType: "mirror" // More efficient than full cycle
               }
             }}
           />
@@ -95,8 +109,10 @@ const Contact = memo(function Contact() {
         <motion.div 
           className="max-w-6xl mx-auto"
           style={{ opacity, scale }}
+          // Use layout='position' to optimize rendering
+          layout="position"
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 backdrop-blur-sm rounded-xl overflow-hidden border border-border/20 shadow-lg relative" // Reduced shadow, radius and gap
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 backdrop-blur-sm rounded-xl overflow-hidden border border-border/20 shadow-lg relative"
                style={{ background: "rgba(var(--card-rgb), 0.6)" }}>
             
             {/* Subtle inner glow effect - only render if component has been visible */}
@@ -104,41 +120,40 @@ const Contact = memo(function Contact() {
               <motion.div
                 className="absolute inset-0 border-[1px] border-accent/10 rounded-xl opacity-0"
                 animate={{ 
-                  opacity: isInView ? [0, isMobile ? 0.4 : 0.5, isMobile ? 0.5 : 0.7, isMobile ? 0.4 : 0.5, 0] : 0,
+                  opacity: isInView ? [0, 0.5, 0] : 0,
                   boxShadow: [
                     "inset 0 0 0px rgba(147, 51, 234, 0)",
-                    "inset 0 0 15px rgba(147, 51, 234, 0.2)",
-                    "inset 0 0 30px rgba(147, 51, 234, 0.3)",
-                    "inset 0 0 15px rgba(147, 51, 234, 0.2)",
+                    "inset 0 0 20px rgba(147, 51, 234, 0.3)",
                     "inset 0 0 0px rgba(147, 51, 234, 0)",
                   ]
                 }}
                 transition={{ 
                   repeat: Infinity,
-                  duration: isMobile ? 15 : 10,
-                  ease: "easeInOut" 
+                  duration: 10,
+                  ease: "easeInOut",
+                  repeatType: "mirror" // More efficient than full cycle
                 }}
               />
             )}
             
             {/* Left column - Contact Info */}
-            <div className="lg:col-span-7 p-5 md:p-8 relative"> {/* Reduced padding for mobile */}
+            <div className="lg:col-span-7 p-5 md:p-8 relative">
               <div className="h-full flex flex-col justify-between">
                 {/* Heading */}
-                <div className="mb-8"> {/* Reduced margin */}
+                <div className="mb-8">
                   <motion.h3 
-                    className="text-xl md:text-2xl font-bold mb-3 text-gradient" // Smaller text and margin
-                    initial={{ opacity: 0, y: isMobile ? -3 : -5 }} // Reduced animation distance
-                    animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? -3 : -5) }}
-                    transition={{ duration: isMobile ? 0.3 : 0.4 }} // Faster animation
+                    className="text-xl md:text-2xl font-bold mb-3 text-gradient"
+                    initial={{ opacity: 0, y: -3 }}
+                    animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : -3 }}
+                    transition={{ duration: 0.3 }}
                   >
                     Let&apos;s Work Together
                   </motion.h3>
                   <motion.p 
-                    className="text-muted max-w-lg text-sm md:text-base" // Responsive text size
-                    initial={{ opacity: 0, y: isMobile ? -2 : -3 }} // Reduced animation distance
-                    animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? -2 : -3) }}
-                    transition={{ duration: isMobile ? 0.3 : 0.4, delay: isMobile ? 0.1 : 0.15 }} // Faster animation, reduced delay
+                    className="text-muted max-w-lg text-sm md:text-base"
+                    initial={{ opacity: 0, y: -2 }}
+                    animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : -2 }}
+                    transition={{ duration: 0.3, delay: 0.1 }}
                   >
                     I&apos;m currently available for freelance work and collaboration opportunities.
                     Feel free to reach out if you have a project in mind or just want to connect.
@@ -146,7 +161,7 @@ const Contact = memo(function Contact() {
                 </div>
                 
                 {/* Contact methods */}
-                <div className="space-y-5 md:space-y-8"> {/* Reduced spacing for mobile */}
+                <div className="space-y-5 md:space-y-8">
                   {contactMethods.map((method, i) => (
                     <ContactMethod
                       key={method.title}
@@ -163,32 +178,23 @@ const Contact = memo(function Contact() {
             </div>
             
             {/* Right column - Social Links */}
-            <div className="lg:col-span-5 bg-gradient-to-br from-card/80 to-card p-5 md:p-8 flex flex-col justify-between relative" // Reduced padding
+            <div className="lg:col-span-5 bg-gradient-to-br from-card/80 to-card p-5 md:p-8 flex flex-col justify-between relative"
                  style={{ borderLeft: "1px solid rgba(var(--border-rgb), 0.1)" }}>
               
               <div className="relative z-10">
                 <motion.h3 
-                  className="text-xl font-bold mb-6 text-gradient" // Smaller text and margin
-                  initial={{ opacity: 0, x: isMobile ? 3 : 5 }} // Reduced animation distance
-                  animate={{ opacity: isInView ? 1 : 0, x: isInView ? 0 : (isMobile ? 3 : 5) }}
-                  transition={{ duration: isMobile ? 0.3 : 0.4, delay: isMobile ? 0.15 : 0.2 }} // Faster animation, reduced delay
+                  className="text-xl font-bold mb-6 text-gradient"
+                  initial={{ opacity: 0, x: 3 }}
+                  animate={{ opacity: isInView ? 1 : 0, x: isInView ? 0 : 3 }}
+                  transition={{ duration: 0.3, delay: 0.15 }}
                 >
                   Connect With Me
                 </motion.h3>
                 
                 {/* Social links grid */}
                 <motion.div 
-                  className="grid grid-cols-2 gap-4" // Reduced gap
-                  variants={{
-                    hidden: { opacity: 0 },
-                    show: {
-                      opacity: 1,
-                      transition: { 
-                        staggerChildren: isMobile ? 0.03 : 0.05, 
-                        delayChildren: isMobile ? 0.2 : 0.3 
-                      } // Faster stagger, reduced delay
-                    }
-                  }}
+                  className="grid grid-cols-2 gap-4"
+                  variants={socialVariants}
                   initial="hidden"
                   animate={isInView ? "show" : "hidden"}
                 >
@@ -201,9 +207,9 @@ const Contact = memo(function Contact() {
                         isMobile={isMobile}
                       />
                       <motion.span 
-                        className="text-xs text-muted mt-2" // Smaller text
+                        className="text-xs text-muted mt-2"
                         variants={{
-                          hidden: { opacity: 0, y: isMobile ? 2 : 3 }, // Reduced animation distance
+                          hidden: { opacity: 0, y: 2 },
                           show: { opacity: 1, y: 0 }
                         }}
                       >
@@ -216,16 +222,16 @@ const Contact = memo(function Contact() {
               
               {/* Availability indicator */}
               <motion.div 
-                className="mt-8 pt-4 border-t border-border/20" // Reduced spacing
-                initial={{ opacity: 0, y: isMobile ? 3 : 5 }} // Reduced animation distance
-                animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 3 : 5) }}
-                transition={{ duration: isMobile ? 0.3 : 0.4, delay: isMobile ? 0.4 : 0.5 }} // Faster animation, reduced delay
+                className="mt-8 pt-4 border-t border-border/20"
+                initial={{ opacity: 0, y: 3 }}
+                animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 3 }}
+                transition={{ duration: 0.3, delay: 0.4 }}
               >
-                <p className="text-xs md:text-sm text-muted"> {/* Responsive text size */}
+                <p className="text-xs md:text-sm text-muted">
                   Prefer a quick response? Send me a direct message on LinkedIn or email me for 
                   project inquiries.
                 </p>
-                <div className="mt-3 flex items-center space-x-2"> {/* Reduced margin */}
+                <div className="mt-3 flex items-center space-x-2">
                   <motion.div 
                     className="w-2 h-2 rounded-full bg-accent"
                     animate={{ 
@@ -237,8 +243,9 @@ const Contact = memo(function Contact() {
                     }}
                     transition={{ 
                       repeat: Infinity,
-                      duration: isMobile ? 2.5 : 2,
-                      ease: "easeInOut" 
+                      duration: 2,
+                      ease: "easeInOut",
+                      repeatType: "mirror" // More efficient than full cycle
                     }}
                   ></motion.div>
                   <span className="text-xs text-accent">Available for new projects</span>
@@ -250,29 +257,32 @@ const Contact = memo(function Contact() {
         
         {/* Footer note - simplified */}
         <motion.div
-          className="mt-12 text-center" // Reduced margin
+          className="mt-12 text-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: isInView ? 0.7 : 0 }}
-          transition={{ duration: isMobile ? 0.3 : 0.4, delay: isMobile ? 0.6 : 0.8 }} // Faster animation, reduced delay
+          transition={{ duration: 0.3, delay: 0.6 }}
         >
           <p className="text-sm text-muted">Thanks for viewing my portfolio</p>
           <motion.div
-            className="w-2 h-2 bg-accent/30 rounded-full mx-auto mt-3" // Reduced margin
+            className="w-2 h-2 bg-accent/30 rounded-full mx-auto mt-3"
             animate={{ 
-              scale: [1, isMobile ? 1.2 : 1.3, 1], 
-              opacity: [0.3, isMobile ? 0.4 : 0.5, 0.3],
+              scale: [1, 1.2, 1], 
+              opacity: [0.3, 0.4, 0.3],
               boxShadow: [
                 "0 0 0px rgba(147, 51, 234, 0.1)",
                 "0 0 5px rgba(147, 51, 234, 0.4)",
                 "0 0 0px rgba(147, 51, 234, 0.1)"
               ]
-            }} // Reduced animation range
-            transition={{ duration: isMobile ? 1.8 : 1.5, repeat: Infinity, repeatType: "reverse" }} // Faster animation
+            }}
+            transition={{ duration: 1.8, repeat: Infinity, repeatType: "mirror" }}
           />
         </motion.div>
       </div>
     </section>
   );
 });
+
+// Add display name for better debugging in dev tools
+Contact.displayName = 'Contact';
 
 export default Contact;

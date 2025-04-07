@@ -3,7 +3,7 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import ScrollReveal from "../ScrollReveal";
 import StaggerReveal from "../StaggerReveal";
 import NumberCounter from "../Experience/NumberCounter";
-import { memo } from "react";
+import { memo, useRef, useState, useEffect } from "react";
 
 interface ProfileImageProps {
   contentY: MotionValue<number>;
@@ -12,8 +12,29 @@ interface ProfileImageProps {
 
 // Memoize the component to prevent unnecessary re-renders
 const ProfileImage = memo(function ProfileImage({ contentY, isMobile = false }: ProfileImageProps) {
+  const [shouldLoadLottie, setShouldLoadLottie] = useState(false);
+  const lottieRef = useRef<HTMLDivElement>(null);
+
+  // Load Lottie only when component is in viewport
+  useEffect(() => {
+    if (!lottieRef.current) return;
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          setShouldLoadLottie(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    
+    observer.observe(lottieRef.current);
+    
+    return () => observer.disconnect();
+  }, []);
+
   // Animation constants - simplified for better mobile performance
-  
   const hoverAnimation = {
     y: isMobile ? -2 : -3, 
     boxShadow: isMobile ? 
@@ -31,7 +52,7 @@ const ProfileImage = memo(function ProfileImage({ contentY, isMobile = false }: 
       <div className="relative">
         {/* Profile container */}
         <div className="relative w-full max-w-md mx-auto lg:mx-0">
-          {/* Lottie animation profile */}
+          {/* Lottie animation profile - optimized loading strategy */}
           <ScrollReveal
             direction="left"
             duration={isMobile ? 0.5 : 0.6}
@@ -40,14 +61,21 @@ const ProfileImage = memo(function ProfileImage({ contentY, isMobile = false }: 
             distance={isMobile ? 20 : 30}
             mobileOptimized={true}
           >
-            <div className="aspect-square relative overflow-hidden flex items-center justify-center">
+            <div 
+              ref={lottieRef}
+              className="aspect-square relative overflow-hidden flex items-center justify-center"
+            >
               <div className="w-full h-full">
-                <DotLottieReact
-                  src="https://lottie.host/ec2681d0-ab67-4f7d-a35a-c870c0a588aa/BVfwAmcRde.lottie"
-                  loop
-                  autoplay
-                  className="w-full h-full"
-                />
+                {shouldLoadLottie ? (
+                  <DotLottieReact
+                    src="https://lottie.host/ec2681d0-ab67-4f7d-a35a-c870c0a588aa/BVfwAmcRde.lottie"
+                    loop
+                    autoplay
+                    className="w-full h-full"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-card/50 animate-pulse"></div>
+                )}
               </div>
             </div>
           </ScrollReveal>

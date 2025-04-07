@@ -20,7 +20,7 @@ const Projects = memo(function Projects() {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { 
     once: false, 
-    amount: isMobile ? 0.05 : 0.1 // Further reduced threshold for mobile
+    amount: isMobile ? 0.05 : 0.1 
   });
   
   // Added explicit state to track if the component has ever been visible
@@ -45,16 +45,16 @@ const Projects = memo(function Projects() {
     offset: ["start end", "end start"]
   });
   
-  // Simplified transform values for better mobile performance
+  // Optimized transform values with fewer interpolation points
   const opacity = useTransform(
     scrollYProgress, 
-    [0, isMobile ? 0.05 : 0.1, isMobile ? 0.95 : 0.9, 1], 
+    [0, 0.1, 0.9, 1], 
     [0.2, 1, 1, 0.2]
   );
   const scale = useTransform(
     scrollYProgress, 
-    [0, isMobile ? 0.05 : 0.1, isMobile ? 0.95 : 0.9, 1], 
-    [isMobile ? 0.995 : 0.99, 1, 1, isMobile ? 0.995 : 0.99]
+    [0, 0.1, 0.9, 1], 
+    [0.995, 1, 1, 0.995]
   );
   
   // Fetch GitHub projects with custom hook - only when component is visible and has been visible at least once
@@ -65,7 +65,7 @@ const Projects = memo(function Projects() {
     forceFresh: false // Use cached data when available
   }, isInView && hasBeenVisible); // Only fetch when visible AND has been visible at least once
   
-  // Custom featured projects
+  // Custom featured projects - memoized to prevent unnecessary recalculations
   const customProjects = useMemo(() => [
     {
       id: 91,
@@ -83,7 +83,7 @@ const Projects = memo(function Projects() {
     },
   ], []);
   
-  // Process GitHub projects - limit to 6 projects for better performance
+  // Process GitHub projects - limit to 6 projects and memoize
   const originalProjects = useMemo(() => {
     // Always use defaults if there was an error or if no projects loaded yet
     if (error) {
@@ -101,78 +101,89 @@ const Projects = memo(function Projects() {
     <section 
       id="projects" 
       ref={containerRef}
-      className="py-16 md:py-28 relative overflow-hidden" // Reduced padding for mobile
+      className="py-16 md:py-28 relative overflow-hidden"
     >
-      {/* Accent glow effects - simplified for mobile */}
-      <motion.div 
-        className="absolute top-0 right-[10%] w-[40%] h-[30%] rounded-full bg-accent/15 blur-[150px] opacity-0"
-        animate={{ 
-          opacity: isInView ? (isMobile ? 0.4 : 0.5) : 0,
-          y: isInView ? (isMobile ? [0, 10, 0, -10, 0] : [0, 15, 0, -15, 0]) : 0,
-        }}
-        transition={{ 
-          opacity: { duration: isMobile ? 1.5 : 2 },
-          y: { 
-            repeat: Infinity,
-            duration: isMobile ? 20 : 25,
-            ease: "easeInOut" 
-          }
-        }}
-      />
-      <motion.div 
-        className="absolute bottom-[20%] left-[5%] w-[30%] h-[25%] rounded-full bg-accent/20 blur-[120px] opacity-0"
-        animate={{ 
-          opacity: isInView ? (isMobile ? 0.5 : 0.6) : 0,
-          scale: isInView ? (isMobile ? [1, 1.1, 1, 0.95, 1] : [1, 1.2, 1, 0.9, 1]) : 0.9,
-        }}
-        transition={{ 
-          opacity: { duration: isMobile ? 1.2 : 1.5, delay: isMobile ? 0.3 : 0.5 },
-          scale: { 
-            repeat: Infinity,
-            duration: isMobile ? 15 : 20,
-            ease: "easeInOut" 
-          }
-        }}
-      />
+      {/* Accent glow effects - optimized for performance */}
+      {hasBeenVisible && (
+        <>
+          <motion.div 
+            className="absolute top-0 right-[10%] w-[40%] h-[30%] rounded-full bg-accent/15 blur-[150px] opacity-0"
+            animate={{ 
+              opacity: isInView ? (isMobile ? 0.4 : 0.5) : 0,
+              y: isInView ? [0, 10, 0] : 0, // Simplified keyframes
+            }}
+            transition={{ 
+              opacity: { duration: 1.5 },
+              y: { 
+                repeat: Infinity,
+                duration: 20,
+                ease: "easeInOut",
+                repeatType: "mirror" // More efficient than full cycle
+              }
+            }}
+          />
+          <motion.div 
+            className="absolute bottom-[20%] left-[5%] w-[30%] h-[25%] rounded-full bg-accent/20 blur-[120px] opacity-0"
+            animate={{ 
+              opacity: isInView ? (isMobile ? 0.5 : 0.6) : 0,
+              scale: isInView ? [1, 1.1, 1] : 0.9, // Simplified keyframes
+            }}
+            transition={{ 
+              opacity: { duration: 1.2, delay: 0.3 },
+              scale: { 
+                repeat: Infinity,
+                duration: 15,
+                ease: "easeInOut",
+                repeatType: "mirror" // More efficient than full cycle
+              }
+            }}
+          />
+        </>
+      )}
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         {/* Section header */}
         <SectionHeader isInView={isInView} isMobile={isMobile} />
         
         {/* Project grid */}
-        <div className="grid grid-cols-1 gap-6"> {/* Reduced gap */}
+        <div className="grid grid-cols-1 gap-6">
           {/* Featured projects section with Lottie */}
           <motion.div 
-            className="backdrop-blur-sm rounded-xl overflow-hidden border border-border/20 shadow-lg relative" // Reduced shadow and corner radius
+            className="backdrop-blur-sm rounded-xl overflow-hidden border border-border/20 shadow-lg relative"
             style={{ 
               background: "rgba(var(--card-rgb), 0.6)",
               opacity,
               scale 
             }}
+            // Use layout='position' to optimize rendering
+            layout="position"
           >
-            {/* Card glow effect - simplified for mobile */}
-            <motion.div 
-              className="absolute -inset-1 bg-gradient-to-r from-accent/20 via-accent/5 to-accent/20 rounded-xl opacity-0"
-              animate={{ 
-                opacity: isInView ? [0, isMobile ? 0.4 : 0.5, 0] : 0,
-              }}
-              transition={{ 
-                repeat: Infinity,
-                duration: isMobile ? 5 : 6,
-                ease: "easeInOut" 
-              }}
-              style={{ filter: isMobile ? "blur(6px)" : "blur(8px)" }}
-            />
+            {/* Card glow effect - only render if visible */}
+            {hasBeenVisible && (
+              <motion.div 
+                className="absolute -inset-1 bg-gradient-to-r from-accent/20 via-accent/5 to-accent/20 rounded-xl opacity-0"
+                animate={{ 
+                  opacity: isInView ? [0, isMobile ? 0.4 : 0.5, 0] : 0,
+                }}
+                transition={{ 
+                  repeat: Infinity,
+                  duration: 5,
+                  ease: "easeInOut",
+                  repeatType: "mirror" // More efficient than full cycle
+                }}
+                style={{ filter: "blur(8px)" }}
+              />
+            )}
             
-            <div className="p-5 md:p-8 relative z-10"> {/* Reduced padding */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-6"> {/* Responsive gap */}
+            <div className="p-5 md:p-8 relative z-10">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 md:gap-6">
                 {/* Left column: First two featured projects */}
-                <div className="lg:col-span-8 space-y-5 md:space-y-6"> {/* Reduced spacing */}
+                <div className="lg:col-span-8 space-y-5 md:space-y-6">
                   {/* First featured project - Argicon.gr */}
                   <FeaturedProject 
                     project={customProjects[0]} 
                     isInView={isInView}
-                    delay={isMobile ? 0.1 : 0.15} // Further reduced delay for mobile
+                    delay={0.1}
                     index={0}
                     isMobile={isMobile}
                   />
@@ -181,7 +192,7 @@ const Projects = memo(function Projects() {
                   <FeaturedProject 
                     project={customProjects[1]} 
                     isInView={isInView}
-                    delay={isMobile ? 0.15 : 0.2} // Further reduced delay for mobile
+                    delay={0.15}
                     reversed
                     index={1}
                     isMobile={isMobile}
@@ -190,19 +201,19 @@ const Projects = memo(function Projects() {
                 
                 {/* Right column: Lottie Animation */}
                 <div className="lg:col-span-4">
-                  <LottiePanel isInView={isInView} delay={isMobile ? 0.2 : 0.25} isMobile={isMobile} />
+                  <LottiePanel isInView={isInView} delay={0.2} isMobile={isMobile} />
                 </div>
               </div>
             </div>
           </motion.div>
           
           {/* GitHub projects section */}
-          <div className="mt-12"> {/* Reduced margin */}
+          <div className="mt-12">
             <motion.h3
-              initial={{ opacity: 0, y: isMobile ? 5 : 10 }} // Further reduced animation distance for mobile
-              animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 5 : 10) }}
-              transition={{ duration: isMobile ? 0.3 : 0.4, delay: isMobile ? 0.5 : 0.6 }} // Faster animation for mobile
-              className="text-xl md:text-2xl font-bold mb-5 text-gradient text-center" // Smaller text and margin
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 5 }}
+              transition={{ duration: 0.3, delay: 0.5 }}
+              className="text-xl md:text-2xl font-bold mb-5 text-gradient text-center"
             >
               GitHub Projects
             </motion.h3>
@@ -221,9 +232,9 @@ const Projects = memo(function Projects() {
               </motion.div>
             )}
             
-            {/* Projects grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6"> {/* Responsive gap */}
-              {originalProjects.slice(0, 6).map((project, index) => (
+            {/* Projects grid - Only render up to 6 projects for better performance */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+              {originalProjects.map((project, index) => (
                 <ProjectCard
                   key={project.id}
                   project={project}
@@ -241,19 +252,19 @@ const Projects = memo(function Projects() {
           
           {/* GitHub link */}
           <motion.div
-            className="mt-8 text-center" // Reduced margin
-            initial={{ opacity: 0, y: isMobile ? 5 : 10 }} // Further reduced animation distance for mobile
-            animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 5 : 10) }}
-            transition={{ duration: isMobile ? 0.3 : 0.4, delay: isMobile ? 0.8 : 1 }} // Faster animation for mobile
+            className="mt-8 text-center"
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 5 }}
+            transition={{ duration: 0.3, delay: 0.8 }}
           >
             <motion.a 
               href="https://github.com/dacrab" 
-              className="inline-flex items-center px-5 py-2.5 rounded-lg bg-accent text-white hover:bg-accent-dark transition-colors duration-200 shadow-md hover:shadow-accent/15 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:ring-offset-2 focus:ring-offset-background" // Simplified styles
+              className="inline-flex items-center px-5 py-2.5 rounded-lg bg-accent text-white hover:bg-accent-dark transition-colors duration-200 shadow-md hover:shadow-accent/15 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:ring-offset-2 focus:ring-offset-background"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ 
-                boxShadow: `0 0 ${isMobile ? '10px' : '15px'} rgba(147, 51, 234, 0.5)`,
-                scale: isMobile ? 1.01 : 1.02
+                boxShadow: "0 0 10px rgba(147, 51, 234, 0.5)",
+                scale: 1.01
               }}
               whileTap={{ scale: 0.98 }}
             >
@@ -268,5 +279,8 @@ const Projects = memo(function Projects() {
     </section>
   );
 });
+
+// Add display name for better debugging in dev tools
+Projects.displayName = 'Projects';
 
 export default Projects;
