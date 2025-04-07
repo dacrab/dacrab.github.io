@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, memo } from "react";
+import { useRef, useState, useEffect, memo } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
@@ -15,6 +15,17 @@ const Experience = memo(function Experience() {
   const ref = useRef(null);
   const isMobile = useIsMobile();
   const isInView = useInView(ref, { once: false, amount: isMobile ? 0.05 : 0.1 }); // Even lower threshold for mobile for earlier animation
+  
+  // State to track if component has ever been visible
+  // This helps with lazy loading optimizations
+  const [hasBeenVisible, setHasBeenVisible] = useState(false);
+  
+  // Only perform expensive animations/calculations after component has been visible once
+  useEffect(() => {
+    if (isInView && !hasBeenVisible) {
+      setHasBeenVisible(true);
+    }
+  }, [isInView, hasBeenVisible]);
   
   // Scroll progress for animations with simplified values
   const { scrollYProgress } = useScroll({
@@ -32,37 +43,42 @@ const Experience = memo(function Experience() {
       ref={ref}
       className="py-16 md:py-28 relative overflow-hidden" // Reduced padding for mobile
     >
-      {/* Accent glow effects */}
-      <motion.div 
-        className="absolute top-[15%] left-[50%] w-[40%] h-[35%] rounded-full bg-accent/15 blur-[150px] opacity-0"
-        animate={{ 
-          opacity: isInView ? (isMobile ? 0.3 : 0.5) : 0,
-          x: isInView ? [-50, -60, -55, -45, -50] : -50, // subtle side-to-side movement
-        }}
-        transition={{ 
-          opacity: { duration: isMobile ? 1.5 : 1.8 },
-          x: { 
-            repeat: Infinity,
-            duration: isMobile ? 25 : 20,
-            ease: "easeInOut" 
-          }
-        }}
-      />
-      <motion.div 
-        className="absolute bottom-[25%] right-[10%] w-[30%] h-[40%] rounded-full bg-accent/20 blur-[120px] opacity-0"
-        animate={{ 
-          opacity: isInView ? (isMobile ? 0.4 : 0.6) : 0,
-          scale: isInView ? [1, 1.15, 1, 0.9, 1] : 0.9,
-        }}
-        transition={{ 
-          opacity: { duration: isMobile ? 1.2 : 1.5, delay: isMobile ? 0.3 : 0.5 },
-          scale: { 
-            repeat: Infinity,
-            duration: isMobile ? 22 : 18,
-            ease: "easeInOut" 
-          }
-        }}
-      />
+      {/* Only render complex animations if component has been visible at least once */}
+      {hasBeenVisible && (
+        <>
+          {/* Accent glow effects */}
+          <motion.div 
+            className="absolute top-[15%] left-[50%] w-[40%] h-[35%] rounded-full bg-accent/15 blur-[150px] opacity-0"
+            animate={{ 
+              opacity: isInView ? (isMobile ? 0.3 : 0.5) : 0,
+              x: isInView ? [-50, -60, -55, -45, -50] : -50, // subtle side-to-side movement
+            }}
+            transition={{ 
+              opacity: { duration: isMobile ? 1.5 : 1.8 },
+              x: { 
+                repeat: Infinity,
+                duration: isMobile ? 25 : 20,
+                ease: "easeInOut" 
+              }
+            }}
+          />
+          <motion.div 
+            className="absolute bottom-[25%] right-[10%] w-[30%] h-[40%] rounded-full bg-accent/20 blur-[120px] opacity-0"
+            animate={{ 
+              opacity: isInView ? (isMobile ? 0.4 : 0.6) : 0,
+              scale: isInView ? [1, 1.15, 1, 0.9, 1] : 0.9,
+            }}
+            transition={{ 
+              opacity: { duration: isMobile ? 1.2 : 1.5, delay: isMobile ? 0.3 : 0.5 },
+              scale: { 
+                repeat: Infinity,
+                duration: isMobile ? 22 : 18,
+                ease: "easeInOut" 
+              }
+            }}
+          />
+        </>
+      )}
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         {/* Section header */}
@@ -79,18 +95,20 @@ const Experience = memo(function Experience() {
           <div className="backdrop-blur-sm rounded-xl overflow-hidden border border-border/20 shadow-lg relative" // Reduced shadow and border radius for better performance
                style={{ background: "rgba(var(--card-rgb), 0.6)" }}>
             
-            {/* Card glow effect */}
-            <motion.div 
-              className="absolute inset-0 bg-accent/5 opacity-0"
-              animate={{ 
-                opacity: isInView ? [0, isMobile ? 0.6 : 0.8, 0] : 0,
-              }}
-              transition={{ 
-                repeat: Infinity,
-                duration: isMobile ? 10 : 8,
-                ease: "easeInOut" 
-              }}
-            />
+            {/* Card glow effect - only render if visible at least once */}
+            {hasBeenVisible && (
+              <motion.div 
+                className="absolute inset-0 bg-accent/5 opacity-0"
+                animate={{ 
+                  opacity: isInView ? [0, isMobile ? 0.6 : 0.8, 0] : 0,
+                }}
+                transition={{ 
+                  repeat: Infinity,
+                  duration: isMobile ? 10 : 8,
+                  ease: "easeInOut" 
+                }}
+              />
+            )}
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 relative z-10">
               {/* Left column: Lottie Visualization */}

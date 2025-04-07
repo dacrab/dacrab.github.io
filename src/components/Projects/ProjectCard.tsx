@@ -8,8 +8,8 @@ const ProjectCard = memo(function ProjectCard({
   isInView, 
   delay,
   isActive,
-  onHover,
-  onLeave,
+  onHoverStart,
+  onHoverEnd,
   index,
   isMobile = false
 }: ProjectBaseProps) {
@@ -17,7 +17,7 @@ const ProjectCard = memo(function ProjectCard({
   const primaryTagColor = primaryTag ? getTagColor(primaryTag) : '';
   
   // Delay calculation that caps the index value for better mobile performance
-  const calculatedDelay = delay + (Math.min(index || 0, isMobile ? 3 : 5) * (isMobile ? 0.03 : 0.05));
+  const calculatedDelay = (delay || 0) + (Math.min(index || 0, isMobile ? 3 : 5) * (isMobile ? 0.03 : 0.05));
   
   return (
     <motion.div
@@ -25,8 +25,8 @@ const ProjectCard = memo(function ProjectCard({
       animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 10 : 15) }}
       transition={{ duration: isMobile ? 0.3 : 0.4, delay: calculatedDelay }}
       className={`group bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden hover:border-accent/30 transition-all duration-200 flex flex-col h-full shadow-sm ${isActive ? 'ring-2 ring-accent/40' : ''}`}
-      onMouseEnter={() => onHover?.()}
-      onMouseLeave={() => onLeave?.()}
+      onHoverStart={() => onHoverStart?.()}
+      onHoverEnd={() => onHoverEnd?.()}
     >
       {/* Card header */}
       <div className="p-4 border-b border-border/20 flex items-center justify-between">

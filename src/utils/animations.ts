@@ -8,7 +8,7 @@ import { Variants } from "framer-motion";
 // Cache to prevent redundant variant recreation
 const variantCache = new Map<string, Variants>();
 
-// Common transition presets
+// Common transition presets - centralized for consistency
 const transitions = {
   spring: {
     type: "spring",
@@ -38,7 +38,34 @@ const transitions = {
     type: "tween",
     ease: [0, 0, 0.2, 1],
   },
+  easeInOut: {
+    type: "tween",
+    ease: "easeInOut",
+  },
+  linear: {
+    type: "tween",
+    ease: "linear",
+  },
+  // Special cubic bezier for smooth reveals
+  smoothReveal: {
+    type: "tween",
+    ease: [0.215, 0.61, 0.355, 1],
+  },
 };
+
+// Common animation defaults
+const defaults = {
+  duration: 0.5,
+  delay: 0,
+  staggerDelay: 0.1,
+  distance: {
+    desktop: 50,
+    mobile: 30,
+  },
+};
+
+// Helper functions
+// ---------------
 
 /**
  * Helper to get optimized animation values for mobile
@@ -55,27 +82,68 @@ export const getOptimizedValue = (
   return maxValue !== undefined ? Math.min(optimized, maxValue) : optimized;
 };
 
-// Helper function to get directional offset
-const getDirectionalOffset = (direction: string) => {
+/**
+ * Get appropriate directional offset based on direction and device
+ */
+const getDirectionalOffset = (
+  direction: "up" | "down" | "left" | "right" | "none", 
+  distance: number, 
+  isMobile: boolean
+) => {
+  // For "none" direction, return empty object
+  if (direction === "none") return {};
+  
+  // Optimize distance for mobile
+  const optimizedDistance = isMobile ? 
+    getOptimizedValue(distance, true, 0.6, 30) : 
+    distance;
+  
   switch (direction) {
-    case "up": return { y: 50 };
-    case "down": return { y: -50 };
-    case "left": return { x: 50 };
-    case "right": return { x: -50 };
+    case "up": return { y: optimizedDistance };
+    case "down": return { y: -optimizedDistance };
+    case "left": return { x: optimizedDistance };
+    case "right": return { x: -optimizedDistance };
     default: return {};
   }
 };
 
-// Helper function to get mobile-optimized directional offset
-const getMobileDirectionalOffset = (direction: string) => {
-  switch (direction) {
-    case "up": return { y: 30 };     // Reduced distance
-    case "down": return { y: -30 };  // Reduced distance
-    case "left": return { x: 30 };   // Reduced distance
-    case "right": return { x: -30 }; // Reduced distance
-    default: return {};
+/**
+ * Get transition based on device type
+ */
+const getTransition = (
+  type: "spring" | "snappy" | "tween" | "smoothReveal" = "spring",
+  duration: number,
+  delay: number,
+  isMobile: boolean
+) => {
+  const optimizedDuration = getOptimizedValue(duration, isMobile, 0.8, 0.4);
+  const optimizedDelay = getOptimizedValue(delay, isMobile, 0.7);
+  
+  let baseTransition;
+  
+  switch (type) {
+    case "spring":
+      baseTransition = isMobile ? transitions.springMobile : transitions.spring;
+      break;
+    case "snappy":
+      baseTransition = isMobile ? transitions.snappyMobile : transitions.snappy;
+      break;
+    case "smoothReveal":
+      baseTransition = isMobile ? transitions.easeOut : transitions.smoothReveal;
+      break;
+    default:
+      baseTransition = transitions.easeOut;
   }
+  
+  return {
+    ...baseTransition,
+    duration: optimizedDuration,
+    delay: optimizedDelay,
+  };
 };
+
+// Core Animation Variants
+// ----------------------
 
 /**
  * Fade in animation from a direction
@@ -83,33 +151,92 @@ const getMobileDirectionalOffset = (direction: string) => {
  */
 export const fadeIn = (
   direction: "up" | "down" | "left" | "right" | "none" = "up", 
-  delay: number = 0, 
-  duration: number = 0.5,
+  delay: number = defaults.delay, 
+  duration: number = defaults.duration,
+  isMobile: boolean = false,
+  distance: number = defaults.distance.desktop
+): Variants => {
+  const cacheKey = `fadeIn-${direction}-${delay}-${duration}-${isMobile}-${distance}`;
+  
+  if (variantCache.has(cacheKey)) {
+    return variantCache.get(cacheKey)!;
+  }
+  
+  const directionOffset = getDirectionalOffset(direction, distance, isMobile);
+  
+  const variant = {
+    hidden: {
+      opacity: 0,
+      ...directionOffset,
+    },
+    visible: {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      transition: getTransition("spring", duration, delay, isMobile),
+    },
+  };
+  
+  variantCache.set(cacheKey, variant);
+  return variant;
+};
+
+/**
+ * Scale animation for elements that should grow/shrink into view
+ * Memoized for performance
+ */
+export const scaleIn = (
+  delay: number = defaults.delay, 
+  duration: number = defaults.duration, 
   isMobile: boolean = false
 ): Variants => {
-  const cacheKey = `fadeIn-${direction}-${delay}-${duration}-${isMobile}`;
+  const cacheKey = `scaleIn-${delay}-${duration}-${isMobile}`;
+  
+  if (variantCache.has(cacheKey)) {
+    return variantCache.get(cacheKey)!;
+  }
+  
+  const variant = {
+    hidden: { 
+      opacity: 0, 
+      scale: isMobile ? 0.9 : 0.8, // Less scale for mobile for better performance
+    },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      transition: getTransition("snappy", duration, delay, isMobile),
+    },
+  };
+  
+  variantCache.set(cacheKey, variant);
+  return variant;
+};
+
+/**
+ * Creates a stagger container animation
+ * Memoized for performance
+ */
+export const staggerContainer = (
+  staggerChildren: number = defaults.staggerDelay, 
+  delayChildren: number = defaults.delay,
+  isMobile: boolean = false
+): Variants => {
+  const cacheKey = `staggerContainer-${staggerChildren}-${delayChildren}-${isMobile}`;
   
   if (variantCache.has(cacheKey)) {
     return variantCache.get(cacheKey)!;
   }
   
   // Get optimized values for mobile
-  const optimizedDelay = getOptimizedValue(delay, isMobile, 0.7);
-  const optimizedDuration = getOptimizedValue(duration, isMobile, 0.8, 0.4);
+  const optimizedStagger = getOptimizedValue(staggerChildren, isMobile, 0.6, 0.05);
+  const optimizedDelay = getOptimizedValue(delayChildren, isMobile, 0.7);
   
   const variant = {
-    hidden: {
-      opacity: 0,
-      ...(isMobile ? getMobileDirectionalOffset(direction) : getDirectionalOffset(direction)),
-    },
+    hidden: {},
     visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
       transition: {
-        ...(isMobile ? transitions.springMobile : transitions.spring),
-        duration: optimizedDuration,
-        delay: optimizedDelay,
+        staggerChildren: optimizedStagger,
+        delayChildren: optimizedDelay,
       },
     },
   };
@@ -122,7 +249,7 @@ export const fadeIn = (
  * Creates a reveal animation for sections or large elements
  * Memoized for performance
  */
-export const revealSection = (delay: number = 0, isMobile: boolean = false): Variants => {
+export const revealSection = (delay: number = defaults.delay, isMobile: boolean = false): Variants => {
   const cacheKey = `revealSection-${delay}-${isMobile}`;
   
   if (variantCache.has(cacheKey)) {
@@ -153,78 +280,10 @@ export const revealSection = (delay: number = 0, isMobile: boolean = false): Var
 };
 
 /**
- * Creates a stagger container animation
- * Memoized for performance
- */
-export const staggerContainer = (
-  staggerChildren: number = 0.1, 
-  delayChildren: number = 0,
-  isMobile: boolean = false
-): Variants => {
-  const cacheKey = `staggerContainer-${staggerChildren}-${delayChildren}-${isMobile}`;
-  
-  if (variantCache.has(cacheKey)) {
-    return variantCache.get(cacheKey)!;
-  }
-  
-  // Get optimized values for mobile
-  const optimizedStagger = getOptimizedValue(staggerChildren, isMobile, 0.6, 0.05);
-  const optimizedDelay = getOptimizedValue(delayChildren, isMobile, 0.7);
-  
-  const variant = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: optimizedStagger,
-        delayChildren: optimizedDelay,
-      },
-    },
-  };
-  
-  variantCache.set(cacheKey, variant);
-  return variant;
-};
-
-/**
- * Scale animation for elements that should grow/shrink into view
- * Memoized for performance
- */
-export const scaleIn = (delay: number = 0, duration: number = 0.5, isMobile: boolean = false): Variants => {
-  const cacheKey = `scaleIn-${delay}-${duration}-${isMobile}`;
-  
-  if (variantCache.has(cacheKey)) {
-    return variantCache.get(cacheKey)!;
-  }
-  
-  // Get optimized values for mobile
-  const optimizedDelay = getOptimizedValue(delay, isMobile, 0.7);
-  const optimizedDuration = getOptimizedValue(duration, isMobile, 0.8, 0.4);
-  
-  const variant = {
-    hidden: { 
-      opacity: 0, 
-      scale: isMobile ? 0.9 : 0.8, // Less scale for mobile for better performance
-    },
-    visible: { 
-      opacity: 1, 
-      scale: 1,
-      transition: {
-        ...(isMobile ? transitions.snappyMobile : transitions.snappy),
-        delay: optimizedDelay,
-        duration: optimizedDuration,
-      },
-    },
-  };
-  
-  variantCache.set(cacheKey, variant);
-  return variant;
-};
-
-/**
  * Animation for card elements with hover effects
  * Memoized for performance
  */
-export const cardAnimation = (delay: number = 0, isMobile: boolean = false): Variants => {
+export const cardAnimation = (delay: number = defaults.delay, isMobile: boolean = false): Variants => {
   const cacheKey = `cardAnimation-${delay}-${isMobile}`;
   
   if (variantCache.has(cacheKey)) {
@@ -270,152 +329,27 @@ export const cardAnimation = (delay: number = 0, isMobile: boolean = false): Var
   return variant;
 };
 
-/**
- * Text reveal animation
- * Memoized for performance
- */
-export const textVariant = (delay: number = 0, isMobile: boolean = false): Variants => {
-  const cacheKey = `textVariant-${delay}-${isMobile}`;
-  
-  if (variantCache.has(cacheKey)) {
-    return variantCache.get(cacheKey)!;
-  }
-  
-  // Get optimized delay for mobile
-  const optimizedDelay = getOptimizedValue(delay, isMobile, 0.7);
-  
-  const variant = {
-    hidden: {
-      y: isMobile ? 25 : 40,  // Reduced distance for mobile
-      opacity: 0,
-    },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        type: "spring",
-        stiffness: isMobile ? 200 : 260,
-        damping: isMobile ? 25 : 20,
-        delay: optimizedDelay,
-        duration: isMobile ? 0.5 : 0.7,
-      },
-    },
-  };
-  
-  variantCache.set(cacheKey, variant);
-  return variant;
-};
+// Specialized Animations
+// ---------------------
 
 /**
- * Slide in animation with customizable direction and timing
+ * SVG path animation for drawing effects
  * Memoized for performance
  */
-export const slideIn = (
-  direction: "up" | "down" | "left" | "right", 
-  type: string, 
-  delay: number, 
-  duration: number,
+export const svgPathAnimation = (
+  delay: number = defaults.delay, 
+  duration: number = 2, 
   isMobile: boolean = false
 ): Variants => {
-  const cacheKey = `slideIn-${direction}-${type}-${delay}-${duration}-${isMobile}`;
+  const cacheKey = `svgPath-${delay}-${duration}-${isMobile}`;
   
   if (variantCache.has(cacheKey)) {
     return variantCache.get(cacheKey)!;
   }
   
-  // Get optimized values for mobile
+  // Get optimized values
   const optimizedDelay = getOptimizedValue(delay, isMobile, 0.7);
-  const optimizedDuration = getOptimizedValue(duration, isMobile, 0.8, 0.4);
-  
-  // Calculate values based on direction
-  let x = 0;
-  let y = 0;
-  
-  const distance = isMobile ? 50 : 80; // Reduced distance for mobile
-  
-  if (direction === "left") x = -distance;
-  if (direction === "right") x = distance;
-  if (direction === "up") y = distance;
-  if (direction === "down") y = -distance;
-  
-  const variant = {
-    hidden: {
-      x,
-      y,
-      opacity: 0,
-    },
-    visible: {
-      x: 0,
-      y: 0,
-      opacity: 1,
-      transition: {
-        type,
-        delay: optimizedDelay,
-        duration: optimizedDuration,
-        ease: "easeOut",
-      },
-    },
-  };
-  
-  variantCache.set(cacheKey, variant);
-  return variant;
-};
-
-/**
- * Zoom in animation for elements
- * Memoized for performance
- */
-export const zoomIn = (delay: number, duration: number, isMobile: boolean = false): Variants => {
-  const cacheKey = `zoomIn-${delay}-${duration}-${isMobile}`;
-  
-  if (variantCache.has(cacheKey)) {
-    return variantCache.get(cacheKey)!;
-  }
-  
-  // Get optimized values for mobile
-  const optimizedDelay = getOptimizedValue(delay, isMobile, 0.7);
-  const optimizedDuration = getOptimizedValue(duration, isMobile, 0.8, 0.4);
-  
-  // Reduced scale values for mobile to improve performance
-  const initialScale = isMobile ? 0.9 : 0.85;
-  
-  const variant = {
-    hidden: {
-      scale: initialScale,
-      opacity: 0,
-    },
-    visible: {
-      scale: 1,
-      opacity: 1,
-      transition: {
-        type: "tween",
-        delay: optimizedDelay,
-        duration: optimizedDuration,
-        ease: "easeOut",
-      },
-    },
-  };
-  
-  variantCache.set(cacheKey, variant);
-  return variant;
-};
-
-/**
- * SVG signature animation for decorative elements
- * Memoized for performance
- */
-export const svgSignatureAnimation = (delay: number = 1, isMobile: boolean = false): Variants => {
-  const cacheKey = `svgSignature-${delay}-${isMobile}`;
-  
-  if (variantCache.has(cacheKey)) {
-    return variantCache.get(cacheKey)!;
-  }
-  
-  // Get optimized delay for mobile
-  const optimizedDelay = getOptimizedValue(delay, isMobile, 0.7);
-  
-  // Shorter durations on mobile
-  const drawDuration = isMobile ? 2 : 2.5;
+  const optimizedDuration = getOptimizedValue(duration, isMobile, 0.8, 1.5);
   
   const variant = {
     hidden: { pathLength: 0, opacity: 0 },
@@ -426,7 +360,7 @@ export const svgSignatureAnimation = (delay: number = 1, isMobile: boolean = fal
         pathLength: {
           delay: optimizedDelay,
           type: "spring",
-          duration: drawDuration,
+          duration: optimizedDuration,
           bounce: 0,
         },
         opacity: { 
@@ -442,30 +376,37 @@ export const svgSignatureAnimation = (delay: number = 1, isMobile: boolean = fal
 };
 
 /**
- * SVG circle animation for decorative elements
+ * SVG shape animation for circles, rectangles, etc.
  * Memoized for performance
  */
-export const svgCircleAnimation = (delay: number = 0, isMobile: boolean = false): Variants => {
-  const cacheKey = `svgCircle-${delay}-${isMobile}`;
+export const svgShapeAnimation = (
+  delay: number = defaults.delay, 
+  duration: number = 1.2, 
+  opacity: number = 1,
+  isMobile: boolean = false
+): Variants => {
+  const cacheKey = `svgShape-${delay}-${duration}-${opacity}-${isMobile}`;
   
   if (variantCache.has(cacheKey)) {
     return variantCache.get(cacheKey)!;
   }
   
-  // Get optimized delay for mobile
+  // Get optimized values
   const optimizedDelay = getOptimizedValue(delay, isMobile, 0.7);
+  const optimizedDuration = getOptimizedValue(duration, isMobile, 0.8, 0.8);
+  const finalOpacity = isMobile ? Math.min(opacity * 0.8, 0.8) : opacity;
   
   const variant = {
     hidden: { 
-      scale: 0,
+      scale: 0, 
       opacity: 0 
     },
     visible: {
       scale: 1,
-      opacity: 1,
+      opacity: finalOpacity,
       transition: {
         delay: optimizedDelay,
-        duration: isMobile ? 0.8 : 1.2,
+        duration: optimizedDuration,
         ease: "easeOut"
       }
     }
@@ -475,39 +416,8 @@ export const svgCircleAnimation = (delay: number = 0, isMobile: boolean = false)
   return variant;
 };
 
-/**
- * SVG decorative circle animation with pulsing effect
- * Memoized for performance
- */
-export const svgDecorativeCircleAnimation = (delay: number = 0, opacity: number = 0.6, isMobile: boolean = false): Variants => {
-  const cacheKey = `svgDecorativeCircle-${delay}-${opacity}-${isMobile}`;
-  
-  if (variantCache.has(cacheKey)) {
-    return variantCache.get(cacheKey)!;
-  }
-  
-  // Get optimized delay for mobile
-  const optimizedDelay = getOptimizedValue(delay, isMobile, 0.7);
-  
-  // Lower opacity on mobile for better performance
-  const finalOpacity = isMobile ? Math.min(opacity * 0.8, 0.5) : opacity;
-  
-  const variant = {
-    hidden: { scale: 0, opacity: 0 },
-    visible: {
-      scale: 1,
-      opacity: finalOpacity,
-      transition: {
-        delay: optimizedDelay,
-        duration: isMobile ? 0.8 : 1.2,
-        ease: "easeOut"
-      }
-    }
-  };
-  
-  variantCache.set(cacheKey, variant);
-  return variant;
-};
+// Continuous Animations (for infinite effects)
+// -------------------------------------------
 
 /**
  * Floating animation for decorative elements
@@ -575,106 +485,8 @@ export const rotationAnimation = (
   };
 };
 
-/**
- * Orbit animation for particles and decorative elements
- */
-export const orbitAnimation = (
-  radius: number = 20,
-  duration: number = 10,
-  isMobile: boolean = false
-) => {
-  // Reduce radius on mobile for better performance
-  const optimizedRadius = isMobile ? Math.min(radius * 0.7, 15) : radius;
-  // Slower on mobile to reduce CPU usage
-  const optimizedDuration = isMobile ? duration * 1.3 : duration;
-  
-  const steps = 36; // Number of points in the orbit path
-  const xValues = [];
-  const yValues = [];
-  
-  for (let i = 0; i <= steps; i++) {
-    const angle = (i / steps) * 2 * Math.PI;
-    xValues.push(Math.cos(angle) * optimizedRadius);
-    yValues.push(Math.sin(angle) * optimizedRadius);
-  }
-  
-  return {
-    x: xValues,
-    y: yValues,
-    transition: {
-      repeat: Infinity,
-      duration: optimizedDuration,
-      ease: "linear",
-    }
-  };
-};
-
-/**
- * Tech keyword animation for hero section
- */
-export const techKeywordAnimation = (delay: number, y: string[] = ["0%", "-50%"], isMobile: boolean = false): Variants => {
-  const cacheKey = `techKeyword-${delay}-${y.join("-")}-${isMobile}`;
-  
-  if (variantCache.has(cacheKey)) {
-    return variantCache.get(cacheKey)!;
-  }
-  
-  // Get optimized delay for mobile
-  const optimizedDelay = getOptimizedValue(delay, isMobile, 0.7);
-  
-  // Reduce distance on mobile for better performance
-  const optimizedY = isMobile 
-    ? [0, 10] // Smaller movement on mobile
-    : [0, 20]; // Regular movement on desktop
-  
-  const variant = {
-    hidden: { opacity: 0, y: optimizedY[1] },
-    visible: { 
-      opacity: isMobile ? 0.6 : 0.7, // Lower opacity on mobile
-      y: 0,
-      transition: {
-        duration: isMobile ? 0.6 : 0.8, // Faster on mobile
-        delay: optimizedDelay
-      } 
-    }
-  };
-  
-  variantCache.set(cacheKey, variant);
-  return variant;
-};
-
-/**
- * Background shape animation
- */
-export const bgShapeAnimation = (delay: number = 0, opacity: number = 0.5, isMobile: boolean = false): Variants => {
-  const cacheKey = `bgShape-${delay}-${opacity}-${isMobile}`;
-  
-  if (variantCache.has(cacheKey)) {
-    return variantCache.get(cacheKey)!;
-  }
-  
-  // Get optimized values for mobile
-  const optimizedDelay = getOptimizedValue(delay, isMobile, 0.7);
-  const optimizedOpacity = isMobile ? Math.min(opacity * 0.7, 0.3) : opacity; // Lower opacity on mobile
-  
-  const variant = {
-    hidden: { 
-      opacity: 0,
-      scale: 0.7
-    },
-    visible: { 
-      opacity: optimizedOpacity,
-      scale: 1,
-      transition: {
-        opacity: { duration: isMobile ? 0.8 : 1.2, delay: optimizedDelay },
-        scale: { duration: isMobile ? 1 : 1.5, delay: optimizedDelay }
-      } 
-    }
-  };
-  
-  variantCache.set(cacheKey, variant);
-  return variant;
-};
+// Dropdown and UI component animations
+// ----------------------------------
 
 /**
  * Dropdown animation for popups and dropdowns 
@@ -707,6 +519,371 @@ export const dropdownAnimation: Variants = {
       ease: "easeInOut"
     }
   }
+};
+
+// Specialized Text Animations
+// --------------------------
+
+/**
+ * Centralized emoji animations for consistent effects across components
+ * Memoized for performance and optimized for mobile
+ */
+export const emojiAnimation = (
+  animation: "wave" | "bounce" | "pulse" | "spin" | "float" | "none" = "wave",
+  delay: number = defaults.delay, 
+  duration: number = defaults.duration,
+  isMobile: boolean = false
+): { 
+  animate: Record<string, unknown>; 
+  transition: Record<string, unknown>; 
+  className: string;
+} => {
+  const cacheKey = `emojiAnimation-${animation}-${delay}-${duration}-${isMobile}`;
+  
+  // Basic result structure for "none" animation
+  const baseResult = {
+    animate: {},
+    transition: {},
+    className: "inline-block"
+  };
+  
+  if (animation === "none") return baseResult;
+  
+  if (variantCache.has(cacheKey)) {
+    return variantCache.get(cacheKey) as unknown as { 
+      animate: Record<string, unknown>; 
+      transition: Record<string, unknown>; 
+      className: string;
+    };
+  }
+  
+  // Get optimized values for mobile
+  const optimizedDelay = getOptimizedValue(delay, isMobile, 0.7);
+  
+  let result;
+  
+  // Mobile optimizations - simpler animations for better performance
+  if (isMobile) {
+    switch (animation) {
+      case "wave":
+        result = {
+          animate: { rotate: [0, 5, 0] },
+          transition: {
+            repeat: Infinity,
+            repeatDelay: 5,
+            duration: 0.8,
+            delay: optimizedDelay,
+            ease: "easeInOut",
+          },
+          className: "inline-block origin-bottom-right"
+        };
+        break;
+      case "bounce":
+        result = {
+          animate: { y: [0, -3, 0] },
+          transition: {
+            repeat: Infinity,
+            repeatDelay: 4,
+            duration: 0.5,
+            delay: optimizedDelay,
+            ease: "easeOut",
+          },
+          className: "inline-block"
+        };
+        break;
+      case "pulse":
+        result = {
+          animate: { scale: [1, 1.1, 1] },
+          transition: {
+            repeat: Infinity,
+            repeatDelay: 3,
+            duration: 0.5,
+            delay: optimizedDelay,
+            ease: "easeInOut",
+          },
+          className: "inline-block"
+        };
+        break;
+      // Simplify or disable complex animations on mobile
+      case "spin":
+      case "float":
+      default:
+        result = baseResult;
+        break;
+    }
+  } else {
+    // Full animations for desktop
+    switch (animation) {
+      case "wave":
+        result = {
+          animate: { rotate: [0, 15, 5, 15, 0, -5, 0] },
+          transition: {
+            repeat: Infinity,
+            repeatDelay: 3,
+            duration: 1.5,
+            delay: optimizedDelay,
+            ease: [0.215, 0.61, 0.355, 1],
+            times: [0, 0.2, 0.3, 0.4, 0.6, 0.8, 1]
+          },
+          className: "inline-block origin-bottom-right"
+        };
+        break;
+      case "bounce":
+        result = {
+          animate: { y: [0, -10, 0] },
+          transition: {
+            repeat: Infinity,
+            repeatDelay: 2,
+            duration: 0.8,
+            delay: optimizedDelay,
+            ease: "easeOut",
+          },
+          className: "inline-block"
+        };
+        break;
+      case "pulse":
+        result = {
+          animate: { scale: [1, 1.2, 1] },
+          transition: {
+            repeat: Infinity,
+            repeatDelay: 2.5,
+            duration: 0.7,
+            delay: optimizedDelay,
+            ease: "easeInOut",
+          },
+          className: "inline-block"
+        };
+        break;
+      case "spin":
+        result = {
+          animate: { rotate: [0, 360] },
+          transition: {
+            repeat: Infinity,
+            repeatDelay: 3,
+            duration: 1.2,
+            delay: optimizedDelay,
+            ease: "linear",
+          },
+          className: "inline-block"
+        };
+        break;
+      case "float":
+        result = {
+          animate: { y: [0, -5, 0, 5, 0] },
+          transition: {
+            repeat: Infinity,
+            duration: 4,
+            delay: optimizedDelay,
+            ease: "easeInOut",
+          },
+          className: "inline-block"
+        };
+        break;
+      default:
+        result = baseResult;
+        break;
+    }
+  }
+  
+  variantCache.set(cacheKey, result as unknown as Variants);
+  return result as { 
+    animate: Record<string, unknown>; 
+    transition: Record<string, unknown>; 
+    className: string;
+  };
+};
+
+/**
+ * Specialized text animation variants for different text effects
+ * Memoized for performance and optimized for mobile
+ */
+export const textAnimation = (
+  variant: "reveal" | "split" | "char-by-char" | "typewriter" | "gradient",
+  text: string,
+  delay: number = defaults.delay,
+  duration: number = defaults.duration,
+  isMobile: boolean = false,
+  isInView: boolean = true
+): {
+  containerProps: Record<string, unknown>;
+  itemProps?: Record<string, unknown>;
+  additionalProps?: Record<string, unknown>;
+} => {
+  const cacheKey = `textAnimation-${variant}-${text.length}-${delay}-${duration}-${isMobile}-${isInView}`;
+  
+  if (variantCache.has(cacheKey)) {
+    return variantCache.get(cacheKey) as unknown as {
+      containerProps: Record<string, unknown>;
+      itemProps?: Record<string, unknown>;
+      additionalProps?: Record<string, unknown>;
+    };
+  }
+  
+  // Get optimized values
+  const optimizedDuration = getOptimizedValue(duration, isMobile, 0.6, 0.3);
+  const optimizedDelay = getOptimizedValue(delay, isMobile, 0.5);
+  
+  let result;
+  
+  switch (variant) {
+    case "reveal":
+      result = {
+        containerProps: {
+          initial: { y: isMobile ? "50%" : "100%", opacity: 0 },
+          animate: isInView 
+            ? { y: "0%", opacity: 1 } 
+            : { y: isMobile ? "50%" : "100%", opacity: 0 },
+          transition: {
+            duration: optimizedDuration,
+            delay: optimizedDelay,
+            ease: isMobile ? "easeOut" : [0.215, 0.61, 0.355, 1]
+          },
+          style: { willChange: "transform, opacity" }
+        }
+      };
+      break;
+      
+    case "char-by-char":
+      result = {
+        containerProps: {
+          initial: { opacity: 0 },
+          animate: { opacity: 1 },
+          transition: { duration: 0.3, delay: optimizedDelay }
+        },
+        itemProps: {
+          initial: { clipPath: "inset(0 100% 0 0)" },
+          animate: isInView ? { clipPath: "inset(0 0 0 0)" } : { clipPath: "inset(0 100% 0 0)" },
+          transition: {
+            duration: optimizedDuration,
+            delay: optimizedDelay, // The component will add staggered delays
+            ease: isMobile ? "easeOut" : [0.215, 0.61, 0.355, 1]
+          },
+          style: { willChange: "clip-path" }
+        }
+      };
+      break;
+      
+    case "split":
+      result = {
+        containerProps: {
+          initial: { opacity: 1 },
+          animate: { opacity: 1 }
+        },
+        itemProps: {
+          initial: { opacity: 0, y: isMobile ? 15 : 20, display: "inline-block" },
+          animate: isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: isMobile ? 15 : 20 },
+          transition: {
+            duration: optimizedDuration,
+            delay: optimizedDelay, // The component will add staggered delays
+            ease: isMobile ? "easeOut" : [0.215, 0.61, 0.355, 1]
+          },
+          style: { willChange: "transform, opacity" }
+        }
+      };
+      break;
+      
+    case "typewriter":
+      if (isMobile && text.length > 50) {
+        // Static reveal for long text on mobile
+        result = {
+          containerProps: {
+            initial: { opacity: 0 },
+            animate: isInView ? { opacity: 1 } : { opacity: 0 },
+            transition: {
+              duration: 0.4,
+              delay: optimizedDelay,
+            },
+            className: "whitespace-pre-line"
+          }
+        };
+      } else {
+        const typingSpeed = isMobile 
+          ? optimizedDuration * text.length * 0.03
+          : duration * text.length * 0.08;
+          
+        result = {
+          containerProps: {
+            initial: { width: "0%" },
+            animate: isInView ? { width: "100%" } : { width: "0%" },
+            transition: {
+              duration: typingSpeed,
+              delay: optimizedDelay,
+              ease: "linear"
+            },
+            className: "whitespace-nowrap",
+            style: { willChange: "width" }
+          },
+          additionalProps: {
+            cursor: {
+              animate: { opacity: [1, 0, 1] },
+              transition: { 
+                repeat: Infinity, 
+                duration: isMobile ? 1 : 0.8 
+              },
+              style: { willChange: "opacity" }
+            }
+          }
+        };
+      }
+      break;
+      
+    case "gradient":
+      if (isMobile) {
+        // Static gradient for mobile
+        result = {
+          containerProps: {
+            initial: { opacity: 0 },
+            animate: isInView ? { opacity: 1 } : { opacity: 0 },
+            transition: {
+              duration: optimizedDuration,
+              delay: optimizedDelay,
+            },
+            className: "bg-clip-text text-transparent bg-gradient-to-r from-accent via-gradient-2 to-gradient-4"
+          }
+        };
+      } else {
+        // Animated gradient for desktop
+        const gradientDuration = duration * 5;
+        
+        result = {
+          containerProps: {
+            initial: { backgroundPosition: "0% 50%" },
+            animate: isInView 
+              ? { backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] } 
+              : { backgroundPosition: "0% 50%" },
+            transition: {
+              duration: gradientDuration,
+              delay: optimizedDelay,
+              repeat: Infinity,
+              repeatType: "loop",
+              ease: "linear"
+            },
+            className: "bg-clip-text text-transparent bg-gradient-to-r from-accent via-gradient-2 to-gradient-4 bg-[size:300%]",
+            style: { willChange: "background-position" }
+          }
+        };
+      }
+      break;
+      
+    default:
+      result = {
+        containerProps: {
+          initial: { opacity: 0 },
+          animate: isInView ? { opacity: 1 } : { opacity: 0 },
+          transition: {
+            duration: optimizedDuration,
+            delay: optimizedDelay
+          }
+        }
+      };
+  }
+  
+  variantCache.set(cacheKey, result as unknown as Variants);
+  return result as {
+    containerProps: Record<string, unknown>;
+    itemProps?: Record<string, unknown>;
+    additionalProps?: Record<string, unknown>;
+  };
 };
 
 /**

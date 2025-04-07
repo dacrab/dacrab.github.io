@@ -1,44 +1,30 @@
 "use client";
 
-import { useRef } from "react";
+import dynamic from 'next/dynamic';
 import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
-import About from "@/components/About";
-import Projects from "@/components/Projects";
-import Experience from "@/components/Experience";
-import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
+import Hero from "@/components/Hero";
+import LazySection from "@/components/LazySection";
+
+// Lazy load components - without immediate mounting
+const About = dynamic(() => import('@/components/About'), { ssr: false });
+const Experience = dynamic(() => import('@/components/Experience'), { ssr: false });
+const Projects = dynamic(() => import('@/components/Projects'), { ssr: false });
+const Contact = dynamic(() => import('@/components/Contact'), { ssr: false });
 
 export default function Home() {
-  // Create refs for each section
-  const heroRef = useRef(null);
-  const aboutRef = useRef(null);
-  const projectsRef = useRef(null);
-  const experienceRef = useRef(null);
-  const contactRef = useRef(null);
-
   return (
-    <main className="min-h-screen bg-background">
-      {/* Content with refs */}
-      <div className="relative z-10">
-        <Navbar />
-        <section ref={heroRef} className="min-h-screen">
-          <Hero />
-        </section>
-        <section ref={aboutRef} className="min-h-screen">
-          <About />
-        </section>
-        <section ref={projectsRef} className="min-h-screen">
-          <Projects />
-        </section>
-        <section ref={experienceRef} className="min-h-screen">
-          <Experience />
-        </section>
-        <section ref={contactRef} className="min-h-screen">
-          <Contact />
-        </section>
-        <Footer />
-      </div>
+    <main className="flex flex-col min-h-screen">
+      <Navbar />
+      <Hero />
+      
+      {/* Progressively load sections as user scrolls */}
+      <LazySection component={About} id="about" preloadMargin="400px" />
+      <LazySection component={Projects} id="projects" preloadMargin="400px" />
+      <LazySection component={Experience} id="experience" preloadMargin="400px" />
+      <LazySection component={Contact} id="contact" preloadMargin="400px" />
+      
+      <Footer />
     </main>
   );
 }

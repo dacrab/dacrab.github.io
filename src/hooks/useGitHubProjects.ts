@@ -14,12 +14,36 @@ interface UseGitHubProjectsResult {
 // Active requests tracker to prevent duplicate requests
 const activeRequests = new Map<string, Promise<GitHubRepo[]>>();
 
+// Cache for GitHub projects data
+interface CacheEntry {
+  data: GitHubRepo[];
+  timestamp: number;
+  username: string;
+}
+
+// Global cache for GitHub projects
+const projectsCache = new Map<string, CacheEntry>();
+
+// Cache expiration time (increased to 15 minutes for better performance)
+const CACHE_EXPIRATION = 15 * 60 * 1000;
+
+// SSR prefetched flag to avoid refetching on client after SSR
+let isSSRPrefetched = false;
+
+// Rate limit tracking - prevent excessive requests if rate limit hit
+const rateLimitState = {
+  isLimited: false,
+  resetTime: 0,
+  retryCount: 0
+};
+
 /**
  * Custom hook to fetch and manage GitHub projects via server API route
  * This approach securely handles authentication by keeping tokens on the server
  * 
  * @param username GitHub username
  * @param options Additional options for fetching repositories
+ * @param shouldFetch Control when fetching happens (e.g., based on component visibility)
  * @returns Object containing projects, loading state, error, and refetch function
  */
 export function useGitHubProjects(
@@ -29,11 +53,20 @@ export function useGitHubProjects(
     direction?: "asc" | "desc";
     minStars?: number;
     excludeForks?: boolean;
-  }
+    forceFresh?: boolean; // Force fresh data fetch bypassing cache
+  },
+  shouldFetch: boolean = true
 ): UseGitHubProjectsResult {
   const [projects, setProjects] = useState<GitHubProjectData[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
+  const [fetchAttempted, setFetchAttempted] = useState<boolean>(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+
+  // For SSR detection
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Memoize options to use as dependency for fetchProjects
   const optionsString = useMemo(() => {
@@ -42,13 +75,56 @@ export function useGitHubProjects(
       sort: options?.sort,
       direction: options?.direction,
       minStars: options?.minStars,
-      excludeForks: options?.excludeForks
+      excludeForks: options?.excludeForks,
+      forceFresh: options?.forceFresh
     });
-  }, [username, options?.sort, options?.direction, options?.minStars, options?.excludeForks]);
+  }, [username, options?.sort, options?.direction, options?.minStars, options?.excludeForks, options?.forceFresh]);
+
+  // Generate cache key from request parameters
+  const getCacheKey = (requestUrl: string) => {
+    return `github_projects_${requestUrl}`;
+  };
+
+  // Check if cache is valid and hasn't expired
+  const isCacheValid = (cacheEntry: CacheEntry) => {
+    return (
+      cacheEntry &&
+      Date.now() - cacheEntry.timestamp < CACHE_EXPIRATION && 
+      cacheEntry.username === username
+    );
+  };
+
+  // Function to apply client-side filtering to projects
+  const filterProjects = useCallback((data: GitHubRepo[]): GitHubProjectData[] => {
+    let projectData = transformReposToProjects(data);
+    
+    if (options) {
+      const { minStars, excludeForks } = options;
+      
+      if ((minStars && minStars > 0) || excludeForks) {
+        projectData = projectData.filter(project => {
+          const passesStarFilter = !minStars || project.stars >= minStars;
+          const passesForkFilter = !excludeForks || !project.fork;
+          return passesStarFilter && passesForkFilter;
+        });
+      }
+    }
+    
+    return projectData;
+  }, [options]);
 
   const fetchProjects = useCallback(async () => {
+    // Skip fetching if we hit a rate limit and it hasn't reset yet
+    if (rateLimitState.isLimited && Date.now() < rateLimitState.resetTime) {
+      console.log(`GitHub API rate limited. Retry after ${new Date(rateLimitState.resetTime).toLocaleTimeString()}`);
+      return;
+    }
+
     try {
-      setLoading(true);
+      // Only show loading state if we haven't fetched before
+      if (!fetchAttempted) {
+        setLoading(true);
+      }
       setError(null);
       
       // Build query params for the API route
@@ -58,6 +134,20 @@ export function useGitHubProjects(
       if (options?.direction) params.append('direction', options.direction);
       
       const requestUrl = `/api/github?${params.toString()}`;
+      const cacheKey = getCacheKey(requestUrl);
+      
+      // Check cache first if not forcing fresh data
+      const cachedData = projectsCache.get(cacheKey);
+      if (!options?.forceFresh && cachedData && isCacheValid(cachedData)) {
+        console.log('Using cached GitHub projects data');
+        
+        // Apply client-side filtering to cached data
+        const filteredProjects = filterProjects(cachedData.data);
+        setProjects(filteredProjects);
+        setLoading(false);
+        setFetchAttempted(true);
+        return;
+      }
       
       // Deduplicate active fetch requests
       let fetchPromise = activeRequests.get(requestUrl);
@@ -66,16 +156,38 @@ export function useGitHubProjects(
         // Create new request if none exists
         fetchPromise = fetch(requestUrl)
           .then(response => {
+            if (response.status === 429) {
+              // Handle rate limit
+              const resetHeader = response.headers.get('x-ratelimit-reset');
+              const resetTime = resetHeader 
+                ? parseInt(resetHeader) * 1000 // Convert from seconds to milliseconds
+                : Date.now() + 60 * 60 * 1000; // Default to 1 hour if header not available
+              
+              rateLimitState.isLimited = true;
+              rateLimitState.resetTime = resetTime;
+              rateLimitState.retryCount++;
+              
+              throw new Error(`GitHub API rate limit exceeded. Resets at ${new Date(resetTime).toLocaleTimeString()}`);
+            }
+            
             if (!response.ok) {
               return response.json().then(errorData => {
                 throw new Error(errorData.error || `API error: ${response.status}`);
+              }).catch(() => {
+                throw new Error(`Network error: ${response.status}`);
               });
             }
+            
+            // Reset rate limit state on successful request
+            rateLimitState.isLimited = false;
+            rateLimitState.retryCount = 0;
+            
             return response.json();
           })
           .finally(() => {
             // Remove from active requests when done
             activeRequests.delete(requestUrl);
+            setFetchAttempted(true);
           });
           
         // Store the promise to deduplicate subsequent requests
@@ -85,35 +197,59 @@ export function useGitHubProjects(
       // Wait for the request to complete
       const repos: GitHubRepo[] = await fetchPromise;
       
-      // Apply transformations and filtering efficiently
-      let projectData = transformReposToProjects(repos);
-      
-      // Apply client-side filtering with optimized conditionals
-      if (options) {
-        const { minStars, excludeForks } = options;
-        
-        if ((minStars && minStars > 0) || excludeForks) {
-          projectData = projectData.filter(project => {
-            // Combine filter conditions for a single pass
-            const passesStarFilter = !minStars || project.stars >= minStars;
-            const passesForkFilter = !excludeForks || !project.fork;
-            return passesStarFilter && passesForkFilter;
-          });
-        }
+      // Store in cache
+      if (repos && Array.isArray(repos) && repos.length > 0) {
+        projectsCache.set(cacheKey, {
+          data: repos,
+          timestamp: Date.now(),
+          username: username || ''
+        });
       }
       
-      setProjects(projectData);
+      // Only update state if component is still mounted
+      if (isMounted) {
+        // Apply transformations and filtering
+        const filteredProjects = filterProjects(repos);
+        setProjects(filteredProjects);
+      }
     } catch (err) {
-      setError(err instanceof Error ? err : new Error("Failed to fetch GitHub projects"));
-      console.error("Error in useGitHubProjects:", err);
+      if (isMounted) {
+        setError(err instanceof Error ? err : new Error("Failed to fetch GitHub projects"));
+        console.error("Error in useGitHubProjects:", err);
+      }
     } finally {
-      setLoading(false);
+      if (isMounted) {
+        setLoading(false);
+      }
     }
-  }, [optionsString, username, options]); // Include username and options as dependencies
+  }, [username, filterProjects, fetchAttempted, isMounted, options?.sort, options?.direction, options?.forceFresh, isCacheValid]);
 
   useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+    // Skip fetch if SSR prefetched and this is first client render
+    if (typeof window !== 'undefined' && !fetchAttempted && isSSRPrefetched) {
+      setFetchAttempted(true);
+      isSSRPrefetched = false;
+      return;
+    }
+    
+    // Only fetch if the component should fetch and is mounted
+    if (shouldFetch && isMounted && (!fetchAttempted || optionsString)) {
+      // Add a small delay to prevent rapid consecutive API calls
+      // and to prioritize UI rendering
+      const debounceTimer = setTimeout(() => {
+        fetchProjects();
+      }, 500); // Increased delay for better performance
+      
+      return () => clearTimeout(debounceTimer);
+    }
+  }, [fetchProjects, shouldFetch, fetchAttempted, optionsString, isMounted]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      setIsMounted(false);
+    };
+  }, []);
 
   return {
     projects,

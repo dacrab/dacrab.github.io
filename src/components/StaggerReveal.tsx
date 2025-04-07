@@ -3,6 +3,7 @@
 import React, { ReactNode, useRef } from "react";
 import { motion, useInView, Variants } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { getOptimizedValue, staggerContainer, fadeIn } from "@/utils/animations";
 
 interface StaggerRevealProps {
   children: ReactNode;
@@ -41,66 +42,53 @@ export default function StaggerReveal({
 }: StaggerRevealProps) {
   const ref = useRef(null);
   const isMobile = useIsMobile();
+  const shouldOptimize = isMobile && mobileOptimized;
   
-  // Mobile optimizations
-  const optimizedDistance = mobileOptimized && isMobile ? Math.min(distance * 0.6, 20) : distance;
-  const optimizedDuration = mobileOptimized && isMobile ? Math.min(duration * 0.8, 0.4) : duration;
-  const optimizedDelay = mobileOptimized && isMobile ? Math.min(childDelay * 0.7, childDelay) : childDelay;
-  const optimizedStaggerDelay = mobileOptimized && isMobile ? Math.min(staggerDelay * 0.6, 0.05) : staggerDelay;
-  const optimizedThreshold = mobileOptimized && isMobile ? Math.min(threshold, 0.05) : threshold;
+  // Use centralized utility for optimized values
+  const optimizedDuration = getOptimizedValue(duration, shouldOptimize, 0.8, 0.4);
+  const optimizedDelay = getOptimizedValue(childDelay, shouldOptimize, 0.7);
+  const optimizedStaggerDelay = getOptimizedValue(staggerDelay, shouldOptimize, 0.6, 0.05);
+  const optimizedThreshold = getOptimizedValue(threshold, shouldOptimize, 1, 0.05);
+  const optimizedDistance = getOptimizedValue(distance, shouldOptimize, 1, 0.05);
   
   const isInView = useInView(ref, { amount: optimizedThreshold, once });
 
-  // Container variants for parent
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: optimizedStaggerDelay,
-        delayChildren: optimizedDelay,
-      },
-    },
-  };
+  // Use centralized stagger container variant
+  const containerVariants = staggerContainer(optimizedStaggerDelay, optimizedDelay, shouldOptimize);
 
-  // Child variants for individual items
-  const childVariants: Variants = {
-    hidden: (() => {
-      // Simpler animations for mobile
-      if (mobileOptimized && isMobile) {
-        switch (direction) {
-          case "up": return { opacity: 0, y: optimizedDistance };
-          case "down": return { opacity: 0, y: -optimizedDistance };
-          case "left": return { opacity: 0, x: -optimizedDistance };
-          case "right": return { opacity: 0, x: optimizedDistance };
-          case "none": return { opacity: 0 };
-          default: return { opacity: 0, y: optimizedDistance };
+  // Use the fadeIn utility for child variants
+  const getItemVariants = (): Variants => {
+    if (direction === "none") {
+      // For "none" direction, use a simple fade-in with scale
+      return {
+        hidden: { 
+          opacity: 0, 
+          scale: shouldOptimize ? 1 : 0.95 
+        },
+        visible: {
+          opacity: 1,
+          scale: 1,
+          transition: {
+            type: "spring",
+            stiffness: shouldOptimize ? 200 : 260,
+            damping: shouldOptimize ? 25 : 20,
+            duration: optimizedDuration,
+          }
         }
-      }
-      
-      // Regular animations for desktop
-      switch (direction) {
-        case "up": return { opacity: 0, y: optimizedDistance };
-        case "down": return { opacity: 0, y: -optimizedDistance };
-        case "left": return { opacity: 0, x: -optimizedDistance };
-        case "right": return { opacity: 0, x: optimizedDistance };
-        case "none": return { opacity: 0, scale: 0.95 };
-        default: return { opacity: 0, y: optimizedDistance };
-      }
-    })(),
-    visible: {
-      opacity: 1,
-      x: 0,
-      y: 0,
-      scale: 1,
-      transition: {
-        type: "spring",
-        stiffness: isMobile ? 200 : 260, // Less bouncy on mobile
-        damping: isMobile ? 25 : 20,     // More damping on mobile
-        duration: optimizedDuration,
-      },
-    },
+      };
+    }
+    
+    // For directional animations, use the fadeIn utility with optimized distance
+    const fadeInVariant = fadeIn(direction, 0, optimizedDuration, shouldOptimize, optimizedDistance);
+    
+    // Rename the variants to match our stagger container
+    return {
+      hidden: fadeInVariant.hidden,
+      visible: fadeInVariant.visible
+    };
   };
+  
+  const childVariants = getItemVariants();
   
   // Determine the appropriate will-change property based on direction
   const getWillChange = (): string => {

@@ -1,13 +1,12 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { motion, useScroll, useTransform, useSpring, AnimatePresence, MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, AnimatePresence, MotionValue, useInView } from "framer-motion";
 import TextAnimation from "./TextAnimation";
 import { useIsMobile } from "@/hooks/useIsMobile"; 
 import {
   dropdownAnimation,
   fadeIn,
-  textVariant,
   floatingAnimation,
   pulseAnimation
 } from "@/utils/animations";
@@ -378,6 +377,15 @@ export default function Hero() {
   const [showCVDropdown, setShowCVDropdown] = useState(false);
   const isMobile = useIsMobile();
   
+  // Add state to track if component has been visible
+  const [hasBeenVisible, setHasBeenVisible] = useState(false);
+  
+  // Check if hero is in view using Framer Motion's useInView
+  const isInView = useInView(ref, { 
+    once: false, 
+    amount: isMobile ? 0.1 : 0.2
+  });
+  
   // Scroll animations setup
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -388,19 +396,29 @@ export default function Hero() {
   const headerOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
   const gridOpacity = useTransform(scrollYProgress, [0, 0.5], [0.7, 0]);
   
-  // Signature SVG path animation
+  // Signature SVG path animation - only initialize when visible
   const pathLength = useSpring(0, { 
     stiffness: isMobile ? 80 : 100, 
     damping: isMobile ? 35 : 30 
   });
 
+  // Set once component has been visible - moved after all other hooks to maintain order
   useEffect(() => {
+    if (isInView && !hasBeenVisible) {
+      setHasBeenVisible(true);
+    }
+  }, [isInView, hasBeenVisible]);
+
+  useEffect(() => {
+    // Only run animation when component is visible or has been visible
+    if (!isInView && !hasBeenVisible) return;
+    
     const timer = setTimeout(() => {
       pathLength.set(1);
     }, isMobile ? 800 : 1000);
     
     return () => clearTimeout(timer);
-  }, [pathLength, isMobile]);
+  }, [pathLength, isMobile, isInView, hasBeenVisible]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -431,13 +449,63 @@ export default function Hero() {
     setShowCVDropdown(false);
   };
 
+  // Create the background shapes and elements
+  const backgroundElements = (
+    <>
+      <motion.div 
+        className="absolute -left-[20%] top-[10%] w-[60%] h-[55%] rounded-full bg-accent/10 blur-[120px]"
+        style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", isMobile ? "5%" : "10%"]) }}
+        initial={{ opacity: 0 }}
+        animate={{ 
+          opacity: isMobile ? 0.3 : 0.5,
+          scale: 1,
+          transition: {
+            opacity: { duration: isMobile ? 1.2 : 1.5, delay: isMobile ? 0.4 : 0.5 },
+            scale: { duration: isMobile ? 1 : 1.5, delay: isMobile ? 0.4 : 0.5 }
+          }
+        }}
+        whileInView={{
+          opacity: hasBeenVisible ? [isMobile ? 0.3 : 0.5, isMobile ? 0.4 : 0.6, isMobile ? 0.3 : 0.5, isMobile ? 0.25 : 0.4, isMobile ? 0.3 : 0.5] : [isMobile ? 0.3 : 0.5],
+          scale: hasBeenVisible ? [1, 1.05, 1, 0.95, 1] : [1],
+          transition: {
+            repeat: hasBeenVisible ? Infinity : 0,
+            duration: isMobile ? 18 : 15,
+            ease: "easeInOut"
+          }
+        }}
+      />
+      <motion.div 
+        className="absolute right-[10%] bottom-[10%] w-[50%] h-[50%] rounded-full bg-accent/10 blur-[120px]"
+        style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", isMobile ? "-10%" : "-15%"]) }}
+        initial={{ opacity: 0 }}
+        animate={{ 
+          opacity: isMobile ? 0.3 : 0.5,
+          scale: 1,
+          transition: {
+            opacity: { duration: isMobile ? 1.2 : 1.5, delay: isMobile ? 0.8 : 1 },
+            scale: { duration: isMobile ? 1 : 1.5, delay: isMobile ? 0.8 : 1 }
+          }
+        }}
+        whileInView={{
+          opacity: hasBeenVisible ? [isMobile ? 0.3 : 0.5, isMobile ? 0.25 : 0.4, isMobile ? 0.3 : 0.5, isMobile ? 0.4 : 0.6, isMobile ? 0.3 : 0.5] : [isMobile ? 0.3 : 0.5],
+          scale: hasBeenVisible ? [1, 0.95, 1, 1.05, 1] : [1],
+          transition: {
+            repeat: hasBeenVisible ? Infinity : 0,
+            duration: isMobile ? 20 : 18,
+            ease: "easeInOut"
+          }
+        }}
+      />
+    </>
+  );
+
   return (
     <div
       ref={ref}
       id="home"
       className="min-h-screen w-full relative flex flex-col items-center justify-center overflow-hidden pt-24"
     >
-      {/* Background grid */}
+      {/* Background grid - only use complex animations if component has been visible */}
       <motion.div 
         className="absolute inset-0 z-0"
         style={{ 
@@ -451,61 +519,18 @@ export default function Hero() {
           transition: { duration: isMobile ? 1.2 : 1.5 }
         }}
         whileInView={{
-          backgroundSize: ["50px 50px", "51px 51px", "50px 50px", "49px 49px", "50px 50px"],
-          transition: {
+          backgroundSize: hasBeenVisible ? ["50px 50px", "51px 51px", "50px 50px", "49px 49px", "50px 50px"] : "50px 50px",
+          transition: hasBeenVisible ? {
             repeat: Infinity,
             duration: isMobile ? 25 : 20,
             ease: "easeInOut"
-          }
+          } : {}
         }}
       />
       
-      {/* Background shapes */}
+      {/* Background shapes - always render but control animations with hasBeenVisible */}
       <div className="absolute inset-0 -z-10">
-        <motion.div 
-          className="absolute -left-[20%] top-[10%] w-[60%] h-[55%] rounded-full bg-accent/10 blur-[120px]"
-          style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", isMobile ? "5%" : "10%"]) }}
-          initial={{ opacity: 0 }}
-          animate={{ 
-            opacity: isMobile ? 0.3 : 0.5,
-            scale: 1,
-            transition: {
-              opacity: { duration: isMobile ? 1.2 : 1.5, delay: isMobile ? 0.4 : 0.5 },
-              scale: { duration: isMobile ? 1 : 1.5, delay: isMobile ? 0.4 : 0.5 }
-            }
-          }}
-          whileInView={{
-            opacity: [isMobile ? 0.3 : 0.5, isMobile ? 0.4 : 0.6, isMobile ? 0.3 : 0.5, isMobile ? 0.25 : 0.4, isMobile ? 0.3 : 0.5],
-            scale: [1, 1.05, 1, 0.95, 1],
-            transition: {
-              repeat: Infinity,
-              duration: isMobile ? 18 : 15,
-              ease: "easeInOut"
-            }
-          }}
-        />
-        <motion.div 
-          className="absolute right-[10%] bottom-[10%] w-[50%] h-[50%] rounded-full bg-accent/10 blur-[120px]"
-          style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", isMobile ? "-10%" : "-15%"]) }}
-          initial={{ opacity: 0 }}
-          animate={{ 
-            opacity: isMobile ? 0.3 : 0.5,
-            scale: 1,
-            transition: {
-              opacity: { duration: isMobile ? 1.2 : 1.5, delay: isMobile ? 0.8 : 1 },
-              scale: { duration: isMobile ? 1 : 1.5, delay: isMobile ? 0.8 : 1 }
-            }
-          }}
-          whileInView={{
-            opacity: [isMobile ? 0.3 : 0.5, isMobile ? 0.25 : 0.4, isMobile ? 0.3 : 0.5, isMobile ? 0.4 : 0.6, isMobile ? 0.3 : 0.5],
-            scale: [1, 0.95, 1, 1.05, 1],
-            transition: {
-              repeat: Infinity,
-              duration: isMobile ? 20 : 18,
-              ease: "easeInOut"
-            }
-          }}
-        />
+        {backgroundElements}
       </div>
 
       <div className="container mx-auto relative z-10 px-4 md:px-6 lg:px-8">
@@ -556,7 +581,7 @@ export default function Hero() {
               {/* Description text */}
               <motion.div
                 className="max-w-2xl text-muted mb-8 lg:mb-12"
-                variants={textVariant(1.3, isMobile)}
+                variants={fadeIn("up", 1.3, 0.7, isMobile)}
                 initial="hidden"
                 animate="visible"
               >

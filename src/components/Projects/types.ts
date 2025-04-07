@@ -12,12 +12,12 @@ export interface Project {
 // Common props for project components
 export interface ProjectBaseProps {
   project: Project;
-  isInView: boolean;
-  delay: number;
-  isActive?: boolean;
-  onHover?: () => void;
-  onLeave?: () => void;
+  isInView?: boolean;
+  delay?: number;
   index?: number;
+  isActive?: boolean;
+  onHoverStart?: () => void;
+  onHoverEnd?: () => void;
   isMobile?: boolean;
 }
 

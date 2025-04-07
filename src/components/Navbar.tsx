@@ -15,6 +15,42 @@ const NAV_ITEMS = [
   { label: "Contact", href: "#contact" }
 ];
 
+// Social links to add to mobile menu
+const SOCIAL_LINKS = [
+  { name: "GitHub", url: "https://github.com/dacrab", icon: "github" },
+  { name: "LinkedIn", url: "https://linkedin.com/in/vaggelis-kavouras", icon: "linkedin" },
+  { name: "Email", url: "mailto:contact@example.com", icon: "mail" },
+];
+
+// Render social icons
+const SocialIcon = ({ type }: { type: string }) => {
+  switch (type) {
+    case 'github':
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+          <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+        </svg>
+      );
+    case 'linkedin':
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+          <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+          <rect x="2" y="9" width="4" height="12"></rect>
+          <circle cx="4" cy="4" r="2"></circle>
+        </svg>
+      );
+    case 'mail':
+      return (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+          <polyline points="22,6 12,13 2,6"></polyline>
+        </svg>
+      );
+    default:
+      return null;
+  }
+};
+
 export default function Navbar() {
   // State
   const [isOpen, setIsOpen] = useState(false);
@@ -24,10 +60,27 @@ export default function Navbar() {
   // Refs
   const isClickNavigating = useRef(false);
   const clickTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   
   // Hooks
   useScroll();
   const isMobile = useIsMobile();
+  
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node) && isOpen) {
+        setIsOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
   
   // Close mobile menu on window resize
   useEffect(() => {
@@ -141,11 +194,11 @@ export default function Navbar() {
     }
   };
   
-  // Mobile menu variants - simplified for mobile
+  // Mobile menu variants - enhanced animations
   const menuVariants = {
     hidden: { 
       opacity: 0,
-      y: isMobile ? -20 : -30,
+      height: 0,
       transition: {
         duration: isMobile ? 0.2 : 0.3,
         ease: "easeInOut"
@@ -153,7 +206,7 @@ export default function Navbar() {
     },
     visible: { 
       opacity: 1,
-      y: 0,
+      height: "auto",
       transition: {
         duration: isMobile ? 0.3 : 0.4,
         ease: "easeOut",
@@ -163,14 +216,16 @@ export default function Navbar() {
     }
   };
   
-  // Mobile nav items variants - simplified for mobile
+  // Mobile nav items variants - enhanced for a smoother experience
   const navItemVariants = {
     hidden: { 
       opacity: 0, 
-      y: isMobile ? -10 : -20 
+      x: isMobile ? -5 : -10, 
+      y: isMobile ? -5 : -10 
     },
     visible: { 
       opacity: 1, 
+      x: 0,
       y: 0,
       transition: {
         type: "spring",
@@ -179,10 +234,33 @@ export default function Navbar() {
       }
     }
   };
+  
+  // Social links variants for staggered animation
+  const socialLinkVariants = {
+    hidden: { 
+      opacity: 0, 
+      scale: 0.9 
+    },
+    visible: { 
+      opacity: 1, 
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: isMobile ? 200 : 300,
+        damping: isMobile ? 25 : 20
+      }
+    }
+  };
+
+  // Create backdrop blur effect that increases with scroll
+  const getBlurValue = () => {
+    if (!scrolled) return 'backdrop-blur-0';
+    return 'backdrop-blur-md';
+  };
 
   return (
     <motion.header
-      className={`fixed top-0 left-0 right-0 z-50 py-3 transition-all duration-300 ${scrolled ? 'bg-base-100/80 backdrop-blur-md shadow-sm' : 'bg-transparent'}`}
+      className={`fixed top-0 left-0 right-0 z-50 py-3 transition-all duration-300 ${scrolled ? 'bg-base-100/80 shadow-sm' : 'bg-transparent'} ${getBlurValue()}`}
       initial="hidden"
       animate="visible"
       variants={navVariants}
@@ -237,61 +315,142 @@ export default function Navbar() {
           </ul>
         </nav>
         
-        {/* Mobile Menu Hamburger */}
-        <button
-          className="md:hidden relative w-10 h-10 flex items-center justify-center"
+        {/* Mobile Menu Hamburger - Enhanced with subtle animations */}
+        <motion.button
+          className="md:hidden relative w-10 h-10 flex items-center justify-center p-2 rounded-md z-20"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle mobile menu"
+          whileTap={{ scale: 0.95 }}
+          whileHover={{ backgroundColor: isOpen ? "rgba(var(--accent-rgb), 0.1)" : "rgba(var(--card-rgb), 0.1)" }}
         >
           <div className="flex flex-col justify-center items-center w-6 h-6">
-            <span 
-              className={`block h-0.5 w-full bg-base-content transition-all duration-300 ease-out ${isOpen ? 'rotate-45 translate-y-1.5' : ''}`}
+            <motion.span 
+              className="block h-0.5 w-full bg-base-content transition-all duration-300 ease-out"
+              animate={{ 
+                rotate: isOpen ? 45 : 0, 
+                translateY: isOpen ? 2 : 0,
+                backgroundColor: isOpen ? "var(--accent)" : "currentColor"
+              }}
               style={{ transformOrigin: "center" }}
             />
-            <span 
-              className={`block h-0.5 w-full bg-base-content transition-all duration-300 ease-out my-1 ${isOpen ? 'opacity-0' : ''}`}
+            <motion.span 
+              className="block h-0.5 w-full bg-base-content transition-all duration-300 ease-out my-1"
+              animate={{ 
+                opacity: isOpen ? 0 : 1,
+                width: isOpen ? "0%" : "100%",
+                backgroundColor: isOpen ? "var(--accent)" : "currentColor"
+              }}
             />
-            <span 
-              className={`block h-0.5 w-full bg-base-content transition-all duration-300 ease-out ${isOpen ? '-rotate-45 -translate-y-1.5' : ''}`}
+            <motion.span 
+              className="block h-0.5 w-full bg-base-content transition-all duration-300 ease-out"
+              animate={{ 
+                rotate: isOpen ? -45 : 0, 
+                translateY: isOpen ? -2 : 0,
+                backgroundColor: isOpen ? "var(--accent)" : "currentColor" 
+              }}
               style={{ transformOrigin: "center" }}
             />
           </div>
-        </button>
+        </motion.button>
       </div>
       
-      {/* Mobile Navigation Menu */}
+      {/* Mobile Navigation Menu - Enhanced with proper layout and animations */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            className="md:hidden absolute top-full left-0 right-0 bg-base-100/95 backdrop-blur-md shadow-lg"
+            ref={menuRef}
+            className="md:hidden fixed top-[57px] left-0 right-0 min-h-screen overflow-auto bg-base-100/95 backdrop-blur-md z-10"
             initial="hidden"
             animate="visible"
             exit="hidden"
             variants={menuVariants}
-            style={{ willChange: "transform, opacity" }}
+            style={{ willChange: "transform, opacity", originY: "top" }}
           >
-            <nav className="container mx-auto px-4 py-4">
-              <ul className="flex flex-col space-y-2">
-                {NAV_ITEMS.map(({ label, href }) => {
-                  const isActive = activeSection === href.substring(1);
-                  
-                  return (
-                    <motion.li 
-                      key={href}
-                      variants={navItemVariants}
-                    >
-                      <a
-                        href={href}
-                        onClick={(e) => handleNavClick(e, href)}
-                        className={`block px-4 py-3 text-lg rounded-md transition-colors duration-300 ${isActive ? 'bg-base-200/50 text-accent font-medium' : 'text-base-content hover:bg-base-200/30'}`}
+            <div className="container mx-auto py-8 px-6">
+              {/* Mobile menu content container */}
+              <div className="grid grid-cols-1 gap-8">
+                {/* Navigation links */}
+                <nav>
+                  <h3 className="text-xs uppercase tracking-wider text-muted mb-3 font-medium">Navigation</h3>
+                  <ul className="space-y-1">
+                    {NAV_ITEMS.map(({ label, href }) => {
+                      const isActive = activeSection === href.substring(1);
+                      
+                      return (
+                        <motion.li 
+                          key={href}
+                          variants={navItemVariants}
+                          className="overflow-hidden"
+                        >
+                          <a
+                            href={href}
+                            onClick={(e) => handleNavClick(e, href)}
+                            className={`block px-4 py-3 text-lg rounded-md transition-all duration-300 ${
+                              isActive 
+                                ? 'bg-accent/10 text-accent font-medium border-l-2 border-accent pl-[calc(1rem-2px)]' 
+                                : 'text-base-content hover:bg-base-200/30 hover:pl-5'
+                            }`}
+                          >
+                            {label}
+                          </a>
+                        </motion.li>
+                      );
+                    })}
+                  </ul>
+                </nav>
+                
+                {/* Social links */}
+                <div>
+                  <h3 className="text-xs uppercase tracking-wider text-muted mb-3 font-medium">Connect</h3>
+                  <motion.div 
+                    className="flex space-x-3"
+                    variants={{
+                      hidden: {},
+                      visible: {
+                        transition: {
+                          staggerChildren: 0.1
+                        }
+                      }
+                    }}
+                  >
+                    {SOCIAL_LINKS.map((social) => (
+                      <motion.a
+                        key={social.name}
+                        href={social.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-3 rounded-full bg-card/50 hover:bg-accent/10 hover:text-accent transition-colors border border-border/20"
+                        variants={socialLinkVariants}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        aria-label={social.name}
                       >
-                        {label}
-                      </a>
-                    </motion.li>
-                  );
-                })}
-              </ul>
-            </nav>
+                        <SocialIcon type={social.icon} />
+                      </motion.a>
+                    ))}
+                  </motion.div>
+                </div>
+                
+                {/* Resume/CV download button */}
+                <motion.div 
+                  variants={navItemVariants}
+                  className="pt-2"
+                >
+                  <a 
+                    href="/assets/cv/CV_Vaggelis_Kavouras_English.pdf" 
+                    download
+                    className="flex items-center justify-center px-5 py-3 rounded-lg bg-accent text-white hover:bg-accent-dark transition-colors text-sm font-medium"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="7 10 12 15 17 10"></polyline>
+                      <line x1="12" y1="15" x2="12" y2="3"></line>
+                    </svg>
+                    <span>Download CV</span>
+                  </a>
+                </motion.div>
+              </div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

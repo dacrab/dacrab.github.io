@@ -23,7 +23,7 @@ const FeaturedProject = memo(function FeaturedProject({
     animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 5 : 8) },
     transition: { 
       duration: isMobile ? 0.3 : 0.4, 
-      delay: delay + delayOffset + (Math.min(index, 2) * (isMobile ? 0.03 : 0.05)) 
+      delay: (delay || 0) + delayOffset + (Math.min(index, 2) * (isMobile ? 0.03 : 0.05)) 
     }
   });
   
@@ -44,7 +44,7 @@ const FeaturedProject = memo(function FeaturedProject({
       ref={containerRef}
       initial={{ opacity: 0, y: isMobile ? 10 : 15 }}
       animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 10 : 15) }}
-      transition={{ duration: isMobile ? 0.4 : 0.5, delay }}
+      transition={{ duration: isMobile ? 0.4 : 0.5, delay: delay || 0 }}
       className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden group hover:border-accent/30 transition-all duration-300 shadow-md relative"
     >
       <div className={layoutClasses.grid}>

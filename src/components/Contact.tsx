@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, memo } from "react";
+import { useRef, useState, useEffect, memo } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
@@ -15,6 +15,16 @@ const Contact = memo(function Contact() {
   const ref = useRef<HTMLElement>(null);
   const isMobile = useIsMobile();
   const isInView = useInView(ref, { once: false, amount: isMobile ? 0.05 : 0.1 }); // Reduced threshold for earlier animation
+  
+  // State to track if component has ever been visible - for lazy loading
+  const [hasBeenVisible, setHasBeenVisible] = useState(false);
+  
+  // Only perform expensive animations/calculations after component has been visible once
+  useEffect(() => {
+    if (isInView && !hasBeenVisible) {
+      setHasBeenVisible(true);
+    }
+  }, [isInView, hasBeenVisible]);
   
   // Simplified scroll animation setup with reduced transform values
   const { scrollYProgress } = useScroll({
@@ -40,37 +50,42 @@ const Contact = memo(function Contact() {
       ref={ref}
       className="py-16 md:py-28 relative overflow-hidden" // Removed bg-background class
     >
-      {/* Accent glow effects */}
-      <motion.div 
-        className="absolute top-0 left-0 w-[25%] h-[30%] rounded-full bg-accent/20 blur-[100px] opacity-0"
-        animate={{ 
-          opacity: isInView ? (isMobile ? 0.3 : 0.4) : 0,
-          y: isInView ? [0, 10, 0] : 0,
-        }}
-        transition={{ 
-          opacity: { duration: isMobile ? 1.2 : 1.5 },
-          y: { 
-            repeat: Infinity,
-            duration: isMobile ? 20 : 16,
-            ease: "easeInOut" 
-          }
-        }}
-      />
-      <motion.div 
-        className="absolute bottom-[10%] right-[5%] w-[35%] h-[40%] rounded-full bg-accent/15 blur-[150px] opacity-0"
-        animate={{ 
-          opacity: isInView ? (isMobile ? 0.4 : 0.6) : 0,
-          scale: isInView ? [1, 1.1, 1, 0.95, 1] : 0.9,
-        }}
-        transition={{ 
-          opacity: { duration: isMobile ? 1.5 : 2, delay: isMobile ? 0.2 : 0.3 },
-          scale: { 
-            repeat: Infinity,
-            duration: isMobile ? 18 : 14,
-            ease: "easeInOut" 
-          }
-        }}
-      />
+      {/* Only render complex animations if component has been visible at least once */}
+      {hasBeenVisible && (
+        <>
+          {/* Accent glow effects */}
+          <motion.div 
+            className="absolute top-0 left-0 w-[25%] h-[30%] rounded-full bg-accent/20 blur-[100px] opacity-0"
+            animate={{ 
+              opacity: isInView ? (isMobile ? 0.3 : 0.4) : 0,
+              y: isInView ? [0, 10, 0] : 0,
+            }}
+            transition={{ 
+              opacity: { duration: isMobile ? 1.2 : 1.5 },
+              y: { 
+                repeat: Infinity,
+                duration: isMobile ? 20 : 16,
+                ease: "easeInOut" 
+              }
+            }}
+          />
+          <motion.div 
+            className="absolute bottom-[10%] right-[5%] w-[35%] h-[40%] rounded-full bg-accent/15 blur-[150px] opacity-0"
+            animate={{ 
+              opacity: isInView ? (isMobile ? 0.4 : 0.6) : 0,
+              scale: isInView ? [1, 1.1, 1, 0.95, 1] : 0.9,
+            }}
+            transition={{ 
+              opacity: { duration: isMobile ? 1.5 : 2, delay: isMobile ? 0.2 : 0.3 },
+              scale: { 
+                repeat: Infinity,
+                duration: isMobile ? 18 : 14,
+                ease: "easeInOut" 
+              }
+            }}
+          />
+        </>
+      )}
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         {/* Section heading */}
@@ -84,25 +99,27 @@ const Contact = memo(function Contact() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 backdrop-blur-sm rounded-xl overflow-hidden border border-border/20 shadow-lg relative" // Reduced shadow, radius and gap
                style={{ background: "rgba(var(--card-rgb), 0.6)" }}>
             
-            {/* Subtle inner glow effect */}
-            <motion.div
-              className="absolute inset-0 border-[1px] border-accent/10 rounded-xl opacity-0"
-              animate={{ 
-                opacity: isInView ? [0, isMobile ? 0.4 : 0.5, isMobile ? 0.5 : 0.7, isMobile ? 0.4 : 0.5, 0] : 0,
-                boxShadow: [
-                  "inset 0 0 0px rgba(147, 51, 234, 0)",
-                  "inset 0 0 15px rgba(147, 51, 234, 0.2)",
-                  "inset 0 0 30px rgba(147, 51, 234, 0.3)",
-                  "inset 0 0 15px rgba(147, 51, 234, 0.2)",
-                  "inset 0 0 0px rgba(147, 51, 234, 0)",
-                ]
-              }}
-              transition={{ 
-                repeat: Infinity,
-                duration: isMobile ? 15 : 10,
-                ease: "easeInOut" 
-              }}
-            />
+            {/* Subtle inner glow effect - only render if component has been visible */}
+            {hasBeenVisible && (
+              <motion.div
+                className="absolute inset-0 border-[1px] border-accent/10 rounded-xl opacity-0"
+                animate={{ 
+                  opacity: isInView ? [0, isMobile ? 0.4 : 0.5, isMobile ? 0.5 : 0.7, isMobile ? 0.4 : 0.5, 0] : 0,
+                  boxShadow: [
+                    "inset 0 0 0px rgba(147, 51, 234, 0)",
+                    "inset 0 0 15px rgba(147, 51, 234, 0.2)",
+                    "inset 0 0 30px rgba(147, 51, 234, 0.3)",
+                    "inset 0 0 15px rgba(147, 51, 234, 0.2)",
+                    "inset 0 0 0px rgba(147, 51, 234, 0)",
+                  ]
+                }}
+                transition={{ 
+                  repeat: Infinity,
+                  duration: isMobile ? 15 : 10,
+                  ease: "easeInOut" 
+                }}
+              />
+            )}
             
             {/* Left column - Contact Info */}
             <div className="lg:col-span-7 p-5 md:p-8 relative"> {/* Reduced padding for mobile */}

@@ -3,6 +3,7 @@
 import React, { ReactNode, useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import { getOptimizedValue, emojiAnimation, staggerContainer } from "@/utils/animations";
 
 interface ScrollRevealProps {
   children: ReactNode;
@@ -41,7 +42,7 @@ export default function ScrollReveal({
   style = {},
   viewport,
   emoji,
-  emojiAnimation = "wave",
+  emojiAnimation: emojiAnimationType = "wave",
   emojiPosition = "after",
   emojiSize = "text-2xl",
   mobileOptimized = true
@@ -49,14 +50,12 @@ export default function ScrollReveal({
   const ref = useRef(null);
   const isMobile = useIsMobile();
   
-  // Optimize animations for mobile
-  const optimizedDistance = mobileOptimized && isMobile ? Math.min(distance * 0.7, 30) : distance;
-  const optimizedDuration = mobileOptimized && isMobile ? Math.min(duration * 0.8, 0.5) : duration;
-  const optimizedDelay = mobileOptimized && isMobile ? Math.min(delay * 0.7, delay) : delay;
-  const optimizedStaggerDelay = mobileOptimized && isMobile ? Math.min(staggerDelay * 0.6, 0.05) : staggerDelay;
-  
-  // Viewport threshold can be smaller on mobile for earlier reveal
-  const optimizedThreshold = mobileOptimized && isMobile ? Math.min(threshold * 0.8, 0.15) : threshold;
+  // Use centralized utility for optimized values
+  const optimizedDistance = getOptimizedValue(distance, isMobile && mobileOptimized, 0.7, 30);
+  const optimizedDuration = getOptimizedValue(duration, isMobile && mobileOptimized, 0.8, 0.5);
+  const optimizedDelay = getOptimizedValue(delay, isMobile && mobileOptimized, 0.7);
+  const optimizedStaggerDelay = getOptimizedValue(staggerDelay, isMobile && mobileOptimized, 0.6, 0.05);
+  const optimizedThreshold = getOptimizedValue(threshold, isMobile && mobileOptimized, 0.8, 0.15);
   
   const isInView = useInView(ref, { 
     amount: viewport?.amount || optimizedThreshold, 
@@ -82,19 +81,10 @@ export default function ScrollReveal({
 
   const { initialProps, finalProps } = getAnimationProps();
 
-  // Container variant for staggered animations - optimized for mobile
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: optimizedStaggerDelay,
-        delayChildren: optimizedDelay,
-      },
-    },
-  };
+  // Use centralized stagger container variant
+  const containerVariants = staggerContainer(optimizedStaggerDelay, optimizedDelay, isMobile && mobileOptimized);
 
-  // Item variants for staggered children - optimized for mobile
+  // Item variants for staggered children - using central transition presets
   const itemVariants = {
     hidden: initialProps,
     show: {
@@ -109,137 +99,31 @@ export default function ScrollReveal({
     },
   };
 
-  // Get emoji animation properties - simplified for mobile
-  const getEmojiAnimation = () => {
-    // On mobile with optimization enabled, use simpler animations
-    if (mobileOptimized && isMobile) {
-      // Simplified version for mobile - less complex animations
-      switch (emojiAnimation) {
-        case "wave":
-          return {
-            animate: { rotate: [0, 10, 0, -5, 0] }, // Simplified rotation
-            transition: {
-              repeat: Infinity,
-              repeatDelay: 4,      // Longer delay between animations
-              duration: 1.2,       // Shorter duration
-              delay: optimizedDelay + optimizedDuration + 0.3,
-              ease: "easeInOut",
-            },
-            className: "origin-bottom-right"
-          };
-        case "bounce":
-          return {
-            animate: { y: [0, -5, 0] }, // Reduced bounce distance
-            transition: {
-              repeat: Infinity,
-              repeatDelay: 3,      // Longer delay between animations
-              duration: 0.6,       // Shorter duration
-              delay: optimizedDelay + optimizedDuration + 0.3,
-              ease: "easeOut",
-            },
-            className: ""
-          };
-        case "pulse":
-        case "spin":
-        case "float":
-        default:
-          // Disable complex animations on mobile
-          return {
-            animate: {},
-            transition: {},
-            className: ""
-          };
-      }
-    }
-    
-    // Full animations for desktop
-    switch (emojiAnimation) {
-      case "wave":
-        return {
-          animate: { rotate: [0, 15, 5, 15, 0, -5, 0] },
-          transition: {
-            repeat: Infinity,
-            repeatDelay: 3,
-            duration: 1.5,
-            delay: delay + duration + 0.3,
-            ease: [0.215, 0.61, 0.355, 1],
-            times: [0, 0.2, 0.3, 0.4, 0.6, 0.8, 1]
-          },
-          className: "origin-bottom-right"
-        };
-      case "bounce":
-        return {
-          animate: { y: [0, -10, 0] },
-          transition: {
-            repeat: Infinity,
-            repeatDelay: 2,
-            duration: 0.8,
-            delay: delay + duration + 0.3,
-            ease: "easeOut",
-          },
-          className: ""
-        };
-      case "pulse":
-        return {
-          animate: { scale: [1, 1.2, 1] },
-          transition: {
-            repeat: Infinity,
-            repeatDelay: 2.5,
-            duration: 0.7,
-            delay: delay + duration + 0.3,
-            ease: "easeInOut",
-          },
-          className: ""
-        };
-      case "spin":
-        return {
-          animate: { rotate: [0, 360] },
-          transition: {
-            repeat: Infinity,
-            repeatDelay: 3,
-            duration: 1.2,
-            delay: delay + duration + 0.3,
-            ease: "linear",
-          },
-          className: ""
-        };
-      case "float":
-        return {
-          animate: { y: [0, -5, 0, 5, 0] },
-          transition: {
-            repeat: Infinity,
-            duration: 4,
-            delay: delay + duration + 0.3,
-            ease: "easeInOut",
-          },
-          className: ""
-        };
-      default:
-        return {
-          animate: {},
-          transition: {},
-          className: ""
-        };
-    }
-  };
+  // Use centralized emoji animation utility
+  const emojiAnimationConfig = emojiAnimation(
+    emojiAnimationType,
+    delay + duration + 0.3,
+    emojiAnimationType === "wave" ? 1.5 : 0.8,
+    isMobile && mobileOptimized
+  );
   
-  // Emoji component - conditionally optimized for mobile
+  // Emoji component with centralized animation
   const EmojiComponent = emoji ? (
     <motion.span
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{ 
         opacity: isInView ? 1 : 0, 
         scale: isInView ? 1 : 0.5,
-        ...(emojiAnimation !== "none" ? getEmojiAnimation().animate : {})
+        ...(emojiAnimationType !== "none" ? emojiAnimationConfig.animate : {})
       }}
       transition={{
         opacity: { duration: 0.3, delay: optimizedDelay + optimizedDuration },
         scale: { duration: 0.5, delay: optimizedDelay + optimizedDuration, type: "spring" },
-        ...(emojiAnimation !== "none" ? getEmojiAnimation().transition : {})
+        ...(emojiAnimationType !== "none" ? emojiAnimationConfig.transition : {})
       }}
-      className={`inline-block ${getEmojiAnimation().className} ${emojiSize} mx-2`}
+      className={`inline-block ${emojiAnimationConfig.className} ${emojiSize} mx-2`}
       style={{ 
-        willChange: emojiAnimation !== "none" ? "transform" : "opacity" 
+        willChange: emojiAnimationType !== "none" ? "transform" : "opacity" 
       }}
     >
       {emoji}
