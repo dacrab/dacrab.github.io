@@ -6,23 +6,24 @@ import { memo } from "react";
 
 interface TimelineProps {
   isInView: boolean;
+  isMobile: boolean;
 }
 
 // Memoize the component to prevent unnecessary re-renders
-const Timeline = memo(function Timeline({ isInView }: TimelineProps) {
+const Timeline = memo(function Timeline({ isInView, isMobile }: TimelineProps) {
   return (
     <motion.div
       className="max-w-6xl mx-auto rounded-xl overflow-hidden border border-border/20 shadow-md backdrop-blur-sm p-4 md:p-8"
       style={{ background: "rgba(var(--card-rgb), 0.6)" }}
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 15 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
+      initial={{ opacity: 0, y: isMobile ? 10 : 15 }}
+      animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : isMobile ? 10 : 15 }}
+      transition={{ duration: isMobile ? 0.4 : 0.5, delay: 0.2 }}
     >
       <div className="text-center mb-6 md:mb-8">
         <motion.h3
-          initial={{ opacity: 0, y: -5 }}
-          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : -5 }}
-          transition={{ duration: 0.4, delay: 0.3 }}
+          initial={{ opacity: 0, y: isMobile ? -3 : -5 }}
+          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : isMobile ? -3 : -5 }}
+          transition={{ duration: isMobile ? 0.3 : 0.4, delay: 0.3 }}
           className="text-xl md:text-2xl font-bold mb-2 inline-block text-gradient"
         >
           Career Timeline
@@ -31,14 +32,14 @@ const Timeline = memo(function Timeline({ isInView }: TimelineProps) {
         <motion.div
           className="h-0.5 w-12 md:w-16 bg-accent/50 mx-auto mb-3 md:mb-4"
           initial={{ width: 0, opacity: 0 }}
-          animate={{ width: isInView ? 64 : 0, opacity: isInView ? 1 : 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          animate={{ width: isInView ? (isMobile ? 48 : 64) : 0, opacity: isInView ? 1 : 0 }}
+          transition={{ duration: isMobile ? 0.4 : 0.5, delay: 0.4 }}
         />
         
         <motion.p
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: isInView ? 0.8 : 0, y: isInView ? 0 : 5 }}
-          transition={{ duration: 0.4, delay: 0.5 }}
+          initial={{ opacity: 0, y: isMobile ? 3 : 5 }}
+          animate={{ opacity: isInView ? 0.8 : 0, y: isInView ? 0 : isMobile ? 3 : 5 }}
+          transition={{ duration: isMobile ? 0.3 : 0.4, delay: 0.5 }}
           className="text-muted max-w-xl mx-auto text-sm md:text-base"
         >
           A chronological journey through my professional experience and skill development
@@ -61,7 +62,7 @@ const Timeline = memo(function Timeline({ isInView }: TimelineProps) {
               initial={{ height: 0 }}
               animate={{ height: isInView ? "100%" : 0 }}
               transition={{ 
-                height: { duration: 0.8, delay: 0.4, ease: "easeOut" }
+                height: { duration: isMobile ? 0.6 : 0.8, delay: 0.4, ease: "easeOut" }
               }}
             />
           </div>
@@ -76,7 +77,7 @@ const Timeline = memo(function Timeline({ isInView }: TimelineProps) {
           initial={{ height: 0 }}
           animate={{ height: isInView ? "100%" : 0 }}
           transition={{ 
-            height: { duration: 0.8, delay: 0.4, ease: "easeOut" }
+            height: { duration: isMobile ? 0.6 : 0.8, delay: 0.4, ease: "easeOut" }
           }}
         />
         
@@ -99,9 +100,9 @@ const Timeline = memo(function Timeline({ isInView }: TimelineProps) {
                 key={exp.id}
                 direction={direction}
                 className="mb-8 md:mb-12 relative"
-                duration={0.5}
-                delay={0.3 + (0.08 * Math.min(index, 3))}
-                distance={20}
+                duration={isMobile ? 0.4 : 0.5}
+                delay={0.3 + (0.08 * Math.min(index, isMobile ? 2 : 3))}
+                distance={isMobile ? 15 : 20}
                 threshold={0.1}
               >
                 <TimelineEntry
@@ -114,6 +115,7 @@ const Timeline = memo(function Timeline({ isInView }: TimelineProps) {
                   technologies={exp.skills}
                   isInView={isInView}
                   index={index}
+                  isMobile={isMobile}
                 />
               </ScrollReveal>
             );
@@ -127,7 +129,7 @@ const Timeline = memo(function Timeline({ isInView }: TimelineProps) {
             className="md:hidden absolute left-4 -bottom-2 w-6 h-6 rounded-full border border-accent/50 flex items-center justify-center bg-card/30 backdrop-blur-sm shadow-md z-10"
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: isInView ? 1 : 0, scale: isInView ? 1 : 0 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
+            transition={{ duration: isMobile ? 0.4 : 0.5, delay: 0.8 }}
           >
             <motion.div 
               className="w-2 h-2 bg-accent rounded-full"
@@ -136,7 +138,7 @@ const Timeline = memo(function Timeline({ isInView }: TimelineProps) {
                 opacity: [0.7, 1, 0.7]
               }}
               transition={{
-                duration: 1.5,
+                duration: isMobile ? 2 : 1.5,
                 repeat: Infinity,
                 repeatType: "reverse"
               }}
@@ -148,7 +150,7 @@ const Timeline = memo(function Timeline({ isInView }: TimelineProps) {
             className="hidden md:flex absolute left-1/2 -translate-x-1/2 -bottom-2 w-8 h-8 rounded-full border border-accent/50 items-center justify-center bg-card/30 backdrop-blur-sm shadow-md z-10"
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: isInView ? 1 : 0, scale: isInView ? 1 : 0 }}
-            transition={{ duration: 0.5, delay: 0.8 }}
+            transition={{ duration: isMobile ? 0.4 : 0.5, delay: 0.8 }}
           >
             <motion.div 
               className="w-2.5 h-2.5 bg-accent rounded-full"
@@ -157,7 +159,7 @@ const Timeline = memo(function Timeline({ isInView }: TimelineProps) {
                 opacity: [0.7, 1, 0.7]
               }}
               transition={{
-                duration: 1.5,
+                duration: isMobile ? 2 : 1.5,
                 repeat: Infinity,
                 repeatType: "reverse"
               }}

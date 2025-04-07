@@ -2,6 +2,7 @@
 
 import React, { ReactNode, useRef } from "react";
 import { motion, useInView, Variants } from "framer-motion";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface StaggerRevealProps {
   children: ReactNode;
@@ -15,6 +16,7 @@ interface StaggerRevealProps {
   once?: boolean;
   childClassName?: string;
   style?: React.CSSProperties;
+  mobileOptimized?: boolean; // Allow disabling optimization
 }
 
 /**
@@ -35,9 +37,19 @@ export default function StaggerReveal({
   once = true,
   childClassName = "",
   style = {},
+  mobileOptimized = true,
 }: StaggerRevealProps) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { amount: threshold, once });
+  const isMobile = useIsMobile();
+  
+  // Mobile optimizations
+  const optimizedDistance = mobileOptimized && isMobile ? Math.min(distance * 0.6, 20) : distance;
+  const optimizedDuration = mobileOptimized && isMobile ? Math.min(duration * 0.8, 0.4) : duration;
+  const optimizedDelay = mobileOptimized && isMobile ? Math.min(childDelay * 0.7, childDelay) : childDelay;
+  const optimizedStaggerDelay = mobileOptimized && isMobile ? Math.min(staggerDelay * 0.6, 0.05) : staggerDelay;
+  const optimizedThreshold = mobileOptimized && isMobile ? Math.min(threshold, 0.05) : threshold;
+  
+  const isInView = useInView(ref, { amount: optimizedThreshold, once });
 
   // Container variants for parent
   const containerVariants: Variants = {
@@ -45,8 +57,8 @@ export default function StaggerReveal({
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: staggerDelay,
-        delayChildren: childDelay,
+        staggerChildren: optimizedStaggerDelay,
+        delayChildren: optimizedDelay,
       },
     },
   };
@@ -54,13 +66,26 @@ export default function StaggerReveal({
   // Child variants for individual items
   const childVariants: Variants = {
     hidden: (() => {
+      // Simpler animations for mobile
+      if (mobileOptimized && isMobile) {
+        switch (direction) {
+          case "up": return { opacity: 0, y: optimizedDistance };
+          case "down": return { opacity: 0, y: -optimizedDistance };
+          case "left": return { opacity: 0, x: -optimizedDistance };
+          case "right": return { opacity: 0, x: optimizedDistance };
+          case "none": return { opacity: 0 };
+          default: return { opacity: 0, y: optimizedDistance };
+        }
+      }
+      
+      // Regular animations for desktop
       switch (direction) {
-        case "up": return { opacity: 0, y: distance };
-        case "down": return { opacity: 0, y: -distance };
-        case "left": return { opacity: 0, x: -distance };
-        case "right": return { opacity: 0, x: distance };
+        case "up": return { opacity: 0, y: optimizedDistance };
+        case "down": return { opacity: 0, y: -optimizedDistance };
+        case "left": return { opacity: 0, x: -optimizedDistance };
+        case "right": return { opacity: 0, x: optimizedDistance };
         case "none": return { opacity: 0, scale: 0.95 };
-        default: return { opacity: 0, y: distance };
+        default: return { opacity: 0, y: optimizedDistance };
       }
     })(),
     visible: {
@@ -70,11 +95,19 @@ export default function StaggerReveal({
       scale: 1,
       transition: {
         type: "spring",
-        stiffness: 260,
-        damping: 20,
-        duration,
+        stiffness: isMobile ? 200 : 260, // Less bouncy on mobile
+        damping: isMobile ? 25 : 20,     // More damping on mobile
+        duration: optimizedDuration,
       },
     },
+  };
+  
+  // Determine the appropriate will-change property based on direction
+  const getWillChange = (): string => {
+    if (direction === "none") return "opacity";
+    if (direction === "up" || direction === "down") return "transform, opacity";
+    if (direction === "left" || direction === "right") return "transform, opacity";
+    return "opacity";
   };
 
   return (
@@ -84,10 +117,17 @@ export default function StaggerReveal({
       variants={containerVariants}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
-      style={style}
+      style={{
+        ...style,
+        willChange: "opacity"
+      }}
     >
       {React.Children.map(children, (child) => (
-        <motion.div className={childClassName} variants={childVariants}>
+        <motion.div 
+          className={childClassName} 
+          variants={childVariants}
+          style={{ willChange: getWillChange() }}
+        >
           {child}
         </motion.div>
       ))}

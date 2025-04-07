@@ -5,17 +5,18 @@ import { memo } from "react";
 
 interface LottieVisualizationProps {
   isInView: boolean;
+  isMobile: boolean;
 }
 
 // Memoize the component to prevent unnecessary re-renders
-const LottieVisualization = memo(function LottieVisualization({ isInView }: LottieVisualizationProps) {
+const LottieVisualization = memo(function LottieVisualization({ isInView, isMobile }: LottieVisualizationProps) {
   // Simplified animation variants for better mobile performance
   const fadeInUp = {
-    hidden: { opacity: 0, y: 8 },
+    hidden: { opacity: 0, y: isMobile ? 5 : 8 },
     visible: (delay: number) => ({
       opacity: 1, 
       y: 0,
-      transition: { duration: 0.4, delay }
+      transition: { duration: isMobile ? 0.3 : 0.4, delay }
     })
   };
 
@@ -47,10 +48,10 @@ const LottieVisualization = memo(function LottieVisualization({ isInView }: Lott
           initial={{ opacity: 0, scale: 0.95 }}
           animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
           transition={{ 
-            duration: 0.5,
+            duration: isMobile ? 0.4 : 0.5,
             delay: 0.2
           }}
-          whileHover={{ scale: 1.02 }}
+          whileHover={{ scale: isMobile ? 1.01 : 1.02 }}
           className="w-full h-full"
         >
           <DotLottieReact
@@ -64,14 +65,14 @@ const LottieVisualization = memo(function LottieVisualization({ isInView }: Lott
       
       {/* Experience stats with number counter - simplified */}
       <motion.div 
-        initial={{ opacity: 0, y: 10 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
+        initial={{ opacity: 0, y: isMobile ? 8 : 10 }}
+        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: isMobile ? 8 : 10 }}
+        transition={{ duration: isMobile ? 0.4 : 0.5, delay: 0.4 }}
         className="grid grid-cols-3 gap-3"
       >
-        <StatsCard value={1} label="Year" delay={0.5} isInView={isInView} />
-        <StatsCard value={15} label="Projects" delay={0.55} isInView={isInView} />
-        <StatsCard value={10} label="Skills" delay={0.6} isInView={isInView} />
+        <StatsCard value={1} label="Year" delay={0.5} isInView={isInView} isMobile={isMobile} />
+        <StatsCard value={15} label="Projects" delay={0.55} isInView={isInView} isMobile={isMobile} />
+        <StatsCard value={10} label="Skills" delay={0.6} isInView={isInView} isMobile={isMobile} />
       </motion.div>
     </div>
   );
@@ -82,22 +83,23 @@ interface StatsCardProps {
   label: string;
   delay: number;
   isInView: boolean;
+  isMobile: boolean;
 }
 
 // Memoize StatsCard for better performance
-const StatsCard = memo(function StatsCard({ value, label, delay, isInView }: StatsCardProps) {
+const StatsCard = memo(function StatsCard({ value, label, delay, isInView, isMobile }: StatsCardProps) {
   return (
     <motion.div 
       className="bg-card/30 backdrop-blur-sm border border-border/30 rounded-xl py-3 px-2 text-center relative overflow-hidden group"
       whileHover={{ 
-        y: -2, 
+        y: isMobile ? -1 : -2, 
         borderColor: "rgba(var(--accent-rgb), 0.3)"
       }}
       transition={{ duration: 0.2 }}
     >
       <NumberCounter
         end={value}
-        duration={1}
+        duration={isMobile ? 0.8 : 1}
         delay={delay}
         suffix="+"
         isInView={isInView}

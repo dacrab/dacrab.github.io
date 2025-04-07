@@ -7,17 +7,20 @@ import { memo } from "react";
 
 interface ProfileImageProps {
   contentY: MotionValue<number>;
+  isMobile?: boolean;
 }
 
 // Memoize the component to prevent unnecessary re-renders
-const ProfileImage = memo(function ProfileImage({ contentY }: ProfileImageProps) {
+const ProfileImage = memo(function ProfileImage({ contentY, isMobile = false }: ProfileImageProps) {
   // Animation constants - simplified for better mobile performance
   
   const hoverAnimation = {
-    y: -3, 
-    boxShadow: "0 8px 20px -5px rgba(var(--accent-rgb), 0.15)",
+    y: isMobile ? -2 : -3, 
+    boxShadow: isMobile ? 
+      "0 6px 15px -5px rgba(var(--accent-rgb), 0.12)" : 
+      "0 8px 20px -5px rgba(var(--accent-rgb), 0.15)",
     borderColor: "rgba(var(--accent-rgb), 0.3)",
-    transition: { duration: 0.2 }
+    transition: { duration: isMobile ? 0.15 : 0.2 }
   };
 
   return (
@@ -31,9 +34,11 @@ const ProfileImage = memo(function ProfileImage({ contentY }: ProfileImageProps)
           {/* Lottie animation profile */}
           <ScrollReveal
             direction="left"
-            duration={0.6}
+            duration={isMobile ? 0.5 : 0.6}
             delay={0.1}
             className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden relative z-10 shadow-md transition-shadow duration-300"
+            distance={isMobile ? 20 : 30}
+            mobileOptimized={true}
           >
             <div className="aspect-square relative overflow-hidden flex items-center justify-center">
               <div className="w-full h-full">
@@ -51,10 +56,11 @@ const ProfileImage = memo(function ProfileImage({ contentY }: ProfileImageProps)
         {/* Stats highlights - simplified for mobile */}
         <StaggerReveal
           className="mt-6 grid grid-cols-2 gap-4 max-w-md mx-auto lg:mx-0"
-          duration={0.5}
-          childDelay={0.2}
-          staggerDelay={0.1}
+          duration={isMobile ? 0.4 : 0.5}
+          childDelay={isMobile ? 0.15 : 0.2}
+          staggerDelay={isMobile ? 0.07 : 0.1}
           childClassName="h-full"
+          mobileOptimized={true}
         >
           {/* Experience stat */}
           <motion.div 
@@ -63,8 +69,8 @@ const ProfileImage = memo(function ProfileImage({ contentY }: ProfileImageProps)
           >
             <NumberCounter
               end={1}
-              duration={1.5}
-              delay={0.6}
+              duration={isMobile ? 1.2 : 1.5}
+              delay={isMobile ? 0.5 : 0.6}
               suffix="+"
               className="text-accent text-2xl font-bold"
             />
@@ -78,8 +84,8 @@ const ProfileImage = memo(function ProfileImage({ contentY }: ProfileImageProps)
           >
             <NumberCounter
               end={15}
-              duration={1.5}
-              delay={0.7}
+              duration={isMobile ? 1.2 : 1.5}
+              delay={isMobile ? 0.6 : 0.7}
               suffix="+"
               className="text-accent text-2xl font-bold"
             />

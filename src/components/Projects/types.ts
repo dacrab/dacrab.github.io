@@ -18,6 +18,7 @@ export interface ProjectBaseProps {
   onHover?: () => void;
   onLeave?: () => void;
   index?: number;
+  isMobile?: boolean;
 }
 
 // Color mapping for project tags

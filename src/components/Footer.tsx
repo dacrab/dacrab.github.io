@@ -1,9 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const isMobile = useIsMobile();
 
   return (
     <footer className="bg-background relative overflow-hidden border-t border-border">
@@ -12,10 +14,10 @@ export default function Footer() {
           {/* About column */}
           <div>
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: isMobile ? 15 : 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
+              transition={{ duration: isMobile ? 0.4 : 0.5 }}
+              viewport={{ once: true, amount: isMobile ? 0.1 : 0.2 }}
             >
               <h3 className="text-xl font-bold mb-4">About Me</h3>
               <p className="text-muted mb-6">
@@ -28,26 +30,33 @@ export default function Footer() {
           {/* Quick links */}
           <div>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: isMobile ? 15 : 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              viewport={{ once: true }}
+              transition={{ duration: isMobile ? 0.4 : 0.5, delay: isMobile ? 0.15 : 0.2 }}
+              viewport={{ once: true, amount: isMobile ? 0.1 : 0.2 }}
             >
               <h3 className="text-xl font-bold mb-4">Quick Links</h3>
               <ul className="space-y-3">
                 {['Home', 'About', 'Projects', 'Experience', 'Contact'].map((item, index) => (
                   <motion.li 
                     key={item}
-                    initial={{ opacity: 0, x: -10 }}
+                    initial={{ opacity: 0, x: isMobile ? -7 : -10 }}
                     whileInView={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3, delay: 0.3 + index * 0.1 }}
-                    viewport={{ once: true }}
+                    transition={{ 
+                      duration: isMobile ? 0.25 : 0.3, 
+                      delay: (isMobile ? 0.2 : 0.3) + index * (isMobile ? 0.07 : 0.1)
+                    }}
+                    viewport={{ once: true, amount: isMobile ? 0.1 : 0.2 }}
                   >
                     <motion.a 
                       href={`#${item.toLowerCase()}`} 
                       className="text-muted flex items-center transition-colors duration-300 hover:text-accent"
-                      whileHover={{ x: 5 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                      whileHover={{ x: isMobile ? 3 : 5 }}
+                      transition={{ 
+                        type: "spring", 
+                        stiffness: isMobile ? 350 : 400, 
+                        damping: isMobile ? 20 : 25
+                      }}
                     >
                       <svg 
                         className="w-3 h-3 mr-2 text-accent" 
@@ -74,10 +83,10 @@ export default function Footer() {
           {/* Connect column */}
           <div>
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: isMobile ? 15 : 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              viewport={{ once: true }}
+              transition={{ duration: isMobile ? 0.4 : 0.5, delay: isMobile ? 0.3 : 0.4 }}
+              viewport={{ once: true, amount: isMobile ? 0.1 : 0.2 }}
             >
               <h3 className="text-xl font-bold mb-4">Connect</h3>
               <div className="flex space-x-4 mb-6">
@@ -112,9 +121,9 @@ export default function Footer() {
                     className="relative group"
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ duration: 0.2 }}
+                    whileHover={{ scale: isMobile ? 1.05 : 1.1 }}
+                    whileTap={{ scale: isMobile ? 0.97 : 0.95 }}
+                    transition={{ duration: isMobile ? 0.15 : 0.2 }}
                   >
                     <div className="absolute inset-0 bg-accent/20 rounded-full blur-md opacity-0 group-hover:opacity-70 transition-opacity duration-300 -z-10"></div>
                     <div className="flex items-center justify-center w-10 h-10 bg-card/50 hover:bg-card/80 border border-border/40 rounded-full transition-all duration-300">
@@ -128,12 +137,12 @@ export default function Footer() {
 
               {/* Email section with fixed hover animations */}
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: isMobile ? 7 : 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.5 }}
-                viewport={{ once: true }}
+                transition={{ duration: isMobile ? 0.3 : 0.4, delay: isMobile ? 0.4 : 0.5 }}
+                viewport={{ once: true, amount: isMobile ? 0.1 : 0.2 }}
                 className="bg-card/30 backdrop-blur-sm border border-border/30 rounded-xl p-4 hover:shadow-md transition-all duration-300"
-                whileHover={{ y: -3 }}
+                whileHover={{ y: isMobile ? -2 : -3 }}
               >
                 <p className="text-sm text-muted">
                   Want to get in touch? Send me an email at:
@@ -145,7 +154,7 @@ export default function Footer() {
                     textDecoration: "underline",
                     textDecorationColor: "rgba(var(--accent-rgb), 1)" 
                   }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ duration: isMobile ? 0.15 : 0.2 }}
                 >
                   vkavouras@proton.me
                 </motion.a>
@@ -158,8 +167,8 @@ export default function Footer() {
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          viewport={{ once: true }}
+          transition={{ duration: isMobile ? 0.4 : 0.5, delay: isMobile ? 0.5 : 0.6 }}
+          viewport={{ once: true, amount: isMobile ? 0.1 : 0.2 }}
           className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center"
         >
           <p className="text-sm text-muted mb-4 md:mb-0">

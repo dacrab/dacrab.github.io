@@ -12,15 +12,19 @@ const FeaturedProject = memo(function FeaturedProject({
   isInView, 
   delay, 
   reversed = false,
-  index = 0
+  index = 0,
+  isMobile = false
 }: FeaturedProjectProps) {
   const containerRef = useRef(null);
   
   // Simplified animation props with delay capping for better mobile performance
   const fadeIn = (delayOffset: number = 0) => ({
-    initial: { opacity: 0, y: 8 },
-    animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : 8 },
-    transition: { duration: 0.4, delay: delay + delayOffset + (Math.min(index, 2) * 0.05) }
+    initial: { opacity: 0, y: isMobile ? 5 : 8 },
+    animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 5 : 8) },
+    transition: { 
+      duration: isMobile ? 0.3 : 0.4, 
+      delay: delay + delayOffset + (Math.min(index, 2) * (isMobile ? 0.03 : 0.05)) 
+    }
   });
   
   // Layout classes based on reversed prop
@@ -38,9 +42,9 @@ const FeaturedProject = memo(function FeaturedProject({
   return (
     <motion.div
       ref={containerRef}
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 15 }}
-      transition={{ duration: 0.5, delay }}
+      initial={{ opacity: 0, y: isMobile ? 10 : 15 }}
+      animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 10 : 15) }}
+      transition={{ duration: isMobile ? 0.4 : 0.5, delay }}
       className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden group hover:border-accent/30 transition-all duration-300 shadow-md relative"
     >
       <div className={layoutClasses.grid}>

@@ -7,6 +7,7 @@ interface BioSectionProps {
   contentY: MotionValue<number>; 
   bioRef: React.RefObject<HTMLDivElement>; 
   bioAnimate: AnimationControls; 
+  isMobile?: boolean;
 }
 
 // Optimized animation variants
@@ -19,29 +20,29 @@ const staggerContainer = {
   }
 };
 
-const fadeIn = (delay: number) => ({
+const fadeIn = (delay: number, isMobile = false) => ({
   hidden: {
-    y: 15,
+    y: isMobile ? 10 : 15,
     opacity: 0
   },
   visible: {
     y: 0,
     opacity: 1,
     transition: {
-      delay,
-      duration: 0.5
+      delay: isMobile ? delay * 0.8 : delay,
+      duration: isMobile ? 0.4 : 0.5
     }
   }
 });
 
-const cardAnimation = (delay: number) => ({
-  hidden: { opacity: 0, y: 10 },
+const cardAnimation = (delay: number, isMobile = false) => ({
+  hidden: { opacity: 0, y: isMobile ? 7 : 10 },
   visible: { 
     opacity: 1, 
     y: 0,
     transition: {
-      duration: 0.3,
-      delay,
+      duration: isMobile ? 0.25 : 0.3,
+      delay: isMobile ? delay * 0.8 : delay,
       ease: "easeOut"
     }
   }
@@ -58,7 +59,7 @@ const KeywordHighlight = memo(({ children }: { children: React.ReactNode }) => (
 KeywordHighlight.displayName = 'KeywordHighlight';
 
 // Main component - memoized
-const BioSection = memo(function BioSection({ contentY, bioRef, bioAnimate }: BioSectionProps) {
+const BioSection = memo(function BioSection({ contentY, bioRef, bioAnimate, isMobile = false }: BioSectionProps) {
   // Dynamic age calculation
   const [age, setAge] = useState<number>(0);
   
@@ -77,6 +78,16 @@ const BioSection = memo(function BioSection({ contentY, bioRef, bioAnimate }: Bi
     setAge(calculatedAge);
   }, []);
   
+  // Create optimized stagger container with mobile-aware delays
+  const optimizedStaggerContainer = {
+    ...staggerContainer,
+    visible: {
+      transition: {
+        staggerChildren: isMobile ? 0.07 : 0.1
+      }
+    }
+  };
+  
   // Optimized skill category renderer
   const renderSkillCategory = (category: SkillCategoryKey, label: string) => (
     <div className="flex flex-col md:flex-row md:items-center gap-2">
@@ -89,8 +100,8 @@ const BioSection = memo(function BioSection({ contentY, bioRef, bioAnimate }: Bi
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5 py-1 px-2 rounded-md bg-card/50 border border-border/30 hover:border-accent/30 transition-all duration-200"
-            variants={cardAnimation(0.05 + (index * 0.02))}
-            whileHover={{ y: -2 }}
+            variants={cardAnimation(0.05 + (index * (isMobile ? 0.015 : 0.02)), isMobile)}
+            whileHover={{ y: isMobile ? -1 : -2, transition: { duration: isMobile ? 0.15 : 0.2 } }}
           >
             <Image 
               src={skill.icon} 
@@ -113,13 +124,13 @@ const BioSection = memo(function BioSection({ contentY, bioRef, bioAnimate }: Bi
     >
       <motion.div 
         ref={bioRef}
-        variants={staggerContainer}
+        variants={optimizedStaggerContainer}
         initial="hidden"
         animate={bioAnimate}
         className="space-y-6"
       >
         <motion.div 
-          variants={fadeIn(0.1)}
+          variants={fadeIn(0.1, isMobile)}
           className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl p-5 shadow-md"
         >
           <h3 className="text-xl md:text-2xl font-bold mb-3 relative inline-block">
@@ -132,7 +143,7 @@ const BioSection = memo(function BioSection({ contentY, bioRef, bioAnimate }: Bi
         </motion.div>
         
         <motion.div 
-          variants={fadeIn(0.15)}
+          variants={fadeIn(0.15, isMobile)}
           className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl p-5 shadow-md"
         >
           <p className="text-muted leading-relaxed">
@@ -141,7 +152,7 @@ const BioSection = memo(function BioSection({ contentY, bioRef, bioAnimate }: Bi
         </motion.div>
         
         <motion.div 
-          variants={fadeIn(0.2)}
+          variants={fadeIn(0.2, isMobile)}
           className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl p-5 shadow-md"
         >
           <h3 className="text-lg md:text-xl font-bold mb-3 relative inline-block">

@@ -4,6 +4,7 @@ import { useRef, useState, useMemo, memo } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useGitHubProjects } from "@/hooks/useGitHubProjects";
 import { DEFAULT_PROJECTS, transformGitHubToProjects } from "./Projects/types";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 // Import extracted components
 import SectionHeader from "./Projects/SectionHeader";
@@ -15,9 +16,13 @@ import LoadingSpinner from "./Projects/LoadingSpinner";
 
 // Memoize the component to prevent unnecessary re-renders
 const Projects = memo(function Projects() {
+  const isMobile = useIsMobile();
   // References and scroll animations
   const containerRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(containerRef, { once: false, amount: 0.1 }); // Reduced threshold for earlier animation
+  const isInView = useInView(containerRef, { 
+    once: false, 
+    amount: isMobile ? 0.05 : 0.1 // Further reduced threshold for mobile
+  });
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   
   // Scroll progress for animations with simplified values
@@ -27,8 +32,16 @@ const Projects = memo(function Projects() {
   });
   
   // Simplified transform values for better mobile performance
-  const opacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.2, 1, 1, 0.2]);
-  const scale = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.99, 1, 1, 0.99]);
+  const opacity = useTransform(
+    scrollYProgress, 
+    [0, isMobile ? 0.05 : 0.1, isMobile ? 0.95 : 0.9, 1], 
+    [0.2, 1, 1, 0.2]
+  );
+  const scale = useTransform(
+    scrollYProgress, 
+    [0, isMobile ? 0.05 : 0.1, isMobile ? 0.95 : 0.9, 1], 
+    [isMobile ? 0.995 : 0.99, 1, 1, isMobile ? 0.995 : 0.99]
+  );
   
   // Fetch GitHub projects with custom hook
   const { projects: githubProjects, loading, error } = useGitHubProjects("dacrab", {
@@ -76,18 +89,18 @@ const Projects = memo(function Projects() {
       ref={containerRef}
       className="py-16 md:py-28 relative overflow-hidden" // Reduced padding for mobile
     >
-      {/* Accent glow effects */}
+      {/* Accent glow effects - simplified for mobile */}
       <motion.div 
         className="absolute top-0 right-[10%] w-[40%] h-[30%] rounded-full bg-accent/15 blur-[150px] opacity-0"
         animate={{ 
-          opacity: isInView ? 0.5 : 0,
-          y: isInView ? [0, 15, 0, -15, 0] : 0,
+          opacity: isInView ? (isMobile ? 0.4 : 0.5) : 0,
+          y: isInView ? (isMobile ? [0, 10, 0, -10, 0] : [0, 15, 0, -15, 0]) : 0,
         }}
         transition={{ 
-          opacity: { duration: 2 },
+          opacity: { duration: isMobile ? 1.5 : 2 },
           y: { 
             repeat: Infinity,
-            duration: 25,
+            duration: isMobile ? 20 : 25,
             ease: "easeInOut" 
           }
         }}
@@ -95,14 +108,14 @@ const Projects = memo(function Projects() {
       <motion.div 
         className="absolute bottom-[20%] left-[5%] w-[30%] h-[25%] rounded-full bg-accent/20 blur-[120px] opacity-0"
         animate={{ 
-          opacity: isInView ? 0.6 : 0,
-          scale: isInView ? [1, 1.2, 1, 0.9, 1] : 0.9,
+          opacity: isInView ? (isMobile ? 0.5 : 0.6) : 0,
+          scale: isInView ? (isMobile ? [1, 1.1, 1, 0.95, 1] : [1, 1.2, 1, 0.9, 1]) : 0.9,
         }}
         transition={{ 
-          opacity: { duration: 1.5, delay: 0.5 },
+          opacity: { duration: isMobile ? 1.2 : 1.5, delay: isMobile ? 0.3 : 0.5 },
           scale: { 
             repeat: Infinity,
-            duration: 20,
+            duration: isMobile ? 15 : 20,
             ease: "easeInOut" 
           }
         }}
@@ -110,7 +123,7 @@ const Projects = memo(function Projects() {
 
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         {/* Section header */}
-        <SectionHeader isInView={isInView} />
+        <SectionHeader isInView={isInView} isMobile={isMobile} />
         
         {/* Loading State */}
         {loading && <LoadingSpinner />}
@@ -130,18 +143,18 @@ const Projects = memo(function Projects() {
                 scale 
               }}
             >
-              {/* Card glow effect */}
+              {/* Card glow effect - simplified for mobile */}
               <motion.div 
                 className="absolute -inset-1 bg-gradient-to-r from-accent/20 via-accent/5 to-accent/20 rounded-xl opacity-0"
                 animate={{ 
-                  opacity: isInView ? [0, 0.5, 0] : 0,
+                  opacity: isInView ? [0, isMobile ? 0.4 : 0.5, 0] : 0,
                 }}
                 transition={{ 
                   repeat: Infinity,
-                  duration: 6,
+                  duration: isMobile ? 5 : 6,
                   ease: "easeInOut" 
                 }}
-                style={{ filter: "blur(8px)" }}
+                style={{ filter: isMobile ? "blur(6px)" : "blur(8px)" }}
               />
               
               <div className="p-5 md:p-8 relative z-10"> {/* Reduced padding */}
@@ -152,23 +165,25 @@ const Projects = memo(function Projects() {
                     <FeaturedProject 
                       project={customProjects[0]} 
                       isInView={isInView}
-                      delay={0.15} // Reduced delay
+                      delay={isMobile ? 0.1 : 0.15} // Further reduced delay for mobile
                       index={0}
+                      isMobile={isMobile}
                     />
                     
                     {/* Second featured project - DesignDash.gr */}
                     <FeaturedProject 
                       project={customProjects[1]} 
                       isInView={isInView}
-                      delay={0.2} // Reduced delay
+                      delay={isMobile ? 0.15 : 0.2} // Further reduced delay for mobile
                       reversed
                       index={1}
+                      isMobile={isMobile}
                     />
                   </div>
                   
                   {/* Right column: Lottie Animation */}
                   <div className="lg:col-span-4">
-                    <LottiePanel isInView={isInView} delay={0.25} /> {/* Reduced delay */}
+                    <LottiePanel isInView={isInView} delay={isMobile ? 0.2 : 0.25} isMobile={isMobile} />
                   </div>
                 </div>
               </div>
@@ -178,25 +193,25 @@ const Projects = memo(function Projects() {
             {originalProjects.length > 0 && (
               <div className="mt-12"> {/* Reduced margin */}
                 <motion.h3
-                  initial={{ opacity: 0, y: 10 }} // Reduced animation distance
-                  animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 10 }}
-                  transition={{ duration: 0.4, delay: 0.6 }} // Faster animation, reduced delay
+                  initial={{ opacity: 0, y: isMobile ? 5 : 10 }} // Further reduced animation distance for mobile
+                  animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 5 : 10) }}
+                  transition={{ duration: isMobile ? 0.3 : 0.4, delay: isMobile ? 0.5 : 0.6 }} // Faster animation for mobile
                   className="text-xl md:text-2xl font-bold mb-5 text-gradient text-center" // Smaller text and margin
                 >
                   More Projects
                 </motion.h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 relative"> {/* Reduced gap */}
-                  {/* Subtle glow on hover */}
+                  {/* Subtle glow on hover - simplified for mobile */}
                   {activeIndex !== null && (
                     <motion.div 
                       className="absolute opacity-0 w-1/3 h-full bg-accent/10 blur-[50px] z-0"
                       initial={false}
                       animate={{ 
-                        opacity: activeIndex !== null ? 0.6 : 0,
+                        opacity: activeIndex !== null ? (isMobile ? 0.5 : 0.6) : 0,
                         left: activeIndex !== null ? `${(activeIndex % 3) * 33.3}%` : 0
                       }}
-                      transition={{ duration: 0.3 }}
+                      transition={{ duration: isMobile ? 0.25 : 0.3 }}
                     />
                   )}
                   {originalProjects.map((project, index) => (
@@ -204,11 +219,12 @@ const Projects = memo(function Projects() {
                       key={project.id}
                       project={project} 
                       isInView={isInView}
-                      delay={0.7 + (index * 0.06)} // Reduced base delay and increment
+                      delay={isMobile ? 0.6 : 0.7 + (index * (isMobile ? 0.04 : 0.06))} // Reduced base delay and increment for mobile
                       index={index + 2}
                       isActive={activeIndex === (index + 2)}
                       onHover={() => setActiveIndex(index + 2)}
                       onLeave={() => setActiveIndex(null)}
+                      isMobile={isMobile}
                     />
                   ))}
                 </div>
@@ -217,11 +233,11 @@ const Projects = memo(function Projects() {
           </div>
         )}
         
-        {/* View all projects button - simplified */}
+        {/* View all projects button - simplified for mobile */}
         <motion.div 
-          initial={{ opacity: 0, y: 10 }} // Reduced animation distance
-          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 10 }}
-          transition={{ duration: 0.4, delay: 0.7 }} // Faster animation, reduced delay
+          initial={{ opacity: 0, y: isMobile ? 5 : 10 }} // Reduced animation distance for mobile
+          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 5 : 10) }}
+          transition={{ duration: isMobile ? 0.3 : 0.4, delay: isMobile ? 0.6 : 0.7 }} // Faster animation for mobile
           className="mt-12 text-center" // Reduced margin
         >
           <motion.a 
@@ -230,8 +246,10 @@ const Projects = memo(function Projects() {
             target="_blank"
             rel="noopener noreferrer"
             whileHover={{ 
-              boxShadow: "0 0 15px rgba(147, 51, 234, 0.5)"
+              boxShadow: `0 0 ${isMobile ? '10px' : '15px'} rgba(147, 51, 234, 0.5)`,
+              scale: isMobile ? 1.01 : 1.02
             }}
+            whileTap={{ scale: 0.98 }}
           >
             <span className="font-medium">View All Projects on GitHub</span>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

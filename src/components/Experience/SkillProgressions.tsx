@@ -5,15 +5,16 @@ import { memo } from "react";
 
 interface SkillProgressionsProps {
   isInView: boolean;
+  isMobile: boolean;
 }
 
 // Memoize the component to prevent unnecessary re-renders
-const SkillProgressions = memo(function SkillProgressions({ isInView }: SkillProgressionsProps) {
+const SkillProgressions = memo(function SkillProgressions({ isInView, isMobile }: SkillProgressionsProps) {
   // Simplified animation for better mobile performance
   const fadeInAnimation = {
-    initial: { opacity: 0, y: 8 },
-    animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : 8 },
-    transition: { duration: 0.4 }
+    initial: { opacity: 0, y: isMobile ? 5 : 8 },
+    animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : isMobile ? 5 : 8 },
+    transition: { duration: isMobile ? 0.3 : 0.4 }
   };
 
   return (
@@ -28,7 +29,7 @@ const SkillProgressions = memo(function SkillProgressions({ isInView }: SkillPro
       <motion.p
         className="text-muted max-w-lg mb-6"
         {...fadeInAnimation}
-        transition={{ duration: 0.4, delay: 0.1 }}
+        transition={{ duration: isMobile ? 0.3 : 0.4, delay: 0.1 }}
       >
         My focus areas span across frontend development with an emphasis on modern technologies and responsive design principles.
       </motion.p>
@@ -37,14 +38,14 @@ const SkillProgressions = memo(function SkillProgressions({ isInView }: SkillPro
       <div className="space-y-5 mb-6">
         {SKILL_PROGRESSIONS.map((skill, index) => {
           // Cap delay for better mobile performance
-          const delay = Math.min(index, 4) * 0.08;
+          const delay = Math.min(index, isMobile ? 3 : 4) * (isMobile ? 0.06 : 0.08);
           
           return (
             <motion.div
               key={skill.name}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: isInView ? 1 : 0, x: isInView ? 0 : -10 }}
-              transition={{ duration: 0.4, delay: 0.15 + delay }}
+              initial={{ opacity: 0, x: isMobile ? -8 : -10 }}
+              animate={{ opacity: isInView ? 1 : 0, x: isInView ? 0 : isMobile ? -8 : -10 }}
+              transition={{ duration: isMobile ? 0.3 : 0.4, delay: 0.15 + delay }}
               className="group"
             >
               <div className="flex justify-between items-center mb-1.5">
@@ -53,7 +54,7 @@ const SkillProgressions = memo(function SkillProgressions({ isInView }: SkillPro
                     className="w-1.5 h-1.5 rounded-full bg-accent mr-2"
                     initial={{ scale: 0.8 }}
                     animate={{ scale: isInView ? 1 : 0.8 }}
-                    transition={{ duration: 0.3, delay: 0.2 + delay }}
+                    transition={{ duration: isMobile ? 0.25 : 0.3, delay: 0.2 + delay }}
                   />
                   <span className="text-base font-medium group-hover:text-accent transition-colors duration-200">
                     {skill.name}
@@ -62,7 +63,7 @@ const SkillProgressions = memo(function SkillProgressions({ isInView }: SkillPro
                 
                 <NumberCounter
                   end={skill.percentage}
-                  duration={1}
+                  duration={isMobile ? 0.8 : 1}
                   delay={0.3 + delay}
                   suffix="%"
                   isInView={isInView}
@@ -79,7 +80,7 @@ const SkillProgressions = memo(function SkillProgressions({ isInView }: SkillPro
                   }}
                   initial={{ width: 0 }}
                   animate={{ width: isInView ? `${skill.percentage}%` : 0 }}
-                  transition={{ duration: 0.8, delay: 0.3 + delay, ease: "easeOut" }}
+                  transition={{ duration: isMobile ? 0.6 : 0.8, delay: 0.3 + delay, ease: "easeOut" }}
                 />
               </div>
             </motion.div>
@@ -89,9 +90,9 @@ const SkillProgressions = memo(function SkillProgressions({ isInView }: SkillPro
       
       {/* Professional approach - simplified */}
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 10 }}
-        transition={{ duration: 0.4, delay: 0.6 }}
+        initial={{ opacity: 0, y: isMobile ? 8 : 10 }}
+        animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : isMobile ? 8 : 10 }}
+        transition={{ duration: isMobile ? 0.3 : 0.4, delay: 0.6 }}
         className="mt-auto pt-5 border-t border-border/30"
       >
         <h4 className="text-lg font-semibold mb-2 text-gradient">Professional Approach</h4>

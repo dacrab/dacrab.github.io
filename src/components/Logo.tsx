@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface LogoProps {
   onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
@@ -13,6 +14,7 @@ interface LogoProps {
 export default function Logo({ onClick, className = "", size = "md", showFullName = false }: LogoProps) {
   const [mounted, setMounted] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     setMounted(true);
@@ -36,30 +38,33 @@ export default function Logo({ onClick, className = "", size = "md", showFullNam
     hidden: { opacity: 0 },
     visible: { 
       opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+      transition: { 
+        staggerChildren: isMobile ? 0.07 : 0.1, 
+        delayChildren: isMobile ? 0.15 : 0.2 
+      }
     },
     hover: {
-      transition: { staggerChildren: 0.05 }
+      transition: { staggerChildren: isMobile ? 0.03 : 0.05 }
     }
   };
   
   const letterVariants = {
-    hidden: { y: 20, opacity: 0 },
+    hidden: { y: isMobile ? 15 : 20, opacity: 0 },
     visible: { 
       y: 0, 
       opacity: 1,
       transition: {
         type: "spring",
-        stiffness: 300,
-        damping: 20
+        stiffness: isMobile ? 250 : 300,
+        damping: isMobile ? 25 : 20
       }
     },
     hover: (custom: number) => ({
-      y: [0, -5, 0],
+      y: [0, isMobile ? -3 : -5, 0],
       color: "var(--accent)",
       transition: {
-        duration: 0.5,
-        delay: custom * 0.05
+        duration: isMobile ? 0.4 : 0.5,
+        delay: custom * (isMobile ? 0.03 : 0.05)
       }
     })
   };
@@ -71,15 +76,15 @@ export default function Logo({ onClick, className = "", size = "md", showFullNam
       opacity: 1,
       transition: {
         type: "spring",
-        stiffness: 500,
-        damping: 15,
-        delay: 0.7
+        stiffness: isMobile ? 400 : 500,
+        damping: isMobile ? 20 : 15,
+        delay: isMobile ? 0.5 : 0.7
       }
     },
     hover: {
-      scale: 1.2,
-      rotate: [0, 10, -10, 0],
-      transition: { duration: 0.5 }
+      scale: isMobile ? 1.15 : 1.2,
+      rotate: [0, isMobile ? 7 : 10, isMobile ? -7 : -10, 0],
+      transition: { duration: isMobile ? 0.4 : 0.5 }
     }
   };
   
@@ -127,11 +132,11 @@ export default function Logo({ onClick, className = "", size = "md", showFullNam
           className="absolute inset-0 bg-accent/10 blur-xl rounded-full"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{
-            opacity: [0.2, 0.4, 0.2],
-            scale: [0.8, 1.1, 0.8],
+            opacity: [0.2, isMobile ? 0.3 : 0.4, 0.2],
+            scale: [0.8, isMobile ? 1.05 : 1.1, 0.8],
           }}
           transition={{
-            duration: 4,
+            duration: isMobile ? 5 : 4,
             repeat: Infinity,
             ease: "easeInOut"
           }}

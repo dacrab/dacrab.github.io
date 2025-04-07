@@ -11,6 +11,7 @@ export interface TimelineEntryProps {
   technologies: string[];
   isInView: boolean;
   index: number;
+  isMobile: boolean;
 }
 
 // Memoize the component to prevent unnecessary re-renders
@@ -23,7 +24,8 @@ const TimelineEntry = memo(function TimelineEntry({
   description,
   technologies,
   isInView,
-  index
+  index,
+  isMobile
 }: TimelineEntryProps) {
   // Use desktop position (if provided) for md+ screens, otherwise use position
   const effectivePosition = desktopPosition || position;
@@ -84,8 +86,8 @@ const TimelineEntry = memo(function TimelineEntry({
   `;
 
   // Simplified delay calculation for better mobile performance
-  const delayBase = 0.2;
-  const delayStep = Math.min(index, 3) * 0.05;
+  const delayBase = isMobile ? 0.15 : 0.2;
+  const delayStep = Math.min(index, isMobile ? 2 : 3) * (isMobile ? 0.04 : 0.05);
   
   return (
     <div className={containerClasses}>
@@ -98,9 +100,9 @@ const TimelineEntry = memo(function TimelineEntry({
       <div className={contentGridColClass}>
         <motion.div 
           className={contentClasses}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : 10 }}
-          transition={{ duration: 0.3, delay: delayBase + delayStep }}
+          initial={{ opacity: 0, y: isMobile ? 8 : 10 }}
+          animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : isMobile ? 8 : 10 }}
+          transition={{ duration: isMobile ? 0.25 : 0.3, delay: delayBase + delayStep }}
         >
           {/* Timeline entry dot/marker with absolute positioning */}
           <div className={dotClasses} style={dotStyles}>
@@ -108,7 +110,7 @@ const TimelineEntry = memo(function TimelineEntry({
               className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-accent"
               initial={{ scale: 0 }}
               animate={{ scale: isInView ? 1 : 0 }}
-              transition={{ duration: 0.3, delay: delayBase + delayStep }}
+              transition={{ duration: isMobile ? 0.25 : 0.3, delay: delayBase + delayStep }}
             />
           </div>
           
@@ -119,7 +121,7 @@ const TimelineEntry = memo(function TimelineEntry({
             className="text-base md:text-lg font-bold mb-1"
             initial={{ opacity: 0 }}
             animate={{ opacity: isInView ? 1 : 0 }}
-            transition={{ duration: 0.3, delay: delayBase + 0.1 + delayStep }}
+            transition={{ duration: isMobile ? 0.25 : 0.3, delay: delayBase + 0.1 + delayStep }}
           >
             {title}
           </motion.h4>
@@ -128,7 +130,7 @@ const TimelineEntry = memo(function TimelineEntry({
             className="text-sm md:text-base text-accent mb-3"
             initial={{ opacity: 0 }}
             animate={{ opacity: isInView ? 1 : 0 }}
-            transition={{ duration: 0.3, delay: delayBase + 0.15 + delayStep }}
+            transition={{ duration: isMobile ? 0.25 : 0.3, delay: delayBase + 0.15 + delayStep }}
           >
             {company}
           </motion.h5>
@@ -137,7 +139,7 @@ const TimelineEntry = memo(function TimelineEntry({
             className="text-muted text-sm space-y-2 mb-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: isInView ? 1 : 0 }}
-            transition={{ duration: 0.3, delay: delayBase + 0.2 + delayStep }}
+            transition={{ duration: isMobile ? 0.25 : 0.3, delay: delayBase + 0.2 + delayStep }}
           >
             {description.map((paragraph, i) => (
               <p key={i} className="flex items-start">
@@ -152,7 +154,7 @@ const TimelineEntry = memo(function TimelineEntry({
             className="flex flex-wrap gap-1.5"
             initial={{ opacity: 0 }}
             animate={{ opacity: isInView ? 1 : 0 }}
-            transition={{ duration: 0.3, delay: delayBase + 0.25 + delayStep }}
+            transition={{ duration: isMobile ? 0.25 : 0.3, delay: delayBase + 0.25 + delayStep }}
           >
             {technologies.map((tech) => (
               <span

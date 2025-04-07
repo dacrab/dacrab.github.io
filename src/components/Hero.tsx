@@ -3,10 +3,13 @@
 import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform, useSpring, AnimatePresence, MotionValue } from "framer-motion";
 import TextAnimation from "./TextAnimation";
+import { useIsMobile } from "@/hooks/useIsMobile"; 
 import {
   dropdownAnimation,
   fadeIn,
-  textVariant
+  textVariant,
+  floatingAnimation,
+  pulseAnimation
 } from "@/utils/animations";
 
 // CV dropdown component
@@ -62,7 +65,10 @@ const CVDropdown = ({ isOpen, onDownload }: { isOpen: boolean; onDownload: (lang
 );
 
 // Abstract graphic for the right side
-const AbstractGraphic = ({ pathLength }: { pathLength: MotionValue<number> }) => (
+const AbstractGraphic = ({ pathLength }: { pathLength: MotionValue<number> }) => {
+  const isMobile = useIsMobile();
+  
+  return (
   <motion.svg 
     width="100%" 
     height="100%" 
@@ -71,7 +77,7 @@ const AbstractGraphic = ({ pathLength }: { pathLength: MotionValue<number> }) =>
     className="w-full h-full max-h-[500px]"
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
-    transition={{ duration: 1, delay: 0.5 }}
+    transition={{ duration: isMobile ? 0.8 : 1, delay: isMobile ? 0.4 : 0.5 }}
   >
     {/* Circle decorations */}
     <motion.circle 
@@ -84,15 +90,12 @@ const AbstractGraphic = ({ pathLength }: { pathLength: MotionValue<number> }) =>
       strokeDasharray="4 4"
       initial={{ opacity: 0 }}
       animate={{ 
-        opacity: 0.6,
-        y: [0, -5, 0, 5, 0],
+        opacity: isMobile ? 0.5 : 0.6,
+        ...floatingAnimation(5, 15, isMobile),
         rotate: [0, 1, 0, -1, 0],
-        scale: [1, 1.02, 1, 0.98, 1],
+        ...pulseAnimation([1, 1.02, 1, 0.98, 1], 12, isMobile),
         transition: {
-          opacity: { duration: 2, delay: 1.5 },
-          y: { repeat: Infinity, duration: 15, ease: "easeInOut" },
-          rotate: { repeat: Infinity, duration: 20, ease: "easeInOut" },
-          scale: { repeat: Infinity, duration: 12, ease: "easeInOut" }
+          opacity: { duration: isMobile ? 1.5 : 2, delay: isMobile ? 1 : 1.5 },
         }
       }}
     />
@@ -105,15 +108,12 @@ const AbstractGraphic = ({ pathLength }: { pathLength: MotionValue<number> }) =>
       strokeWidth="0.5"
       initial={{ opacity: 0 }}
       animate={{ 
-        opacity: 0.8,
-        y: [0, -3, 0, 3, 0],
+        opacity: isMobile ? 0.7 : 0.8,
+        ...floatingAnimation(3, 12, isMobile),
         rotate: [0, -2, 0, 2, 0],
-        scale: [1, 1.03, 1, 0.97, 1],
+        ...pulseAnimation([1, 1.03, 1, 0.97, 1], 10, isMobile),
         transition: {
-          opacity: { duration: 2, delay: 1.8 },
-          y: { repeat: Infinity, duration: 12, ease: "easeInOut" },
-          rotate: { repeat: Infinity, duration: 18, ease: "easeInOut" },
-          scale: { repeat: Infinity, duration: 10, ease: "easeInOut" }
+          opacity: { duration: isMobile ? 1.5 : 2, delay: isMobile ? 1.3 : 1.8 },
         }
       }}
     />
@@ -239,22 +239,26 @@ const AbstractGraphic = ({ pathLength }: { pathLength: MotionValue<number> }) =>
       }}
     />
   </motion.svg>
-);
+  );
+};
 
 // Floating tech keywords
-const TechKeywords = ({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) => (
+const TechKeywords = ({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) => {
+  const isMobile = useIsMobile();
+  
+  return (
   <>
     <motion.div
       className="absolute top-[15%] right-[15%] font-mono text-xs text-accent/70 backdrop-blur-sm px-2 py-1 rounded-full bg-card/10 border border-accent/5"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 0.7, y: 0 }}
-      transition={{ duration: 0.8, delay: 3.2 }}
-      style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]) }}
+      initial={{ opacity: 0, y: isMobile ? 15 : 20 }}
+      animate={{ opacity: isMobile ? 0.6 : 0.7, y: 0 }}
+      transition={{ duration: isMobile ? 0.6 : 0.8, delay: isMobile ? 2.8 : 3.2 }}
+      style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", isMobile ? "-30%" : "-50%"]) }}
       whileInView={{
         boxShadow: ["0 0 0 rgba(147, 51, 234, 0)", "0 0 5px rgba(147, 51, 234, 0.3)", "0 0 0 rgba(147, 51, 234, 0)"],
         transition: {
           repeat: Infinity,
-          duration: 4,
+          duration: isMobile ? 5 : 4,
           ease: "easeInOut"
         }
       }}
@@ -263,15 +267,15 @@ const TechKeywords = ({ scrollYProgress }: { scrollYProgress: MotionValue<number
     </motion.div>
     <motion.div
       className="absolute bottom-[20%] left-[20%] font-mono text-xs text-accent/70 backdrop-blur-sm px-2 py-1 rounded-full bg-card/10 border border-accent/5"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 0.7, y: 0 }}
-      transition={{ duration: 0.8, delay: 3.4 }}
-      style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "50%"]) }}
+      initial={{ opacity: 0, y: isMobile ? 15 : 20 }}
+      animate={{ opacity: isMobile ? 0.6 : 0.7, y: 0 }}
+      transition={{ duration: isMobile ? 0.6 : 0.8, delay: isMobile ? 3.0 : 3.4 }}
+      style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", isMobile ? "30%" : "50%"]) }}
       whileInView={{
         boxShadow: ["0 0 0 rgba(37, 99, 235, 0)", "0 0 5px rgba(37, 99, 235, 0.3)", "0 0 0 rgba(37, 99, 235, 0)"],
         transition: {
           repeat: Infinity,
-          duration: 4.5,
+          duration: isMobile ? 5.5 : 4.5,
           ease: "easeInOut"
         }
       }}
@@ -280,15 +284,15 @@ const TechKeywords = ({ scrollYProgress }: { scrollYProgress: MotionValue<number
     </motion.div>
     <motion.div
       className="absolute top-[60%] right-[25%] font-mono text-xs text-accent/70 backdrop-blur-sm px-2 py-1 rounded-full bg-card/10 border border-accent/5"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 0.7, y: 0 }}
-      transition={{ duration: 0.8, delay: 3.6 }}
-      style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]) }}
+      initial={{ opacity: 0, y: isMobile ? 15 : 20 }}
+      animate={{ opacity: isMobile ? 0.6 : 0.7, y: 0 }}
+      transition={{ duration: isMobile ? 0.6 : 0.8, delay: isMobile ? 3.2 : 3.6 }}
+      style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", isMobile ? "-30%" : "-30%"]) }}
       whileInView={{
         boxShadow: ["0 0 0 rgba(147, 51, 234, 0)", "0 0 5px rgba(147, 51, 234, 0.3)", "0 0 0 rgba(147, 51, 234, 0)"],
         transition: {
           repeat: Infinity,
-          duration: 5,
+          duration: isMobile ? 5 : 4,
           ease: "easeInOut"
         }
       }}
@@ -297,14 +301,15 @@ const TechKeywords = ({ scrollYProgress }: { scrollYProgress: MotionValue<number
     </motion.div>
     <motion.div
       className="absolute top-[35%] left-[15%] font-mono text-xs text-accent/70 backdrop-blur-sm px-2 py-1 rounded-full bg-card/10 border border-accent/5"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 0.7, y: 0 }}
-      transition={{ duration: 0.8, delay: 3.8 }}
+      initial={{ opacity: 0, y: isMobile ? 15 : 20 }}
+      animate={{ opacity: isMobile ? 0.6 : 0.7, y: 0 }}
+      transition={{ duration: isMobile ? 0.6 : 0.8, delay: isMobile ? 3.4 : 3.8 }}
+      style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", isMobile ? "30%" : "50%"]) }}
       whileInView={{
         boxShadow: ["0 0 0 rgba(37, 99, 235, 0)", "0 0 5px rgba(37, 99, 235, 0.3)", "0 0 0 rgba(37, 99, 235, 0)"],
         transition: {
           repeat: Infinity,
-          duration: 4.2,
+          duration: isMobile ? 5.5 : 4.5,
           ease: "easeInOut"
         }
       }}
@@ -313,14 +318,15 @@ const TechKeywords = ({ scrollYProgress }: { scrollYProgress: MotionValue<number
     </motion.div>
     <motion.div
       className="absolute top-[80%] right-[40%] font-mono text-xs text-accent/70 backdrop-blur-sm px-2 py-1 rounded-full bg-card/10 border border-accent/5"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 0.7, y: 0 }}
-      transition={{ duration: 0.8, delay: 4.0 }}
+      initial={{ opacity: 0, y: isMobile ? 15 : 20 }}
+      animate={{ opacity: isMobile ? 0.6 : 0.7, y: 0 }}
+      transition={{ duration: isMobile ? 0.6 : 0.8, delay: isMobile ? 3.6 : 4.0 }}
+      style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", isMobile ? "30%" : "50%"]) }}
       whileInView={{
         boxShadow: ["0 0 0 rgba(147, 51, 234, 0)", "0 0 5px rgba(147, 51, 234, 0.3)", "0 0 0 rgba(147, 51, 234, 0)"],
         transition: {
           repeat: Infinity,
-          duration: 4.8,
+          duration: isMobile ? 5 : 4,
           ease: "easeInOut"
         }
       }}
@@ -328,15 +334,19 @@ const TechKeywords = ({ scrollYProgress }: { scrollYProgress: MotionValue<number
       Framer Motion
     </motion.div>
   </>
-);
+  );
+};
 
 // Scroll indicator component
-const ScrollIndicator = ({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) => (
+const ScrollIndicator = ({ scrollYProgress }: { scrollYProgress: MotionValue<number> }) => {
+  const isMobile = useIsMobile();
+  
+  return (
   <motion.div 
     className="absolute bottom-8 left-1/2 -translate-x-1/2"
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
-    transition={{ delay: 3.5, duration: 1 }}
+    transition={{ delay: isMobile ? 2.8 : 3.5, duration: isMobile ? 0.8 : 1 }}
     style={{ opacity: useTransform(scrollYProgress, [0, 0.2], [1, 0]) }}
   >
     <div className="flex flex-col items-center">
@@ -360,11 +370,13 @@ const ScrollIndicator = ({ scrollYProgress }: { scrollYProgress: MotionValue<num
       </svg>
     </div>
   </motion.div>
-);
+  );
+};
 
 export default function Hero() {
   const ref = useRef(null);
   const [showCVDropdown, setShowCVDropdown] = useState(false);
+  const isMobile = useIsMobile();
   
   // Scroll animations setup
   const { scrollYProgress } = useScroll({
@@ -377,15 +389,18 @@ export default function Hero() {
   const gridOpacity = useTransform(scrollYProgress, [0, 0.5], [0.7, 0]);
   
   // Signature SVG path animation
-  const pathLength = useSpring(0, { stiffness: 100, damping: 30 });
+  const pathLength = useSpring(0, { 
+    stiffness: isMobile ? 80 : 100, 
+    damping: isMobile ? 35 : 30 
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
       pathLength.set(1);
-    }, 1000);
+    }, isMobile ? 800 : 1000);
     
     return () => clearTimeout(timer);
-  }, [pathLength]);
+  }, [pathLength, isMobile]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -432,14 +447,14 @@ export default function Hero() {
         }}
         initial={{ opacity: 0 }}
         animate={{ 
-          opacity: [0, 0.7],
-          transition: { duration: 1.5 }
+          opacity: [0, isMobile ? 0.6 : 0.7],
+          transition: { duration: isMobile ? 1.2 : 1.5 }
         }}
         whileInView={{
           backgroundSize: ["50px 50px", "51px 51px", "50px 50px", "49px 49px", "50px 50px"],
           transition: {
             repeat: Infinity,
-            duration: 20,
+            duration: isMobile ? 25 : 20,
             ease: "easeInOut"
           }
         }}
@@ -449,32 +464,44 @@ export default function Hero() {
       <div className="absolute inset-0 -z-10">
         <motion.div 
           className="absolute -left-[20%] top-[10%] w-[60%] h-[55%] rounded-full bg-accent/10 blur-[120px]"
-          style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "10%"]) }}
+          style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", isMobile ? "5%" : "10%"]) }}
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.5 }}
-          transition={{ duration: 1.5, delay: 0.5 }}
+          animate={{ 
+            opacity: isMobile ? 0.3 : 0.5,
+            scale: 1,
+            transition: {
+              opacity: { duration: isMobile ? 1.2 : 1.5, delay: isMobile ? 0.4 : 0.5 },
+              scale: { duration: isMobile ? 1 : 1.5, delay: isMobile ? 0.4 : 0.5 }
+            }
+          }}
           whileInView={{
-            opacity: [0.5, 0.6, 0.5, 0.4, 0.5],
+            opacity: [isMobile ? 0.3 : 0.5, isMobile ? 0.4 : 0.6, isMobile ? 0.3 : 0.5, isMobile ? 0.25 : 0.4, isMobile ? 0.3 : 0.5],
             scale: [1, 1.05, 1, 0.95, 1],
             transition: {
               repeat: Infinity,
-              duration: 15,
+              duration: isMobile ? 18 : 15,
               ease: "easeInOut"
             }
           }}
         />
         <motion.div 
           className="absolute right-[10%] bottom-[10%] w-[50%] h-[50%] rounded-full bg-accent/10 blur-[120px]"
-          style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", "-15%"]) }}
+          style={{ y: useTransform(scrollYProgress, [0, 1], ["0%", isMobile ? "-10%" : "-15%"]) }}
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.5 }}
-          transition={{ duration: 1.5, delay: 1 }}
+          animate={{ 
+            opacity: isMobile ? 0.3 : 0.5,
+            scale: 1,
+            transition: {
+              opacity: { duration: isMobile ? 1.2 : 1.5, delay: isMobile ? 0.8 : 1 },
+              scale: { duration: isMobile ? 1 : 1.5, delay: isMobile ? 0.8 : 1 }
+            }
+          }}
           whileInView={{
-            opacity: [0.5, 0.4, 0.5, 0.6, 0.5],
+            opacity: [isMobile ? 0.3 : 0.5, isMobile ? 0.25 : 0.4, isMobile ? 0.3 : 0.5, isMobile ? 0.4 : 0.6, isMobile ? 0.3 : 0.5],
             scale: [1, 0.95, 1, 1.05, 1],
             transition: {
               repeat: Infinity,
-              duration: 18,
+              duration: isMobile ? 20 : 18,
               ease: "easeInOut"
             }
           }}
@@ -492,7 +519,7 @@ export default function Hero() {
               {/* Introduction text */}
               <motion.div 
                 className="mb-2 text-accent text-base md:text-lg tracking-wide"
-                variants={fadeIn("up", 0.1, 0.6)}
+                variants={fadeIn("up", 0.1, 0.6, isMobile)}
                 initial="hidden"
                 animate="visible"
               >
@@ -500,15 +527,16 @@ export default function Hero() {
                   text="Hello, I'm"
                   variant="typewriter"
                   className="inline-block"
-                  delay={0.5}
-                  duration={0.3}
+                  delay={isMobile ? 0.4 : 0.5}
+                  duration={isMobile ? 0.25 : 0.3}
+                  mobileOptimized={true}
                 />
               </motion.div>
               
               {/* Main headline */}
               <div className="mb-6 lg:mb-8">
                 <motion.div
-                  variants={fadeIn("up", 0.8, 0.7)}
+                  variants={fadeIn("up", 0.8, 0.7, isMobile)}
                   initial="hidden"
                   animate="visible"
                 >
@@ -517,9 +545,10 @@ export default function Hero() {
                     variant="reveal"
                     className="block text-4xl md:text-5xl lg:text-6xl font-bold"
                     delay={0.1}
-                    duration={0.5}
+                    duration={isMobile ? 0.4 : 0.5}
                     emoji="👋"
                     emojiAnimation="wave"
+                    mobileOptimized={true}
                   />
                 </motion.div>
               </div>
@@ -527,7 +556,7 @@ export default function Hero() {
               {/* Description text */}
               <motion.div
                 className="max-w-2xl text-muted mb-8 lg:mb-12"
-                variants={textVariant(1.3)}
+                variants={textVariant(1.3, isMobile)}
                 initial="hidden"
                 animate="visible"
               >
@@ -536,14 +565,15 @@ export default function Hero() {
                   variant="split"
                   className="text-base md:text-lg"
                   delay={0.1}
-                  duration={0.4}
+                  duration={isMobile ? 0.3 : 0.4}
+                  mobileOptimized={true}
                 />
               </motion.div>
               
               {/* Action buttons */}
               <motion.div 
                 className="flex flex-wrap gap-3 md:gap-4"
-                variants={fadeIn("up", 1.8, 0.5)}
+                variants={fadeIn("up", 1.8, 0.5, isMobile)}
                 initial="hidden"
                 animate="visible"
               >

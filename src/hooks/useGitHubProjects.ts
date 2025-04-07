@@ -109,7 +109,7 @@ export function useGitHubProjects(
     } finally {
       setLoading(false);
     }
-  }, [optionsString]); // Use the memoized string as dependency
+  }, [optionsString, username, options]); // Include username and options as dependencies
 
   useEffect(() => {
     fetchProjects();
