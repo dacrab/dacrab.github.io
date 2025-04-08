@@ -342,7 +342,7 @@ const ScrollIndicator = ({ scrollYProgress }: { scrollYProgress: MotionValue<num
   
   return (
   <motion.div 
-    className="absolute bottom-8 left-1/2 -translate-x-1/2"
+    className={`absolute ${isMobile ? 'bottom-4' : 'bottom-8'} left-1/2 -translate-x-1/2`}
     initial={{ opacity: 0 }}
     animate={{ opacity: 1 }}
     transition={{ delay: isMobile ? 2.8 : 3.5, duration: isMobile ? 0.8 : 1 }}

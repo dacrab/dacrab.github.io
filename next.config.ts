@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
   images: {
     remotePatterns: [
       {
@@ -31,12 +30,33 @@ const nextConfig: NextConfig = {
           {
             key: 'Link',
             value: [
-              '<https://cdn.jsdelivr.net>; rel=preconnect',
-              '<https://lottie.host>; rel=preconnect',
+              '<https://cdn.jsdelivr.net>; rel=preconnect; crossorigin=anonymous',
+              '<https://lottie.host>; rel=preconnect; crossorigin=anonymous',
               '<https://fonts.googleapis.com>; rel=preconnect',
-              '<https://fonts.gstatic.com>; rel=preconnect; crossorigin',
+              '<https://fonts.gstatic.com>; rel=preconnect; crossorigin=anonymous',
+              
+              // Preload critical resources for first view
+              '<https://lottie.host/ec2681d0-ab67-4f7d-a35a-c870c0a588aa/BVfwAmcRde.lottie>; rel=preload; as=fetch; crossorigin=anonymous',
+              
+              // Add Cache-Control headers for better caching
+              '<https://cdn.jsdelivr.net/npm/@lottiefiles/dotlottie-web@0.41.0/dist/dotlottie-player.wasm>; rel=preload; as=fetch; crossorigin=anonymous',
             ].join(', '),
           },
+          {
+            // Enable HTTP/2 Server Push if supported
+            key: 'X-HTTP2-Push',
+            value: '*',
+          },
+          {
+            // Instruct browsers to eagerly fetch critical resources
+            key: 'X-Early-Data',
+            value: '1',
+          },
+          {
+            // Allow cross-origin for critical resources
+            key: 'Cross-Origin-Resource-Policy',
+            value: 'cross-origin',
+          }
         ],
       },
     ];
@@ -84,16 +104,33 @@ const nextConfig: NextConfig = {
           },
         };
       }
+      
+      // Enable progressive loading optimization
+      if (config.output) {
+        config.output.chunkLoadingGlobal = 'lottieJsonp';
+        config.output.chunkLoading = 'jsonp';
+      }
     }
 
     if (!isServer) {
+      // Better handling of Lottie files
       config.module.rules.push({
         test: /\.lottie$/,
         type: 'asset/resource',
+        generator: {
+          filename: 'static/chunks/lottie/[name].[hash][ext]',
+        },
       });
     }
 
     return config;
+  },
+  
+  // Improve first load by including only minimal JS
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
   },
   
   compress: true,

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import { memo, useState, useEffect } from "react";
+import { memo, useState, useEffect, useRef } from "react";
 import { useLazyLottie } from "@/hooks/useLazyLottie";
 
 interface LottiePanelProps {
@@ -9,38 +9,67 @@ interface LottiePanelProps {
   isMobile?: boolean;
 }
 
+// Type definitions for Navigator extensions
+interface NavigatorExtended extends Navigator {
+  deviceMemory?: number;
+  connection?: {
+    effectiveType?: string;
+    saveData?: boolean;
+  };
+}
+
 // Memoize the component to prevent unnecessary re-renders
 const LottiePanel = memo(function LottiePanel({ isInView, delay, isMobile = false }: LottiePanelProps) {
-  // State to check for low-end devices
+  // State to check for device capabilities
   const [isLowEndDevice, setIsLowEndDevice] = useState(false);
+  const hasAnimated = useRef(false);
   
-  // Check for low-end devices
+  // Check for low-end devices more comprehensively
   useEffect(() => {
-    // Simple detection for low-end devices based on hardware concurrency
-    if (typeof navigator !== 'undefined' && navigator.hardwareConcurrency !== undefined) {
-      // Devices with fewer than 4 cores are likely to have performance issues with animations
-      setIsLowEndDevice(navigator.hardwareConcurrency < 4);
-    }
+    if (typeof navigator === 'undefined') return;
+    
+    const nav = navigator as NavigatorExtended;
+    
+    // Detect low-end devices based on multiple factors
+    const hasLowCores = nav.hardwareConcurrency !== undefined && nav.hardwareConcurrency < 4;
+    const hasLowMemory = nav.deviceMemory !== undefined && nav.deviceMemory < 4;
+    const hasLowConnectivity = nav.connection && (
+      nav.connection.effectiveType === '2g' || 
+      nav.connection.effectiveType === '3g' ||
+      nav.connection.saveData === true
+    );
+    
+    setIsLowEndDevice(hasLowCores || hasLowMemory || hasLowConnectivity || false);
   }, []);
   
-  // Only load Lottie when component is visible and not on a low-end mobile device
+  // Track if animation has played once already to avoid replaying on scroll
+  useEffect(() => {
+    if (isInView && !hasAnimated.current) {
+      hasAnimated.current = true;
+    }
+  }, [isInView]);
+  
+  // Only load Lottie when component is visible, with stricter conditions for mobile
   const shouldLoadLottie = isInView && (!isMobile || !isLowEndDevice);
   
-  // Lazy load the Lottie animation only when the component is visible and device can handle it
-  // Setting preload to false to save resources when not needed
+  // Lazy load the Lottie animation with enhanced mobile optimizations
   const { isLottieReady, animationSource } = useLazyLottie(
     shouldLoadLottie, 
     'https://lottie.host/89786656-4880-42e7-9f18-82895c67895a/37mBlD7a1R.lottie',
-    false // Disable preloading to improve initial load performance
+    false, // Disable preloading to improve initial load performance
+    true // Enable mobile optimizations
   );
   
-  // Simpler animation transition for mobile
+  // Simpler animation transition for mobile, with further reductions for low-end devices
   const getMotionProps = () => {
     if (isMobile) {
       return {
-        initial: { opacity: 0, y: 10 },
-        animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : 10 },
-        transition: { duration: 0.3, delay }, // Reduced duration for mobile
+        initial: { opacity: 0, y: isLowEndDevice ? 5 : 10 },
+        animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : (isLowEndDevice ? 5 : 10) },
+        transition: { 
+          duration: isLowEndDevice ? 0.2 : 0.3, 
+          delay: isLowEndDevice ? delay * 0.7 : delay // Shorter delay for low-end devices
+        },
         whileHover: isLowEndDevice ? {} : { scale: 1.01 }, // Disable hover on low-end devices
         whileTap: isLowEndDevice ? {} : { scale: 0.99 }
       };
@@ -66,10 +95,11 @@ const LottiePanel = memo(function LottiePanel({ isInView, delay, isMobile = fals
           Let&apos;s Build Something Amazing
         </h3>
         
-        {/* Lottie Animation - with lazy loading and device capability detection */}
+        {/* Lottie Animation - with enhanced lazy loading */}
         <div className="flex-grow relative overflow-hidden flex items-center justify-center py-3">
           <motion.div 
             className="w-full h-72 relative"
+            layoutId="project-lottie-container"
             {...(isMobile && isLowEndDevice ? {} : {
               whileHover: { scale: isMobile ? 1.01 : 1.02 },
               transition: { duration: isMobile ? 0.15 : 0.2 }
@@ -97,28 +127,37 @@ const LottiePanel = memo(function LottiePanel({ isInView, delay, isMobile = fals
                 </svg>
               </div>
             ) : (
-              // Show Lottie for capable devices
+              // Show Lottie for capable devices with conditional loop setting
               isLottieReady && animationSource ? (
                 <DotLottieReact
                   src={animationSource}
                   loop={!isMobile} // Disable loop on mobile for better performance
-                  autoplay
+                  autoplay={!hasAnimated.current || !isMobile} // Only autoplay on first view for mobile
                   className="w-full h-full"
+                  speed={isMobile ? 0.8 : 1} // Slow down animation on mobile for better performance
                 />
               ) : (
                 // Simplified loading spinner with reduced animation complexity
                 <div className="w-full h-full flex items-center justify-center">
-                  <div className="w-8 h-8 border-t-2 border-accent/30 rounded-full animate-spin" style={{ animationDuration: '1.5s' }}></div>
+                  <div 
+                    className="w-8 h-8 border-t-2 border-accent/30 rounded-full animate-spin" 
+                    style={{ 
+                      animationDuration: isMobile ? '2s' : '1.5s',
+                      opacity: 0.7
+                    }}
+                  ></div>
                 </div>
               )
             )}
           </motion.div>
         </div>
         
-        {/* Description - simplified */}
-        <p className="text-muted text-sm text-center mb-4">
-          Have a project in mind? I&apos;d love to help bring your vision to life.
-        </p>
+        {/* Description - simplified and conditionally rendered for performance */}
+        {(!isMobile || !isLowEndDevice || isInView) && (
+          <p className="text-muted text-sm text-center mb-4">
+            Have a project in mind? I&apos;d love to help bring your vision to life.
+          </p>
+        )}
         
         {/* "Discuss Your Project" button - simplified for mobile */}
         <div className="mt-auto text-center">
@@ -127,7 +166,7 @@ const LottiePanel = memo(function LottiePanel({ isInView, delay, isMobile = fals
             className="inline-flex items-center px-4 py-2 rounded-lg bg-accent/10 border border-accent/30 text-accent hover:bg-accent hover:text-white transition-all duration-200 font-medium"
             whileHover={isMobile && isLowEndDevice ? {} : { 
               y: isMobile ? -1 : -2, 
-              boxShadow: `0 ${isMobile ? '4px' : '6px'} ${isMobile ? '10px' : '15px'} -5px rgba(var(--accent-rgb), ${isMobile ? '0.2' : '0.25'})`
+              boxShadow: `0 ${isMobile ? '4px' : '6px'} ${isMobile ? '8px' : '15px'} -5px rgba(var(--accent-rgb), ${isMobile ? '0.15' : '0.25'})`
             }}
             whileTap={isMobile && isLowEndDevice ? {} : { y: 0 }}
           >
