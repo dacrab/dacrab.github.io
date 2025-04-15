@@ -16,18 +16,15 @@ interface ScrollRevealProps {
   staggerDelay?: number;
   threshold?: number;
   once?: boolean;
-  style?: Record<string, unknown>;
+  style?: React.CSSProperties;
   viewport?: { amount?: number; once?: boolean };
   emoji?: string;
   emojiAnimation?: "wave" | "bounce" | "pulse" | "spin" | "float" | "none";
   emojiPosition?: "before" | "after";
   emojiSize?: string;
-  mobileOptimized?: boolean; // Allow disabling optimization
+  mobileOptimized?: boolean;
 }
 
-/**
- * ScrollReveal - A component that reveals its children with a sleek animation when scrolled into view.
- */
 export default function ScrollReveal({
   children,
   direction = "up",
@@ -49,91 +46,79 @@ export default function ScrollReveal({
 }: ScrollRevealProps) {
   const ref = useRef(null);
   const isMobile = useIsMobile();
-  
-  // Use centralized utility for optimized values
+
+  // Optimize values for mobile if needed
   const optimizedDistance = getOptimizedValue(distance, isMobile && mobileOptimized, 0.7, 30);
   const optimizedDuration = getOptimizedValue(duration, isMobile && mobileOptimized, 0.8, 0.5);
   const optimizedDelay = getOptimizedValue(delay, isMobile && mobileOptimized, 0.7);
   const optimizedStaggerDelay = getOptimizedValue(staggerDelay, isMobile && mobileOptimized, 0.6, 0.05);
   const optimizedThreshold = getOptimizedValue(threshold, isMobile && mobileOptimized, 0.8, 0.15);
-  
-  const isInView = useInView(ref, { 
-    amount: viewport?.amount || optimizedThreshold, 
-    once: viewport?.once ?? once 
+
+  const isInView = useInView(ref, {
+    amount: viewport?.amount ?? optimizedThreshold,
+    once: viewport?.once ?? once
   });
 
-  // Calculate animation properties based on direction
-  const getAnimationProps = () => {
-    // Define the types explicitly to include x and y properties
-    const initialProps: { opacity: number; x?: number; y?: number } = { opacity: 0 };
-    const finalProps: { opacity: number; x?: number; y?: number } = { opacity: 1 };
-    
-    if (direction !== "none") {
-      const axis = direction === "left" || direction === "right" ? "x" : "y";
-      const value = optimizedDistance * (direction === "right" || direction === "up" ? 1 : -1);
-      
-      initialProps[axis] = value;
-      finalProps[axis] = 0;
-    }
-    
-    return { initialProps, finalProps };
-  };
+  // Animation props based on direction
+  const axis = direction === "left" || direction === "right" ? "x" : "y";
+  const sign = direction === "right" || direction === "up" ? 1 : -1;
+  const initialProps: { opacity: number; x?: number; y?: number } = { opacity: 0 };
+  if (direction !== "none") initialProps[axis] = optimizedDistance * sign;
+  const finalProps: { opacity: number; x?: number; y?: number } = { opacity: 1 };
+  if (direction !== "none") finalProps[axis] = 0;
 
-  const { initialProps, finalProps } = getAnimationProps();
-
-  // Use centralized stagger container variant
+  // Variants for staggered children
   const containerVariants = staggerContainer(optimizedStaggerDelay, optimizedDelay, isMobile && mobileOptimized);
-
-  // Item variants for staggered children - using central transition presets
   const itemVariants = {
     hidden: initialProps,
     show: {
       ...finalProps,
       transition: {
         type: "spring",
-        stiffness: isMobile ? 200 : 260, // Less bouncy on mobile
-        damping: isMobile ? 25 : 20,     // More damping on mobile
+        stiffness: isMobile ? 200 : 260,
+        damping: isMobile ? 25 : 20,
         duration: optimizedDuration,
         delay: optimizedDelay,
       },
     },
   };
 
-  // Use centralized emoji animation utility
-  const emojiAnimationConfig = emojiAnimation(
+  // Emoji animation config
+  const emojiConfig = emojiAnimation(
     emojiAnimationType,
     delay + duration + 0.3,
     emojiAnimationType === "wave" ? 1.5 : 0.8,
     isMobile && mobileOptimized
   );
-  
-  // Emoji component with centralized animation
-  const EmojiComponent = emoji ? (
+
+  // Emoji component
+  const Emoji = emoji ? (
     <motion.span
       initial={{ opacity: 0, scale: 0.5 }}
-      animate={{ 
-        opacity: isInView ? 1 : 0, 
+      animate={{
+        opacity: isInView ? 1 : 0,
         scale: isInView ? 1 : 0.5,
-        ...(emojiAnimationType !== "none" ? emojiAnimationConfig.animate : {})
+        ...(emojiAnimationType !== "none" ? emojiConfig.animate : {})
       }}
       transition={{
         opacity: { duration: 0.3, delay: optimizedDelay + optimizedDuration },
         scale: { duration: 0.5, delay: optimizedDelay + optimizedDuration, type: "spring" },
-        ...(emojiAnimationType !== "none" ? emojiAnimationConfig.transition : {})
+        ...(emojiAnimationType !== "none" ? emojiConfig.transition : {})
       }}
-      className={`inline-block ${emojiAnimationConfig.className} ${emojiSize} mx-2`}
-      style={{ 
-        willChange: emojiAnimationType !== "none" ? "transform" : "opacity" 
-      }}
+      className={`inline-block ${emojiConfig.className} ${emojiSize} mx-2`}
+      style={{ willChange: emojiAnimationType !== "none" ? "transform" : "opacity" }}
     >
       {emoji}
     </motion.span>
   ) : null;
 
+  // Layout for emoji and content
+  const flexDir = emojiPosition === "before" ? "flex-row" : "flex-row-reverse";
+
   if (!staggerChildren) {
     return (
-      <div className={`flex ${emojiPosition === "before" ? "flex-row" : "flex-row-reverse"} items-center gap-2 ${className}`}>
-        {emoji && emojiPosition === "before" && EmojiComponent}
+      <div className={`flex ${flexDir} items-center gap-2 ${className}`}>
+        {emoji && emojiPosition === "before" && Emoji}
         <motion.div
           ref={ref}
           className="flex-grow"
@@ -151,14 +136,14 @@ export default function ScrollReveal({
         >
           {children}
         </motion.div>
-        {emoji && emojiPosition === "after" && EmojiComponent}
+        {emoji && emojiPosition === "after" && Emoji}
       </div>
     );
   }
 
   return (
-    <div className={`flex ${emojiPosition === "before" ? "flex-row" : "flex-row-reverse"} items-center gap-2 ${className}`}>
-      {emoji && emojiPosition === "before" && EmojiComponent}
+    <div className={`flex ${flexDir} items-center gap-2 ${className}`}>
+      {emoji && emojiPosition === "before" && Emoji}
       <motion.div
         ref={ref}
         className="flex-grow"
@@ -170,8 +155,9 @@ export default function ScrollReveal({
           willChange: "opacity"
         }}
       >
-        {React.Children.map(children, (child) => (
-          <motion.div 
+        {React.Children.map(children, (child, i) => (
+          <motion.div
+            key={i}
             variants={itemVariants}
             style={{
               willChange: direction !== "none" ? "transform, opacity" : "opacity"
@@ -181,7 +167,7 @@ export default function ScrollReveal({
           </motion.div>
         ))}
       </motion.div>
-      {emoji && emojiPosition === "after" && EmojiComponent}
+      {emoji && emojiPosition === "after" && Emoji}
     </div>
   );
 }

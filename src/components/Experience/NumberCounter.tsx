@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef, memo } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState, memo } from "react";
+import { motion } from "framer-motion";
 
 interface NumberCounterProps {
   end: number;
@@ -10,70 +10,68 @@ interface NumberCounterProps {
   className?: string;
 }
 
-// Memoize the component to prevent unnecessary re-renders
 const NumberCounter = memo(function NumberCounter({
   end,
   duration,
   delay = 0,
-  suffix = '',
+  suffix = "",
   isInView = true,
-  className = 'text-accent text-2xl font-bold'
+  className = "text-accent text-2xl font-bold",
 }: NumberCounterProps) {
   const [count, setCount] = useState(0);
-  const animationRef = useRef<number>(0);
-  
+  const raf = useRef<number | null>(null);
+
   useEffect(() => {
-    // Reset counter when not in view
     if (!isInView) {
       setCount(0);
-      return () => cancelAnimationFrame(animationRef.current);
+      return;
     }
-    
-    const startTime = Date.now() + delay * 1000;
-    
-    const animateCount = () => {
-      const now = Date.now();
-      
-      // Wait for delay before starting animation
-      if (now < startTime) {
-        animationRef.current = requestAnimationFrame(animateCount);
+
+    let start: number | null = null;
+    let started = false;
+
+    const animate = (timestamp: number) => {
+      if (!started) {
+        start = timestamp + delay * 1000;
+        started = true;
+      }
+      if (timestamp < (start ?? 0)) {
+        raf.current = requestAnimationFrame(animate);
         return;
       }
-      
-      const elapsed = now - startTime;
+      const elapsed = timestamp - (start ?? 0);
       const progress = Math.min(elapsed / (duration * 1000), 1);
-      
-      // Simple easing function for smoother animation
-      const easedProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
-      const currentCount = Math.floor(easedProgress * end);
-      
-      setCount(currentCount);
-      
+      // Ease out
+      const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      const val = Math.floor(eased * end);
+      setCount(val);
       if (progress < 1) {
-        animationRef.current = requestAnimationFrame(animateCount);
+        raf.current = requestAnimationFrame(animate);
       } else {
-        setCount(end); // Ensure we end exactly at the target number
+        setCount(end);
       }
     };
-    
-    animationRef.current = requestAnimationFrame(animateCount);
-    
-    // Cleanup animation frame on unmount or when dependencies change
-    return () => cancelAnimationFrame(animationRef.current);
+
+    raf.current = requestAnimationFrame(animate);
+    return () => {
+      if (raf.current !== null) {
+        cancelAnimationFrame(raf.current);
+      }
+    };
   }, [end, duration, delay, isInView]);
-  
-  // Simplified animation for better mobile performance
+
   return (
     <motion.div
       className={className}
       initial={{ opacity: 0 }}
-      animate={{ 
+      animate={{
         opacity: isInView ? 1 : 0,
-        y: isInView ? 0 : 5
+        y: isInView ? 0 : 5,
       }}
       transition={{ duration: 0.3, delay }}
     >
-      {count}{suffix}
+      {count}
+      {suffix}
     </motion.div>
   );
 });

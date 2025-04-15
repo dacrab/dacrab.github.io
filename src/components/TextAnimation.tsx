@@ -34,14 +34,15 @@ export default function TextAnimation({
   const isMobile = useIsMobile();
   const isInView = useInView(ref, { amount: 0.2, once });
   const [isLowEndDevice, setIsLowEndDevice] = useState(false);
-  
+
+  // Detect low-end device (mobile only)
   useEffect(() => {
-    if (typeof navigator !== 'undefined' && navigator.hardwareConcurrency !== undefined) {
+    if (typeof navigator !== "undefined" && navigator.hardwareConcurrency !== undefined) {
       setIsLowEndDevice(navigator.hardwareConcurrency < 4);
     }
   }, []);
-  
-  // Skip animations for low-end mobile devices
+
+  // Skip animation for low-end mobile devices
   if (isMobile && isLowEndDevice) {
     return (
       <div ref={ref} className={className}>
@@ -50,67 +51,64 @@ export default function TextAnimation({
       </div>
     );
   }
-  
-  // Mobile optimizations using utility function
+
+  // Optimize animation values for mobile
   const optimizedDuration = getOptimizedValue(duration, isMobile && mobileOptimized, 0.6, 0.3);
   const optimizedDelay = getOptimizedValue(delay, isMobile && mobileOptimized, 0.5);
-  
-  // Get centralized text animation props
+
+  // Centralized animation configs
   const animation = textAnimation(
-    variant, 
-    text, 
-    optimizedDelay, 
-    optimizedDuration, 
+    variant,
+    text,
+    optimizedDelay,
+    optimizedDuration,
     isMobile && mobileOptimized,
     isInView
   );
-  
-  // Use centralized emoji animation utility
-  const emojiAnimationConfig = emojiAnimation(
-    emojiAnimationType, 
+
+  const emojiConfig = emojiAnimation(
+    emojiAnimationType,
     optimizedDelay + optimizedDuration + 0.5,
     emojiAnimationType === "wave" ? 1.5 : 0.8,
     isMobile && mobileOptimized
   );
-  
+
   // Emoji component
-  const EmojiComponent = emoji ? (
+  const Emoji = emoji ? (
     <motion.span
       initial={{ opacity: 0, scale: 0.5 }}
-      animate={{ opacity: 1, scale: 1, ...emojiAnimationConfig.animate }}
+      animate={{ opacity: 1, scale: 1, ...emojiConfig.animate }}
       transition={{
         opacity: { duration: 0.3, delay: optimizedDelay + optimizedDuration },
         scale: { duration: 0.4, delay: optimizedDelay + optimizedDuration, type: "spring" },
-        ...emojiAnimationConfig.transition
+        ...emojiConfig.transition
       }}
-      className={`ml-1 ${emojiAnimationConfig.className} text-[0.9em]`}
+      className={`ml-1 ${emojiConfig.className} text-[0.9em]`}
       style={{ willChange: "transform" }}
     >
       {emoji}
     </motion.span>
   ) : null;
-  
-  // Character by character animation
+
+  // Helper for batching (used in char-by-char and split)
+  const batchArray = <T,>(arr: T[], batchSize: number) => {
+    const batches: T[][] = [];
+    for (let i = 0; i < arr.length; i += batchSize) {
+      batches.push(arr.slice(i, i + batchSize));
+    }
+    return batches;
+  };
+
+  // Char-by-char animation
   if (variant === "char-by-char") {
-    const characters = text.split("");
-    
-    // Batched characters for mobile
+    const chars = text.split("");
     if (mobileOptimized && isMobile) {
-      // Determine batch size for mobile character animations
-      const getBatchSize = () => {
-        const length = text.length;
-        if (length <= 8) return 1;
-        if (length <= 15) return 2;
-        if (length <= 30) return 4;
-        return 6;
-      };
-      
-      const batchSize = getBatchSize();
-      const batches = [];
-      for (let i = 0; i < characters.length; i += batchSize) {
-        batches.push(characters.slice(i, i + batchSize).join(''));
-      }
-      
+      // Batch chars for mobile
+      let batchSize = 1;
+      if (chars.length > 30) batchSize = 6;
+      else if (chars.length > 15) batchSize = 4;
+      else if (chars.length > 8) batchSize = 2;
+      const batches = batchArray(chars, batchSize).map(b => b.join(""));
       return (
         <motion.div
           ref={ref}
@@ -118,25 +116,24 @@ export default function TextAnimation({
           {...animation.containerProps}
         >
           <div>
-            {batches.map((batch, index) => (
+            {batches.map((batch, i) => (
               <motion.span
-                key={`batch-${index}`}
-                {...animation.itemProps as Record<string, unknown>}
+                key={i}
+                {...animation.itemProps}
                 transition={{
                   ...(animation.itemProps?.transition as Record<string, unknown>),
-                  delay: optimizedDelay + index * 0.05,
+                  delay: optimizedDelay + i * 0.05,
                 }}
               >
                 {batch}
               </motion.span>
             ))}
           </div>
-          {EmojiComponent}
+          {Emoji}
         </motion.div>
       );
     }
-    
-    // Regular character-by-character for desktop
+    // Desktop: animate each char
     return (
       <motion.div
         ref={ref}
@@ -144,33 +141,31 @@ export default function TextAnimation({
         {...animation.containerProps}
       >
         <div>
-          {characters.map((char, index) => (
+          {chars.map((char, i) => (
             <motion.span
-              key={`${char}-${index}`}
-              {...animation.itemProps as Record<string, unknown>}
+              key={i}
+              {...animation.itemProps}
               transition={{
                 ...(animation.itemProps?.transition as Record<string, unknown>),
-                delay: optimizedDelay + index * 0.04,
+                delay: optimizedDelay + i * 0.04,
               }}
             >
               {char === " " ? <span>&nbsp;</span> : char}
             </motion.span>
           ))}
         </div>
-        {EmojiComponent}
+        {Emoji}
       </motion.div>
     );
   }
 
-  // Split words animation
+  // Split (word-by-word) animation
   if (variant === "split") {
-    const wordArray = text.split(" ");
-    
-    // Group words for mobile with long text
-    if (mobileOptimized && isMobile && wordArray.length > 8) {
-      const limitedWords = wordArray.slice(0, 7);
-      const remainingWords = wordArray.slice(7).join(' ');
-      
+    const words = text.split(" ");
+    if (mobileOptimized && isMobile && words.length > 8) {
+      // Batch after 7 words for mobile
+      const limited = words.slice(0, 7);
+      const remaining = words.slice(7).join(" ");
       return (
         <motion.div
           ref={ref}
@@ -178,13 +173,13 @@ export default function TextAnimation({
           {...animation.containerProps}
         >
           <div>
-            {limitedWords.map((word, index) => (
+            {limited.map((word, i) => (
               <motion.span
-                key={`${word}-${index}`}
-                {...animation.itemProps as Record<string, unknown>}
+                key={i}
+                {...animation.itemProps}
                 transition={{
                   ...(animation.itemProps?.transition as Record<string, unknown>),
-                  delay: optimizedDelay + index * 0.05,
+                  delay: optimizedDelay + i * 0.05,
                 }}
                 className="inline-block mr-[0.25em]"
               >
@@ -192,23 +187,22 @@ export default function TextAnimation({
               </motion.span>
             ))}
             <motion.span
-              key="remaining-words"
-              {...animation.itemProps as Record<string, unknown>}
+              key="remaining"
+              {...animation.itemProps}
               transition={{
                 ...(animation.itemProps?.transition as Record<string, unknown>),
                 delay: optimizedDelay + 7 * 0.05,
               }}
               className="inline-block"
             >
-              {remainingWords}
+              {remaining}
             </motion.span>
           </div>
-          {EmojiComponent}
+          {Emoji}
         </motion.div>
       );
     }
-    
-    // Standard implementation
+    // Standard: animate each word
     return (
       <motion.div
         ref={ref}
@@ -216,13 +210,13 @@ export default function TextAnimation({
         {...animation.containerProps}
       >
         <div>
-          {wordArray.map((word, index) => (
+          {words.map((word, i) => (
             <motion.span
-              key={`${word}-${index}`}
-              {...animation.itemProps as Record<string, unknown>}
+              key={i}
+              {...animation.itemProps}
               transition={{
                 ...(animation.itemProps?.transition as Record<string, unknown>),
-                delay: optimizedDelay + index * (isMobile ? 0.05 : 0.1),
+                delay: optimizedDelay + i * (isMobile ? 0.05 : 0.1),
               }}
               className="inline-block mr-[0.25em]"
             >
@@ -230,7 +224,7 @@ export default function TextAnimation({
             </motion.span>
           ))}
         </div>
-        {EmojiComponent}
+        {Emoji}
       </motion.div>
     );
   }
@@ -238,30 +232,37 @@ export default function TextAnimation({
   // Typewriter effect
   if (variant === "typewriter") {
     if (mobileOptimized && isMobile && text.length > 50) {
+      // Skip cursor for long mobile text
       return (
         <div ref={ref} className={`relative inline-flex items-center ${className}`}>
-          <motion.div
-            {...animation.containerProps}
-          >
-            {text}
-          </motion.div>
-          {EmojiComponent}
+          <motion.div {...animation.containerProps}>{text}</motion.div>
+          {Emoji}
         </div>
       );
     }
-    
     return (
       <div ref={ref} className={`relative inline-flex items-center ${className}`}>
-        <motion.div
-          {...animation.containerProps}
-        >
+        <motion.div {...animation.containerProps}>
           {text}
-          <motion.span
-            {...(animation.additionalProps?.cursor as Record<string, unknown>)}
-            className={`inline-block ml-[2px] w-[2px] h-[1.2em] bg-${color} align-middle`}
-          />
+          {(() => {
+            const cursor = animation.additionalProps?.cursor;
+            if (
+              cursor &&
+              typeof cursor === 'object' &&
+              !Array.isArray(cursor) &&
+              cursor !== null
+            ) {
+              return (
+                <motion.span
+                  {...(cursor as Record<string, unknown>)}
+                  className={`inline-block ml-[2px] w-[2px] h-[1.2em] bg-${color} align-middle`}
+                />
+              );
+            }
+            return null;
+          })()}
         </motion.div>
-        {EmojiComponent}
+        {Emoji}
       </div>
     );
   }
@@ -270,27 +271,19 @@ export default function TextAnimation({
   if (variant === "gradient") {
     return (
       <div ref={ref} className={`inline-flex items-center ${className}`}>
-        <motion.span
-          {...animation.containerProps}
-        >
-          {text}
-        </motion.span>
-        {EmojiComponent}
+        <motion.span {...animation.containerProps}>{text}</motion.span>
+        {Emoji}
       </div>
     );
   }
 
-  // Default reveal animation
+  // Default: reveal animation
   return (
     <div ref={ref} className={`relative inline-flex items-center ${className}`}>
       <div className="overflow-hidden">
-        <motion.div
-          {...animation.containerProps}
-        >
-          {text}
-        </motion.div>
+        <motion.div {...animation.containerProps}>{text}</motion.div>
       </div>
-      {EmojiComponent}
+      {Emoji}
     </div>
   );
 }

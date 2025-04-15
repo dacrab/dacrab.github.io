@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { ProjectBaseProps, getTagColor } from "./types";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 
 // Memoize the component to prevent unnecessary re-renders
 const ProjectCard = memo(function ProjectCard({ 
@@ -13,17 +13,29 @@ const ProjectCard = memo(function ProjectCard({
   index,
   isMobile = false
 }: ProjectBaseProps) {
-  const primaryTag = project.tags?.[0];
-  const primaryTagColor = primaryTag ? getTagColor(primaryTag) : '';
+  // Memoize derived tag info
+  const primaryTag = useMemo(() => project.tags?.[0], [project.tags]);
+  const primaryTagColor = useMemo(() => 
+    primaryTag ? getTagColor(primaryTag) : '', 
+    [primaryTag]
+  );
   
   // Delay calculation that caps the index value for better mobile performance
-  const calculatedDelay = (delay || 0) + (Math.min(index || 0, isMobile ? 3 : 5) * (isMobile ? 0.03 : 0.05));
+  const calculatedDelay = useMemo(() => 
+    (delay || 0) + (Math.min(index || 0, isMobile ? 3 : 5) * (isMobile ? 0.03 : 0.05)),
+    [delay, index, isMobile]
+  );
+
+  // Memoize the main animation object
+  const mainAnimation = useMemo(() => ({
+    initial: { opacity: 0, y: isMobile ? 10 : 15 },
+    animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 10 : 15) },
+    transition: { duration: isMobile ? 0.3 : 0.4, delay: calculatedDelay }
+  }), [isInView, isMobile, calculatedDelay]);
   
   return (
     <motion.div
-      initial={{ opacity: 0, y: isMobile ? 10 : 15 }}
-      animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 10 : 15) }}
-      transition={{ duration: isMobile ? 0.3 : 0.4, delay: calculatedDelay }}
+      {...mainAnimation}
       className={`group bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden hover:border-accent/30 transition-all duration-200 flex flex-col h-full shadow-sm ${isActive ? 'ring-2 ring-accent/40' : ''}`}
       onHoverStart={() => onHoverStart?.()}
       onHoverEnd={() => onHoverEnd?.()}

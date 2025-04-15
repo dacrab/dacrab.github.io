@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import TextAnimation from "../TextAnimation";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 
 interface SectionHeaderProps {
   isInView: boolean;
@@ -9,12 +9,18 @@ interface SectionHeaderProps {
 
 // Memoize the component to prevent unnecessary re-renders
 const SectionHeader = memo(function SectionHeader({ isInView, isMobile = false }: SectionHeaderProps) {
+  
+  // Memoize animation props
+  const mainAnimation = useMemo(() => ({
+    initial: { opacity: 0, y: isMobile ? 10 : 15 },
+    animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 10 : 15) },
+    transition: { duration: isMobile ? 0.4 : 0.5 }
+  }), [isInView, isMobile]);
+
   return (
     <div className="mb-12 text-center relative">
       <motion.div
-        initial={{ opacity: 0, y: isMobile ? 10 : 15 }}
-        animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 10 : 15) }}
-        transition={{ duration: isMobile ? 0.4 : 0.5 }}
+        {...mainAnimation}
       >
         <div className="relative inline-block">
           <TextAnimation 

@@ -1,4 +1,4 @@
-import { useRef, memo } from "react";
+import { useRef, memo, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ProjectBaseProps, getTagColor } from "./types";
 
@@ -17,34 +17,42 @@ const FeaturedProject = memo(function FeaturedProject({
 }: FeaturedProjectProps) {
   const containerRef = useRef(null);
   
-  // Simplified animation props with delay capping for better mobile performance
-  const fadeIn = (delayOffset: number = 0) => ({
+  // Memoized animation function
+  const fadeIn = useMemo(() => (delayOffset: number = 0) => ({
     initial: { opacity: 0, y: isMobile ? 5 : 8 },
     animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 5 : 8) },
     transition: { 
       duration: isMobile ? 0.3 : 0.4, 
       delay: (delay || 0) + delayOffset + (Math.min(index, 2) * (isMobile ? 0.03 : 0.05)) 
     }
-  });
+  }), [isMobile, isInView, delay, index]);
   
-  // Layout classes based on reversed prop
-  const layoutClasses = {
+  // Memoized layout classes
+  const layoutClasses = useMemo(() => ({
     grid: `grid grid-cols-1 lg:grid-cols-12 ${reversed ? 'lg:grid-flow-dense' : ''}`,
     metaSection: `p-5 md:p-6 lg:col-span-4 ${reversed ? 'lg:col-start-9' : 'lg:col-start-1'} relative flex flex-col justify-between`,
     contentSection: `p-5 md:p-6 border-t lg:border-t-0 ${reversed ? 'lg:border-r' : 'lg:border-l'} border-border/20 lg:col-span-8 ${reversed ? 'lg:col-start-1' : 'lg:col-start-5'} bg-card/20 flex flex-col justify-between`
-  };
+  }), [reversed]);
   
-  // Primary tag color
-  const primaryTagColor = project.tags && project.tags.length > 0 
-    ? getTagColor(project.tags[0]) 
-    : undefined;
+  // Memoized primary tag color
+  const primaryTagColor = useMemo(() => 
+    project.tags && project.tags.length > 0 
+      ? getTagColor(project.tags[0]) 
+      : undefined,
+    [project.tags]
+  );
+
+  // Memoize main container animation
+  const mainContainerAnimation = useMemo(() => ({
+    initial: { opacity: 0, y: isMobile ? 10 : 15 },
+    animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 10 : 15) },
+    transition: { duration: isMobile ? 0.4 : 0.5, delay: delay || 0 }
+  }), [isInView, isMobile, delay]);
   
   return (
     <motion.div
       ref={containerRef}
-      initial={{ opacity: 0, y: isMobile ? 10 : 15 }}
-      animate={{ opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 10 : 15) }}
-      transition={{ duration: isMobile ? 0.4 : 0.5, delay: delay || 0 }}
+      {...mainContainerAnimation}
       className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden group hover:border-accent/30 transition-all duration-300 shadow-md relative"
     >
       <div className={layoutClasses.grid}>

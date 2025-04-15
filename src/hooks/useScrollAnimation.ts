@@ -8,7 +8,7 @@ export interface ScrollAnimationOptions {
   delay?: number;
   threshold?: number;
   once?: boolean;
-  ease?: string | number[] | undefined;
+  ease?: string | number[];
   springConfig?: {
     stiffness?: number;
     damping?: number;
@@ -16,15 +16,11 @@ export interface ScrollAnimationOptions {
   };
 }
 
-// Cache for common transition configurations
-const cachedTransitions = new Map<string, object>();
+const defaultSpring = { stiffness: 260, damping: 20, mass: 1 };
 
 /**
  * Custom hook for scroll-triggered animations
- * Optimized for performance with memoization
- * 
- * @param options Configuration options for animations
- * @returns Object containing refs and animation properties
+ * Optimized for performance with memoization and simplified logic
  */
 export function useScrollAnimation(options: ScrollAnimationOptions = {}) {
   const {
@@ -35,101 +31,86 @@ export function useScrollAnimation(options: ScrollAnimationOptions = {}) {
     threshold = 0.2,
     once = true,
     ease = [0.25, 0.1, 0.25, 1],
-    springConfig = { stiffness: 260, damping: 20 }
+    springConfig = {},
   } = options;
 
   const ref = useRef(null);
   const isInView = useInView(ref, { amount: threshold, once });
 
-  // Memoize transition config to prevent recreation on each render
-  const transitionConfig = useMemo(() => {
-    const cacheKey = `${duration}-${delay}-${springConfig.stiffness}-${springConfig.damping}-${springConfig.mass ?? 1}`;
-    
-    if (cachedTransitions.has(cacheKey)) {
-      return cachedTransitions.get(cacheKey);
-    }
-    
-    const config = {
-      type: "spring",
-      ...springConfig,
-      duration,
-      delay,
-      ease,
-    };
-    
-    cachedTransitions.set(cacheKey, config);
-    return config;
-  }, [duration, delay, ease, springConfig]);
+  // Memoize transition config
+  const transition = useMemo(
+    () => {
+      const mergedSpring = { ...defaultSpring, ...springConfig };
+      return {
+        type: "spring",
+        ...mergedSpring,
+        duration,
+        delay,
+        ease,
+      };
+    },
+    [duration, delay, ease, springConfig]
+  );
 
-  // Memoize initial props based on direction to prevent object recreations
-  const initialProps = useMemo(() => {
+  // Memoize initial and animate props
+  const [initial, animate] = useMemo(() => {
     switch (direction) {
       case "up":
-        return { opacity: 0, y: distance };
+        return [{ opacity: 0, y: distance }, { opacity: 1, y: 0 }];
       case "down":
-        return { opacity: 0, y: -distance };
+        return [{ opacity: 0, y: -distance }, { opacity: 1, y: 0 }];
       case "left":
-        return { opacity: 0, x: -distance };
+        return [{ opacity: 0, x: -distance }, { opacity: 1, x: 0 }];
       case "right":
-        return { opacity: 0, x: distance };
+        return [{ opacity: 0, x: distance }, { opacity: 1, x: 0 }];
       case "none":
-        return { opacity: 0 };
+        return [{ opacity: 0 }, { opacity: 1 }];
       default:
-        return { opacity: 0, y: distance };
+        return [{ opacity: 0, y: distance }, { opacity: 1, y: 0 }];
     }
   }, [direction, distance]);
 
-  // Memoize animate props to prevent object recreations
-  const animateProps = useMemo(() => {
-    return direction === "left" || direction === "right"
-      ? { opacity: 1, x: 0 }
-      : direction === "none"
-        ? { opacity: 1 }
-        : { opacity: 1, y: 0 };
-  }, [direction]);
+  // Memoize variants
+  const variants = useMemo<Variants>(
+    () => ({
+      hidden: initial,
+      visible: { ...animate, transition },
+    }),
+    [initial, animate, transition]
+  );
 
-  // Memoize variants to prevent recreation on each render
-  const variants = useMemo<Variants>(() => ({
-    hidden: initialProps,
-    visible: {
-      ...animateProps,
-      transition: transitionConfig,
-    },
-  }), [initialProps, animateProps, transitionConfig]);
-
-  // Memoize container variants to prevent recreation
-  const containerVariants = useMemo<Variants>(() => ({
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: delay,
+  // Memoize container variants
+  const containerVariants = useMemo<Variants>(
+    () => ({
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: {
+          staggerChildren: 0.1,
+          delayChildren: delay,
+        },
       },
-    },
-  }), [delay]);
+    }),
+    [delay]
+  );
 
-  // Memoize the entire return object to prevent recreations
-  return useMemo(() => ({
+  // Memoize style for direct style prop animations
+  const style = useMemo(
+    () =>
+      isInView
+        ? { ...animate, transition: `all ${duration}s ${delay}s` }
+        : initial,
+    [isInView, animate, initial, duration, delay]
+  );
+
+  return {
     ref,
     isInView,
     variants,
     containerVariants,
     initial: "hidden",
     animate: isInView ? "visible" : "hidden",
-    transition: transitionConfig,
-    // Helper function for direct style prop animations
-    style: isInView
-      ? { ...animateProps, transition: `all ${duration}s ${delay}s` }
-      : initialProps,
-  }), [
-    isInView, 
-    variants, 
-    containerVariants, 
-    transitionConfig, 
-    animateProps, 
-    initialProps, 
-    duration, 
-    delay
-  ]);
-} 
+    transition,
+    style,
+  };
+}

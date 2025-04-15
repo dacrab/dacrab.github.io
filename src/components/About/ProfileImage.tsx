@@ -5,108 +5,85 @@ import StaggerReveal from "../StaggerReveal";
 import NumberCounter from "../Experience/NumberCounter";
 import { memo, useRef, useState, useEffect } from "react";
 
-// Type definitions for Navigator extensions
-interface NavigatorExtended extends Navigator {
-  deviceMemory?: number;
-  connection?: {
-    effectiveType?: string;
-    saveData?: boolean;
-  };
-}
-
 interface ProfileImageProps {
   contentY: MotionValue<number>;
   isMobile?: boolean;
 }
 
-// Memoize the component to prevent unnecessary re-renders
+const isNavigatorLowEnd = (): boolean => {
+  if (typeof navigator === "undefined") return false;
+  // @ts-expect-error Accessing non-standard navigator properties for device heuristics
+  const { hardwareConcurrency, deviceMemory, connection } = navigator;
+  return (
+    (hardwareConcurrency && hardwareConcurrency < 4) ||
+    (deviceMemory && deviceMemory < 4) ||
+    (connection &&
+      (connection.effectiveType === "2g" ||
+        connection.effectiveType === "3g" ||
+        connection.saveData === true))
+  );
+};
+
 const ProfileImage = memo(function ProfileImage({ contentY, isMobile = false }: ProfileImageProps) {
   const [shouldLoadLottie, setShouldLoadLottie] = useState(false);
   const [isLowEndDevice, setIsLowEndDevice] = useState(false);
   const lottieRef = useRef<HTMLDivElement>(null);
-  const hasAnimatedRef = useRef(false);
 
-  // Check for low-end devices more comprehensively
+  // Detect low-end device once on mount
   useEffect(() => {
-    if (typeof navigator === 'undefined') return;
-    
-    const nav = navigator as NavigatorExtended;
-    
-    // Detect low-end devices based on multiple factors
-    const hasLowCores = nav.hardwareConcurrency !== undefined && nav.hardwareConcurrency < 4;
-    const hasLowMemory = nav.deviceMemory !== undefined && nav.deviceMemory < 4;
-    const hasLowConnectivity = nav.connection && (
-      nav.connection.effectiveType === '2g' || 
-      nav.connection.effectiveType === '3g' ||
-      nav.connection.saveData === true
-    );
-    
-    setIsLowEndDevice(hasLowCores || hasLowMemory || hasLowConnectivity || false);
+    setIsLowEndDevice(isNavigatorLowEnd());
   }, []);
 
-  // Load Lottie only when component is in viewport and device can handle it
+  // Only load Lottie when in view and not on low-end mobile
   useEffect(() => {
-    if (!lottieRef.current) return;
-    
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          // On low-end mobile devices, don't autoload Lottie to preserve performance
-          if (isLowEndDevice && isMobile) {
-            hasAnimatedRef.current = true;
-            return;
+    const el = lottieRef.current;
+    if (!el) return;
+
+    const observer: IntersectionObserver | null = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (!(isLowEndDevice && isMobile)) {
+            setTimeout(() => setShouldLoadLottie(true), isMobile ? 500 : 200);
           }
-          
-          // Small delay before loading Lottie to prioritize other critical content
-          setTimeout(() => {
-            setShouldLoadLottie(true);
-            hasAnimatedRef.current = true;
-          }, isMobile ? 500 : 200);
-          
-          observer.disconnect();
+          observer?.disconnect();
         }
       },
       { rootMargin: "200px" }
     );
-    
-    observer.observe(lottieRef.current);
-    
-    return () => observer.disconnect();
+
+    observer.observe(el);
+    return () => observer && observer.disconnect();
   }, [isMobile, isLowEndDevice]);
 
-  // Animation constants - simplified for better mobile performance
   const hoverAnimation = {
-    y: isMobile ? -2 : -3, 
-    boxShadow: isMobile ? 
-      "0 6px 15px -5px rgba(var(--accent-rgb), 0.12)" : 
-      "0 8px 20px -5px rgba(var(--accent-rgb), 0.15)",
+    y: isMobile ? -2 : -3,
+    boxShadow: isMobile
+      ? "0 6px 15px -5px rgba(var(--accent-rgb), 0.12)"
+      : "0 8px 20px -5px rgba(var(--accent-rgb), 0.15)",
     borderColor: "rgba(var(--accent-rgb), 0.3)",
     transition: { duration: isMobile ? 0.15 : 0.2 }
   };
 
   return (
-    <motion.div 
+    <motion.div
       className="lg:col-span-5 lg:col-start-1 relative"
       style={{ y: contentY }}
     >
       <div className="relative">
-        {/* Profile container */}
         <div className="relative w-full max-w-md mx-auto lg:mx-0">
-          {/* Lottie animation profile - optimized loading strategy */}
           <ScrollReveal
             direction="left"
             duration={isMobile ? 0.5 : 0.6}
             delay={0.1}
             className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden relative z-10 shadow-md transition-shadow duration-300"
             distance={isMobile ? 20 : 30}
-            mobileOptimized={true}
+            mobileOptimized
           >
-            <div 
+            <div
               ref={lottieRef}
               className="aspect-square relative overflow-hidden flex items-center justify-center"
             >
               <div className="w-full h-full">
-                {/* On low-end mobile devices, use a static SVG avatar for better performance */}
                 {isLowEndDevice && isMobile ? (
                   <div className="w-full h-full bg-card/50 flex items-center justify-center">
                     <svg
@@ -126,17 +103,16 @@ const ProfileImage = memo(function ProfileImage({ contentY, isMobile = false }: 
                 ) : shouldLoadLottie ? (
                   <DotLottieReact
                     src="https://lottie.host/ec2681d0-ab67-4f7d-a35a-c870c0a588aa/BVfwAmcRde.lottie"
-                    loop={!isMobile} // Disable loop on mobile for better performance
-                    autoplay
+                    loop
                     className="w-full h-full"
-                    speed={isMobile ? 0.8 : 1} // Slow down animation on mobile for better performance
+                    speed={isMobile ? 0.8 : 1}
                   />
                 ) : (
                   <div className="w-full h-full bg-card/50 animate-pulse flex items-center justify-center">
-                    <div 
-                      className="w-10 h-10 border-t-2 border-accent/30 rounded-full animate-spin" 
-                      style={{ 
-                        animationDuration: isMobile ? '2s' : '1.5s',
+                    <div
+                      className="w-10 h-10 border-t-2 border-accent/30 rounded-full animate-spin"
+                      style={{
+                        animationDuration: isMobile ? "2s" : "1.5s",
                         opacity: 0.7
                       }}
                     ></div>
@@ -146,18 +122,16 @@ const ProfileImage = memo(function ProfileImage({ contentY, isMobile = false }: 
             </div>
           </ScrollReveal>
         </div>
-        
-        {/* Stats highlights - simplified for mobile */}
+
         <StaggerReveal
           className="mt-6 grid grid-cols-2 gap-4 max-w-md mx-auto lg:mx-0"
           duration={isMobile ? 0.4 : 0.5}
           childDelay={isMobile ? 0.15 : 0.2}
           staggerDelay={isMobile ? 0.07 : 0.1}
           childClassName="h-full"
-          mobileOptimized={true}
+          mobileOptimized
         >
-          {/* Experience stat */}
-          <motion.div 
+          <motion.div
             className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200"
             whileHover={hoverAnimation}
           >
@@ -170,9 +144,7 @@ const ProfileImage = memo(function ProfileImage({ contentY, isMobile = false }: 
             />
             <div className="text-sm text-muted mt-1">Year Experience</div>
           </motion.div>
-          
-          {/* Projects stat */}
-          <motion.div 
+          <motion.div
             className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200"
             whileHover={hoverAnimation}
           >
