@@ -6,6 +6,7 @@ import SwissMotion from "./SwissMotion";
 import ShapeAnimation from "./ShapeAnimation";
 import ParallaxLayer from "./ParallaxLayer";
 import TextAnimation from "./TextAnimation";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 // Animation constants
 const ANIMATION = {
@@ -28,14 +29,19 @@ const ANIMATION = {
 export default function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
   const [showCVDropdown, setShowCVDropdown] = useState(false);
+  const isMobile = useIsMobile();
   
-  // Parallax scrolling effect
+  // Parallax scrolling effect - reduced effect on mobile
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"]
   });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const y = useTransform(
+    scrollYProgress, 
+    [0, 1], 
+    isMobile ? ["0%", "20%"] : ["0%", "50%"]
+  );
   
   // Handle CV download
   const handleCVDownload = (lang: string) => {
@@ -61,25 +67,26 @@ export default function Hero() {
     <div
       ref={heroRef} 
       id="home"
-      className="relative min-h-[calc(100vh-82px)] max-h-[800px] pt-12 overflow-hidden flex flex-col"
+      className="relative min-h-[calc(100vh-82px)] max-h-[1000px] pt-12 sm:pt-16 overflow-hidden flex flex-col"
     >
-      {/* Background Elements */}
-      <BackgroundElements />
+      {/* Background Elements - conditionally render fewer elements on mobile */}
+      <BackgroundElements isMobile={isMobile} />
       
       <motion.div
         className="swiss-container flex-1 flex flex-col"
         style={{ y }}
       >
-        <div className="swiss-grid flex-1 mt-8 md:mt-24">
+        <div className={`flex flex-col md:grid md:swiss-grid flex-1 ${isMobile ? 'mt-12' : 'mt-4 md:mt-24'}`}>
           {/* Left Hero Content */}
           <HeroContent 
             showCVDropdown={showCVDropdown} 
             setShowCVDropdown={setShowCVDropdown} 
-            handleCVDownload={handleCVDownload} 
+            handleCVDownload={handleCVDownload}
+            isMobile={isMobile}
           />
           
-          {/* Right Hero Visual */}
-          <HeroVisual />
+          {/* Right Hero Visual - conditionally render on mobile */}
+          {!isMobile && <HeroVisual />}
         </div>
       </motion.div>
 
@@ -90,7 +97,71 @@ export default function Hero() {
 }
 
 // Background elements component
-function BackgroundElements() {
+function BackgroundElements({ isMobile }: { isMobile: boolean }) {
+  // Render fewer and simpler elements on mobile
+  if (isMobile) {
+    return (
+      <>
+        <SwissMotion
+          type="reveal"
+          delay={0.3}
+          duration={0.8}
+          className="absolute top-16 right-0 w-1/3 h-1/3 overflow-hidden"
+        >
+          <div className="absolute top-0 left-0 w-[200%] h-[2px] bg-[var(--accent)] origin-top-left rotate-45 transform -translate-x-1/4"></div>
+        </SwissMotion>
+
+        <ParallaxLayer speed={0.3} direction="up" className="absolute bottom-16 left-0 -z-10">
+          <ShapeAnimation 
+            type="square" 
+            color="var(--accent-secondary)" 
+            size={80} 
+            variant="float"
+            delay={0.5}
+            duration={1.8}
+            loop={true}
+          />
+        </ParallaxLayer>
+        
+        <ParallaxLayer speed={0.25} direction="left" className="absolute top-24 left-1/4 -z-10">
+          <ShapeAnimation 
+            type="triangle" 
+            color="var(--accent)" 
+            size={40} 
+            variant="rotate"
+            delay={0.3}
+            duration={2.5}
+            loop={true}
+          />
+        </ParallaxLayer>
+        
+        <ParallaxLayer speed={0.35} direction="right" className="absolute top-32 right-8 -z-10">
+          <ShapeAnimation 
+            type="circle" 
+            color="var(--accent-tertiary)" 
+            size={60} 
+            variant="pulse"
+            delay={0.7}
+            duration={2.0}
+            loop={true}
+          />
+        </ParallaxLayer>
+
+        <ParallaxLayer speed={0.4} direction="right" className="absolute bottom-40 right-5 -z-10">
+          <ShapeAnimation 
+            type="diagonal" 
+            color="var(--accent-secondary)" 
+            size={50} 
+            variant="draw"
+            delay={0.9}
+            duration={1.0}
+            loop={true}
+          />
+        </ParallaxLayer>
+      </>
+    );
+  }
+
   return (
     <>
       {/* Animated Swiss-style diagonal line */}
@@ -158,14 +229,16 @@ function BackgroundElements() {
 function HeroContent({ 
   showCVDropdown, 
   setShowCVDropdown, 
-  handleCVDownload 
+  handleCVDownload,
+  isMobile
 }: { 
   showCVDropdown: boolean; 
   setShowCVDropdown: (show: boolean) => void; 
   handleCVDownload: (lang: string) => void;
+  isMobile: boolean;
 }) {
   return (
-    <div className="swiss-asymmetric-left flex flex-col justify-center mb-12 md:mb-0">
+    <div className="md:swiss-asymmetric-left flex flex-col justify-center mb-8 md:mb-0">
       <SwissMotion
         type="slide"
         delay={0.2}
@@ -173,15 +246,15 @@ function HeroContent({
         className="mb-6"
       >
         <div className="flex items-center mb-2">
-          <div className="w-16 h-1 bg-[var(--accent)] mr-4"></div>
-          <p className="text-[var(--muted)] uppercase tracking-widest text-sm">Web Developer</p>
+          <div className="w-10 md:w-16 h-1 bg-[var(--accent)] mr-4"></div>
+          <p className="text-[var(--muted)] uppercase tracking-widest text-xs sm:text-sm">Web Developer</p>
         </div>
         
         {/* Heading with animated elements */}
-        <HeroHeading />
+        <HeroHeading isMobile={isMobile} />
         
         {/* Description text */}
-        <div className="swiss-body max-w-md mb-6 relative">
+        <div className="swiss-body max-w-md mb-6 relative text-sm md:text-base">
           <span className="relative inline-block">
             Creating clean, functional, and engaging digital experiences
             through thoughtful design and modern development techniques.
@@ -203,90 +276,207 @@ function HeroContent({
         <ButtonGroup 
           showCVDropdown={showCVDropdown} 
           setShowCVDropdown={setShowCVDropdown} 
-          handleCVDownload={handleCVDownload} 
+          handleCVDownload={handleCVDownload}
+          isMobile={isMobile}
         />
+        
+        {/* Tech Keywords - moved inside the motion container on desktop */}
+        {!isMobile && (
+          <TechKeywords className="mt-8" />
+        )}
       </SwissMotion>
 
-      {/* Tech Keywords */}
-      <TechKeywords />
+      {/* Tech Keywords - only on mobile, outside the motion container */}
+      {isMobile && <TechKeywords className="mt-4" />}
+      
+      {/* Mobile-only Visual */}
+      {isMobile && (
+        <div className="mt-16">
+          <SwissMotion
+            type="scale"
+            delay={0.5}
+            duration={ANIMATION.duration.medium}
+          >
+            <div className="w-40 h-40 swiss-grid-pattern relative mx-auto">
+              {/* Swiss style accent borders */}
+              <SwissMotion type="reveal" delay={0.6} duration={0.4}>
+                <div className="absolute left-0 top-0 w-full h-2 bg-[var(--accent)]"></div>
+              </SwissMotion>
+              <SwissMotion type="reveal" delay={0.8} duration={0.4}>
+                <div className="absolute right-0 top-0 w-2 h-full bg-[var(--accent-secondary)]"></div>
+              </SwissMotion>
+              
+              {/* Swiss design elements */}
+              <motion.div
+                className="absolute top-1/4 left-1/4 w-1/3 h-1/3 border border-[var(--accent)] bg-[var(--background)] opacity-90"
+                initial={{ scale: 0, rotate: -15 }}
+                animate={{ 
+                  scale: [0, 1.3, 0.85, 1.15, 1],
+                  rotate: [-25, 8, -8, 3, 0],
+                  x: [15, -8, 4, -2, 0],
+                  y: [-8, 12, -4, 2, 0]
+                }}
+                transition={{ 
+                  duration: 1.0, 
+                  delay: 0.5, 
+                  ease: ANIMATION.easing.explosive,
+                  times: [0, 0.35, 0.6, 0.85, 1]
+                }}
+              />
+              <motion.div
+                className="absolute bottom-1/4 right-1/4 w-1/3 h-1/3 bg-[var(--accent-secondary)] opacity-25"
+                initial={{ scale: 0, rotate: 15 }}
+                animate={{ 
+                  scale: [0, 0.7, 1.2, 0.9, 1],
+                  rotate: [25, -15, 10, -5, 0],
+                  x: [-20, 12, -6, 2, 0],
+                  y: [12, -15, 6, -2, 0]
+                }}
+                transition={{ 
+                  duration: 1.1, 
+                  delay: 0.6, 
+                  ease: ANIMATION.easing.explosive,
+                  times: [0, 0.25, 0.55, 0.8, 1]
+                }}
+              />
+              
+              {/* Grid lines */}
+              <motion.div 
+                className="absolute top-1/2 left-0 w-full h-[1px] bg-[var(--foreground)] opacity-20"
+                initial={{ scaleX: 0 }}
+                animate={{ 
+                  scaleX: [0, 1.2, 0.9, 1.1, 1],
+                  opacity: [0, 0.3, 0.2, 0.35, 0.25]
+                }}
+                transition={{ 
+                  duration: ANIMATION.duration.medium,
+                  delay: 0.9, 
+                  ease: ANIMATION.easing.explosive,
+                  times: [0, 0.3, 0.6, 0.8, 1]
+                }}
+              />
+              <motion.div 
+                className="absolute top-0 left-1/2 w-[1px] h-full bg-[var(--foreground)] opacity-20"
+                initial={{ scaleY: 0 }}
+                animate={{ 
+                  scaleY: [0, 1.15, 0.9, 1.05, 1],
+                  opacity: [0, 0.3, 0.2, 0.25, 0.2] 
+                }}
+                transition={{ 
+                  duration: ANIMATION.duration.medium,
+                  delay: 1.0, 
+                  ease: ANIMATION.easing.explosive,
+                  times: [0, 0.25, 0.55, 0.75, 1]
+                }}
+              />
+
+              {/* Additional energetic element */}
+              <motion.div
+                className="absolute top-3/4 left-3/4 w-6 h-6 bg-[var(--accent)] opacity-70"
+                initial={{ scale: 0, rotate: 0 }}
+                animate={{ 
+                  scale: [0, 1.4, 0.7, 1.2, 1],
+                  rotate: [0, 45, -15, 20, 0],
+                  opacity: [0, 0.8, 0.5, 0.7, 0.6]
+                }}
+                transition={{ 
+                  duration: 0.9, 
+                  delay: 1.2,
+                  ease: ANIMATION.easing.explosive,
+                  times: [0, 0.3, 0.5, 0.75, 1]
+                }}
+              />
+            </div>
+          </SwissMotion>
+        </div>
+      )}
     </div>
   );
 }
 
 // Hero heading with animated elements
-function HeroHeading() {
+function HeroHeading({ isMobile }: { isMobile: boolean }) {
+  // Smaller text and fewer animations on mobile
+  const textClass = isMobile ? "text-3xl sm:text-4xl font-bold mb-4" : "swiss-heading-1 mt-3 mb-4 relative";
+  
   return (
-    <h1 className="swiss-heading-1 mt-3 mb-4 relative">
+    <h1 className={textClass}>
       <div className="relative inline-block">
         <TextAnimation text="MODERN" variant="reveal" delay={0.3} />
-        <motion.div 
-          className="absolute -right-4 top-1/2 w-8 h-8"
-          animate={{ 
-            rotate: [0, 180, 360],
-            scale: [1, 1.2, 1]
-          }}
-          transition={{ 
-            duration: 5, 
-            repeat: Infinity, 
-            ease: ANIMATION.easing.crisp 
-          }}
-        >
-          <ShapeAnimation 
-            type="cross" 
-            color="var(--accent)" 
-            size={24} 
-            variant="draw"
-            loop={true}
-          />
-        </motion.div>
+        {!isMobile && (
+          <motion.div 
+            className="absolute -right-4 top-1/2 w-8 h-8"
+            animate={{ 
+              rotate: [0, 180, 360],
+              scale: [1, 1.2, 1]
+            }}
+            transition={{ 
+              duration: 5, 
+              repeat: Infinity, 
+              ease: ANIMATION.easing.crisp 
+            }}
+          >
+            <ShapeAnimation 
+              type="cross" 
+              color="var(--accent)" 
+              size={24} 
+              variant="draw"
+              loop={true}
+            />
+          </motion.div>
+        )}
       </div>
       <br />
       <div className="relative inline-block">
         <TextAnimation text="WEB" variant="reveal" delay={0.5} />
-        <motion.div 
-          className="absolute -left-2 top-1/2 w-6 h-6"
-          animate={{ 
-            y: [-5, 5, -5],
-            opacity: [0.7, 1, 0.7]
-          }}
-          transition={{ 
-            duration: 4, 
-            repeat: Infinity, 
-            ease: "easeInOut" 
-          }}
-        >
-          <ShapeAnimation 
-            type="circle" 
-            color="var(--accent-tertiary)" 
-            size={12} 
-            variant="pulse"
-            loop={true}
-          />
-        </motion.div>
+        {!isMobile && (
+          <motion.div 
+            className="absolute -left-2 top-1/2 w-6 h-6"
+            animate={{ 
+              y: [-5, 5, -5],
+              opacity: [0.7, 1, 0.7]
+            }}
+            transition={{ 
+              duration: 4, 
+              repeat: Infinity, 
+              ease: "easeInOut" 
+            }}
+          >
+            <ShapeAnimation 
+              type="circle" 
+              color="var(--accent-tertiary)" 
+              size={12} 
+              variant="pulse"
+              loop={true}
+            />
+          </motion.div>
+        )}
       </div>
       <br />
       <div className="relative inline-block">
         <TextAnimation text="SOLUTIONS" variant="reveal" delay={0.7} />
-        <motion.div 
-          className="absolute -right-2 bottom-1/4 w-10 h-10"
-          animate={{ 
-            rotate: [0, 45, 0, -45, 0],
-            scale: [1, 0.9, 1, 1.1, 1]
-          }}
-          transition={{ 
-            duration: 6, 
-            repeat: Infinity, 
-            ease: ANIMATION.easing.explosive 
-          }}
-        >
-          <ShapeAnimation 
-            type="square" 
-            color="var(--accent-secondary)" 
-            size={16} 
-            variant="rotate"
-            loop={true}
-          />
-        </motion.div>
+        {!isMobile && (
+          <motion.div 
+            className="absolute -right-2 bottom-1/4 w-10 h-10"
+            animate={{ 
+              rotate: [0, 45, 0, -45, 0],
+              scale: [1, 0.9, 1, 1.1, 1]
+            }}
+            transition={{ 
+              duration: 6, 
+              repeat: Infinity, 
+              ease: ANIMATION.easing.explosive 
+            }}
+          >
+            <ShapeAnimation 
+              type="square" 
+              color="var(--accent-secondary)" 
+              size={16} 
+              variant="rotate"
+              loop={true}
+            />
+          </motion.div>
+        )}
       </div>
     </h1>
   );
@@ -296,17 +486,21 @@ function HeroHeading() {
 function ButtonGroup({ 
   showCVDropdown, 
   setShowCVDropdown, 
-  handleCVDownload 
+  handleCVDownload,
+  isMobile
 }: { 
   showCVDropdown: boolean; 
   setShowCVDropdown: (show: boolean) => void; 
   handleCVDownload: (lang: string) => void;
+  isMobile: boolean;
 }) {
+  const buttonSize = isMobile ? "text-xs" : "text-sm";
+  
   return (
-    <div className="flex flex-wrap gap-4">
+    <div className="flex flex-wrap gap-3 md:gap-4">
       <SwissMotion type="fade" delay={0.9} whileHover="lift" whileTap="press">
         <button 
-          className="swiss-button"
+          className={`swiss-button ${buttonSize}`}
           onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
         >
           VIEW PROJECTS
@@ -316,7 +510,7 @@ function ButtonGroup({
       <div className="relative">
         <SwissMotion type="fade" delay={1.1} whileHover="lift" whileTap="press">
           <button
-            className="swiss-button-outline"
+            className={`swiss-button-outline ${buttonSize}`}
             onClick={(e) => {
               e.stopPropagation();
               setShowCVDropdown(!showCVDropdown);
@@ -354,13 +548,13 @@ function ButtonGroup({
 }
 
 // Tech keywords component
-function TechKeywords() {
+function TechKeywords({ className = "" }: { className?: string }) {
   return (
     <SwissMotion 
       type="stagger"
       delay={1.2}
       staggerChildren={0.08}
-      className="flex flex-wrap gap-2 mt-auto"
+      className={`flex flex-wrap gap-2 text-xs ${className}`}
     >
       {["REACT", "NEXTJS", "TYPESCRIPT", "NODEJS", "AWS"].map((tech) => (
         <SwissMotion
@@ -404,11 +598,11 @@ function HeroVisual() {
 function AccentBorders() {
   return (
     <>
-      <SwissMotion type="reveal" delay={0.8} duration={0.5}>
-        <div className="absolute left-0 top-0 w-full h-1 bg-[var(--accent)]"></div>
+      <SwissMotion type="reveal" delay={0.6} duration={0.4}>
+        <div className="absolute left-0 top-0 w-full h-2 bg-[var(--accent)]"></div>
       </SwissMotion>
-      <SwissMotion type="reveal" delay={1.0} duration={0.5}>
-        <div className="absolute right-0 top-0 w-1 h-full bg-[var(--accent-secondary)]"></div>
+      <SwissMotion type="reveal" delay={0.8} duration={0.4}>
+        <div className="absolute right-0 top-0 w-2 h-full bg-[var(--accent-secondary)]"></div>
       </SwissMotion>
       <SwissMotion type="fade" delay={1.2} duration={0.5}>
         <div className="absolute right-1/3 bottom-1/3 w-1/4 h-1/4 bg-[var(--accent-tertiary)]"></div>
@@ -739,7 +933,7 @@ function ScrollIndicator() {
       type="fade" 
       delay={1.5}
       duration={0.5}
-      className="absolute bottom-6 left-1/2 transform -translate-x-1/2 flex flex-col items-center"
+      className="absolute bottom-2 sm:bottom-4 left-1/2 transform -translate-x-1/2 flex flex-col items-center"
     >
       <p className="text-xs uppercase tracking-widest mb-2">Scroll Down</p>
       <motion.div 

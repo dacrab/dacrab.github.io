@@ -141,12 +141,12 @@ export default function Navbar() {
       animate="visible"
       variants={navVariants}
     >
-      <div className="swiss-container swiss-grid h-[60px]">
-        <div className="col-span-3 flex items-center">
+      <div className="swiss-container flex justify-between items-center h-[60px]">
+        <div className="flex items-center">
           <Logo onClick={handleLogoClick} showFullName={!isMobile} />
         </div>
         
-        <nav className="hidden md:flex col-span-9 justify-end items-center">
+        <nav className="hidden md:flex justify-end items-center">
           <ul className="flex space-x-8">
             {NAV_ITEMS.map(({ label, href }) => {
               const isActive = activeSection === href.slice(1);
@@ -165,10 +165,10 @@ export default function Navbar() {
           </ul>
         </nav>
         
-        {/* Mobile menu button */}
+        {/* Mobile menu button - positioned at far right */}
         <button
           id="mobile-menu-toggle"
-          className="md:hidden ml-auto flex items-center justify-center p-2 z-20 focus:outline-none"
+          className="md:hidden flex items-center justify-center p-2 z-20 focus:outline-none"
           onClick={toggleMenu}
           aria-label="Toggle mobile menu"
           aria-expanded={isOpen}

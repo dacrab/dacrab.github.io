@@ -26,8 +26,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Combine the font variables into a single string to avoid hydration mismatches
+  const fontClasses = `${sans.variable} ${mono.variable}`;
+  
   return (
-    <html lang="en" className={`${sans.variable} ${mono.variable}`}>
+    <html lang="en" className={fontClasses} suppressHydrationWarning>
       <body className="bg-[var(--background)] text-[var(--foreground)]">
         {children}
       </body>
