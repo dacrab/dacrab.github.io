@@ -3,17 +3,17 @@ import "./animations.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-// Define font variables
+// Define font variables - use different instances for sans and mono
 const sans = Inter({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-helvetica",
+  variable: "--font-sans",
 });
 
 const mono = Inter({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-helvetica-mono",
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {

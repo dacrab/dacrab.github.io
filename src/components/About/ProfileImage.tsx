@@ -6,9 +6,10 @@ export default function ProfileImage() {
   const statsRef = useRef<HTMLDivElement>(null);
   const isStatsInView = useInView(statsRef, { once: true, amount: 0.5 });
   
-  // Swiss style easing functions
-  const swissEase = [0.19, 1, 0.22, 1]; // Smooth Swiss-style precision curve
-  const swissEaseCrisp = [0.17, 0.67, 0.83, 0.67]; // Crisp Swiss-style precision curve
+  // Enhanced Swiss style easing functions for more explosive animations
+  const swissEase = [0.22, 0.9, 0.36, 0.95]; // Sharper Swiss-style precision curve
+  const swissEaseCrisp = [0.12, 0.8, 0.88, 0.58]; // More explosive Swiss-style precision curve
+  const swissEaseExplosive = [0, 0.9, 0.1, 1]; // Extremely sharp, explosive curve
 
   return (
     <div className="swiss-card relative">
@@ -18,19 +19,19 @@ export default function ProfileImage() {
         <motion.div 
           className="absolute inset-0 swiss-grid-pattern opacity-10"
           animate={{ 
-            backgroundPosition: ["0% 0%", "2% 2%"],
+            backgroundPosition: ["0% 0%", "5% 5%"],
           }}
           transition={{ 
-            duration: 8, 
+            duration: 5, 
             ease: "linear", 
             repeat: Infinity,
             repeatType: "reverse"
           }}
         />
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5 }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5, ease: swissEaseExplosive }}
           className="w-full h-full flex items-center justify-center relative"
         >
           {/* Swiss-style geometric abstract profile representation */}
@@ -39,12 +40,12 @@ export default function ProfileImage() {
             <motion.div 
               className="absolute top-1/4 left-1/4 w-1/2 h-1/2 bg-[var(--accent-tertiary)] opacity-20 rotate-45"
               animate={{ 
-                rotate: [45, 47, 45, 43, 45],
-                scale: [1, 1.02, 1, 0.98, 1]
+                rotate: [45, 55, 45, 35, 45],
+                scale: [1, 1.1, 1, 0.9, 1]
               }}
               transition={{
-                duration: 10,
-                ease: swissEase,
+                duration: 6,
+                ease: swissEaseExplosive,
                 repeat: Infinity,
                 repeatType: "mirror"
               }}
@@ -52,12 +53,12 @@ export default function ProfileImage() {
             <motion.div 
               className="absolute bottom-1/3 right-1/4 w-1/4 h-1/4 bg-[var(--accent-secondary)] opacity-30"
               animate={{ 
-                x: [0, 4, 0, -4, 0],
-                y: [0, -3, 0, 3, 0]
+                x: [0, 12, 0, -12, 0],
+                y: [0, -8, 0, 8, 0]
               }}
               transition={{
-                duration: 12,
-                ease: swissEase,
+                duration: 7,
+                ease: swissEaseCrisp,
                 repeat: Infinity,
                 repeatType: "mirror"
               }}
@@ -72,10 +73,11 @@ export default function ProfileImage() {
                   <motion.div 
                     className="w-24 h-24 rounded-full bg-[var(--accent)] opacity-80 flex items-center justify-center"
                     animate={{ 
-                      scale: [1, 1.03, 1, 0.98, 1]
+                      scale: [1, 1.15, 1, 0.92, 1],
+                      y: [0, -5, 0, 5, 0]
                     }}
                     transition={{
-                      duration: 6,
+                      duration: 4,
                       ease: swissEaseCrisp,
                       repeat: Infinity,
                       repeatType: "mirror"
@@ -84,14 +86,14 @@ export default function ProfileImage() {
                     <motion.div 
                       className="w-16 h-16 rounded-full bg-[var(--card)]"
                       animate={{ 
-                        scale: [1, 0.97, 1, 1.02, 1]
+                        scale: [1, 0.85, 1, 1.1, 1]
                       }}
                       transition={{
-                        duration: 6,
-                        ease: swissEaseCrisp,
+                        duration: 3.5,
+                        ease: swissEase,
                         repeat: Infinity,
                         repeatType: "mirror",
-                        delay: 0.5
+                        delay: 0.2
                       }}
                     />
                   </motion.div>
@@ -100,12 +102,13 @@ export default function ProfileImage() {
                   <motion.div 
                     className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-32 h-32 bg-[var(--accent-secondary)] opacity-60 rotate-45"
                     animate={{ 
-                      rotate: [45, 46, 45, 44, 45],
-                      y: [0, -2, 0, 2, 0]
+                      rotate: [45, 60, 45, 30, 45],
+                      y: [0, -8, 0, 8, 0],
+                      scale: [1, 1.08, 1, 0.95, 1]
                     }}
                     transition={{
-                      duration: 8,
-                      ease: swissEase,
+                      duration: 5,
+                      ease: swissEaseExplosive,
                       repeat: Infinity,
                       repeatType: "mirror"
                     }}
@@ -116,11 +119,12 @@ export default function ProfileImage() {
                 <motion.div 
                   className="absolute inset-0 swiss-grid-pattern opacity-30"
                   animate={{ 
-                    backgroundPosition: ["0% 0%", "1% 1%"],
+                    backgroundPosition: ["0% 0%", "2% 2%"],
+                    opacity: [0.3, 0.4, 0.3, 0.2, 0.3]
                   }}
                   transition={{ 
-                    duration: 6, 
-                    ease: "linear", 
+                    duration: 4, 
+                    ease: swissEaseCrisp, 
                     repeat: Infinity,
                     repeatType: "reverse"
                   }}
@@ -130,11 +134,12 @@ export default function ProfileImage() {
                 <motion.div 
                   className="absolute top-0 left-0 w-full h-2 bg-[var(--accent)]"
                   animate={{ 
-                    width: ["100%", "95%", "100%"]
+                    width: ["100%", "80%", "100%"],
+                    x: [0, 10, 0]
                   }}
                   transition={{
-                    duration: 7,
-                    ease: swissEaseCrisp,
+                    duration: 4,
+                    ease: swissEaseExplosive,
                     repeat: Infinity,
                     repeatType: "mirror"
                   }}
@@ -142,11 +147,12 @@ export default function ProfileImage() {
                 <motion.div 
                   className="absolute bottom-0 right-0 w-2 h-full bg-[var(--accent-secondary)]"
                   animate={{ 
-                    height: ["100%", "95%", "100%"]
+                    height: ["100%", "75%", "100%"],
+                    y: [0, 10, 0]
                   }}
                   transition={{
-                    duration: 8,
-                    ease: swissEaseCrisp,
+                    duration: 4.5,
+                    ease: swissEaseExplosive,
                     repeat: Infinity,
                     repeatType: "mirror"
                   }}
@@ -158,10 +164,11 @@ export default function ProfileImage() {
             <motion.div 
               className="absolute top-4 left-4 text-xs font-bold tracking-widest opacity-70 uppercase"
               animate={{ 
-                opacity: [0.7, 0.5, 0.7]
+                opacity: [0.7, 0.3, 0.7],
+                x: [0, 3, 0]
               }}
               transition={{
-                duration: 5,
+                duration: 3,
                 ease: "easeInOut",
                 repeat: Infinity,
                 repeatType: "mirror"
@@ -172,14 +179,15 @@ export default function ProfileImage() {
             <motion.div 
               className="absolute bottom-4 right-4 text-xs font-bold tracking-widest opacity-70 uppercase"
               animate={{ 
-                opacity: [0.7, 0.5, 0.7]
+                opacity: [0.7, 0.3, 0.7],
+                x: [0, -3, 0]
               }}
               transition={{
-                duration: 5,
+                duration: 3,
                 ease: "easeInOut",
                 repeat: Infinity,
                 repeatType: "mirror",
-                delay: 1
+                delay: 0.5
               }}
             >
               DEVELOPER
