@@ -20,13 +20,27 @@ const NumberCounter = memo(function NumberCounter({
 }: NumberCounterProps) {
   const [count, setCount] = useState(0);
   const raf = useRef<number | null>(null);
+  const previousInView = useRef<boolean>(false);
 
   useEffect(() => {
-    if (!isInView) {
+    // Reset to 0 when element goes out of view
+    if (!isInView && previousInView.current) {
       setCount(0);
+      previousInView.current = false;
       return;
     }
 
+    // Skip if not in view
+    if (!isInView) {
+      return;
+    }
+
+    // Update reference
+    previousInView.current = true;
+    
+    // Always start from 0 when animation begins
+    setCount(0);
+    
     let start: number | null = null;
     let started = false;
 
@@ -35,16 +49,26 @@ const NumberCounter = memo(function NumberCounter({
         start = timestamp + delay * 1000;
         started = true;
       }
+      
       if (timestamp < (start ?? 0)) {
         raf.current = requestAnimationFrame(animate);
         return;
       }
+      
       const elapsed = timestamp - (start ?? 0);
       const progress = Math.min(elapsed / (duration * 1000), 1);
-      // Ease out
-      const eased = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      
+      // Improved easing function for smoother animation
+      // Using cubic bezier-like easing for a more natural feel
+      const eased = progress === 1 
+        ? 1 
+        : progress < 0.5
+          ? 4 * progress * progress * progress
+          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+      
       const val = Math.floor(eased * end);
       setCount(val);
+      
       if (progress < 1) {
         raf.current = requestAnimationFrame(animate);
       } else {
@@ -53,6 +77,7 @@ const NumberCounter = memo(function NumberCounter({
     };
 
     raf.current = requestAnimationFrame(animate);
+    
     return () => {
       if (raf.current !== null) {
         cancelAnimationFrame(raf.current);
@@ -68,7 +93,11 @@ const NumberCounter = memo(function NumberCounter({
         opacity: isInView ? 1 : 0,
         y: isInView ? 0 : 5,
       }}
-      transition={{ duration: 0.3, delay }}
+      transition={{ 
+        duration: 0.4,
+        delay,
+        ease: [0.25, 0.1, 0.25, 1.0] // Improved easing curve
+      }}
     >
       {count}
       {suffix}

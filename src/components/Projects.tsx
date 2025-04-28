@@ -3,7 +3,7 @@
 import { useRef, useState, useMemo, memo, useEffect } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useGitHubProjects } from "@/hooks/useGitHubProjects";
-import { DEFAULT_PROJECTS, transformGitHubToProjects, ProjectData } from "./Projects/types";
+import { transformGitHubToProjects, ProjectData } from "./Projects/types";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
@@ -62,8 +62,8 @@ const Projects = memo(function Projects() {
   // Get up to 6 projects, fallback to defaults if error or empty
   const githubData = useMemo(() => {
     if (error || (githubProjects.length === 0 && !loading)) {
-      if (error) console.log("Using default projects due to error:", error.message);
-      return DEFAULT_PROJECTS.slice(0, 6);
+      if (error) console.log("No GitHub projects available:", error.message);
+      return [];
     }
     return githubProjects.length
       ? transformGitHubToProjects(githubProjects).slice(0, 6)
@@ -241,127 +241,129 @@ const Projects = memo(function Projects() {
           </div>
 
           {/* GitHub Projects */}
-          <div>
-            <div className="flex items-center justify-between mb-8">
-              <SwissMotion type="slide" delay={0.4}>
-                <TextAnimation
-                  text="GITHUB PROJECTS"
-                  variant="reveal"
-                  className="swiss-heading-3"
-                  delay={0.5}
-                />
-              </SwissMotion>
-              {loading && (
+          {githubData.length > 0 && (
+            <div>
+              <div className="flex items-center justify-between mb-8">
+                <SwissMotion type="slide" delay={0.4}>
+                  <TextAnimation
+                    text="GITHUB PROJECTS"
+                    variant="reveal"
+                    className="swiss-heading-3"
+                    delay={0.5}
+                  />
+                </SwissMotion>
+                {loading && (
+                  <SwissMotion type="fade" delay={0.2}>
+                  <div className="flex items-center">
+                    <LoadingSpinner size="small" />
+                    <span className="ml-2 text-sm text-[var(--muted)]">Loading projects...</span>
+                  </div>
+                  </SwissMotion>
+                )}
+              </div>
+              
+              {error && <ErrorMessage message={error.message} />}
+              
+              {!loading && githubData.length === 0 && !error && (
                 <SwissMotion type="fade" delay={0.2}>
-                <div className="flex items-center">
-                  <LoadingSpinner size="small" />
-                  <span className="ml-2 text-sm text-[var(--muted)]">Loading projects...</span>
+                <div className="swiss-card text-center py-12">
+                  <p className="text-[var(--muted)]">No GitHub projects found. Check back later!</p>
                 </div>
                 </SwissMotion>
               )}
-            </div>
-            
-            {error && <ErrorMessage message={error.message} />}
-            
-            {!loading && githubData.length === 0 && !error && (
-              <SwissMotion type="fade" delay={0.2}>
-              <div className="swiss-card text-center py-12">
-                <p className="text-[var(--muted)]">No GitHub projects found. Check back later!</p>
-              </div>
-              </SwissMotion>
-            )}
-            
-            <SwissMotion 
-              type="grid" 
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-            >
-              {githubData.map((project: ProjectData, index) => (
-                <SwissMotion
-                  key={project.id} 
-                  gridLayout={{
-                    columns: isMobile ? 1 : (githubData.length < 3 ? 2 : 3),
-                    rows: Math.ceil(githubData.length / (isMobile ? 1 : (githubData.length < 3 ? 2 : 3))),
-                    itemIndex: index
-                  }}
-                  whileHover="scale"
-                  whileTap="press"
-                  className="swiss-card relative"
-                >
-                  {/* Portfolio grid pattern animation - signature for Projects cards */}
-                  <motion.div 
-                    className="absolute top-2 right-2 w-8 h-8 grid grid-cols-2 grid-rows-2 gap-px opacity-20 pointer-events-none"
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 0.2, scale: 1 }}
-                    transition={{ delay: 0.6 + (index * 0.1), duration: 0.5 }}
+              
+              <SwissMotion 
+                type="grid" 
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
+                {githubData.map((project: ProjectData, index) => (
+                  <SwissMotion
+                    key={project.id} 
+                    gridLayout={{
+                      columns: isMobile ? 1 : (githubData.length < 3 ? 2 : 3),
+                      rows: Math.ceil(githubData.length / (isMobile ? 1 : (githubData.length < 3 ? 2 : 3))),
+                      itemIndex: index
+                    }}
+                    whileHover="scale"
+                    whileTap="press"
+                    className="swiss-card relative"
                   >
-                    {[0, 1, 2, 3].map(i => (
-                      <div key={i} className="bg-[var(--accent)]"></div>
-                    ))}
-                  </motion.div>
-                  
-                  <div className="absolute top-0 right-0 w-1/5 h-1 bg-[var(--accent-tertiary)]"></div>
-                  
-                  <h4 className="font-bold mb-3">{project.title}</h4>
-                  <p className="text-[var(--muted)] mb-4 text-sm line-clamp-3">{project.description}</p>
-                  
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {project.tags.map((tag, i) => (
-                      <motion.span 
-                        key={`${project.id}-${tag}-${i}`} 
-                        className="text-xs px-2 py-1 bg-[var(--card-hover)] rounded-sm"
-                        whileHover={{ 
-                          backgroundColor: "var(--accent)",
-                          color: "var(--card)",
-                          transition: { duration: 0.3 }
-                        }}
-                      >
-                        {tag}
-                      </motion.span>
-                    ))}
-                  </div>
-                  
-                  <div className="flex items-center justify-between mt-auto">
-                    <div className="flex items-center">
-                      <motion.span 
-                        className="flex items-center text-xs text-[var(--muted)]"
-                        whileHover={{ 
-                          scale: 1.1, 
-                          color: "var(--accent)",
-                          transition: { duration: 0.3 }
-                        }}
-                      >
-                        ★ {project.stars}
-                      </motion.span>
-                      {project.language && (
-                        <span className="ml-4 flex items-center text-xs text-[var(--muted)]">
-                          <span 
-                            className="inline-block w-2 h-2 rounded-full mr-1"
-                            style={{ backgroundColor: getLanguageColor(project.language) }}
-                          ></span>
-                          {project.language}
-                        </span>
-                      )}
+                    {/* Portfolio grid pattern animation - signature for Projects cards */}
+                    <motion.div 
+                      className="absolute top-2 right-2 w-8 h-8 grid grid-cols-2 grid-rows-2 gap-px opacity-20 pointer-events-none"
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 0.2, scale: 1 }}
+                      transition={{ delay: 0.6 + (index * 0.1), duration: 0.5 }}
+                    >
+                      {[0, 1, 2, 3].map(i => (
+                        <div key={i} className="bg-[var(--accent)]"></div>
+                      ))}
+                    </motion.div>
+                    
+                    <div className="absolute top-0 right-0 w-1/5 h-1 bg-[var(--accent-tertiary)]"></div>
+                    
+                    <h4 className="font-bold mb-3">{project.title}</h4>
+                    <p className="text-[var(--muted)] mb-4 text-sm line-clamp-3">{project.description}</p>
+                    
+                    <div className="flex flex-wrap gap-2 mb-6">
+                      {project.tags.map((tag, i) => (
+                        <motion.span 
+                          key={`${project.id}-${tag}-${i}`} 
+                          className="text-xs px-2 py-1 bg-[var(--card-hover)] rounded-sm"
+                          whileHover={{ 
+                            backgroundColor: "var(--accent)",
+                            color: "var(--card)",
+                            transition: { duration: 0.3 }
+                          }}
+                        >
+                          {tag}
+                        </motion.span>
+                      ))}
                     </div>
                     
-                    <Link 
-                    href={project.link}
-                    target="_blank"
-                      className="text-sm font-medium text-[var(--accent)] hover:underline"
-                    >
-                      <motion.div
-                        whileHover={{ 
-                          rotate: 45,
-                          transition: { duration: 0.3 }
-                        }}
+                    <div className="flex items-center justify-between mt-auto">
+                      <div className="flex items-center">
+                        <motion.span 
+                          className="flex items-center text-xs text-[var(--muted)]"
+                          whileHover={{ 
+                            scale: 1.1, 
+                            color: "var(--accent)",
+                            transition: { duration: 0.3 }
+                          }}
+                        >
+                          ★ {project.stars}
+                        </motion.span>
+                        {project.language && (
+                          <span className="ml-4 flex items-center text-xs text-[var(--muted)]">
+                            <span 
+                              className="inline-block w-2 h-2 rounded-full mr-1"
+                              style={{ backgroundColor: getLanguageColor(project.language) }}
+                            ></span>
+                            {project.language}
+                          </span>
+                        )}
+                      </div>
+                      
+                      <Link 
+                      href={project.link}
+                      target="_blank"
+                        className="text-sm font-medium text-[var(--accent)] hover:underline"
                       >
-                        <ArrowUpRight size={14} />
-                </motion.div>
-                    </Link>
-                  </div>
-                </SwissMotion>
-              ))}
-            </SwissMotion>
-          </div>
+                        <motion.div
+                          whileHover={{ 
+                            rotate: 45,
+                            transition: { duration: 0.3 }
+                          }}
+                        >
+                          <ArrowUpRight size={14} />
+                  </motion.div>
+                      </Link>
+                    </div>
+                  </SwissMotion>
+                ))}
+              </SwissMotion>
+            </div>
+          )}
         </motion.div>
       </div>
     </section>

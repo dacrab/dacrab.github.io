@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import LottieVisualization from "./Experience/LottieVisualization";
 import SkillProgressions from "./Experience/SkillProgressions";
@@ -11,7 +11,6 @@ import ShapeAnimation from "./ShapeAnimation";
 import ParallaxLayer from "./ParallaxLayer";
 
 export default function Experience() {
-  const ref = useRef<HTMLElement>(null);
   const isMobile = useIsMobile();
   
   const skillsSectionRef = useRef<HTMLDivElement>(null);
@@ -23,14 +22,6 @@ export default function Experience() {
   const timelineRef = useRef<HTMLDivElement>(null);
   const isTimelineInView = useInView(timelineRef, { once: false, amount: 0.1 });
   
-  // Scroll-based animation
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"]
-  });
-
-  const contentY = useTransform(scrollYProgress, [0, 1], [30, -30]);
-  
   // Signature Experience section animations - timeline-like staggered lines
   const lineCount = 7;
   const lines = Array.from({ length: lineCount });
@@ -38,7 +29,6 @@ export default function Experience() {
   return (
     <section
       id="experience"
-      ref={ref}
       className="py-24 md:py-32 relative overflow-hidden"
     >
       {/* Swiss style accent elements with Experience-specific animations */}
@@ -116,7 +106,6 @@ export default function Experience() {
 
         <motion.div
           className="max-w-6xl mx-auto mb-16"
-          style={{ y: contentY }}
         >
           <div className="swiss-grid">
             <SwissMotion 

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { SKILL_PROGRESSIONS } from "./types";
 import NumberCounter from "./NumberCounter";
-import { memo } from "react";
+import { memo, useRef } from "react";
 
 interface SkillProgressionsProps {
   isInView: boolean;
@@ -9,11 +9,25 @@ interface SkillProgressionsProps {
 }
 
 const SkillProgressions = memo(function SkillProgressions({ isInView, isMobile }: SkillProgressionsProps) {
+  // Track previous view state to handle reset
+  const wasInView = useRef(false);
+  
+  // Reset animation when going out of view
+  if (!isInView && wasInView.current) {
+    wasInView.current = false;
+  } else if (isInView) {
+    wasInView.current = true;
+  }
+  
   // Animation helpers
   const getFooterAnim = () => ({
     initial: { opacity: 0, y: isMobile ? 8 : 10 },
     animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : isMobile ? 8 : 10 },
-    transition: { duration: isMobile ? 0.3 : 0.4, delay: 0.6 }
+    transition: { 
+      duration: isMobile ? 0.4 : 0.5, 
+      delay: 0.6,
+      ease: [0.25, 0.1, 0.25, 1.0] // Improved easing for smoother animation
+    }
   });
 
   return (
@@ -34,14 +48,19 @@ const SkillProgressions = memo(function SkillProgressions({ isInView, isMobile }
         {SKILL_PROGRESSIONS.map((skill, index) => {
           // Cap delay for better mobile performance
           const cappedIdx = Math.min(index, isMobile ? 3 : 4);
-          const delay = 0.15 + cappedIdx * (isMobile ? 0.06 : 0.08);
+          // Slightly longer base delay to ensure proper sequence
+          const delay = 0.2 + cappedIdx * (isMobile ? 0.08 : 0.1);
 
           return (
             <motion.div
               key={skill.name}
               initial={{ opacity: 0, x: isMobile ? -8 : -10 }}
               animate={{ opacity: isInView ? 1 : 0, x: isInView ? 0 : isMobile ? -8 : -10 }}
-              transition={{ duration: isMobile ? 0.3 : 0.4, delay }}
+              transition={{ 
+                duration: isMobile ? 0.4 : 0.5, 
+                delay,
+                ease: [0.25, 0.1, 0.25, 1.0] // Smoother easing
+              }}
               className="group"
             >
               <div className="flex justify-between items-center mb-2">
@@ -50,7 +69,11 @@ const SkillProgressions = memo(function SkillProgressions({ isInView, isMobile }
                     className="w-2 h-2 bg-[var(--accent)] mr-3"
                     initial={{ scale: 0.8 }}
                     animate={{ scale: isInView ? 1 : 0.8 }}
-                    transition={{ duration: isMobile ? 0.25 : 0.3, delay: delay + 0.05 }}
+                    transition={{ 
+                      duration: isMobile ? 0.3 : 0.4, 
+                      delay: delay + 0.05,
+                      ease: "easeOut"
+                    }}
                   />
                   <span className="text-base font-medium group-hover:text-[var(--accent)] transition-colors duration-200">
                     {skill.name}
@@ -58,7 +81,7 @@ const SkillProgressions = memo(function SkillProgressions({ isInView, isMobile }
                 </div>
                 <NumberCounter
                   end={skill.percentage}
-                  duration={isMobile ? 0.8 : 1}
+                  duration={isMobile ? 1.0 : 1.2} // Slightly longer for smoother counting
                   delay={delay + 0.15}
                   suffix="%"
                   isInView={isInView}
@@ -70,14 +93,17 @@ const SkillProgressions = memo(function SkillProgressions({ isInView, isMobile }
                   className="h-full"
                   style={{
                     background: "var(--accent)",
-                    willChange: "width"
+                    willChange: "width",
+                    originX: 0 // Ensure animation starts from left
                   }}
                   initial={{ width: 0 }}
-                  animate={{ width: isInView ? `${skill.percentage}%` : 0 }}
+                  animate={{ width: isInView ? `${skill.percentage}%` : "0%" }}
+                  // Always start from 0 width when not in view
+                  key={`${skill.name}-${isInView ? "visible" : "hidden"}`}
                   transition={{ 
-                    duration: isMobile ? 0.6 : 0.8, 
+                    duration: isMobile ? 0.8 : 1.0, 
                     delay: delay + 0.15, 
-                    ease: [0.17, 0.67, 0.83, 0.67] 
+                    ease: [0.25, 0.1, 0.25, 1.0] // Smoother cubic bezier curve
                   }}
                 />
               </div>

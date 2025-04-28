@@ -1,4 +1,4 @@
-import { motion, useInView, useScroll, useTransform, TargetAndTransition } from "framer-motion";
+import { motion, useInView, TargetAndTransition } from "framer-motion";
 import { memo, useState, useEffect, useRef } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import NumberCounter from "./NumberCounter";
@@ -13,6 +13,8 @@ interface LottieVisualizationProps {
 const ANIMATION_EASING = {
   swissEaseExplosive: [0, 0.9, 0.1, 1], // Extremely sharp, explosive curve
   swissEaseCrisp: [0.12, 0.8, 0.88, 0.58], // More explosive Swiss-style precision curve
+  // Add smoother easing for consistent feel across components
+  swissEaseSmooth: [0.25, 0.1, 0.25, 1.0], // Smoother cubic bezier curve for animations
 };
 
 // Stats data
@@ -64,6 +66,16 @@ const LottieVisualization = memo(function LottieVisualization({
   const visualizationRef = useRef<HTMLDivElement>(null);
   const defaultIsInView = useInView(visualizationRef, { once: false, amount: 0.3 });
   const isInView = providedIsInView !== undefined ? providedIsInView : defaultIsInView;
+  const wasInView = useRef(false);
+  
+  // Track viewport state change
+  useEffect(() => {
+    if (isInView) {
+      wasInView.current = true;
+    } else if (!isInView && wasInView.current) {
+      wasInView.current = false;
+    }
+  }, [isInView]);
   
   // State
   const [hasLoaded, setHasLoaded] = useState(false);
@@ -75,25 +87,15 @@ const LottieVisualization = memo(function LottieVisualization({
     setIsLowEndDevice(detectLowEndDevice());
   }, []);
 
-  // Scroll-based animations
-  const { scrollYProgress } = useScroll({
-    target: visualizationRef,
-    offset: ["start end", "end start"]
-  });
-  
-  const rotateZ = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.75, 1], [-3, 0, 5, 0, -3]);
-  const scale = useTransform(scrollYProgress, [0, 0.25, 0.5, 0.75, 1], [0.95, 1, 1.05, 1, 0.95]);
-  const translateY = useTransform(scrollYProgress, [0, 0.5, 1], [5, 0, 5]);
-  
-  // Animation variants
+  // Main animation variants
   const mainAnim = {
     initial: { opacity: 0, scale: 0.9 },
     animate: { 
       opacity: hasLoaded ? 1 : 0,
       scale: hasLoaded ? 1 : 0.9,
       transition: { 
-        duration: 0.6, 
-        ease: ANIMATION_EASING.swissEaseExplosive
+        duration: 0.8, // Slightly longer for smoother effect
+        ease: ANIMATION_EASING.swissEaseSmooth
       }
     }
   };
@@ -106,11 +108,11 @@ const LottieVisualization = memo(function LottieVisualization({
       transition: {
         duration: isMobile
           ? isLowEndDevice
-            ? 0.3
-            : 0.4
-          : 0.5,
+            ? 0.4
+            : 0.5
+          : 0.6,
         delay: isMobile && isLowEndDevice ? delay * 0.7 : delay,
-        ease: ANIMATION_EASING.swissEaseExplosive
+        ease: ANIMATION_EASING.swissEaseSmooth // Use smoother easing
       },
     }),
   };
@@ -123,11 +125,6 @@ const LottieVisualization = memo(function LottieVisualization({
   return (
     <motion.div 
       ref={visualizationRef}
-      style={{ 
-        rotateZ,
-        scale,
-        y: translateY
-      }}
       className="relative z-0"
       {...mainAnim}
     >
@@ -147,6 +144,7 @@ const LottieVisualization = memo(function LottieVisualization({
           custom={0}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
+          key={`heading-${isInView ? "visible" : "hidden"}`} // Force re-animation
         >
           <span className="text-gradient">Developer Journey</span>
         </motion.h3>
@@ -158,6 +156,7 @@ const LottieVisualization = memo(function LottieVisualization({
           custom={0.1}
           initial="hidden"
           animate={isInView ? "visible" : "hidden"}
+          key={`description-${isInView ? "visible" : "hidden"}`} // Force re-animation
         >
           A visual representation of my growth and experience in web development
         </motion.p>
@@ -174,11 +173,11 @@ const LottieVisualization = memo(function LottieVisualization({
             transition={{
               duration: isMobile
                 ? isLowEndDevice
-                  ? 0.4
-                  : 0.5
-                : 0.6,
+                  ? 0.5
+                  : 0.6
+                : 0.7,
               delay: 0.2,
-              ease: ANIMATION_EASING.swissEaseExplosive
+              ease: ANIMATION_EASING.swissEaseSmooth
             }}
             whileHover={{
               scale: isMobile
@@ -186,10 +185,11 @@ const LottieVisualization = memo(function LottieVisualization({
                   ? 1
                   : 1.03
                 : 1.05,
-              transition: { duration: 0.3, ease: ANIMATION_EASING.swissEaseExplosive }
+              transition: { duration: 0.3, ease: ANIMATION_EASING.swissEaseSmooth }
             }}
             className="w-full"
             style={{ height: "auto" }}
+            key={`timeline-${isInView ? "visible" : "hidden"}`} // Force re-animation
           >
             <TimelineVisualization 
               width={secondWidth} 
@@ -210,17 +210,18 @@ const LottieVisualization = memo(function LottieVisualization({
           transition={{
             duration: isMobile
               ? isLowEndDevice
-                ? 0.4
-                : 0.5
-              : 0.6,
-            delay: isMobile && isLowEndDevice ? 0.2 : 0.3,
-            ease: ANIMATION_EASING.swissEaseExplosive
+                ? 0.5
+                : 0.6
+              : 0.7,
+            delay: 0.3,
+            ease: ANIMATION_EASING.swissEaseSmooth
           }}
           className="grid grid-cols-3 gap-3"
+          key={`stats-${isInView ? "visible" : "hidden"}`} // Force re-animation
         >
           {STATS.map((stat) => (
             <StatsCard
-              key={stat.label}
+              key={`stat-${stat.label}-${isInView ? "visible" : "hidden"}`}
               value={stat.value}
               label={stat.label}
               delay={stat.delay}
@@ -248,7 +249,7 @@ function AccentElements() {
         }}
         transition={{
           duration: 5,
-          ease: ANIMATION_EASING.swissEaseCrisp,
+          ease: ANIMATION_EASING.swissEaseSmooth,
           repeat: Infinity,
           repeatType: "mirror"
         }}
@@ -262,7 +263,7 @@ function AccentElements() {
         }}
         transition={{
           duration: 6,
-          ease: ANIMATION_EASING.swissEaseCrisp,
+          ease: ANIMATION_EASING.swissEaseSmooth,
           repeat: Infinity,
           repeatType: "mirror",
           delay: 0.5
@@ -276,7 +277,7 @@ function AccentElements() {
         }}
         transition={{
           duration: 4,
-          ease: ANIMATION_EASING.swissEaseExplosive,
+          ease: ANIMATION_EASING.swissEaseSmooth,
           repeat: Infinity,
           repeatType: "mirror",
           delay: 0.2
@@ -300,7 +301,7 @@ function MainVisualization({ size }: { size: number }) {
       }}
       transition={{
         duration: 7,
-        ease: ANIMATION_EASING.swissEaseCrisp,
+        ease: ANIMATION_EASING.swissEaseSmooth,
         repeat: Infinity,
         repeatType: "mirror"
       }}
@@ -329,7 +330,7 @@ function MainVisualization({ size }: { size: number }) {
         }}
         transition={{
           duration: 5,
-          ease: ANIMATION_EASING.swissEaseExplosive,
+          ease: ANIMATION_EASING.swissEaseSmooth,
           repeat: Infinity,
           repeatType: "mirror"
         }}
@@ -342,7 +343,7 @@ function MainVisualization({ size }: { size: number }) {
         }}
         transition={{
           duration: 6,
-          ease: ANIMATION_EASING.swissEaseCrisp,
+          ease: ANIMATION_EASING.swissEaseSmooth,
           repeat: Infinity,
           repeatType: "mirror",
           delay: 0.3
@@ -356,7 +357,7 @@ function MainVisualization({ size }: { size: number }) {
         }}
         transition={{
           duration: 5.5,
-          ease: ANIMATION_EASING.swissEaseCrisp,
+          ease: ANIMATION_EASING.swissEaseSmooth,
           repeat: Infinity,
           repeatType: "mirror",
           delay: 0.7
@@ -372,7 +373,7 @@ function MainVisualization({ size }: { size: number }) {
         }}
         transition={{
           duration: 4,
-          ease: ANIMATION_EASING.swissEaseExplosive,
+          ease: ANIMATION_EASING.swissEaseSmooth,
           repeat: Infinity,
           repeatType: "mirror"
         }}
@@ -385,7 +386,7 @@ function MainVisualization({ size }: { size: number }) {
         }}
         transition={{
           duration: 4.5,
-          ease: ANIMATION_EASING.swissEaseExplosive,
+          ease: ANIMATION_EASING.swissEaseSmooth,
           repeat: Infinity,
           repeatType: "mirror",
           delay: 0.2
@@ -434,7 +435,7 @@ function MainVisualization({ size }: { size: number }) {
         }}
         transition={{
           duration: 5,
-          ease: ANIMATION_EASING.swissEaseCrisp,
+          ease: ANIMATION_EASING.swissEaseSmooth,
           repeat: Infinity,
           repeatType: "mirror"
         }}
@@ -446,7 +447,7 @@ function MainVisualization({ size }: { size: number }) {
           }}
           transition={{
             duration: 4,
-            ease: ANIMATION_EASING.swissEaseExplosive,
+            ease: ANIMATION_EASING.swissEaseSmooth,
             repeat: Infinity,
             repeatType: "mirror"
           }}
@@ -458,7 +459,7 @@ function MainVisualization({ size }: { size: number }) {
           }}
           transition={{
             duration: 4.5,
-            ease: ANIMATION_EASING.swissEaseExplosive,
+            ease: ANIMATION_EASING.swissEaseSmooth,
             repeat: Infinity,
             repeatType: "mirror",
             delay: 0.2
@@ -471,7 +472,7 @@ function MainVisualization({ size }: { size: number }) {
           }}
           transition={{
             duration: 4.2,
-            ease: ANIMATION_EASING.swissEaseExplosive,
+            ease: ANIMATION_EASING.swissEaseSmooth,
             repeat: Infinity,
             repeatType: "mirror",
             delay: 0.4
@@ -502,7 +503,7 @@ function TimelineVisualization({ width, height, isInView }: TimelineProps) {
       }}
       transition={{
         duration: 5,
-        ease: ANIMATION_EASING.swissEaseCrisp,
+        ease: ANIMATION_EASING.swissEaseSmooth,
         repeat: Infinity,
         repeatType: "mirror"
       }}
@@ -534,7 +535,7 @@ function TimelineVisualization({ width, height, isInView }: TimelineProps) {
             }}
             transition={{
               duration: 4,
-              ease: ANIMATION_EASING.swissEaseCrisp,
+              ease: ANIMATION_EASING.swissEaseSmooth,
               repeat: Infinity,
               repeatType: "mirror"
             }}
@@ -545,7 +546,7 @@ function TimelineVisualization({ width, height, isInView }: TimelineProps) {
             position="left-0" 
             value={1} 
             delay={0.2} 
-            duration={0.8}
+            duration={1.2}
             isInView={isInView} 
             animationPattern={{
               scale: [1, 1.2, 1, 0.9, 1],
@@ -558,7 +559,7 @@ function TimelineVisualization({ width, height, isInView }: TimelineProps) {
             position="left-1/3" 
             value={5} 
             delay={0.4} 
-            duration={1}
+            duration={1.4}
             isInView={isInView} 
             animationPattern={{
               scale: [1, 1.2, 1, 0.9, 1],
@@ -573,7 +574,7 @@ function TimelineVisualization({ width, height, isInView }: TimelineProps) {
             position="left-2/3" 
             value={10} 
             delay={0.6} 
-            duration={1.2}
+            duration={1.6}
             isInView={isInView} 
             animationPattern={{
               scale: [1, 0.9, 1, 1.2, 1],
@@ -588,7 +589,7 @@ function TimelineVisualization({ width, height, isInView }: TimelineProps) {
             position="right-0" 
             value={15} 
             delay={0.8} 
-            duration={1.4}
+            duration={1.8}
             isInView={isInView} 
             animationPattern={{
               scale: [1, 1.2, 1, 0.9, 1],
@@ -607,7 +608,7 @@ function TimelineVisualization({ width, height, isInView }: TimelineProps) {
             }}
             transition={{
               duration: 3,
-              ease: ANIMATION_EASING.swissEaseCrisp,
+              ease: ANIMATION_EASING.swissEaseSmooth,
               repeat: Infinity,
               repeatType: "mirror"
             }}
@@ -622,7 +623,7 @@ function TimelineVisualization({ width, height, isInView }: TimelineProps) {
             }}
             transition={{
               duration: 3,
-              ease: ANIMATION_EASING.swissEaseCrisp,
+              ease: ANIMATION_EASING.swissEaseSmooth,
               repeat: Infinity,
               repeatType: "mirror",
               delay: 0.5
@@ -685,7 +686,7 @@ function TimelineNode({
       animate={animationPattern}
       transition={{
         duration: transitionDuration,
-        ease: ANIMATION_EASING.swissEaseExplosive,
+        ease: ANIMATION_EASING.swissEaseSmooth,
         repeat: Infinity,
         repeatType: "mirror",
         delay: transitionDelay
@@ -725,9 +726,9 @@ const StatsCard = memo(function StatsCard({
       y: 0,
       scale: 1,
       transition: {
-        duration: 0.5,
+        duration: 0.6,
         delay,
-        ease: ANIMATION_EASING.swissEaseExplosive
+        ease: ANIMATION_EASING.swissEaseSmooth
       },
     },
   };
@@ -739,7 +740,7 @@ const StatsCard = memo(function StatsCard({
       animate={isInView ? "visible" : "hidden"}
       whileHover={{ 
         scale: 1.05,
-        transition: { duration: 0.2, ease: ANIMATION_EASING.swissEaseExplosive }
+        transition: { duration: 0.3, ease: ANIMATION_EASING.swissEaseSmooth }
       }}
       className="bg-[var(--card)]/30 backdrop-blur-sm p-3 rounded-sm relative border-t border-[var(--accent)]/20"
     >
@@ -747,7 +748,7 @@ const StatsCard = memo(function StatsCard({
         <div className="text-2xl font-bold mb-1 flex justify-center">
           <NumberCounter
             end={value}
-            duration={value < 10 ? 0.8 : 1.2}
+            duration={value < 10 ? 1.2 : 1.6}
             isInView={isInView}
             suffix="+"
             className="text-2xl font-bold"
@@ -766,7 +767,7 @@ const StatsCard = memo(function StatsCard({
         }}
         transition={{
           duration: 4,
-          ease: ANIMATION_EASING.swissEaseCrisp,
+          ease: ANIMATION_EASING.swissEaseSmooth,
           repeat: Infinity,
           repeatType: "mirror"
         }}

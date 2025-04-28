@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { GitHubProjectData, GitHubRepo } from "@/types/github";
-import { transformReposToProjects } from "@/services/github";
+import { GitHubProjectData } from "@/types/github";
+import { fetchGitHubRepos, transformReposToProjects } from "@/services/github";
 
 interface UseGitHubProjectsResult {
   projects: GitHubProjectData[];
@@ -19,10 +19,6 @@ interface GitHubProjectsOptions {
   forceFresh?: boolean;
 }
 
-// Cache implementation
-const CACHE_EXPIRATION = 15 * 60 * 1000; // 15 minutes
-const projectsCache = new Map<string, { data: GitHubRepo[], timestamp: number }>();
-
 export function useGitHubProjects(
   username: string = "dacrab",
   options: GitHubProjectsOptions = {},
@@ -31,12 +27,9 @@ export function useGitHubProjects(
   const [projects, setProjects] = useState<GitHubProjectData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-
-  // Generate a cache key based on query parameters
-  const cacheKey = `${username}_${options.sort || ""}_${options.direction || ""}`;
   
   // Memoize options to prevent infinite loops
-  const { minStars, excludeForks, forceFresh } = options;
+  const { sort, direction, minStars, excludeForks, forceFresh } = options;
 
   const fetchProjects = useCallback(async () => {
     if (!shouldFetch) return;
@@ -45,44 +38,19 @@ export function useGitHubProjects(
       setLoading(true);
       setError(null);
 
-      // Check cache first if not forcing fresh data
-      const cached = projectsCache.get(cacheKey);
-      if (!forceFresh && cached && (Date.now() - cached.timestamp < CACHE_EXPIRATION)) {
-        const filteredProjects = transformReposToProjects(cached.data).filter(project => 
-          (!minStars || project.stars >= (minStars || 0)) &&
-          (!excludeForks || !project.fork)
-        );
-        setProjects(filteredProjects);
-        setLoading(false);
-        return;
-      }
-
-      // Build query parameters
-      const params = new URLSearchParams();
-      if (username) params.append("username", username);
-      if (options.sort) params.append("sort", options.sort);
-      if (options.direction) params.append("direction", options.direction);
-
-      // Fetch from API
-      const response = await fetch(`/api/github?${params.toString()}`);
-      
-      if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
-      }
-      
-      const repos: GitHubRepo[] = await response.json();
-      
-      // Cache the results
-      projectsCache.set(cacheKey, {
-        data: repos,
-        timestamp: Date.now()
-      });
-      
-      // Filter and transform the projects
-      const filteredProjects = transformReposToProjects(repos).filter(project => 
-        (!minStars || project.stars >= (minStars || 0)) &&
-        (!excludeForks || !project.fork)
+      // Fetch repos from the central service
+      const repos = await fetchGitHubRepos(
+        username, 
+        sort || "updated", 
+        direction || "desc", 
+        forceFresh
       );
+      
+      // Transform and filter repos to projects
+      const filteredProjects = transformReposToProjects(repos, {
+        minStars,
+        excludeForks
+      });
       
       setProjects(filteredProjects);
     } catch (err) {
@@ -91,7 +59,7 @@ export function useGitHubProjects(
     } finally {
       setLoading(false);
     }
-  }, [username, cacheKey, minStars, excludeForks, forceFresh, shouldFetch, options.direction, options.sort]);
+  }, [username, sort, direction, minStars, excludeForks, forceFresh, shouldFetch]);
 
   useEffect(() => {
     if (shouldFetch) {

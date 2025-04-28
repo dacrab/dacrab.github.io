@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
-import { GitHubRepo } from '@/types/github';
+import { fetchGitHubRepos } from '@/services/github';
 
 /**
  * @description API route handler to fetch GitHub repositories for a given user.
- * It handles authentication using a server-side token (if available)
- * and includes specific error handling for rate limits and user not found errors.
+ * Uses the centralized GitHub service with built-in caching.
  * @param request The incoming Next.js API request object.
  * @returns A NextResponse object containing the repository data or an error message.
  */
@@ -13,33 +12,36 @@ export async function GET(request: Request) {
   const username = searchParams.get('username') || 'dacrab';
   const sort = searchParams.get('sort') || 'updated';
   const direction = searchParams.get('direction') || 'desc';
+  const forceFresh = searchParams.get('forceFresh') === 'true';
   
   try {
-    const response = await fetch(
-      `https://api.github.com/users/${username}/repos?sort=${sort}&direction=${direction}&per_page=10`,
-      {
-        headers: {
-          Accept: 'application/vnd.github.v3+json',
-          'User-Agent': 'Portfolio-Website',
-          ...(process.env.GITHUB_TOKEN && {
-            Authorization: `token ${process.env.GITHUB_TOKEN}`,
-          }),
-        },
-        next: { revalidate: 3600 }, // Cache for 1 hour
-      }
+    // Use the centralized GitHub service
+    const repos = await fetchGitHubRepos(
+      username, 
+      sort as "updated" | "created" | "pushed" | "full_name", 
+      direction as "asc" | "desc",
+      forceFresh
     );
-
-    if (!response.ok) {
-      return NextResponse.json(
-        { error: `GitHub API error: ${response.status}` },
-        { status: response.status }
-      );
-    }
-
-    const repos: GitHubRepo[] = await response.json();
+    
     return NextResponse.json(repos);
   } catch (error) {
     console.error('GitHub API error:', error);
+    
+    // Create appropriate error responses
+    if (error instanceof Error) {
+      if (error.message.includes('rate limit exceeded')) {
+        return NextResponse.json(
+          { error: error.message },
+          { status: 429 }
+        );
+      } else if (error.message.includes('not found')) {
+        return NextResponse.json(
+          { error: error.message },
+          { status: 404 }
+        );
+      }
+    }
+    
     return NextResponse.json(
       { error: 'Failed to fetch GitHub repositories' },
       { status: 500 }

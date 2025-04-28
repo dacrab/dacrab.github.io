@@ -52,63 +52,8 @@ export interface ProjectData {
   language?: string;
 }
 
-// Default projects to show when GitHub projects are not available
-export const DEFAULT_PROJECTS: ProjectData[] = [
-  {
-    id: 1,
-    title: "Portfolio Website",
-    description: "Modern portfolio with Swiss design principles, Next.js, and Framer Motion animations.",
-    tags: ["Next.js", "TypeScript", "Framer Motion", "TailwindCSS"],
-    link: "https://github.com/dacrab/portfolio",
-    stars: 12,
-    language: "TypeScript"
-  },
-  {
-    id: 2,
-    title: "E-commerce Platform",
-    description: "Full-stack online store with product catalog, cart system, and payment processing.",
-    tags: ["React", "Node.js", "MongoDB", "Express"],
-    link: "https://github.com/dacrab/e-commerce-platform",
-    stars: 8,
-    language: "JavaScript"
-  },
-  {
-    id: 3,
-    title: "Data Visualization Dashboard",
-    description: "Interactive dashboard for visualizing and analyzing complex datasets.",
-    tags: ["D3.js", "React", "TypeScript", "Chart.js"],
-    link: "https://github.com/dacrab/data-viz-dashboard",
-    stars: 10,
-    language: "TypeScript"
-  },
-  {
-    id: 4,
-    title: "Task Management App",
-    description: "Productivity application with drag-and-drop functionality and collaboration features.",
-    tags: ["React", "Firebase", "Redux", "Material UI"],
-    link: "https://github.com/dacrab/task-manager",
-    stars: 7,
-    language: "JavaScript"
-  },
-  {
-    id: 5,
-    title: "AI Content Generator",
-    description: "A tool that leverages AI to generate content for various purposes.",
-    tags: ["Python", "TensorFlow", "Flask", "React"],
-    link: "https://github.com/dacrab/ai-content-generator",
-    stars: 15,
-    language: "Python"
-  },
-  {
-    id: 6,
-    title: "Mobile Fitness App",
-    description: "Cross-platform mobile application for tracking workouts and health metrics.",
-    tags: ["React Native", "Redux", "Firebase", "Health APIs"],
-    link: "https://github.com/dacrab/fitness-tracker",
-    stars: 6,
-    language: "JavaScript"
-  }
-];
+// Empty default projects array - no fallback when GitHub API fails
+export const DEFAULT_PROJECTS: ProjectData[] = [];
 
 /**
  * Transform GitHub project data to ProjectData format
