@@ -1,111 +1,135 @@
 "use client";
 
-import { useRef, useEffect, memo, useState } from "react";
-import { useInView, useAnimation, useScroll, useTransform, motion } from "framer-motion";
-import { useIsMobile } from "@/hooks/useIsMobile";
-import SectionHeader from "./About/SectionHeader";
-import ProfileImage from "./About/ProfileImage";
+import { useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import BioSection from "./About/BioSection";
+import ProfileImage from "./About/ProfileImage";
+import SwissMotion from "./SwissMotion";
+import ShapeAnimation from "./ShapeAnimation";
+import ParallaxLayer from "./ParallaxLayer";
+import StaggerItem from "./StaggerItem";
 
-const About = memo(function About() {
-  const ref = useRef<HTMLDivElement>(null);
-  const bioRef = useRef<HTMLDivElement>(null);
-  const isMobile = useIsMobile();
-  const isInView = useInView(ref, { once: false, amount: isMobile ? 0.05 : 0.1 });
-  const controls = useAnimation();
-  const [hasBeenVisible, setHasBeenVisible] = useState(false);
-
-  // Scroll-based Y transform for parallax effect
+export default function About() {
+  const ref = useRef<HTMLElement>(null);
+  
+  // Scroll-based animation
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
   });
-  const contentY = useTransform(scrollYProgress, [0, 0.5], [isMobile ? 3 : 5, 0]);
 
-  // Track first visibility for lazy effects
-  useEffect(() => {
-    if (isInView && !hasBeenVisible) setHasBeenVisible(true);
-  }, [isInView, hasBeenVisible]);
-
-  // Animate bio section in/out
-  useEffect(() => {
-    const state = isInView ? "visible" : (!hasBeenVisible ? "hidden" : undefined);
-    if (state !== undefined) {
-      controls.start(state);
-    }
-  }, [isInView, controls, hasBeenVisible]);
-
-  // Background glow animation configs
-  const leftGlow = {
-    animate: {
-      opacity: isInView ? (isMobile ? 0.3 : 0.5) : 0,
-      scale: isInView ? [1, 1.1, 1] : 0.8,
-    },
-    transition: {
-      opacity: { duration: isMobile ? 1.2 : 1.5 },
-      scale: {
-        repeat: Infinity,
-        duration: isMobile ? 18 : 15,
-        ease: "easeInOut",
-        repeatType: "mirror"
-      }
-    }
-  };
-
-  const rightGlow = {
-    animate: {
-      opacity: isInView ? (isMobile ? 0.25 : 0.4) : 0,
-      scale: isInView ? [1, 0.95, 1] : 0.8,
-    },
-    transition: {
-      opacity: { duration: isMobile ? 1.2 : 1.5, delay: isMobile ? 0.2 : 0.3 },
-      scale: {
-        repeat: Infinity,
-        duration: isMobile ? 15 : 12,
-        ease: "easeInOut",
-        repeatType: "mirror"
-      }
-    }
-  };
+  const contentY = useTransform(scrollYProgress, [0, 1], [30, -30]);
+  
+  // Signature "About" section animations - multiple diagonal lines
+  const diagonalCount = 5;
+  const diagonals = Array.from({ length: diagonalCount });
 
   return (
     <section
       id="about"
       ref={ref}
-      className="py-16 md:py-28 relative overflow-hidden"
+      className="py-24 md:py-32 relative overflow-hidden"
     >
-      {/* Render background effects only after first visibility and only on desktop */}
-      {!isMobile && hasBeenVisible && (
-        <>
-          <motion.div
-            className="absolute top-1/4 -left-[10%] w-[35%] h-[40%] rounded-full bg-accent/20 blur-[120px] opacity-0"
-            animate={leftGlow.animate}
-            transition={leftGlow.transition}
+      {/* Swiss style accent elements with unique About section animations */}
+      <ParallaxLayer speed={0.15} direction="left" className="absolute right-0 top-1/4 z-0">
+        <ShapeAnimation 
+          type="line" 
+          color="var(--accent)" 
+          size={150} 
+          strokeWidth={16}
+          variant="draw"
+          delay={0.3}
+          duration={1.2}
+        />
+      </ParallaxLayer>
+      
+      {/* Multiple diagonal lines with staggered animations - unique to About */}
+      {diagonals.map((_, i) => (
+        <ParallaxLayer 
+          key={`diagonal-${i}`} 
+          speed={0.05 + (i * 0.02)} 
+          direction="right" 
+          className={`absolute left-1/4 z-0`}
+          style={{ top: `${20 + (i * 12)}%` }}
+        >
+          <ShapeAnimation 
+            type="diagonal" 
+            color="var(--accent-secondary)" 
+            size={80 - (i * 10)} 
+            strokeWidth={2}
+            variant="draw"
+            delay={0.2 + (i * 0.1)}
+            duration={0.8}
           />
-          <motion.div
-            className="absolute bottom-1/4 -right-[5%] w-[25%] h-[30%] rounded-full bg-accent/15 blur-[100px] opacity-0"
-            animate={rightGlow.animate}
-            transition={rightGlow.transition}
-          />
-        </>
-      )}
+        </ParallaxLayer>
+      ))}
+      
+      <ParallaxLayer speed={0.2} direction="up" className="absolute left-16 top-16 z-0">
+        <ShapeAnimation 
+          type="square" 
+          color="var(--accent-tertiary)" 
+          size={48} 
+          variant="rotate"
+          delay={0.2}
+          loop={true}
+        />
+      </ParallaxLayer>
 
-      <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        <SectionHeader isMobile={isMobile} />
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-12 lg:gap-x-8 relative">
-          <ProfileImage contentY={contentY} isMobile={isMobile} />
-          <BioSection
-            contentY={contentY}
-            bioRef={bioRef}
-            bioAnimate={controls}
-            isMobile={isMobile}
-          />
-        </div>
+      <div className="swiss-container relative z-10">
+        {/* Section header with Swiss style - Horizontal reveal animation unique to About */}
+        <SwissMotion type="reveal" delay={0.2} duration={1.0} className="mb-16">
+          <div className="flex items-center mb-4">
+            <SwissMotion type="rotate" delay={0.4} duration={0.7}>
+              <div className="w-8 h-8 bg-[var(--accent-tertiary)] mr-4"></div>
+            </SwissMotion>
+            <h2 className="swiss-heading-2">ABOUT</h2>
+          </div>
+          <div className="ml-12">
+            <SwissMotion type="reveal" delay={0.5} duration={0.6}>
+              <div className="w-24 h-1 bg-[var(--foreground)] mb-8"></div>
+            </SwissMotion>
+            <SwissMotion type="fade" delay={0.7} duration={0.6}>
+              <p className="swiss-body max-w-2xl">
+                I&apos;m a full-stack developer with a passion for creating elegant, 
+                user-centered digital experiences with clean and efficient code.
+              </p>
+            </SwissMotion>
+          </div>
+        </SwissMotion>
+
+        {/* Content with Swiss style grid and alternating animations */}
+        <motion.div 
+          className="swiss-grid"
+          style={{ y: contentY }}
+        >
+          <SwissMotion 
+            type="slide" 
+            delay={0.3} 
+            duration={0.7}
+            className="swiss-asymmetric-left"
+          >
+            <BioSection />
+          </SwissMotion>
+          
+          <SwissMotion 
+            type="scale" 
+            delay={0.5} 
+            duration={0.8}
+            className="swiss-asymmetric-right mt-12 md:mt-0"
+          >
+            <ProfileImage />
+          </SwissMotion>
+        </motion.div>
+        
+        {/* About section signature: Staggered grid of squares at the bottom */}
+        <SwissMotion type="stagger" staggerChildren={0.05} delay={0.7} className="mt-16 grid grid-cols-6 md:grid-cols-12 gap-2 max-w-4xl mx-auto">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <StaggerItem key={`square-${i}`} type="scale" whileHover="scale">
+              <div className={`aspect-square ${i % 3 === 0 ? 'bg-[var(--accent)]' : i % 3 === 1 ? 'bg-[var(--accent-secondary)]' : 'bg-[var(--accent-tertiary)]'} opacity-${20 + (i * 5)}`}></div>
+            </StaggerItem>
+          ))}
+        </SwissMotion>
       </div>
     </section>
   );
-});
-
-About.displayName = "About";
-
-export default About;
+}

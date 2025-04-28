@@ -1,30 +1,31 @@
 export interface GitHubRepo {
-  readonly id: number;
-  readonly name: string;
-  readonly full_name: string;
-  readonly html_url: string;
-  readonly description: string;
-  readonly homepage: string;
-  readonly stargazers_count: number;
-  readonly watchers_count: number;
-  readonly forks_count: number;
-  readonly language: string;
-  readonly topics: readonly string[];
-  readonly fork: boolean;
-  readonly archived: boolean;
-  readonly created_at: string;
-  readonly updated_at: string;
-  readonly pushed_at: string;
-  readonly default_branch: string;
+  id: number;
+  name: string;
+  full_name: string;
+  html_url: string;
+  description: string;
+  fork: boolean;
+  created_at: string;
+  updated_at: string;
+  pushed_at: string;
+  stargazers_count: number;
+  watchers_count: number;
+  language: string;
+  topics: string[];
+  homepage: string;
+  default_branch: string;
 }
 
 export interface GitHubProjectData {
-  readonly id: number;
-  readonly title: string;
-  readonly description: string;
-  readonly tags: readonly string[];
-  readonly link: string;
-  readonly stars: number;
-  readonly language: string;
-  readonly fork: boolean;
+  id: number;
+  name: string;
+  fullName: string;
+  url: string;
+  description: string;
+  fork: boolean;
+  stars: number;
+  language: string;
+  topics: string[];
+  homepage: string;
+  updatedAt: string;
 } 

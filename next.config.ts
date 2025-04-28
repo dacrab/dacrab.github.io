@@ -31,15 +31,8 @@ const nextConfig: NextConfig = {
             key: 'Link',
             value: [
               '<https://cdn.jsdelivr.net>; rel=preconnect; crossorigin=anonymous',
-              '<https://lottie.host>; rel=preconnect; crossorigin=anonymous',
               '<https://fonts.googleapis.com>; rel=preconnect',
               '<https://fonts.gstatic.com>; rel=preconnect; crossorigin=anonymous',
-              
-              // Preload critical resources for first view
-              '<https://lottie.host/ec2681d0-ab67-4f7d-a35a-c870c0a588aa/BVfwAmcRde.lottie>; rel=preload; as=fetch; crossorigin=anonymous',
-              
-              // Add Cache-Control headers for better caching
-              '<https://cdn.jsdelivr.net/npm/@lottiefiles/dotlottie-web@0.41.0/dist/dotlottie-player.wasm>; rel=preload; as=fetch; crossorigin=anonymous',
             ].join(', '),
           },
           {
@@ -85,7 +78,7 @@ const nextConfig: NextConfig = {
               enforce: true,
             },
             lib: {
-              test: /[\\/]node_modules[\\/](@lottiefiles|framer-motion)[\\/]/,
+              test: /[\\/]node_modules[\\/](framer-motion)[\\/]/,
               name(module: any) {
                 const packageName = module.context.match(/[\\/]node_modules[\\/](.*?)([\\/]|$)/)[1];
                 return `lib.${packageName.replace('@', '')}`;
@@ -107,20 +100,9 @@ const nextConfig: NextConfig = {
       
       // Enable progressive loading optimization
       if (config.output) {
-        config.output.chunkLoadingGlobal = 'lottieJsonp';
+        config.output.chunkLoadingGlobal = 'webpackJsonp';
         config.output.chunkLoading = 'jsonp';
       }
-    }
-
-    if (!isServer) {
-      // Better handling of Lottie files
-      config.module.rules.push({
-        test: /\.lottie$/,
-        type: 'asset/resource',
-        generator: {
-          filename: 'static/chunks/lottie/[name].[hash][ext]',
-        },
-      });
     }
 
     return config;

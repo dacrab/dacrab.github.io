@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Logo from "./Logo";
-import GlowEffect from "./GlowEffect";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
 const NAV_HEIGHT = 60;
@@ -125,8 +124,6 @@ export default function Navbar() {
     visible: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 200, damping: 20 } }
   };
 
-  const getBlurValue = scrolled ? 'backdrop-blur-md' : 'backdrop-blur-0';
-
   const handleLogoClick = useCallback(() => {
     setIsOpen(false);
     setActiveSection("home");
@@ -138,127 +135,100 @@ export default function Navbar() {
   return (
     <motion.header
       className={`fixed top-0 left-0 right-0 z-50 py-3 transition-all duration-300 ${
-        scrolled ? 'bg-opacity-80 bg-[var(--background)] shadow-sm' : 'bg-transparent'
-      } ${getBlurValue}`}
+        scrolled ? 'bg-[var(--background)] border-b border-[var(--border)]' : 'bg-transparent'
+      }`}
       initial="hidden"
       animate="visible"
       variants={navVariants}
-      style={{ willChange: "transform, opacity" }}
     >
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        <Logo onClick={handleLogoClick} showFullName={!isMobile} />
-        <nav className="hidden md:block">
-          <ul className="flex space-x-1">
+      <div className="swiss-container swiss-grid h-[60px]">
+        <div className="col-span-3 flex items-center">
+          <Logo onClick={handleLogoClick} showFullName={!isMobile} />
+        </div>
+        
+        <nav className="hidden md:flex col-span-9 justify-end items-center">
+          <ul className="flex space-x-8">
             {NAV_ITEMS.map(({ label, href }) => {
               const isActive = activeSection === href.slice(1);
               return (
                 <li key={href}>
-                  <GlowEffect
-                    color="accent"
-                    size={0.7}
-                    intensity={0.4}
-                    followCursor={!isMobile}
-                    pulseEffect={false}
-                    mobileOptimized
+                  <a
+                    href={href}
+                    onClick={e => handleNavClick(e, href)}
+                    className={`swiss-nav-item ${isActive ? 'active' : ''}`}
                   >
-                    <a
-                      href={href}
-                      onClick={e => handleNavClick(e, href)}
-                      className={`relative px-4 py-2 text-sm rounded-md transition-colors duration-300 ${
-                        isActive
-                          ? 'text-[var(--accent)]'
-                          : 'text-[var(--foreground)]/70 hover:text-[var(--foreground)]'
-                      }`}
-                    >
-                      {label}
-                      {isActive && (
-                        <motion.div
-                          layoutId="activeNavIndicator"
-                          className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--accent)]"
-                          style={{ willChange: "transform, opacity" }}
-                          transition={{ type: "spring", stiffness: 500, damping: 25 }}
-                        />
-                      )}
-                    </a>
-                  </GlowEffect>
+                    {label.toUpperCase()}
+                  </a>
                 </li>
               );
             })}
           </ul>
         </nav>
+        
+        {/* Mobile menu button */}
         <button
           id="mobile-menu-toggle"
-          className="md:hidden relative w-10 h-10 flex items-center justify-center p-2 rounded-md z-20 focus:outline-none"
+          className="md:hidden ml-auto flex items-center justify-center p-2 z-20 focus:outline-none"
           onClick={toggleMenu}
           aria-label="Toggle mobile menu"
           aria-expanded={isOpen}
         >
-          <motion.div className="flex flex-col justify-center items-center w-6 h-6" initial={false}>
-            <motion.span
-              className="block h-0.5 w-full transition-all duration-300 ease-out absolute"
-              animate={{
-                rotate: isOpen ? 45 : 0,
-                translateY: isOpen ? 0 : -5,
-                backgroundColor: isOpen ? "var(--accent)" : "var(--foreground)"
-              }}
-              style={{ transformOrigin: "center" }}
+          <div className="flex flex-col justify-center items-center w-6 h-6 relative">
+            <span
+              className={`block h-0.5 w-full bg-[var(--foreground)] absolute transition-all duration-300 ${
+                isOpen ? 'rotate-45' : '-translate-y-2'
+              }`}
             />
-            <motion.span
-              className="block h-0.5 w-full transition-all duration-300 ease-out"
-              animate={{
-                opacity: isOpen ? 0 : 1,
-                width: isOpen ? "0%" : "100%",
-                backgroundColor: isOpen ? "var(--accent)" : "var(--foreground)"
-              }}
+            <span
+              className={`block h-0.5 w-full bg-[var(--foreground)] absolute transition-all duration-300 ${
+                isOpen ? 'opacity-0' : 'opacity-100'
+              }`}
             />
-            <motion.span
-              className="block h-0.5 w-full transition-all duration-300 ease-out absolute"
-              animate={{
-                rotate: isOpen ? -45 : 0,
-                translateY: isOpen ? 0 : 5,
-                backgroundColor: isOpen ? "var(--accent)" : "var(--foreground)"
-              }}
-              style={{ transformOrigin: "center" }}
+            <span
+              className={`block h-0.5 w-full bg-[var(--foreground)] absolute transition-all duration-300 ${
+                isOpen ? '-rotate-45' : 'translate-y-2'
+              }`}
             />
-          </motion.div>
+          </div>
         </button>
       </div>
+
+      {/* Mobile menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             ref={menuRef}
-            className="md:hidden fixed top-[57px] left-0 right-0 max-h-[calc(100vh-57px)] overflow-auto bg-[var(--background)]/95 backdrop-blur-md z-10 shadow-lg"
+            className="absolute top-[60px] left-0 right-0 bg-[var(--background)] border-b border-[var(--border)] md:hidden overflow-hidden z-10"
+            variants={menuVariants}
             initial="hidden"
             animate="visible"
             exit="hidden"
-            variants={menuVariants}
           >
-            <div className="container mx-auto py-6 px-4">
-              <nav>
-                <h3 className="text-xs uppercase tracking-wider text-[var(--foreground)]/60 mb-3 font-medium">Navigation</h3>
-                <ul className="space-y-1">
-                  {NAV_ITEMS.map(({ label, href }) => {
-                    const isActive = activeSection === href.slice(1);
-                    return (
-                      <motion.li key={href} variants={navItemVariants}>
-                        <a
-                          href={href}
-                          onClick={e => handleNavClick(e, href)}
-                          className={`block px-4 py-3 text-lg rounded-md transition-all duration-300 ${
-                            isActive
-                              ? 'bg-[var(--accent)]/10 text-[var(--accent)] font-medium border-l-2 border-[var(--accent)] pl-[calc(1rem-2px)]'
-                              : 'text-[var(--foreground)] hover:bg-[var(--card)]/50 hover:pl-5'
-                          }`}
-                          aria-current={isActive ? "page" : undefined}
-                        >
-                          {label}
-                        </a>
-                      </motion.li>
-                    );
-                  })}
-                </ul>
-              </nav>
-            </div>
+            <motion.div className="px-4 py-5 divide-y divide-[var(--border)]">
+              {NAV_ITEMS.map(({ label, href }) => {
+                const isActive = activeSection === href.slice(1);
+                return (
+                  <motion.div
+                    key={href}
+                    variants={navItemVariants}
+                    className="py-3"
+                  >
+                    <a
+                      href={href}
+                      onClick={e => handleNavClick(e, href)}
+                      className={`block text-lg font-bold uppercase letter-spacing-wide ${
+                        isActive ? 'text-[var(--accent)]' : 'text-[var(--foreground)]'
+                      }`}
+                    >
+                      {label}
+                      {isActive && (
+                        <div className="h-1 w-8 bg-[var(--accent)] mt-1" />
+                      )}
+                    </a>
+                  </motion.div>
+                );
+              })}
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -1,109 +1,103 @@
-import { motion } from "framer-motion";
-import { ProjectBaseProps, getTagColor } from "./types";
-import { memo, useMemo } from "react";
+import React from 'react';
+import { ProjectData } from "./types";
+import { ArrowUpRight } from "lucide-react";
+import SwissMotion from "../SwissMotion";
+import StaggerItem from "../StaggerItem";
 
-// Memoize the component to prevent unnecessary re-renders
-const ProjectCard = memo(function ProjectCard({ 
-  project, 
-  isInView, 
-  delay,
-  isActive,
-  onHoverStart,
-  onHoverEnd,
-  index,
-  isMobile = false
-}: ProjectBaseProps) {
-  // Memoize derived tag info
-  const primaryTag = useMemo(() => project.tags?.[0], [project.tags]);
-  const primaryTagColor = useMemo(() => 
-    primaryTag ? getTagColor(primaryTag) : '', 
-    [primaryTag]
-  );
-  
-  // Delay calculation that caps the index value for better mobile performance
-  const calculatedDelay = useMemo(() => 
-    (delay || 0) + (Math.min(index || 0, isMobile ? 3 : 5) * (isMobile ? 0.03 : 0.05)),
-    [delay, index, isMobile]
-  );
+interface ProjectCardProps {
+  project: ProjectData;
+  index?: number;
+}
 
-  // Memoize the main animation object
-  const mainAnimation = useMemo(() => ({
-    initial: { opacity: 0, y: isMobile ? 10 : 15 },
-    animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : (isMobile ? 10 : 15) },
-    transition: { duration: isMobile ? 0.3 : 0.4, delay: calculatedDelay }
-  }), [isInView, isMobile, calculatedDelay]);
-  
+export default function ProjectCard({ project, index = 0 }: ProjectCardProps) {
   return (
-    <motion.div
-      {...mainAnimation}
-      className={`group bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden hover:border-accent/30 transition-all duration-200 flex flex-col h-full shadow-sm ${isActive ? 'ring-2 ring-accent/40' : ''}`}
-      onHoverStart={() => onHoverStart?.()}
-      onHoverEnd={() => onHoverEnd?.()}
+    <SwissMotion
+      type="scale"
+      delay={0.3 + (index * 0.05)}
+      duration={0.6}
+      whileHover="lift"
+      className="swiss-card relative h-full flex flex-col group"
     >
-      {/* Card header */}
-      <div className="p-4 border-b border-border/20 flex items-center justify-between">
-        {/* Primary tag */}
-        {primaryTag && (
-          <span 
-            className="text-xs uppercase tracking-wider font-medium px-2.5 py-0.5 rounded-full"
-            style={{ 
-              backgroundColor: `${primaryTagColor}15`, 
-              color: primaryTagColor,
-              border: `1px solid ${primaryTagColor}30`
-            }}
-          >
-            {primaryTag}
-          </span>
-        )}
-        
-        {/* Project ID */}
-        <div 
-          className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium border border-accent/30 bg-card/50"
-          style={{ color: primaryTagColor }}
-        >
-          {String(project.id).padStart(2, '0')}
-        </div>
-      </div>
+      {/* Swiss style accent elements */}
+      <SwissMotion type="reveal" delay={0.4 + (index * 0.05)} duration={0.4}>
+        <div className="absolute top-0 right-0 w-1/5 h-1 bg-[var(--accent-tertiary)]"></div>
+      </SwissMotion>
       
-      {/* Card body */}
-      <div className="p-4 flex-grow flex flex-col">
-        <h3 className="text-base md:text-lg font-bold mb-2 group-hover:text-accent transition-colors duration-200">
-          {project.title}
-        </h3>
-        
-        <p className="text-muted text-sm mb-3 flex-grow">
-          {project.description}
-        </p>
-        
-        {/* Secondary tags */}
-        <div className="flex flex-wrap gap-1 mt-auto">
-          {project.tags?.slice(1, 4).map(tag => (
-            <span 
-              key={tag} 
-              className="text-xs px-2 py-0.5 rounded-md border border-border/20 bg-card/40 text-muted"
-            >
+      <SwissMotion type="slide" delay={0.35 + (index * 0.05)} duration={0.5}>
+        <h3 className="font-bold mb-3">{project.title}</h3>
+      </SwissMotion>
+      
+      <SwissMotion type="fade" delay={0.4 + (index * 0.05)} duration={0.5}>
+        <p className="text-[var(--muted)] mb-4 text-sm line-clamp-3">{project.description}</p>
+      </SwissMotion>
+      
+      <SwissMotion type="stagger" staggerChildren={0.03} delay={0.45 + (index * 0.05)} className="flex flex-wrap gap-2 mb-6">
+        {project.tags.map((tag, i) => (
+          <StaggerItem 
+            key={`${project.id}-${tag}-${i}`}
+            type="fade"
+            whileHover="scale"
+          >
+            <span className="text-xs px-2 py-1 bg-[var(--card-hover)] rounded-sm inline-block">
               {tag}
             </span>
-          ))}
-        </div>
-      </div>
+          </StaggerItem>
+        ))}
+      </SwissMotion>
       
-      {/* Card footer */}
-      <div className="p-4 border-t border-border/20 bg-card/20">
-        <a 
-          href={project.link} 
-          className="inline-flex items-center px-3 py-1.5 rounded-lg bg-accent/10 text-accent hover:bg-accent/20 transition-colors border border-accent/20 text-sm font-medium"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <span className="mr-2">View Project</span>
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M7 17l9.2-9.2M17 17V7H7" />
-          </svg>
-        </a>
-      </div>
-    </motion.div>
+      <SwissMotion type="fade" delay={0.5 + (index * 0.05)} duration={0.5} className="mt-auto">
+        {project.stars !== undefined && project.language && (
+          <div className="flex items-center mb-4">
+            <span className="flex items-center text-xs text-[var(--muted)]">
+              <SwissMotion type="scale" delay={0.55 + (index * 0.05)} duration={0.3}>
+                ★ {project.stars}
+              </SwissMotion>
+            </span>
+            <span className="ml-4 flex items-center text-xs text-[var(--muted)]">
+              <span 
+                className="inline-block w-2 h-2 rounded-full mr-1"
+                style={{ backgroundColor: getLanguageColor(project.language) }}
+              ></span>
+              {project.language}
+            </span>
+          </div>
+        )}
+        
+        <SwissMotion whileHover="scale">
+          <a
+            href={project.link}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center text-sm font-medium text-[var(--accent)] hover:underline"
+          >
+            View on GitHub 
+            <ArrowUpRight size={14} className="ml-1 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+          </a>
+        </SwissMotion>
+      </SwissMotion>
+    </SwissMotion>
   );
-});
+} 
 
-export default ProjectCard; 
+// Helper function to get language color
+function getLanguageColor(language: string): string {
+  const colors: Record<string, string> = {
+    TypeScript: "#3178c6",
+    JavaScript: "#f1e05a",
+    HTML: "#e34c26",
+    CSS: "#563d7c",
+    Python: "#3572A5",
+    Java: "#b07219",
+    Go: "#00ADD8",
+    Rust: "#dea584",
+    Ruby: "#701516",
+    "C": "#555555",
+    "C++": "#f34b7d",
+    "C#": "#178600",
+    PHP: "#4F5D95",
+    Shell: "#89e051",
+    Swift: "#ffac45",
+  };
+
+  return colors[language] || "#8b949e"; // Default color if language not found
+} 

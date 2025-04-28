@@ -1,41 +1,34 @@
-import TextAnimation from "../TextAnimation";
-import ScrollReveal from "../ScrollReveal";
+import React from 'react';
 
 interface SectionHeaderProps {
-  isMobile?: boolean;
+  title: string;
+  description: string;
+  accentColor?: 'primary' | 'secondary' | 'tertiary';
 }
 
-export default function SectionHeader({ isMobile = false }: SectionHeaderProps) {
+export default function SectionHeader({ 
+  title, 
+  description,
+  accentColor = 'tertiary'
+}: SectionHeaderProps) {
+  const accentColorMap = {
+    primary: 'bg-[var(--accent)]',
+    secondary: 'bg-[var(--accent-secondary)]',
+    tertiary: 'bg-[var(--accent-tertiary)]'
+  };
+  
   return (
-    <ScrollReveal
-      direction="up"
-      className="mb-16 text-center relative"
-      duration={isMobile ? 0.4 : 0.5}
-      distance={isMobile ? 15 : 20}
-      mobileOptimized={true}
-    >
-      <div className="relative inline-block mb-3">
-        <TextAnimation 
-          text="About Me" 
-          variant="reveal" 
-          className="text-3xl md:text-4xl font-bold inline-block"
-          delay={0.15}
-          duration={isMobile ? 0.25 : 0.3}
-          mobileOptimized={true}
-        />
-        <span className="absolute -bottom-1.5 left-0 h-3 w-full bg-accent/10 rounded-sm -z-0 transform -rotate-1"></span>
+    <div className="mb-16">
+      <div className="flex items-center mb-4">
+        <div className={`w-8 h-8 ${accentColorMap[accentColor]} mr-4`}></div>
+        <h2 className="swiss-heading-2">{title.toUpperCase()}</h2>
       </div>
-      
-      <div className="mt-5 mb-6">
-        <TextAnimation 
-          text="Passionate developer dedicated to crafting beautiful, functional digital experiences that combine technical excellence with creative problem-solving." 
-          variant="split" 
-          className="text-muted max-w-2xl mx-auto leading-relaxed"
-          delay={isMobile ? 0.25 : 0.3}
-          duration={isMobile ? 0.2 : 0.25}
-          mobileOptimized={true}
-        />
+      <div className="ml-12">
+        <div className="w-24 h-1 bg-[var(--foreground)] mb-8"></div>
+        <p className="swiss-body max-w-2xl">
+          {description}
+        </p>
       </div>
-    </ScrollReveal>
+    </div>
   );
 }

@@ -6,7 +6,6 @@ const CACHE_DURATION_MS = 3600 * 1000; // 1 hour in ms
 
 const repoCache = new Map<string, { data: GitHubRepo[]; timestamp: number }>();
 const projectsCache = new Map<string, GitHubProjectData[]>();
-const nameFormatCache = new Map<string, string>();
 
 export async function fetchGitHubRepos(
   username: string = USERNAME,
@@ -50,46 +49,28 @@ export async function fetchGitHubRepos(
   return data;
 }
 
+/**
+ * Transforms GitHub API repository data into project format
+ */
 export function transformReposToProjects(repos: GitHubRepo[]): GitHubProjectData[] {
-  const cacheKey = repos.map(r => r.id).sort().join("-");
-  if (projectsCache.has(cacheKey)) return projectsCache.get(cacheKey)!;
-
-  const projects = repos
-    .filter(r => !r.fork && !r.archived && r.description)
-    .map(r => ({
-      id: r.id,
-      title: formatRepoName(r.name),
-      description: r.description!,
-      tags: getTags(r),
-      link: r.html_url,
-      stars: r.stargazers_count,
-      language: r.language || "Unknown",
-      fork: r.fork
-    }));
-
-  projectsCache.set(cacheKey, projects);
-  return projects;
-}
-
-function formatRepoName(name: string): string {
-  if (nameFormatCache.has(name)) return nameFormatCache.get(name)!;
-  const formatted = name
-    .split("-")
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
-  nameFormatCache.set(name, formatted);
-  return formatted;
-}
-
-function getTags(repo: GitHubRepo): string[] {
-  const tags = [];
-  if (repo.language) tags.push(repo.language);
-  if (repo.topics?.length) tags.push(...repo.topics.slice(0, 3));
-  return tags.length ? tags : ["Code"];
+  if (!repos || !Array.isArray(repos)) return [];
+  
+  return repos.map(repo => ({
+    id: repo.id,
+    name: repo.name,
+    fullName: repo.full_name,
+    url: repo.html_url,
+    description: repo.description || "",
+    fork: repo.fork,
+    stars: repo.stargazers_count,
+    language: repo.language || "Unknown",
+    topics: repo.topics || [],
+    homepage: repo.homepage || "",
+    updatedAt: repo.updated_at
+  }));
 }
 
 export function clearGitHubCaches(): void {
   repoCache.clear();
   projectsCache.clear();
-  nameFormatCache.clear();
 }

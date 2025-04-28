@@ -1,45 +1,39 @@
 "use client";
 
-import TextAnimation from "../TextAnimation";
-import ScrollReveal from "../ScrollReveal";
+import React from 'react';
 import { memo } from "react";
 
 interface SectionHeadingProps {
-  isMobile?: boolean;
+  title: string;
+  description: string;
+  accentColor?: 'primary' | 'secondary' | 'tertiary';
 }
 
 // Memoize the component to prevent unnecessary re-renders
-const SectionHeading = memo(function SectionHeading({ isMobile = false }: SectionHeadingProps) {
+const SectionHeading = memo(function SectionHeading({ 
+  title, 
+  description,
+  accentColor = 'secondary',
+}: SectionHeadingProps) {
+  const accentColorMap = {
+    primary: 'bg-[var(--accent)]',
+    secondary: 'bg-[var(--accent-secondary)]',
+    tertiary: 'bg-[var(--accent-tertiary)]'
+  };
+  
   return (
-    <ScrollReveal
-      direction="up"
-      className="mb-12 text-center"
-      duration={isMobile ? 0.4 : 0.5}
-      distance={isMobile ? 15 : 20}
-      mobileOptimized={true}
-    >
-      <div className="mb-3">
-        <TextAnimation 
-          text="Contact" 
-          variant="reveal" 
-          className="text-3xl md:text-4xl font-bold inline-block"
-          delay={isMobile ? 0.12 : 0.15}
-          duration={isMobile ? 0.25 : 0.3}
-          mobileOptimized={true}
-        />
+    <div className="mb-16">
+      <div className="flex items-center mb-4">
+        <div className={`w-8 h-8 ${accentColorMap[accentColor]} mr-4`}></div>
+        <h2 className="swiss-heading-2">{title.toUpperCase()}</h2>
       </div>
-      
-      <div className="w-20 h-0.5 bg-accent/80 mx-auto mb-5"></div>
-      
-      <TextAnimation 
-        text="Have a project in mind or want to discuss collaboration opportunities?" 
-        variant="split" 
-        className="text-muted max-w-2xl mx-auto"
-        delay={isMobile ? 0.2 : 0.25}
-        duration={isMobile ? 0.2 : 0.25}
-        mobileOptimized={true}
-      />
-    </ScrollReveal>
+      <div className="ml-12">
+        <div className="w-24 h-1 bg-[var(--foreground)] mb-8"></div>
+        <p className="swiss-body max-w-2xl">
+          {description}
+        </p>
+      </div>
+    </div>
   );
 });
 

@@ -3,7 +3,6 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { getOptimizedValue, emojiAnimation, textAnimation } from "@/utils/animations";
 
 interface TextAnimationProps {
   text: string;
@@ -12,9 +11,6 @@ interface TextAnimationProps {
   delay?: number;
   duration?: number;
   once?: boolean;
-  color?: string;
-  emoji?: string;
-  emojiAnimation?: "wave" | "bounce" | "pulse" | "spin" | "none";
   mobileOptimized?: boolean;
 }
 
@@ -25,9 +21,6 @@ export default function TextAnimation({
   delay = 0,
   duration = 0.5,
   once = false,
-  color = "gradient-1",
-  emoji,
-  emojiAnimation: emojiAnimationType = "wave",
   mobileOptimized = true
 }: TextAnimationProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -47,176 +40,56 @@ export default function TextAnimation({
     return (
       <div ref={ref} className={className}>
         {text}
-        {emoji && <span className="ml-1 inline-block">{emoji}</span>}
       </div>
     );
   }
 
   // Optimize animation values for mobile
-  const optimizedDuration = getOptimizedValue(duration, isMobile && mobileOptimized, 0.6, 0.3);
-  const optimizedDelay = getOptimizedValue(delay, isMobile && mobileOptimized, 0.5);
+  const optimizedDuration = isMobile && mobileOptimized ? duration * 0.6 : duration;
+  const optimizedDelay = isMobile && mobileOptimized ? delay * 0.5 : delay;
 
-  // Centralized animation configs
-  const animation = textAnimation(
-    variant,
-    text,
-    optimizedDelay,
-    optimizedDuration,
-    isMobile && mobileOptimized,
-    isInView
-  );
-
-  const emojiConfig = emojiAnimation(
-    emojiAnimationType,
-    optimizedDelay + optimizedDuration + 0.5,
-    emojiAnimationType === "wave" ? 1.5 : 0.8,
-    isMobile && mobileOptimized
-  );
-
-  // Emoji component
-  const Emoji = emoji ? (
-    <motion.span
-      initial={{ opacity: 0, scale: 0.5 }}
-      animate={{ opacity: 1, scale: 1, ...emojiConfig.animate }}
-      transition={{
-        opacity: { duration: 0.3, delay: optimizedDelay + optimizedDuration },
-        scale: { duration: 0.4, delay: optimizedDelay + optimizedDuration, type: "spring" },
-        ...emojiConfig.transition
-      }}
-      className={`ml-1 ${emojiConfig.className} text-[0.9em]`}
-      style={{ willChange: "transform" }}
-    >
-      {emoji}
-    </motion.span>
-  ) : null;
-
-  // Helper for batching (used in char-by-char and split)
-  const batchArray = <T,>(arr: T[], batchSize: number) => {
-    const batches: T[][] = [];
-    for (let i = 0; i < arr.length; i += batchSize) {
-      batches.push(arr.slice(i, i + batchSize));
-    }
-    return batches;
-  };
-
-  // Char-by-char animation
-  if (variant === "char-by-char") {
-    const chars = text.split("");
-    if (mobileOptimized && isMobile) {
-      // Batch chars for mobile
-      let batchSize = 1;
-      if (chars.length > 30) batchSize = 6;
-      else if (chars.length > 15) batchSize = 4;
-      else if (chars.length > 8) batchSize = 2;
-      const batches = batchArray(chars, batchSize).map(b => b.join(""));
-      return (
-        <motion.div
-          ref={ref}
-          className={`inline-flex items-center ${className}`}
-          {...animation.containerProps}
-        >
-          <div>
-            {batches.map((batch, i) => (
-              <motion.span
-                key={i}
-                {...animation.itemProps}
-                transition={{
-                  ...(animation.itemProps?.transition as Record<string, unknown>),
-                  delay: optimizedDelay + i * 0.05,
-                }}
-              >
-                {batch}
-              </motion.span>
-            ))}
-          </div>
-          {Emoji}
-        </motion.div>
-      );
-    }
-    // Desktop: animate each char
+  // Swiss style reveal animation (default)
+  if (variant === "reveal") {
     return (
-      <motion.div
-        ref={ref}
-        className={`inline-flex items-center ${className}`}
-        {...animation.containerProps}
-      >
-        <div>
-          {chars.map((char, i) => (
-            <motion.span
-              key={i}
-              {...animation.itemProps}
-              transition={{
-                ...(animation.itemProps?.transition as Record<string, unknown>),
-                delay: optimizedDelay + i * 0.04,
-              }}
-            >
-              {char === " " ? <span>&nbsp;</span> : char}
-            </motion.span>
-          ))}
+      <div ref={ref} className={`relative inline-flex items-center ${className}`}>
+        <div className="overflow-hidden">
+          <motion.div 
+            initial={{ y: "100%" }}
+            animate={{ y: isInView ? 0 : "100%" }}
+            transition={{ 
+              duration: optimizedDuration,
+              delay: optimizedDelay,
+              ease: [0.17, 0.67, 0.83, 0.67] // Swiss-style crisp animation
+            }}
+          >
+            {text}
+          </motion.div>
         </div>
-        {Emoji}
-      </motion.div>
+      </div>
     );
   }
 
-  // Split (word-by-word) animation
+  // Split words animation
   if (variant === "split") {
     const words = text.split(" ");
-    if (mobileOptimized && isMobile && words.length > 8) {
-      // Batch after 7 words for mobile
-      const limited = words.slice(0, 7);
-      const remaining = words.slice(7).join(" ");
-      return (
-        <motion.div
-          ref={ref}
-          className={`inline-flex items-center ${className}`}
-          {...animation.containerProps}
-        >
-          <div>
-            {limited.map((word, i) => (
-              <motion.span
-                key={i}
-                {...animation.itemProps}
-                transition={{
-                  ...(animation.itemProps?.transition as Record<string, unknown>),
-                  delay: optimizedDelay + i * 0.05,
-                }}
-                className="inline-block mr-[0.25em]"
-              >
-                {word}
-              </motion.span>
-            ))}
-            <motion.span
-              key="remaining"
-              {...animation.itemProps}
-              transition={{
-                ...(animation.itemProps?.transition as Record<string, unknown>),
-                delay: optimizedDelay + 7 * 0.05,
-              }}
-              className="inline-block"
-            >
-              {remaining}
-            </motion.span>
-          </div>
-          {Emoji}
-        </motion.div>
-      );
-    }
-    // Standard: animate each word
     return (
       <motion.div
         ref={ref}
         className={`inline-flex items-center ${className}`}
-        {...animation.containerProps}
       >
         <div>
           {words.map((word, i) => (
             <motion.span
               key={i}
-              {...animation.itemProps}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ 
+                opacity: isInView ? 1 : 0, 
+                y: isInView ? 0 : 10 
+              }}
               transition={{
-                ...(animation.itemProps?.transition as Record<string, unknown>),
+                duration: optimizedDuration,
                 delay: optimizedDelay + i * (isMobile ? 0.05 : 0.1),
+                ease: [0.17, 0.67, 0.83, 0.67]
               }}
               className="inline-block mr-[0.25em]"
             >
@@ -224,66 +97,108 @@ export default function TextAnimation({
             </motion.span>
           ))}
         </div>
-        {Emoji}
       </motion.div>
     );
   }
 
   // Typewriter effect
   if (variant === "typewriter") {
-    if (mobileOptimized && isMobile && text.length > 50) {
-      // Skip cursor for long mobile text
-      return (
-        <div ref={ref} className={`relative inline-flex items-center ${className}`}>
-          <motion.div {...animation.containerProps}>{text}</motion.div>
-          {Emoji}
-        </div>
-      );
-    }
     return (
       <div ref={ref} className={`relative inline-flex items-center ${className}`}>
-        <motion.div {...animation.containerProps}>
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: isInView ? "100%" : 0 }}
+          transition={{
+            duration: optimizedDuration * 1.5,
+            delay: optimizedDelay,
+            ease: [0.17, 0.67, 0.83, 0.67],
+            // Create a stepped animation effect without using "steps()"
+            times: Array.from({ length: 20 }).map((_, i) => i / 19)
+          }}
+          style={{ whiteSpace: "nowrap", overflow: "hidden" }}
+        >
           {text}
-          {(() => {
-            const cursor = animation.additionalProps?.cursor;
-            if (
-              cursor &&
-              typeof cursor === 'object' &&
-              !Array.isArray(cursor) &&
-              cursor !== null
-            ) {
-              return (
-                <motion.span
-                  {...(cursor as Record<string, unknown>)}
-                  className={`inline-block ml-[2px] w-[2px] h-[1.2em] bg-${color} align-middle`}
-                />
-              );
-            }
-            return null;
-          })()}
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isInView ? [0, 1, 0] : 0 }}
+            transition={{
+              duration: 0.8,
+              repeat: Infinity,
+              repeatDelay: 0.2,
+              delay: optimizedDelay + optimizedDuration
+            }}
+            className="inline-block ml-[2px] w-[2px] h-[1.2em] bg-[var(--accent)] align-middle"
+          />
         </motion.div>
-        {Emoji}
       </div>
     );
   }
 
-  // Gradient text animation
+  // Gradient animation - Swiss style shimmer effect
   if (variant === "gradient") {
     return (
       <div ref={ref} className={`inline-flex items-center ${className}`}>
-        <motion.span {...animation.containerProps}>{text}</motion.span>
-        {Emoji}
+        <motion.span 
+          initial={{ backgroundPosition: "0% 50%" }}
+          animate={{ 
+            backgroundPosition: isInView ? ["0% 50%", "100% 50%", "0% 50%"] : "0% 50%"
+          }}
+          transition={{
+            duration: 5,
+            ease: "linear",
+            repeat: Infinity,
+            delay: optimizedDelay
+          }}
+          style={{
+            background: "linear-gradient(90deg, var(--accent) 0%, var(--accent-secondary) 50%, var(--accent) 100%)",
+            backgroundSize: "200% auto",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+            color: "transparent"
+          }}
+        >
+          {text}
+        </motion.span>
       </div>
     );
   }
 
-  // Default: reveal animation
+  // Character by character animation
+  if (variant === "char-by-char") {
+    const chars = text.split("");
+    return (
+      <motion.div
+        ref={ref}
+        className={`inline-flex items-center ${className}`}
+      >
+        <div>
+          {chars.map((char, i) => (
+            <motion.span
+              key={i}
+              initial={{ opacity: 0, y: 5 }}
+              animate={{ 
+                opacity: isInView ? 1 : 0, 
+                y: isInView ? 0 : 5 
+              }}
+              transition={{
+                duration: 0.2,
+                delay: optimizedDelay + i * 0.03,
+                ease: [0.17, 0.67, 0.83, 0.67]
+              }}
+            >
+              {char === " " ? <span>&nbsp;</span> : char}
+            </motion.span>
+          ))}
+        </div>
+      </motion.div>
+    );
+  }
+
+  // Fallback
   return (
-    <div ref={ref} className={`relative inline-flex items-center ${className}`}>
-      <div className="overflow-hidden">
-        <motion.div {...animation.containerProps}>{text}</motion.div>
-      </div>
-      {Emoji}
+    <div ref={ref} className={className}>
+      {text}
     </div>
   );
 }

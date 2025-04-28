@@ -8,6 +8,7 @@ interface SectionSkeletonProps {
 /**
  * SectionSkeleton component - Used as a loading placeholder for lazy-loaded sections
  * Maintains the same dimensions as the actual section to prevent layout shift
+ * Now updated with Swiss style design elements
  */
 const SectionSkeleton = memo(function SectionSkeleton({
   id,
@@ -19,23 +20,42 @@ const SectionSkeleton = memo(function SectionSkeleton({
       className={`${height} relative overflow-hidden`}
       aria-hidden="true"
     >
-      <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        {/* Section header skeleton */}
-        <div className="mb-10 md:mb-16 flex flex-col items-center">
-          <div className="w-12 h-1 bg-gradient-to-r from-accent/30 to-accent/10 rounded mb-5"></div>
-          <div className="h-8 w-48 bg-card/30 rounded animate-pulse"></div>
-          <div className="h-3 w-64 mt-4 bg-card/20 rounded animate-pulse"></div>
+      <div className="swiss-container mx-auto relative z-10">
+        {/* Swiss style section header skeleton */}
+        <div className="mb-12">
+          <div className="flex items-center mb-4">
+            <div className="w-8 h-8 bg-[var(--accent-secondary)] opacity-30 mr-4 animate-pulse"></div>
+            <div className="h-8 w-48 bg-[var(--card-hover)] animate-pulse"></div>
+          </div>
+          <div className="ml-12">
+            <div className="w-24 h-1 bg-[var(--foreground)] opacity-30 mb-8"></div>
+            <div className="h-4 w-64 bg-[var(--card-hover)] animate-pulse"></div>
+          </div>
         </div>
 
-        {/* Main content skeleton */}
+        {/* Main content skeleton with Swiss style */}
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-4 h-64 bg-card/20 rounded-xl animate-pulse"></div>
-            <div className="lg:col-span-8 space-y-4">
-              <div className="h-5 w-1/3 bg-card/30 rounded animate-pulse"></div>
-              <div className="h-3 w-full bg-card/20 rounded animate-pulse"></div>
-              <div className="h-3 w-5/6 bg-card/20 rounded animate-pulse"></div>
-              <div className="h-3 w-4/6 bg-card/20 rounded animate-pulse"></div>
+          {/* Swiss style accent elements */}
+          <div className="absolute left-0 top-1/3 w-2 h-16 bg-[var(--accent-secondary)] opacity-20"></div>
+          <div className="absolute right-0 top-16 w-8 h-1 bg-[var(--accent)] opacity-20"></div>
+          
+          <div className="swiss-grid">
+            <div className="swiss-asymmetric-left">
+              <div className="swiss-card relative h-64 animate-pulse bg-[var(--card-hover)]">
+                <div className="absolute top-0 left-0 w-1/3 h-1 bg-[var(--accent)] opacity-30"></div>
+              </div>
+            </div>
+            
+            <div className="swiss-asymmetric-right mt-12 md:mt-0">
+              <div className="swiss-card relative animate-pulse">
+                <div className="absolute top-0 right-0 w-1 h-16 bg-[var(--accent-secondary)] opacity-30"></div>
+                <div className="space-y-4">
+                  <div className="h-4 w-1/3 bg-[var(--card-hover)]"></div>
+                  <div className="h-3 w-full bg-[var(--card-hover)]"></div>
+                  <div className="h-3 w-5/6 bg-[var(--card-hover)]"></div>
+                  <div className="h-3 w-4/6 bg-[var(--card-hover)]"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

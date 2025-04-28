@@ -1,112 +1,170 @@
 "use client";
 
-import { useRef, useState, useEffect, memo } from "react";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import SectionHeader from "./Experience/SectionHeader";
 import LottieVisualization from "./Experience/LottieVisualization";
 import SkillProgressions from "./Experience/SkillProgressions";
 import Timeline from "./Experience/Timeline";
+import SwissMotion from "./SwissMotion";
+import ShapeAnimation from "./ShapeAnimation";
+import ParallaxLayer from "./ParallaxLayer";
 
-const Experience = memo(function Experience() {
+export default function Experience() {
   const ref = useRef<HTMLElement>(null);
   const isMobile = useIsMobile();
-  const isInView = useInView(ref, { once: false, amount: isMobile ? 0.05 : 0.1 });
-  const [hasBeenVisible, setHasBeenVisible] = useState(false);
-
-  useEffect(() => {
-    if (isInView) setHasBeenVisible(true);
-  }, [isInView]);
-
+  
+  const skillsSectionRef = useRef<HTMLDivElement>(null);
+  const isSkillsInView = useInView(skillsSectionRef, { once: false, amount: 0.2 });
+  
+  const lottieRef = useRef<HTMLDivElement>(null);
+  const isLottieInView = useInView(lottieRef, { once: false, amount: 0.2 });
+  
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const isTimelineInView = useInView(timelineRef, { once: false, amount: 0.1 });
+  
+  // Scroll-based animation
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
   });
 
-  const opacity = useTransform(
-    scrollYProgress,
-    [0, 0.1, 0.9, 1],
-    isMobile ? [0.6, 1, 1, 0.6] : [0.3, 1, 1, 0.3]
-  );
-  const scale = useTransform(
-    scrollYProgress,
-    [0, 0.1, 0.9, 1],
-    isMobile ? [0.998, 1, 1, 0.998] : [0.995, 1, 1, 0.995]
-  );
+  const contentY = useTransform(scrollYProgress, [0, 1], [30, -30]);
+  
+  // Signature Experience section animations - timeline-like staggered lines
+  const lineCount = 7;
+  const lines = Array.from({ length: lineCount });
 
   return (
     <section
       id="experience"
       ref={ref}
-      className="py-16 md:py-28 relative overflow-hidden"
+      className="py-24 md:py-32 relative overflow-hidden"
     >
-      {/* Background effects (desktop only, after first view) */}
-      {!isMobile && hasBeenVisible && (
-        <>
-          <motion.div
-            className="absolute top-[15%] left-[50%] w-[40%] h-[35%] rounded-full bg-accent/15 blur-[150px] opacity-0"
-            animate={{
-              opacity: isInView ? 0.5 : 0,
-              x: isInView ? [-50, -55, -50] : -50
-            }}
-            transition={{
-              opacity: { duration: 1.8 },
-              x: {
-                repeat: Infinity,
-                duration: 20,
-                ease: "easeInOut",
-                repeatType: "mirror"
-              }
-            }}
-          />
-          <motion.div
-            className="absolute bottom-[25%] right-[10%] w-[30%] h-[40%] rounded-full bg-accent/20 blur-[120px] opacity-0"
-            animate={{
-              opacity: isInView ? 0.6 : 0,
-              scale: isInView ? [1, 1.1, 1] : 0.9
-            }}
-            transition={{
-              opacity: { duration: 1.5, delay: 0.5 },
-              scale: {
-                repeat: Infinity,
-                duration: 18,
-                ease: "easeInOut",
-                repeatType: "mirror"
-              }
-            }}
-          />
-        </>
-      )}
+      {/* Swiss style accent elements with Experience-specific animations */}
+      {/* Vertical timeline-like staggered lines - signature for Experience section */}
+      <div className="absolute left-4 md:left-12 top-0 bottom-0 w-12 z-0 flex flex-col justify-around">
+        {lines.map((_, i) => (
+          <ParallaxLayer 
+            key={`line-${i}`}
+            speed={0.05 + (i * 0.03)} 
+            direction={i % 2 === 0 ? "right" : "left"}
+          >
+            <ShapeAnimation 
+              type="line" 
+              color={`var(${i % 3 === 0 ? '--accent' : i % 3 === 1 ? '--accent-secondary' : '--accent-tertiary'})`}
+              size={20 + (i * 10)}
+              strokeWidth={i % 2 === 0 ? 4 : 2}
+              variant="draw"
+              delay={0.1 + (i * 0.1)}
+              duration={0.7}
+            />
+          </ParallaxLayer>
+        ))}
+      </div>
+      
+      {/* Experience-specific circle pattern */}
+      <div className="absolute right-0 top-0 bottom-0 w-24 z-0 flex flex-col justify-around">
+        {[1, 2, 3].map((i) => (
+          <ParallaxLayer 
+            key={`circle-${i}`}
+            speed={0.1 * i} 
+            direction={i % 2 === 0 ? "left" : "right"}
+          >
+            <ShapeAnimation 
+              type="circle" 
+              color={`var(${i === 1 ? '--accent' : i === 2 ? '--accent-secondary' : '--accent-tertiary'})`}
+              size={24 * i}
+              variant={i % 2 === 0 ? "pulse" : "float"}
+              delay={0.3 * i}
+              loop={true}
+            />
+          </ParallaxLayer>
+        ))}
+      </div>
 
-      <div className="container mx-auto px-4 lg:px-8 relative z-10">
-        <SectionHeader isMobile={isMobile} />
+      <div className="swiss-container relative z-10">
+        {/* Section header with Swiss style - Split animation unique to Experience */}
+        <div className="mb-16">
+          <SwissMotion type="slide" delay={0.1} duration={0.5} className="flex items-center mb-4">
+            <div className="w-8 h-8 bg-[var(--accent-tertiary)] mr-4"></div>
+            <h2 className="swiss-heading-2">EXPERIENCE</h2>
+          </SwissMotion>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 ml-12 gap-8">
+            <SwissMotion type="reveal" delay={0.3} duration={0.6}>
+              <div className="w-24 h-1 bg-[var(--foreground)] mb-4"></div>
+              <SwissMotion type="fade" delay={0.5} duration={0.6}>
+                <p className="swiss-body">
+                  My professional journey and skill development showcase my expertise in 
+                  creating modern web solutions.
+                </p>
+              </SwissMotion>
+            </SwissMotion>
+            
+            <SwissMotion type="reveal" delay={0.4} duration={0.6}>
+              <div className="w-24 h-1 bg-[var(--foreground)] mb-4"></div>
+              <SwissMotion type="fade" delay={0.6} duration={0.6}>
+                <p className="swiss-body">
+                  I&apos;ve developed the ability to solve complex technical challenges with
+                  elegant, efficient solutions.
+                </p>
+              </SwissMotion>
+            </SwissMotion>
+          </div>
+        </div>
 
         <motion.div
           className="max-w-6xl mx-auto mb-16"
-          style={{ opacity, scale }}
-          layout="position"
+          style={{ y: contentY }}
         >
-          <div
-            className="backdrop-blur-sm rounded-xl overflow-hidden border border-border/20 shadow-lg relative"
-            style={{ background: "rgba(var(--card-rgb), 0.6)" }}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 relative z-10">
-              <div className="p-5 md:p-8 border-b lg:border-b-0 lg:border-r border-border/20">
-                <LottieVisualization isInView={isInView} isMobile={isMobile} />
+          <div className="swiss-grid">
+            <SwissMotion 
+              type="slide"
+              delay={0.3} 
+              duration={0.7}
+              className="swiss-asymmetric-left"
+            >
+              <div className="swiss-card relative" ref={lottieRef}>
+                <SwissMotion type="reveal" delay={0.4} duration={0.5}>
+                  <div className="absolute top-0 left-0 w-1/3 h-1 bg-[var(--accent)]"></div>
+                </SwissMotion>
+                <h3 className="swiss-heading-3 mb-8">SKILLS VISUALIZATION</h3>
+                <LottieVisualization isInView={isLottieInView} isMobile={isMobile} />
               </div>
-              <div className="p-5 md:p-8">
-                <SkillProgressions isInView={isInView} isMobile={isMobile} />
+            </SwissMotion>
+            
+            <SwissMotion 
+              type="slide" 
+              delay={0.5} 
+              duration={0.7}
+              className="swiss-asymmetric-right mt-12 md:mt-0"
+            >
+              <div className="swiss-card relative" ref={skillsSectionRef}>
+                <SwissMotion type="reveal" delay={0.6} duration={0.5}>
+                  <div className="absolute top-0 right-0 w-1 h-full bg-[var(--accent-secondary)]"></div>
+                </SwissMotion>
+                <h3 className="swiss-heading-3 mb-8">SKILL PROGRESSION</h3>
+                <SkillProgressions isInView={isSkillsInView} isMobile={isMobile} />
               </div>
-            </div>
+            </SwissMotion>
           </div>
         </motion.div>
 
-        <Timeline isInView={isInView} isMobile={isMobile} />
+        <SwissMotion 
+          type="fade"
+          delay={0.7}
+          duration={0.8}
+          className="mt-16 pt-16 border-t border-[var(--border)]"
+        >
+          <SwissMotion type="slide" delay={0.8} duration={0.5}>
+            <h3 className="swiss-heading-3 mb-12 text-center">CAREER TIMELINE</h3>
+          </SwissMotion>
+          <div ref={timelineRef}>
+            <Timeline isInView={isTimelineInView} isMobile={isMobile} />
+          </div>
+        </SwissMotion>
       </div>
     </section>
   );
-});
-
-Experience.displayName = "Experience";
-
-export default Experience;
+}

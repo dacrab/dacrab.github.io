@@ -1,39 +1,37 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0f0f12;
-  --foreground: #f5f5f7;
-  --accent: #6366f1;
-  --accent-light: #818cf8;
-  --accent-dark: #4f46e5;
-  --muted: #94a3b8;
-  --card: #1c1c24;
-  --card-hover: #24242c;
-  --border: #2e2e38;
+  /* Swiss Style color palette */
+  --background: #ffffff;
+  --foreground: #000000;
+  --accent: #ff0000;
+  --accent-light: #ff3333;
+  --accent-dark: #cc0000;
+  --accent-secondary: #0000ff;
+  --accent-tertiary: #ffcc00;
+  --muted: #666666;
+  --card: #f5f5f5;
+  --card-hover: #ebebeb;
+  --border: #dddddd;
   
   /* RGB variables for rgba() functions */
-  --background-rgb: 15, 15, 18;
-  --foreground-rgb: 245, 245, 247;
-  --card-rgb: 28, 28, 36;
-  --border-rgb: 46, 46, 56;
-  --accent-rgb: 99, 102, 241;
-  --accent-light-rgb: 129, 140, 248;
-  --accent-dark-rgb: 79, 70, 229;
+  --background-rgb: 255, 255, 255;
+  --foreground-rgb: 0, 0, 0;
+  --card-rgb: 245, 245, 245;
+  --border-rgb: 221, 221, 221;
+  --accent-rgb: 255, 0, 0;
+  --accent-light-rgb: 255, 51, 51;
+  --accent-dark-rgb: 204, 0, 0;
+  --accent-secondary-rgb: 0, 0, 255;
+  --accent-tertiary-rgb: 255, 204, 0;
   
-  /* New gradient colors */
-  --gradient-1: #6366f1;
-  --gradient-2: #8b5cf6;
-  --gradient-3: #d946ef;
-  --gradient-4: #ec4899;
+  /* Swiss grid system variables */
+  --grid-unit: 8px;
+  --grid-column: 12;
+  --grid-gap: calc(var(--grid-unit) * 3);
   
-  /* RGB values for gradients to use in transparent backgrounds */
-  --gradient-1-rgb: 99, 102, 241;
-  --gradient-2-rgb: 139, 92, 246;
-  --gradient-3-rgb: 217, 70, 239;
-  --gradient-4-rgb: 236, 72, 153;
-  
-  /* Skill card background - dark theme */
-  --skill-card-bg: #24242e;
+  /* Skill card background - light theme */
+  --skill-card-bg: #ebebeb;
 }
 
 @theme inline {
@@ -43,40 +41,38 @@
   --color-muted: var(--muted);
   --color-card: var(--card);
   --color-border: var(--border);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-cursive: var(--font-dancing-script);
+  --font-sans: var(--font-helvetica);
+  --font-mono: var(--font-helvetica-mono);
+  --font-cursive: var(--font-helvetica);
 }
 
-@media (prefers-color-scheme: light) {
+@media (prefers-color-scheme: dark) {
   :root {
-    --background: #f5f5f7;
-    --foreground: #0f0f12;
-    --accent: #4f46e5;
-    --accent-light: #6366f1;
-    --accent-dark: #4338ca;
-    --muted: #64748b;
-    --card: #ffffff;
-    --card-hover: #f8f8f8;
-    --border: #e2e8f0;
+    --background: #000000;
+    --foreground: #ffffff;
+    --accent: #ff0000;
+    --accent-light: #ff3333;
+    --accent-dark: #cc0000;
+    --accent-secondary: #0055ff;
+    --accent-tertiary: #ffcc00;
+    --muted: #999999;
+    --card: #1a1a1a;
+    --card-hover: #2a2a2a;
+    --border: #333333;
     
     /* RGB variables for rgba() functions */
-    --background-rgb: 245, 245, 247;
-    --foreground-rgb: 15, 15, 18;
-    --card-rgb: 255, 255, 255;
-    --border-rgb: 226, 232, 240;
-    --accent-rgb: 79, 70, 229;
-    --accent-light-rgb: 99, 102, 241;
-    --accent-dark-rgb: 67, 56, 202;
+    --background-rgb: 0, 0, 0;
+    --foreground-rgb: 255, 255, 255;
+    --card-rgb: 26, 26, 26;
+    --border-rgb: 51, 51, 51;
+    --accent-rgb: 255, 0, 0;
+    --accent-light-rgb: 255, 51, 51;
+    --accent-dark-rgb: 204, 0, 0;
+    --accent-secondary-rgb: 0, 85, 255;
+    --accent-tertiary-rgb: 255, 204, 0;
     
-    /* Light mode gradient colors */
-    --gradient-1: #4f46e5;
-    --gradient-2: #7c3aed;
-    --gradient-3: #c026d3;
-    --gradient-4: #db2777;
-    
-    /* Skill card background - light theme */
-    --skill-card-bg: #e2e4e7;  /* Slightly darker than gray-200 for better contrast with white icons */
+    /* Skill card background - dark theme */
+    --skill-card-bg: #1a1a1a;
   }
 }
 
@@ -84,6 +80,105 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+/* Swiss Style Typography Classes */
+.swiss-heading-1 {
+  font-size: 4rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.swiss-heading-2 {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.swiss-heading-3 {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.swiss-body {
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+}
+
+.swiss-caption {
+  font-size: 0.875rem;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+
+/* Swiss Grid System */
+.swiss-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-column), 1fr);
+  gap: var(--grid-gap);
+  width: 100%;
+}
+
+.swiss-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 calc(var(--grid-unit) * 3);
+}
+
+/* Swiss Style Asymmetrical Layout Helpers */
+.swiss-asymmetric-left {
+  grid-column: 1 / span 8;
+}
+
+.swiss-asymmetric-right {
+  grid-column: 5 / span 8;
+}
+
+.swiss-asymmetric-small {
+  grid-column: span 4;
+}
+
+.swiss-asymmetric-medium {
+  grid-column: span 6;
+}
+
+.swiss-asymmetric-large {
+  grid-column: span 8;
+}
+
+/* Swiss Style Utility Classes */
+.swiss-border {
+  border: 1px solid var(--foreground);
+}
+
+.swiss-border-accent {
+  border: 1px solid var(--accent);
+}
+
+.swiss-border-left {
+  border-left: calc(var(--grid-unit) / 2) solid var(--foreground);
+}
+
+.swiss-border-left-accent {
+  border-left: calc(var(--grid-unit) / 2) solid var(--accent);
+}
+
+.swiss-border-top {
+  border-top: calc(var(--grid-unit) / 2) solid var(--foreground);
+}
+
+.swiss-border-top-accent {
+  border-top: calc(var(--grid-unit) / 2) solid var(--accent);
 }
 
 /* Basic animations */
@@ -143,18 +238,6 @@ body {
   }
 }
 
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
 /* Animation class utilities */
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out forwards;
@@ -182,324 +265,308 @@ body {
   animation: spin 1s linear infinite;
 }
 
-/* Background animation utilities */
-.animate-float-slow {
-  animation: float 8s ease-in-out infinite;
+/* Swiss Style UI Components */
+.swiss-button {
+  background-color: var(--foreground);
+  color: var(--background);
+  padding: calc(var(--grid-unit) * 1.5) calc(var(--grid-unit) * 3);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
 }
 
-.animate-float-x {
-  animation: floatX 10s ease-in-out infinite;
+.swiss-button:hover {
+  background-color: var(--accent);
 }
 
-.animate-float-diagonal {
-  animation: floatDiagonal 12s ease-in-out infinite;
+.swiss-button-outline {
+  background-color: transparent;
+  color: var(--foreground);
+  padding: calc(var(--grid-unit) * 1.5) calc(var(--grid-unit) * 3);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--foreground);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, transform 0.2s;
 }
 
-@keyframes floatX {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(-15px);
-  }
+.swiss-button-outline:hover {
+  background-color: var(--foreground);
+  color: var(--background);
 }
 
-@keyframes floatDiagonal {
-  0%, 100% {
-    transform: translate(0, 0);
-  }
-  25% {
-    transform: translate(10px, -10px);
-  }
-  50% {
-    transform: translate(0, -20px);
-  }
-  75% {
-    transform: translate(-10px, -10px);
-  }
-}
-
-/* Container utilities */
-.parallax-container {
-  overflow: hidden;
+.swiss-card {
+  background-color: var(--card);
+  padding: calc(var(--grid-unit) * 3);
   position: relative;
 }
 
-/* Text effects */
+.swiss-card-accent {
+  position: relative;
+}
+
+.swiss-card-accent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(var(--grid-unit) * 3);
+  height: calc(var(--grid-unit) / 4);
+  background-color: var(--accent);
+}
+
+/* Swiss Style Navigation */
+.swiss-nav-item {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.swiss-nav-item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background-color: var(--accent);
+  transition: width 0.2s;
+}
+
+.swiss-nav-item:hover {
+  color: var(--accent);
+}
+
+.swiss-nav-item:hover::after,
+.swiss-nav-item.active::after {
+  width: 100%;
+}
+
+.swiss-nav-item.active {
+  color: var(--accent);
+}
+
+/* Swiss Style Form Elements */
+.swiss-input {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid var(--muted);
+  padding: calc(var(--grid-unit)) 0;
+  width: 100%;
+  color: var(--foreground);
+  transition: border-color 0.2s;
+}
+
+.swiss-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.swiss-textarea {
+  background-color: transparent;
+  border: 1px solid var(--muted);
+  padding: calc(var(--grid-unit));
+  width: 100%;
+  color: var(--foreground);
+  transition: border-color 0.2s;
+  resize: vertical;
+}
+
+.swiss-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* Responsive Helpers */
+@media (max-width: 768px) {
+  :root {
+    --grid-column: 6;
+  }
+  
+  .swiss-heading-1 {
+    font-size: 2.5rem;
+  }
+  
+  .swiss-heading-2 {
+    font-size: 2rem;
+  }
+  
+  .swiss-heading-3 {
+    font-size: 1.5rem;
+  }
+  
+  .swiss-asymmetric-left,
+  .swiss-asymmetric-right,
+  .swiss-asymmetric-small,
+  .swiss-asymmetric-medium,
+  .swiss-asymmetric-large {
+    grid-column: span 6;
+  }
+}
+
+/* Keep these elements from the original CSS but adapted to Swiss style */
+.parallax-container {
+  position: relative;
+  overflow: hidden;
+}
+
 .text-gradient {
   background-clip: text;
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(135deg, var(--accent-light), var(--accent-dark));
+  color: transparent;
+  background-image: linear-gradient(135deg, var(--accent) 0%, var(--accent-tertiary) 100%);
 }
 
-.text-gradient-animated {
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(90deg, var(--gradient-1), var(--gradient-2), var(--gradient-3), var(--gradient-4), var(--gradient-1));
-  background-size: 300% 100%;
-  animation: gradientShift 8s ease infinite;
-}
-
-/* Glass effects */
 .glass-effect {
-  background: rgba(var(--foreground-rgb), 0.05);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  background-color: rgba(var(--background-rgb), 0.7);
   border: 1px solid rgba(var(--border-rgb), 0.2);
 }
 
 .glass-card {
-  background: rgba(var(--card-rgb), 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(12px);
+  background-color: rgba(var(--card-rgb), 0.7);
   border: 1px solid rgba(var(--border-rgb), 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
 }
 
-/* Smooth scrolling for the entire page */
 .smooth-scroll {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--card);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 4px;
+  background: var(--muted);
+  border-radius: 0;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-dark);
+  background: var(--accent);
 }
 
-/* Hover effects */
 .hover-lift {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 .hover-lift:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(var(--foreground-rgb), 0.05);
 }
 
-/* Abstract layout utilities */
-.grid-pattern-dots {
-  background-image: radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0);
-  background-size: 30px 30px;
+/* Swiss Style Grid Patterns */
+.swiss-grid-pattern {
+  position: relative;
 }
 
-.grid-pattern-lines {
-  background-image: linear-gradient(var(--border) 0.5px, transparent 0.5px), 
-                   linear-gradient(to right, var(--border) 0.5px, transparent 0.5px);
-  background-size: 50px 50px;
+.swiss-grid-pattern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: calc(var(--grid-unit) * 8) calc(var(--grid-unit) * 8);
+  opacity: 0.2;
+  z-index: -1;
 }
 
-/* Enhanced background elements */
-.bg-code-symbol {
-  color: var(--border);
-  font-family: monospace;
-  opacity: 0.5;
-  text-shadow: 0 0 10px var(--accent);
+.swiss-diagonal-line {
+  position: relative;
 }
 
-.bg-circuit-line {
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  height: 2px;
-  opacity: 0.4;
+.swiss-diagonal-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--accent);
+  transform: rotate(-45deg);
+  transform-origin: top left;
 }
 
-.bg-circuit-node {
-  background: var(--accent);
-  border-radius: 50%;
-  box-shadow: 0 0 15px var(--accent);
-  opacity: 0.7;
-}
-
-.bg-gear {
-  border: 2px solid var(--accent-light);
-  border-radius: 50%;
-  box-shadow: 0 0 20px var(--accent-light);
-  opacity: 0.5;
-}
-
-.bg-gradient-orb {
-  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
-  border-radius: 50%;
-  filter: blur(50px);
-  opacity: 0.5;
-}
-
-/* Theme-adaptive skill card background */
-.skill-card-bg {
-  background-color: var(--skill-card-bg);
-  transition: background-color 0.3s ease;
-}
-
-/* Add hover state for skill cards */
-.skill-card-bg:hover {
-  background-color: color-mix(in srgb, var(--skill-card-bg), var(--accent) 5%);
-  border-color: rgba(var(--accent-rgb), 0.3);
-}
-
-/* Handling white icons in light/dark modes */
-@media (prefers-color-scheme: light) {
-  .skill-card-bg img[src*="FFFFFF"],
-  .skill-card-bg img[src*="github/FFFFFF"],
-  .skill-card-bg img[src*="nextdotjs/FFFFFF"] {
-    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .skill-card-bg img[src*="FFFFFF"],
-  .skill-card-bg img[src*="github/FFFFFF"],
-  .skill-card-bg img[src*="nextdotjs/FFFFFF"] {
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
-  }
-}
-
-/* Enhanced classes for better icon handling */
-.white-icon {
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
-}
-
-.theme-adaptive-icon {
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
-}
-
-.icon-container {
-  background: linear-gradient(145deg, rgba(var(--card-rgb), 0.9), rgba(var(--card-rgb), 0.7));
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-@media (prefers-color-scheme: light) {
-  .icon-container {
-    background: linear-gradient(145deg, rgba(var(--card-rgb), 0.9), rgba(var(--card-rgb), 0.7));
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-  
-  .white-icon {
-    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2)) brightness(0.85);
-  }
-  
-  .theme-adaptive-icon {
-    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .icon-container {
-    background: rgba(var(--card-rgb), 0.6);
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
-  }
-  
-  .white-icon {
-    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
-  }
-  
-  .theme-adaptive-icon {
-    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
-  }
-}
-
-.mask-gradient-bottom {
-  -webkit-mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
-  mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
-}
-
-.mask-gradient-right {
-  -webkit-mask-image: linear-gradient(to right, black 70%, transparent 100%);
-  mask-image: linear-gradient(to right, black 70%, transparent 100%);
-}
-
-/* Subtle animations */
+/* Keep essential animation keyframes and classes */
 @keyframes slowFadeIn {
-  from {
+  0% {
     opacity: 0;
   }
-  to {
+  30% {
+    opacity: 0;
+  }
+  100% {
     opacity: 1;
   }
 }
 
 .animate-slow-fade-in {
-  animation: slowFadeIn 1.5s ease-out forwards;
+  animation: slowFadeIn 1.5s forwards;
 }
 
 @keyframes subtleFloat {
   0%, 100% {
-    transform: translateY(0);
+    transform: translateY(0) translateX(0);
   }
-  50% {
-    transform: translateY(-5px);
+  25% {
+    transform: translateY(-5px) translateX(2px);
+  }
+  75% {
+    transform: translateY(5px) translateX(-2px);
   }
 }
 
 .animate-subtle-float {
-  animation: subtleFloat 5s ease-in-out infinite;
+  animation: subtleFloat 8s ease-in-out infinite;
 }
 
-@keyframes borderPulse {
-  0%, 100% {
-    border-color: rgba(var(--accent-rgb), 0.1);
-  }
-  50% {
-    border-color: rgba(var(--accent-rgb), 0.3);
-  }
-}
-
-.animate-border-pulse {
-  animation: borderPulse 4s ease-in-out infinite;
-}
-
-/* Abstract decorative elements */
-.deco-circle {
+/* Swiss Style Decoration Elements */
+.swiss-circle {
+  width: calc(var(--grid-unit) * 10);
+  height: calc(var(--grid-unit) * 10);
   border-radius: 50%;
-  background: radial-gradient(circle at center, var(--accent-light) 0%, transparent 70%);
-  filter: blur(40px);
-  opacity: 0.2;
+  background-color: var(--accent);
+  position: absolute;
 }
 
-.deco-line {
+.swiss-line {
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  background-color: var(--foreground);
+  width: 100%;
 }
 
-/* Creative layouts */
-.asymmetric-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  grid-auto-rows: minmax(100px, auto);
-  gap: 20px;
-}
-
-.diagonal-divider {
+.swiss-diagonal-divider {
   position: relative;
   overflow: hidden;
+  padding: calc(var(--grid-unit) * 6) 0;
 }
 
-.diagonal-divider::after {
+.swiss-diagonal-divider::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 150%;
-  height: 100px;
-  background-color: var(--background);
-  transform: rotate(-3deg) translateY(-50%);
-  z-index: 1;
+  height: 1px;
+  background-color: var(--foreground);
+  transform: rotate(-30deg);
+  transform-origin: top left;
 }
 
-/* Interactive elements */
 .focus-ring {
   position: relative;
 }
@@ -507,21 +574,23 @@ body {
 .focus-ring::after {
   content: '';
   position: absolute;
-  inset: -3px;
-  border-radius: inherit;
-  border: 1px solid transparent;
-  transition: border-color 0.3s ease;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 1px solid var(--accent);
+  opacity: 0;
+  transition: opacity 0.2s;
 }
 
 .focus-ring:focus-within::after {
-  border-color: var(--accent);
+  opacity: 1;
 }
 
-/* Scroll-triggered classes */
 .reveal-on-scroll {
   opacity: 0;
   transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.5s, transform 0.5s;
 }
 
 .reveal-on-scroll.is-revealed {
@@ -529,13 +598,13 @@ body {
   transform: translateY(0);
 }
 
-/* Custom z-indices for our backgrounds */
+/* Z-index utility */
 .-z-15 {
-  z-index: -5;
+  z-index: -15;
 }
 
-/* Custom font sizing */
+/* Font size utility */
 .text-125 {
-  font-size: 125%;
+  font-size: 1.25rem;
 }
 

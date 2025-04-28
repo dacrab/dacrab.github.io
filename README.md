@@ -1,6 +1,6 @@
 # 🚀 Modern Portfolio Website
 
-A professional portfolio website built with cutting-edge technologies, featuring elegant animations, responsive design, and dynamic GitHub repository integration.
+A professional portfolio website built with cutting-edge technologies, featuring Swiss Style design principles, responsive layouts, and dynamic GitHub repository integration.
 
 ![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black)
 ![React](https://img.shields.io/badge/React-19.0.0-blue)
@@ -11,13 +11,13 @@ A professional portfolio website built with cutting-edge technologies, featuring
 ## ✨ Features
 
 - **📱 Fully Responsive Design**: Optimized for all devices from mobile to desktop
+- **🇨🇭 Swiss Style Design**: Minimalist, clean layouts with strong typography and geometric elements
 - **🎭 Stunning Animations**: Smooth transitions and eye-catching effects powered by Framer Motion
 - **💻 GitHub Integration**: Automatically fetches and displays repositories as showcased projects
 - **🔄 Dynamic Project Showcase**: Featured projects section with custom projects and auto-populated GitHub repositories
 - **🌟 Interactive UI Elements**: Engaging user experience with hover effects and responsive interactions
 - **🌙 Modern Aesthetics**: Clean, contemporary design using Tailwind CSS and custom styling
 - **🖌️ Custom Animation System**: Sophisticated animation utilities for consistent motion across the site
-- **🎨 Lottie Animation Support**: Integration with Lottie for engaging vector animations
 - **👁️ Intersection Observer**: Elements animate as they enter the viewport for a dynamic experience
 - **🔍 SEO Optimized**: Meta tags and semantic structure for improved search engine visibility
 
@@ -41,8 +41,19 @@ A warehouse management system for sports facilities with role-based access contr
 - **[TypeScript 5.7.2](https://www.typescriptlang.org/)**: Type safety and enhanced developer experience
 - **[Tailwind CSS 4.0.0](https://tailwindcss.com/)**: Utility-first CSS framework for rapid UI development
 - **[Framer Motion 12.6.2](https://www.framer.com/motion/)**: Animation library for fluid transitions
-- **[@lottiefiles/dotlottie-react](https://github.com/LottieFiles/dotlottie-react)**: Lottie animation player
 - **[React Intersection Observer](https://github.com/thebuilder/react-intersection-observer)**: Intersection detection for scroll animations
+
+## 🇨🇭 Swiss Style Design
+
+This portfolio embraces Swiss Style (International Typographic Style) design principles:
+
+- **Bold Typography**: Clean, readable type hierarchy with proper spacing
+- **Grid-Based Layout**: Structured organization of content using a grid system
+- **Minimal Geometric Elements**: Simple shapes and clean lines in the design
+- **Strategic Use of Color**: Limited color palette with strong accent colors
+- **Asymmetrical Balance**: Dynamic layouts with visual weight distribution
+- **White Space**: Generous use of negative space to create visual hierarchy
+- **Sans-Serif Typography**: Modern, clean font choices prioritizing readability
 
 ## 🚀 Getting Started
 
@@ -56,7 +67,7 @@ A warehouse management system for sports facilities with role-based access contr
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/yourusername/portfolio.git
+git clone https://github.com/dacrab/portfolio.git
 cd portfolio
 ```
 
@@ -168,5 +179,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Next.js](https://nextjs.org/) - The React framework for production
 - [Framer Motion](https://www.framer.com/motion/) - Animation library
 - [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- [Lottie Files](https://lottiefiles.com/) - Beautiful animations
 - [Google Fonts](https://fonts.google.com/) - Typography

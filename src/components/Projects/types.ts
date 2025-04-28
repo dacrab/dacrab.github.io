@@ -42,50 +42,98 @@ export const getTagColor = (tag: string): string => {
   return tag ? colorMap[tag] || "var(--accent)" : "var(--accent)";
 };
 
-// Transforms GitHub project data to our Project interface
-export const transformGitHubToProjects = (
-  githubProjects: GitHubProjectData[]
-): Project[] => {
-  return githubProjects.map(repo => ({
-    id: repo.id,
-    title: repo.title,
-    description: repo.description,
-    tags: repo.tags,
-    link: repo.link,
-  }));
-};
+export interface ProjectData {
+  id: number;
+  title: string;
+  description: string;
+  tags: string[];
+  link: string;
+  stars?: number;
+  language?: string;
+}
 
-// Default fallback projects if GitHub API fails
-export const DEFAULT_PROJECTS: Project[] = [
+// Default projects to show when GitHub projects are not available
+export const DEFAULT_PROJECTS: ProjectData[] = [
   {
     id: 1,
-    title: "Modern E-commerce Platform",
-    description: "A full-featured e-commerce solution built with Next.js, featuring dynamic product pages, cart functionality, payment processing, and admin dashboard.",
-    tags: ["Next.js", "React", "Stripe", "MongoDB"],
-    link: "#",
+    title: "Portfolio Website",
+    description: "Modern portfolio with Swiss design principles, Next.js, and Framer Motion animations.",
+    tags: ["Next.js", "TypeScript", "Framer Motion", "TailwindCSS"],
+    link: "https://github.com/dacrab/portfolio",
+    stars: 12,
+    language: "TypeScript"
   },
   {
     id: 2,
-    title: "Creative Portfolio Template",
-    description: "A customizable portfolio template for creatives with animations, filtering capabilities, and responsive design for optimal viewing on all devices.",
-    tags: ["React", "Framer Motion", "Tailwind CSS", "Vite"],
-    link: "#",
+    title: "E-commerce Platform",
+    description: "Full-stack online store with product catalog, cart system, and payment processing.",
+    tags: ["React", "Node.js", "MongoDB", "Express"],
+    link: "https://github.com/dacrab/e-commerce-platform",
+    stars: 8,
+    language: "JavaScript"
   },
   {
     id: 3,
-    title: "Task Management Dashboard",
-    description: "A comprehensive task management system with real-time updates, drag-and-drop functionality, team collaboration tools, and performance analytics.",
-    tags: ["TypeScript", "React", "Firebase", "Recharts"],
-    link: "#",
+    title: "Data Visualization Dashboard",
+    description: "Interactive dashboard for visualizing and analyzing complex datasets.",
+    tags: ["D3.js", "React", "TypeScript", "Chart.js"],
+    link: "https://github.com/dacrab/data-viz-dashboard",
+    stars: 10,
+    language: "TypeScript"
   },
   {
     id: 4,
-    title: "AI Content Generator",
-    description: "An intelligent content creation platform that generates high-quality articles, social media posts, and marketing copy using advanced AI algorithms.",
-    tags: ["Python", "TensorFlow", "React", "Node.js"],
-    link: "#",
+    title: "Task Management App",
+    description: "Productivity application with drag-and-drop functionality and collaboration features.",
+    tags: ["React", "Firebase", "Redux", "Material UI"],
+    link: "https://github.com/dacrab/task-manager",
+    stars: 7,
+    language: "JavaScript"
   },
+  {
+    id: 5,
+    title: "AI Content Generator",
+    description: "A tool that leverages AI to generate content for various purposes.",
+    tags: ["Python", "TensorFlow", "Flask", "React"],
+    link: "https://github.com/dacrab/ai-content-generator",
+    stars: 15,
+    language: "Python"
+  },
+  {
+    id: 6,
+    title: "Mobile Fitness App",
+    description: "Cross-platform mobile application for tracking workouts and health metrics.",
+    tags: ["React Native", "Redux", "Firebase", "Health APIs"],
+    link: "https://github.com/dacrab/fitness-tracker",
+    stars: 6,
+    language: "JavaScript"
+  }
 ];
+
+/**
+ * Transform GitHub project data to ProjectData format
+ */
+export function transformGitHubToProjects(githubProjects: GitHubProjectData[]): ProjectData[] {
+  return githubProjects.map(project => ({
+    id: project.id,
+    title: formatRepoName(project.name),
+    description: project.description || "No description provided",
+    tags: [project.language, ...project.topics.slice(0, 3)].filter(Boolean),
+    link: project.url,
+    stars: project.stars,
+    language: project.language
+  }));
+}
+
+/**
+ * Format repository name to be more readable
+ */
+function formatRepoName(name: string): string {
+  return name
+    .split(/[-_]/)
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
 
 // Technology data
 export const TECHNOLOGIES = [

@@ -36,11 +36,11 @@ const TimelineEntry = memo(function TimelineEntry({
       ? "col-span-1 md:col-start-1 md:col-end-3"
       : "col-span-1 md:col-start-2 md:col-end-4";
   const contentClasses = [
-    "bg-card/40 backdrop-blur-sm rounded-lg border border-border/20 shadow-sm p-4 md:p-5 ml-6 md:ml-0 md:mr-0 relative",
+    "swiss-card relative p-4 md:p-5 ml-6 md:ml-0 md:mr-0",
     effectivePosition === "left" ? "md:mr-6" : "md:ml-6"
   ].join(" ");
   const dotClasses =
-    "absolute z-10 left-0 md:left-50% top-2 md:top-5 w-3 h-3 md:w-4 md:h-4 rounded-full bg-accent/20 border border-accent/50 flex items-center justify-center";
+    "absolute z-10 left-0 md:left-50% top-2 md:top-5 w-3 h-3 md:w-4 md:h-4 bg-[var(--accent)]";
   const dotStyles = {
     [effectivePosition === "left" ? "right" : "left"]: "-12px",
     transform: "translateX(-50%)"
@@ -51,10 +51,10 @@ const TimelineEntry = memo(function TimelineEntry({
     effectivePosition === "left"
       ? "justify-start md:pl-6"
       : "justify-end md:pr-6",
-    "text-sm md:text-base text-muted"
+    "text-sm md:text-base text-[var(--muted)]"
   ].join(" ");
   const mobileDateClasses =
-    "inline-block md:hidden text-xs text-muted mb-2 bg-card/50 px-2 py-0.5 rounded";
+    "inline-block md:hidden text-xs text-[var(--muted)] mb-2 bg-[var(--card-hover)] px-2 py-0.5";
 
   // Animation delays
   const delayBase = isMobile ? 0.15 : 0.2;
@@ -81,10 +81,14 @@ const TimelineEntry = memo(function TimelineEntry({
       {/* Content */}
       <div className={contentGridColClass}>
         <motion.div className={contentClasses} {...getAnim()}>
+          {/* Swiss style accent elements on card */}
+          <div className="absolute top-0 left-0 w-1/4 h-1 bg-[var(--accent)]"></div>
+          <div className="absolute bottom-0 right-0 w-1 h-1/4 bg-[var(--accent-secondary)]"></div>
+          
           {/* Timeline dot */}
           <div className={dotClasses} style={dotStyles}>
             <motion.div
-              className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-accent"
+              className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white"
               initial={{ scale: 0 }}
               animate={{ scale: isInView ? 1 : 0 }}
               transition={{
@@ -102,18 +106,18 @@ const TimelineEntry = memo(function TimelineEntry({
             {title}
           </motion.h4>
           <motion.h5
-            className="text-sm md:text-base text-accent mb-3"
+            className="text-sm md:text-base text-[var(--accent)] mb-3"
             {...getFadeAnim(0.15)}
           >
             {company}
           </motion.h5>
           <motion.div
-            className="text-muted text-sm space-y-2 mb-4"
+            className="text-[var(--muted)] text-sm space-y-2 mb-4"
             {...getFadeAnim(0.2)}
           >
             {description.map((paragraph, i) => (
               <p key={i} className="flex items-start">
-                <span className="text-accent mr-2 text-lg leading-tight">•</span>
+                <span className="text-[var(--accent)] mr-2 text-lg leading-tight">•</span>
                 <span>{paragraph}</span>
               </p>
             ))}
@@ -125,7 +129,7 @@ const TimelineEntry = memo(function TimelineEntry({
             {technologies.map((tech) => (
               <span
                 key={tech}
-                className="text-xs px-2 py-0.5 rounded-md border border-border/20 bg-card/40 text-muted"
+                className="text-xs px-2 py-1 bg-[var(--card-hover)] rounded-sm"
               >
                 {tech}
               </span>

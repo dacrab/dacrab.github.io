@@ -1,50 +1,26 @@
-import { motion } from "framer-motion";
-import { memo } from "react";
+import React from 'react';
 
-interface ErrorMessageProps {
-  error: Error;
+export interface ErrorMessageProps {
+  message: string;
 }
 
-// Memoize the component to prevent unnecessary re-renders
-const ErrorMessage = memo(function ErrorMessage({ error }: ErrorMessageProps) {
+export default function ErrorMessage({ message }: ErrorMessageProps) {
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="bg-red-500/10 border border-red-500/20 rounded-lg p-5 md:p-6 mb-6 text-center max-w-3xl mx-auto"
-    >
-      <h3 className="text-lg md:text-xl font-bold mb-2 text-red-500">GitHub API Error</h3>
-      
-      {error.message.includes("rate limit exceeded") ? (
-        <>
-          <p className="text-muted mb-3 text-sm">
-            We&apos;ve hit GitHub&apos;s rate limits. This typically happens when making too many requests without authentication.
+    <div className="swiss-card bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/50 mb-8">
+      <div className="flex items-start">
+        <div className="flex-shrink-0 mt-0.5">
+          <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <div className="ml-3">
+          <h3 className="text-sm font-medium text-red-800 dark:text-red-200">Error loading projects</h3>
+          <p className="mt-1 text-xs text-red-700 dark:text-red-300">{message}</p>
+          <p className="mt-3 text-xs text-red-700 dark:text-red-300">
+            Displaying default projects instead. Try refreshing the page.
           </p>
-          <div className="bg-card/30 p-3 rounded-lg text-left mb-3 text-xs font-mono overflow-auto">
-            <p>{error.message}</p>
-          </div>
-          <p className="text-xs text-muted mb-2">To fix this issue:</p>
-          <ul className="text-xs text-muted list-disc list-inside text-left max-w-md mx-auto">
-            <li>Generate a GitHub personal access token</li>
-            <li>Add it to your .env.local file as GITHUB_ACCESS_TOKEN</li>
-            <li>Restart your development server</li>
-          </ul>
-        </>
-      ) : error.message.includes("not found") ? (
-        <>
-          <p className="text-muted mb-2 text-sm">The GitHub username could not be found.</p>
-          <p className="text-xs text-muted">Check your NEXT_PUBLIC_GITHUB_USERNAME value in .env.local</p>
-        </>
-      ) : (
-        <p className="text-muted text-sm">
-          {error.message || "An unexpected error occurred while fetching your GitHub projects."}
-        </p>
-      )}
-      
-      <p className="text-muted text-xs mt-3">Displaying example projects instead.</p>
-    </motion.div>
+        </div>
+      </div>
+    </div>
   );
-});
-
-export default ErrorMessage; 
+} 

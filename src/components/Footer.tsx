@@ -1,14 +1,16 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useIsMobile } from "@/hooks/useIsMobile";
+import SwissMotion from "./SwissMotion";
+import StaggerItem from "./StaggerItem";
+import ShapeAnimation from "./ShapeAnimation";
+import ParallaxLayer from "./ParallaxLayer";
 
 const QUICK_LINKS = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Projects", href: "#projects" },
-  { label: "Experience", href: "#experience" },
-  { label: "Contact", href: "#contact" },
+  { label: "HOME", href: "#home" },
+  { label: "ABOUT", href: "#about" },
+  { label: "PROJECTS", href: "#projects" },
+  { label: "EXPERIENCE", href: "#experience" },
+  { label: "CONTACT", href: "#contact" },
 ];
 
 const SOCIAL_LINKS = [
@@ -45,166 +47,139 @@ const EMAIL = "vkavouras@proton.me";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const isMobile = useIsMobile();
-
-  // Animation config helpers
-  const getY = () => (isMobile ? 15 : 20);
-  const getDuration = () => (isMobile ? 0.4 : 0.5);
-  const getAmount = () => (isMobile ? 0.1 : 0.2);
 
   return (
-    <footer className="bg-background relative overflow-hidden border-t border-border">
-      <div className="container mx-auto px-4 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-12">
+    <footer className="bg-[var(--background)] border-t border-[var(--foreground)] relative">
+      {/* Animated Swiss-style accent elements */}
+      <ParallaxLayer speed={0.15} direction="down" className="absolute top-0 left-1/4">
+        <ShapeAnimation 
+          type="line" 
+          color="var(--accent)" 
+          size={64} 
+          strokeWidth={4}
+          variant="draw"
+          delay={0.3}
+        />
+      </ParallaxLayer>
+      
+      <ParallaxLayer speed={0.1} direction="up" className="absolute bottom-16 right-8">
+        <ShapeAnimation 
+          type="square" 
+          color="var(--accent-secondary)" 
+          size={48} 
+          variant="float"
+          delay={0.5}
+          loop={true}
+        />
+      </ParallaxLayer>
+      
+      <div className="swiss-container py-16">
+        <div className="swiss-grid mb-16">
           {/* About column */}
-          <div>
-            <motion.div
-              initial={{ opacity: 0, y: getY() }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: getDuration() }}
-              viewport={{ once: true, amount: getAmount() }}
-            >
-              <h3 className="text-xl font-bold mb-4">About Me</h3>
-              <p className="text-muted mb-6">
-                A passionate web developer focused on creating beautiful,
-                functional, and user-friendly experiences.
-              </p>
-            </motion.div>
-          </div>
+          <SwissMotion 
+            type="slide" 
+            delay={0.2} 
+            duration={0.7}
+            className="swiss-asymmetric-small"
+          >
+            <h3 className="swiss-heading-3 mb-6">ABOUT</h3>
+            <SwissMotion type="reveal" delay={0.3} duration={0.5}>
+              <div className="w-12 h-1 bg-[var(--foreground)] mb-4"></div>
+            </SwissMotion>
+            <p className="swiss-body">
+              A passionate web developer focused on creating beautiful,
+              functional, and user-friendly experiences.
+            </p>
+          </SwissMotion>
 
           {/* Quick links */}
-          <div>
-            <motion.div
-              initial={{ opacity: 0, y: getY() }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: getDuration(),
-                delay: isMobile ? 0.15 : 0.2,
-              }}
-              viewport={{ once: true, amount: getAmount() }}
-            >
-              <h3 className="text-xl font-bold mb-4">Quick Links</h3>
-              <ul className="space-y-3">
-                {QUICK_LINKS.map((item, index) => (
-                  <motion.li
-                    key={item.label}
-                    initial={{ opacity: 0, x: isMobile ? -7 : -10 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    transition={{
-                      duration: isMobile ? 0.25 : 0.3,
-                      delay: (isMobile ? 0.2 : 0.3) + index * (isMobile ? 0.07 : 0.1),
-                    }}
-                    viewport={{ once: true, amount: getAmount() }}
-                  >
-                    <motion.a
+          <SwissMotion 
+            type="slide" 
+            delay={0.3} 
+            duration={0.7}
+            className="swiss-asymmetric-small mt-12 md:mt-0"
+          >
+            <h3 className="swiss-heading-3 mb-6">LINKS</h3>
+            <SwissMotion type="reveal" delay={0.4} duration={0.5}>
+              <div className="w-12 h-1 bg-[var(--foreground)] mb-4"></div>
+            </SwissMotion>
+            <SwissMotion type="stagger" staggerChildren={0.06} className="space-y-3">
+              {QUICK_LINKS.map((item) => (
+                <StaggerItem key={item.label} type="fade" whileHover="lift">
+                  <li>
+                    <a
                       href={item.href}
-                      className="text-muted flex items-center transition-colors duration-300 hover:text-accent"
-                      whileHover={{ x: isMobile ? 3 : 5 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: isMobile ? 350 : 400,
-                        damping: isMobile ? 20 : 25,
-                      }}
+                      className="swiss-nav-item"
                     >
-                      <svg
-                        className="w-3 h-3 mr-2 text-accent"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
                       {item.label}
-                    </motion.a>
-                  </motion.li>
-                ))}
-              </ul>
-            </motion.div>
-          </div>
+                    </a>
+                  </li>
+                </StaggerItem>
+              ))}
+            </SwissMotion>
+          </SwissMotion>
 
           {/* Connect column */}
-          <div>
-            <motion.div
-              initial={{ opacity: 0, y: getY() }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{
-                duration: getDuration(),
-                delay: isMobile ? 0.3 : 0.4,
-              }}
-              viewport={{ once: true, amount: getAmount() }}
-            >
-              <h3 className="text-xl font-bold mb-4">Connect</h3>
-              <div className="flex space-x-4 mb-6">
-                {SOCIAL_LINKS.map((social) => (
-                  <motion.a
-                    key={social.name}
+          <SwissMotion 
+            type="slide" 
+            delay={0.4} 
+            duration={0.7}
+            className="swiss-asymmetric-small mt-12 md:mt-0"
+          >
+            <h3 className="swiss-heading-3 mb-6">CONNECT</h3>
+            <SwissMotion type="reveal" delay={0.5} duration={0.5}>
+              <div className="w-12 h-1 bg-[var(--foreground)] mb-4"></div>
+            </SwissMotion>
+            
+            <SwissMotion type="stagger" staggerChildren={0.08} className="flex space-x-6 mb-8">
+              {SOCIAL_LINKS.map((social) => (
+                <StaggerItem key={social.name} type="fade" whileHover="scale">
+                  <a
                     href={social.url}
                     aria-label={social.name}
-                    className="relative group"
                     target="_blank"
                     rel="noopener noreferrer"
-                    whileHover={{ scale: isMobile ? 1.05 : 1.1 }}
-                    whileTap={{ scale: isMobile ? 0.97 : 0.95 }}
-                    transition={{ duration: isMobile ? 0.15 : 0.2 }}
+                    className="transition-colors duration-300 hover:text-[var(--accent)]"
                   >
-                    <div className="absolute inset-0 bg-accent/20 rounded-full blur-md opacity-0 group-hover:opacity-70 transition-opacity duration-300 -z-10"></div>
-                    <div className="flex items-center justify-center w-10 h-10 bg-card/50 hover:bg-card/80 border border-border/40 rounded-full transition-all duration-300">
-                      <span className="text-muted group-hover:text-accent transition-colors duration-300">
-                        {social.icon}
-                      </span>
-                    </div>
-                  </motion.a>
-                ))}
-              </div>
+                    {social.icon}
+                  </a>
+                </StaggerItem>
+              ))}
+            </SwissMotion>
 
-              <motion.div
-                initial={{ opacity: 0, y: isMobile ? 7 : 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{
-                  duration: isMobile ? 0.3 : 0.4,
-                  delay: isMobile ? 0.4 : 0.5,
-                }}
-                viewport={{ once: true, amount: getAmount() }}
-                className="bg-card/30 backdrop-blur-sm border border-border/30 rounded-xl p-4 hover:shadow-md transition-all duration-300"
-                whileHover={{ y: isMobile ? -2 : -3 }}
+            <SwissMotion 
+              type="scale" 
+              delay={0.6} 
+              duration={0.5}
+              whileHover="lift"
+              className="swiss-card"
+            >
+              <p className="swiss-caption mb-2">
+                Want to get in touch? Send me an email at:
+              </p>
+              <a
+                href={`mailto:${EMAIL}`}
+                className="text-[var(--accent)] font-bold uppercase"
               >
-                <p className="text-sm text-muted">
-                  Want to get in touch? Send me an email at:
-                </p>
-                <motion.a
-                  href={`mailto:${EMAIL}`}
-                  className="text-accent block mt-1 relative inline-block underline-offset-2 hover:underline"
-                  transition={{ duration: isMobile ? 0.15 : 0.2 }}
-                >
-                  {EMAIL}
-                </motion.a>
-              </motion.div>
-            </motion.div>
-          </div>
+                {EMAIL}
+              </a>
+            </SwissMotion>
+          </SwissMotion>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{
-            duration: getDuration(),
-            delay: isMobile ? 0.5 : 0.6,
-          }}
-          viewport={{ once: true, amount: getAmount() }}
-          className="border-t border-border pt-8 flex flex-col md:flex-row justify-between items-center"
-        >
-          <p className="text-sm text-muted mb-4 md:mb-0">
-            © {currentYear} Vaggelis Kavouras. All rights reserved.
-          </p>
-          <div className="text-sm text-muted">
-            Built with <span className="mx-1">❤️</span> using Next.js, TypeScript & Tailwind CSS
+        {/* Copyright */}
+        <SwissMotion type="fade" delay={0.7} duration={0.6} className="border-t border-[var(--border)] pt-8 flex flex-col md:flex-row justify-between items-center">
+          <div className="flex items-center mb-4 md:mb-0">
+            <SwissMotion type="rotate" delay={0.8} duration={0.5} className="w-6 h-6 bg-[var(--accent)] mr-3 flex items-center justify-center">
+              <div className="w-3 h-3 bg-[var(--background)]"></div>
+            </SwissMotion>
+            <span className="font-bold uppercase">VAGGELIS KAVOURAS</span>
           </div>
-        </motion.div>
+          
+          <div className="text-[var(--muted)] text-sm uppercase tracking-wider">
+            © {currentYear} ALL RIGHTS RESERVED
+          </div>
+        </SwissMotion>
       </div>
     </footer>
   );

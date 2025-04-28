@@ -1,166 +1,221 @@
-import { motion, MotionValue } from "framer-motion";
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import ScrollReveal from "../ScrollReveal";
-import StaggerReveal from "../StaggerReveal";
+import { useRef } from 'react';
+import { motion, useInView } from "framer-motion";
 import NumberCounter from "../Experience/NumberCounter";
-import { memo, useRef, useState, useEffect } from "react";
 
-interface ProfileImageProps {
-  contentY: MotionValue<number>;
-  isMobile?: boolean;
-}
-
-const isNavigatorLowEnd = (): boolean => {
-  if (typeof navigator === "undefined") return false;
-  // @ts-expect-error Accessing non-standard navigator properties for device heuristics
-  const { hardwareConcurrency, deviceMemory, connection } = navigator;
-  return (
-    (hardwareConcurrency && hardwareConcurrency < 4) ||
-    (deviceMemory && deviceMemory < 4) ||
-    (connection &&
-      (connection.effectiveType === "2g" ||
-        connection.effectiveType === "3g" ||
-        connection.saveData === true))
-  );
-};
-
-const ProfileImage = memo(function ProfileImage({ contentY, isMobile = false }: ProfileImageProps) {
-  const [shouldLoadLottie, setShouldLoadLottie] = useState(false);
-  const [isLowEndDevice, setIsLowEndDevice] = useState(false);
-  const lottieRef = useRef<HTMLDivElement>(null);
-
-  // Detect low-end device once on mount
-  useEffect(() => {
-    setIsLowEndDevice(isNavigatorLowEnd());
-  }, []);
-
-  // Only load Lottie when in view and not on low-end mobile
-  useEffect(() => {
-    const el = lottieRef.current;
-    if (!el) return;
-
-    const observer: IntersectionObserver | null = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          if (!(isLowEndDevice && isMobile)) {
-            setTimeout(() => setShouldLoadLottie(true), isMobile ? 500 : 200);
-          }
-          observer?.disconnect();
-        }
-      },
-      { rootMargin: "200px" }
-    );
-
-    observer.observe(el);
-    return () => observer && observer.disconnect();
-  }, [isMobile, isLowEndDevice]);
-
-  const hoverAnimation = {
-    y: isMobile ? -2 : -3,
-    boxShadow: isMobile
-      ? "0 6px 15px -5px rgba(var(--accent-rgb), 0.12)"
-      : "0 8px 20px -5px rgba(var(--accent-rgb), 0.15)",
-    borderColor: "rgba(var(--accent-rgb), 0.3)",
-    transition: { duration: isMobile ? 0.15 : 0.2 }
-  };
+export default function ProfileImage() {
+  const statsRef = useRef<HTMLDivElement>(null);
+  const isStatsInView = useInView(statsRef, { once: true, amount: 0.5 });
+  
+  // Swiss style easing functions
+  const swissEase = [0.19, 1, 0.22, 1]; // Smooth Swiss-style precision curve
+  const swissEaseCrisp = [0.17, 0.67, 0.83, 0.67]; // Crisp Swiss-style precision curve
 
   return (
-    <motion.div
-      className="lg:col-span-5 lg:col-start-1 relative"
-      style={{ y: contentY }}
-    >
-      <div className="relative">
-        <div className="relative w-full max-w-md mx-auto lg:mx-0">
-          <ScrollReveal
-            direction="left"
-            duration={isMobile ? 0.5 : 0.6}
-            delay={0.1}
-            className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-xl overflow-hidden relative z-10 shadow-md transition-shadow duration-300"
-            distance={isMobile ? 20 : 30}
-            mobileOptimized
-          >
-            <div
-              ref={lottieRef}
-              className="aspect-square relative overflow-hidden flex items-center justify-center"
-            >
-              <div className="w-full h-full">
-                {isLowEndDevice && isMobile ? (
-                  <div className="w-full h-full bg-card/50 flex items-center justify-center">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="0.8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-accent/80 h-4/5 w-4/5"
-                    >
-                      <circle cx="12" cy="8" r="5" />
-                      <path d="M20 21a8 8 0 0 0-16 0" />
-                    </svg>
-                  </div>
-                ) : shouldLoadLottie ? (
-                  <DotLottieReact
-                    src="https://lottie.host/ec2681d0-ab67-4f7d-a35a-c870c0a588aa/BVfwAmcRde.lottie"
-                    loop
-                    className="w-full h-full"
-                    speed={isMobile ? 0.8 : 1}
-                  />
-                ) : (
-                  <div className="w-full h-full bg-card/50 animate-pulse flex items-center justify-center">
-                    <div
-                      className="w-10 h-10 border-t-2 border-accent/30 rounded-full animate-spin"
-                      style={{
-                        animationDuration: isMobile ? "2s" : "1.5s",
-                        opacity: 0.7
+    <div className="swiss-card relative">
+      <div className="absolute top-0 right-0 w-1 h-full bg-[var(--accent-tertiary)]"></div>
+      
+      <div className="aspect-square w-full max-w-md relative overflow-hidden bg-[var(--card)] mx-auto">
+        <motion.div 
+          className="absolute inset-0 swiss-grid-pattern opacity-10"
+          animate={{ 
+            backgroundPosition: ["0% 0%", "2% 2%"],
+          }}
+          transition={{ 
+            duration: 8, 
+            ease: "linear", 
+            repeat: Infinity,
+            repeatType: "reverse"
+          }}
+        />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+          className="w-full h-full flex items-center justify-center relative"
+        >
+          {/* Swiss-style geometric abstract profile representation */}
+          <div className="relative w-full h-full">
+            {/* Background geometric shapes */}
+            <motion.div 
+              className="absolute top-1/4 left-1/4 w-1/2 h-1/2 bg-[var(--accent-tertiary)] opacity-20 rotate-45"
+              animate={{ 
+                rotate: [45, 47, 45, 43, 45],
+                scale: [1, 1.02, 1, 0.98, 1]
+              }}
+              transition={{
+                duration: 10,
+                ease: swissEase,
+                repeat: Infinity,
+                repeatType: "mirror"
+              }}
+            />
+            <motion.div 
+              className="absolute bottom-1/3 right-1/4 w-1/4 h-1/4 bg-[var(--accent-secondary)] opacity-30"
+              animate={{ 
+                x: [0, 4, 0, -4, 0],
+                y: [0, -3, 0, 3, 0]
+              }}
+              transition={{
+                duration: 12,
+                ease: swissEase,
+                repeat: Infinity,
+                repeatType: "mirror"
+              }}
+            />
+            
+            {/* Abstract profile representation */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="relative w-3/4 h-3/4 flex items-center justify-center">
+                {/* Abstract person representation with geometric shapes */}
+                <div className="relative">
+                  {/* Head */}
+                  <motion.div 
+                    className="w-24 h-24 rounded-full bg-[var(--accent)] opacity-80 flex items-center justify-center"
+                    animate={{ 
+                      scale: [1, 1.03, 1, 0.98, 1]
+                    }}
+                    transition={{
+                      duration: 6,
+                      ease: swissEaseCrisp,
+                      repeat: Infinity,
+                      repeatType: "mirror"
+                    }}
+                  >
+                    <motion.div 
+                      className="w-16 h-16 rounded-full bg-[var(--card)]"
+                      animate={{ 
+                        scale: [1, 0.97, 1, 1.02, 1]
                       }}
-                    ></div>
-                  </div>
-                )}
+                      transition={{
+                        duration: 6,
+                        ease: swissEaseCrisp,
+                        repeat: Infinity,
+                        repeatType: "mirror",
+                        delay: 0.5
+                      }}
+                    />
+                  </motion.div>
+                  
+                  {/* Body */}
+                  <motion.div 
+                    className="absolute -bottom-24 left-1/2 -translate-x-1/2 w-32 h-32 bg-[var(--accent-secondary)] opacity-60 rotate-45"
+                    animate={{ 
+                      rotate: [45, 46, 45, 44, 45],
+                      y: [0, -2, 0, 2, 0]
+                    }}
+                    transition={{
+                      duration: 8,
+                      ease: swissEase,
+                      repeat: Infinity,
+                      repeatType: "mirror"
+                    }}
+                  />
+                </div>
+                
+                {/* Swiss-style grid overlay */}
+                <motion.div 
+                  className="absolute inset-0 swiss-grid-pattern opacity-30"
+                  animate={{ 
+                    backgroundPosition: ["0% 0%", "1% 1%"],
+                  }}
+                  transition={{ 
+                    duration: 6, 
+                    ease: "linear", 
+                    repeat: Infinity,
+                    repeatType: "reverse"
+                  }}
+                />
+                
+                {/* Accent lines */}
+                <motion.div 
+                  className="absolute top-0 left-0 w-full h-2 bg-[var(--accent)]"
+                  animate={{ 
+                    width: ["100%", "95%", "100%"]
+                  }}
+                  transition={{
+                    duration: 7,
+                    ease: swissEaseCrisp,
+                    repeat: Infinity,
+                    repeatType: "mirror"
+                  }}
+                />
+                <motion.div 
+                  className="absolute bottom-0 right-0 w-2 h-full bg-[var(--accent-secondary)]"
+                  animate={{ 
+                    height: ["100%", "95%", "100%"]
+                  }}
+                  transition={{
+                    duration: 8,
+                    ease: swissEaseCrisp,
+                    repeat: Infinity,
+                    repeatType: "mirror"
+                  }}
+                />
               </div>
             </div>
-          </ScrollReveal>
-        </div>
-
-        <StaggerReveal
-          className="mt-6 grid grid-cols-2 gap-4 max-w-md mx-auto lg:mx-0"
-          duration={isMobile ? 0.4 : 0.5}
-          childDelay={isMobile ? 0.15 : 0.2}
-          staggerDelay={isMobile ? 0.07 : 0.1}
-          childClassName="h-full"
-          mobileOptimized
-        >
-          <motion.div
-            className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200"
-            whileHover={hoverAnimation}
-          >
-            <NumberCounter
-              end={1}
-              duration={isMobile ? 1.2 : 1.5}
-              delay={isMobile ? 0.5 : 0.6}
-              suffix="+"
-              className="text-accent text-2xl font-bold"
-            />
-            <div className="text-sm text-muted mt-1">Year Experience</div>
-          </motion.div>
-          <motion.div
-            className="bg-card/30 backdrop-blur-sm border border-border/40 rounded-lg p-4 shadow-sm hover:shadow-md transition-all duration-200"
-            whileHover={hoverAnimation}
-          >
-            <NumberCounter
-              end={15}
-              duration={isMobile ? 1.2 : 1.5}
-              delay={isMobile ? 0.6 : 0.7}
-              suffix="+"
-              className="text-accent text-2xl font-bold"
-            />
-            <div className="text-sm text-muted mt-1">Projects Completed</div>
-          </motion.div>
-        </StaggerReveal>
+            
+            {/* Swiss typography elements */}
+            <motion.div 
+              className="absolute top-4 left-4 text-xs font-bold tracking-widest opacity-70 uppercase"
+              animate={{ 
+                opacity: [0.7, 0.5, 0.7]
+              }}
+              transition={{
+                duration: 5,
+                ease: "easeInOut",
+                repeat: Infinity,
+                repeatType: "mirror"
+              }}
+            >
+              PORTFOLIO
+            </motion.div>
+            <motion.div 
+              className="absolute bottom-4 right-4 text-xs font-bold tracking-widest opacity-70 uppercase"
+              animate={{ 
+                opacity: [0.7, 0.5, 0.7]
+              }}
+              transition={{
+                duration: 5,
+                ease: "easeInOut",
+                repeat: Infinity,
+                repeatType: "mirror",
+                delay: 1
+              }}
+            >
+              DEVELOPER
+            </motion.div>
+          </div>
+        </motion.div>
+        
+        {/* Swiss style accent elements */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-[var(--accent)]"></div>
       </div>
-    </motion.div>
+      
+      {/* Stats */}
+      <div ref={statsRef} className="mt-8 grid grid-cols-2 gap-6">
+        <div className="text-center">
+          <NumberCounter 
+            end={1} 
+            duration={1.5} 
+            delay={0.3} 
+            suffix="+" 
+            isInView={isStatsInView}
+            className="text-3xl font-bold mb-1"
+          />
+          <div className="text-sm uppercase tracking-wider text-[var(--muted)]">Years Experience</div>
+        </div>
+        <div className="text-center">
+          <NumberCounter 
+            end={15} 
+            duration={2} 
+            delay={0.5} 
+            suffix="+" 
+            isInView={isStatsInView}
+            className="text-3xl font-bold mb-1"
+          />
+          <div className="text-sm uppercase tracking-wider text-[var(--muted)]">Projects</div>
+        </div>
+      </div>
+    </div>
   );
-});
-
-export default ProfileImage;
+}

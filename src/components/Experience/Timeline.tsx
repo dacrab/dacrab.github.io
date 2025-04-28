@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import ScrollReveal from "../ScrollReveal";
 import TimelineEntry from "./TimelineEntry";
 import { EXPERIENCES } from "./types";
 import { memo, useMemo } from "react";
@@ -16,33 +15,6 @@ const Timeline = memo(function Timeline({ isInView, isMobile }: TimelineProps) {
       initial: { opacity: 0, y: isMobile ? 10 : 15 },
       animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : isMobile ? 10 : 15 },
       transition: { duration: isMobile ? 0.4 : 0.5, delay: 0.2 },
-    }),
-    [isInView, isMobile]
-  );
-
-  const headingAnim = useMemo(
-    () => ({
-      initial: { opacity: 0, y: isMobile ? -3 : -5 },
-      animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : isMobile ? -3 : -5 },
-      transition: { duration: isMobile ? 0.3 : 0.4, delay: 0.3 },
-    }),
-    [isInView, isMobile]
-  );
-
-  const lineAnim = useMemo(
-    () => ({
-      initial: { width: 0, opacity: 0 },
-      animate: { width: isInView ? (isMobile ? 48 : 64) : 0, opacity: isInView ? 1 : 0 },
-      transition: { duration: isMobile ? 0.4 : 0.5, delay: 0.4 },
-    }),
-    [isInView, isMobile]
-  );
-
-  const paraAnim = useMemo(
-    () => ({
-      initial: { opacity: 0, y: isMobile ? 3 : 5 },
-      animate: { opacity: isInView ? 0.8 : 0, y: isInView ? 0 : isMobile ? 3 : 5 },
-      transition: { duration: isMobile ? 0.3 : 0.4, delay: 0.5 },
     }),
     [isInView, isMobile]
   );
@@ -73,36 +45,24 @@ const Timeline = memo(function Timeline({ isInView, isMobile }: TimelineProps) {
 
   return (
     <motion.div
-      className="max-w-6xl mx-auto rounded-xl overflow-hidden border border-border/20 shadow-md backdrop-blur-sm p-4 md:p-8"
-      style={{ background: "rgba(var(--card-rgb), 0.6)" }}
+      className="swiss-container relative z-10"
       {...mainAnim}
     >
-      <div className="text-center mb-6 md:mb-8">
-        <motion.h3
-          {...headingAnim}
-          className="text-xl md:text-2xl font-bold mb-2 inline-block text-gradient"
-        >
-          Career Timeline
-        </motion.h3>
-        <motion.div
-          className="h-0.5 w-12 md:w-16 bg-accent/50 mx-auto mb-3 md:mb-4"
-          {...lineAnim}
-        />
-        <motion.p
-          {...paraAnim}
-          className="text-muted max-w-xl mx-auto text-sm md:text-base"
-        >
-          A chronological journey through my professional experience and skill development
-        </motion.p>
+      <div className="mb-12">
+        <h3 className="swiss-heading-3 mb-8">CAREER TIMELINE</h3>
+        
+        {/* Swiss style accent elements */}
+        <div className="absolute left-0 top-12 w-2 h-24 bg-[var(--accent-secondary)] opacity-70"></div>
+        <div className="absolute right-0 top-8 w-8 h-1 bg-[var(--accent)]"></div>
       </div>
 
-      <div className="relative max-w-5xl mx-auto mt-10 md:mt-14">
+      <div className="relative max-w-5xl mx-auto">
         {/* Desktop vertical line */}
         <div className="hidden md:grid md:grid-cols-[160px_1fr_160px] md:mx-auto">
           <div />
           <div className="relative">
             <motion.div
-              className="absolute inset-0 mx-auto w-px bg-gradient-to-b from-transparent via-accent/60 to-accent/20"
+              className="absolute inset-0 mx-auto w-px bg-[var(--accent)]"
               style={{ left: "50%" }}
               initial={{ height: 0 }}
               animate={{ height: isInView ? "100%" : 0 }}
@@ -113,7 +73,7 @@ const Timeline = memo(function Timeline({ isInView, isMobile }: TimelineProps) {
         </div>
         {/* Mobile vertical line */}
         <motion.div
-          className="absolute md:hidden left-4 top-0 bottom-0 w-0.5 bg-gradient-to-b from-transparent via-accent/60 to-accent/20"
+          className="absolute md:hidden left-4 top-0 bottom-0 w-0.5 bg-[var(--accent)]"
           initial={{ height: 0 }}
           animate={{ height: isInView ? "100%" : 0 }}
           transition={verticalLineTrans}
@@ -123,17 +83,11 @@ const Timeline = memo(function Timeline({ isInView, isMobile }: TimelineProps) {
         <div className="relative z-10">
           {EXPERIENCES.map((exp, index) => {
             const isLeft = index % 2 === 0;
-            const direction = isLeft ? "left" : "right";
             // Always right on mobile, alternate on desktop
             return (
-              <ScrollReveal
+              <div
                 key={exp.id}
-                direction={direction}
                 className="mb-8 md:mb-12 relative"
-                duration={isMobile ? 0.4 : 0.5}
-                delay={0.3 + 0.08 * Math.min(index, isMobile ? 2 : 3)}
-                distance={isMobile ? 15 : 20}
-                threshold={0.1}
               >
                 <TimelineEntry
                   position="right"
@@ -147,7 +101,7 @@ const Timeline = memo(function Timeline({ isInView, isMobile }: TimelineProps) {
                   index={index}
                   isMobile={isMobile}
                 />
-              </ScrollReveal>
+              </div>
             );
           })}
         </div>
@@ -155,24 +109,27 @@ const Timeline = memo(function Timeline({ isInView, isMobile }: TimelineProps) {
         {/* Timeline end marker */}
         <div className="relative">
           <motion.div
-            className="md:hidden absolute left-4 -bottom-2 w-6 h-6 rounded-full border border-accent/50 flex items-center justify-center bg-card/30 backdrop-blur-sm shadow-md z-10"
+            className="md:hidden absolute left-4 -bottom-2 w-6 h-6 rounded-sm border border-[var(--accent)] flex items-center justify-center bg-[var(--card)] z-10"
             {...endMarkerAnim}
           >
             <motion.div
-              className="w-2 h-2 bg-accent rounded-full"
+              className="w-2 h-2 bg-[var(--accent)]"
               {...endMarkerPulse}
             />
           </motion.div>
           <motion.div
-            className="hidden md:flex absolute left-1/2 -translate-x-1/2 -bottom-2 w-8 h-8 rounded-full border border-accent/50 items-center justify-center bg-card/30 backdrop-blur-sm shadow-md z-10"
+            className="hidden md:flex absolute left-1/2 -translate-x-1/2 -bottom-2 w-8 h-8 rounded-sm border border-[var(--accent)] items-center justify-center bg-[var(--card)] z-10"
             {...endMarkerAnim}
           >
             <motion.div
-              className="w-2.5 h-2.5 bg-accent rounded-full"
+              className="w-2.5 h-2.5 bg-[var(--accent)]"
               {...endMarkerPulse}
             />
           </motion.div>
         </div>
+        
+        {/* Swiss style accent element at bottom */}
+        <div className="absolute right-1/4 bottom-10 w-12 h-12 bg-[var(--accent-tertiary)] opacity-80"></div>
       </div>
     </motion.div>
   );
