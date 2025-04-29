@@ -9,6 +9,7 @@ import Timeline from "./Experience/Timeline";
 import SwissMotion from "./SwissMotion";
 import ShapeAnimation from "./ShapeAnimation";
 import ParallaxLayer from "./ParallaxLayer";
+import { SectionHeader } from "./common";
 
 export default function Experience() {
   const isMobile = useIsMobile();
@@ -74,35 +75,14 @@ export default function Experience() {
       </div>
 
       <div className="swiss-container relative z-10">
-        {/* Section header with Swiss style - Split animation unique to Experience */}
-        <div className="mb-16">
-          <SwissMotion type="slide" delay={0.1} duration={0.5} className="flex items-center mb-4">
-            <div className="w-8 h-8 bg-[var(--accent-tertiary)] mr-4"></div>
-            <h2 className="swiss-heading-2">EXPERIENCE</h2>
-          </SwissMotion>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 ml-12 gap-8">
-            <SwissMotion type="reveal" delay={0.3} duration={0.6}>
-              <div className="w-24 h-1 bg-[var(--foreground)] mb-4"></div>
-              <SwissMotion type="fade" delay={0.5} duration={0.6}>
-                <p className="swiss-body">
-                  My professional journey and skill development showcase my expertise in 
-                  creating modern web solutions.
-                </p>
-              </SwissMotion>
-            </SwissMotion>
-            
-            <SwissMotion type="reveal" delay={0.4} duration={0.6}>
-              <div className="w-24 h-1 bg-[var(--foreground)] mb-4"></div>
-              <SwissMotion type="fade" delay={0.6} duration={0.6}>
-                <p className="swiss-body">
-                  I&apos;ve developed the ability to solve complex technical challenges with
-                  elegant, efficient solutions.
-                </p>
-              </SwissMotion>
-            </SwissMotion>
-          </div>
-        </div>
+        {/* Section header with common component */}
+        <SectionHeader 
+          title="EXPERIENCE"
+          description="My professional journey and skill development showcase my expertise in creating modern web solutions and solving complex technical challenges with elegant, efficient implementations."
+          accentColor="secondary"
+          textAnimationVariant="split"
+          motionDelay={0.1}
+        />
 
         <motion.div
           className="max-w-6xl mx-auto mb-16"

@@ -1,8 +1,10 @@
 import { memo } from "react";
 import { ProjectBaseProps } from "./types";
-import { ArrowUpRight } from "lucide-react";
 import SwissMotion from "../SwissMotion";
-import StaggerItem from "../StaggerItem";
+import ProjectTag from "./ProjectTag";
+import ProjectLink from "./ProjectLink";
+import ProjectTitle from "./ProjectTitle";
+import ProjectDescription from "./ProjectDescription";
 
 interface FeaturedProjectProps extends ProjectBaseProps {
   reversed?: boolean;
@@ -33,44 +35,34 @@ const FeaturedProject = memo(function FeaturedProject({
       </SwissMotion>
       
       <div className="mb-6">
-        <SwissMotion type="slide" delay={0.3 + (index * 0.1)} duration={0.5}>
-          <h3 className="text-xl font-bold mb-3">{project.title}</h3>
-        </SwissMotion>
+        <ProjectTitle 
+          title={project.title}
+          delay={0.3 + (index * 0.1)}
+          isFeatured={true}
+        />
         
-        <SwissMotion type="fade" delay={0.4 + (index * 0.1)} duration={0.5}>
-          <p className="text-[var(--muted)] mb-6">{project.description}</p>
-        </SwissMotion>
+        <ProjectDescription
+          description={project.description}
+          delay={0.4 + (index * 0.1)}
+          isFeatured={true}
+        />
         
         <SwissMotion type="stagger" staggerChildren={0.05} delay={0.5 + (index * 0.1)} className="flex flex-wrap gap-2 mb-6">
           {project.tags.map((tag, tagIndex) => (
-            <StaggerItem 
+            <ProjectTag
               key={`${project.id}-${tag}-${tagIndex}`}
-              type="fade"
-              whileHover="scale"
-            >
-              <span className="text-xs px-2 py-1 bg-[var(--card-hover)] rounded-sm inline-block">
-                {tag}
-              </span>
-            </StaggerItem>
+              tag={tag}
+              projectId={project.id}
+              index={tagIndex}
+            />
           ))}
         </SwissMotion>
         
-        <SwissMotion 
-          type="reveal" 
-          delay={0.6 + (index * 0.1)} 
-          duration={0.5}
-          whileHover="scale"
-        >
-          <a
-            href={project.link}
-            target="_blank"
-            rel="noreferrer"
-            className="swiss-button inline-flex items-center text-sm gap-2"
-          >
-            View Project
-            <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-          </a>
-        </SwissMotion>
+        <ProjectLink 
+          href={project.link} 
+          delay={0.6 + (index * 0.1)}
+          isButtonStyle={true}
+        />
       </div>
     </SwissMotion>
   );

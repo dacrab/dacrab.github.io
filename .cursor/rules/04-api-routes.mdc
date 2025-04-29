@@ -1,0 +1,16 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# API Routes Guide
+
+This project uses Next.js API routes to handle server-side operations.
+
+## GitHub API
+- [src/app/api/github/route.ts](mdc:src/app/api/github/route.ts) - Handles GitHub API interactions
+
+## Service Integration
+The API routes work in conjunction with:
+- [src/services/github.ts](mdc:src/services/github.ts) - Client-side service that calls these API routes
+- [src/hooks/useGitHubProjects.ts](mdc:src/hooks/useGitHubProjects.ts) - Hook that utilizes the GitHub service

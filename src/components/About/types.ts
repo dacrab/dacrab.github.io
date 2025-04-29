@@ -35,4 +35,4 @@ export const SKILLS_BY_CATEGORY: SkillCategory = {
 };
 
 // Light icons that need special treatment in dark/light mode
-export const ADAPTIVE_COLOR_ICONS = ["Next.js", "GitHub", "Vercel"]; 
+export const ADAPTIVE_COLOR_ICONS = ["Next.js", "GitHub", "Vercel"];

@@ -1,19 +1,43 @@
 import { motion, useInView, TargetAndTransition } from "framer-motion";
-import { memo, useState, useEffect, useRef } from "react";
+import { memo, useState, useEffect, useRef, useMemo } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import NumberCounter from "./NumberCounter";
 
-// Constants and types
+// Types
 interface LottieVisualizationProps {
   isInView?: boolean;
   isMobile?: boolean;
+}
+
+interface TimelineProps {
+  width: number;
+  height: number;
+  isInView: boolean;
+}
+
+interface TimelineNodeProps {
+  position: string;
+  value: number;
+  delay: number;
+  duration: number;
+  isInView: boolean;
+  animationPattern: TargetAndTransition;
+  transitionDuration: number;
+  transitionDelay?: number;
+  color?: string;
+}
+
+interface StatsCardProps {
+  value: number;
+  label: string;
+  delay: number;
+  isInView: boolean;
 }
 
 // Animation constants
 const ANIMATION_EASING = {
   swissEaseExplosive: [0, 0.9, 0.1, 1], // Extremely sharp, explosive curve
   swissEaseCrisp: [0.12, 0.8, 0.88, 0.58], // More explosive Swiss-style precision curve
-  // Add smoother easing for consistent feel across components
   swissEaseSmooth: [0.25, 0.1, 0.25, 1.0], // Smoother cubic bezier curve for animations
 };
 
@@ -52,192 +76,9 @@ function detectLowEndDevice(): boolean {
 }
 
 /**
- * Creates a Swiss-style visualization with explosive animations
+ * Floating accent elements for visual decoration
  */
-const LottieVisualization = memo(function LottieVisualization({ 
-  isInView: providedIsInView,
-  isMobile: providedIsMobile
-}: LottieVisualizationProps) {
-  // Device detection
-  const defaultIsMobile = useIsMobile();
-  const isMobile = providedIsMobile !== undefined ? providedIsMobile : defaultIsMobile;
-  
-  // References and viewport detection
-  const visualizationRef = useRef<HTMLDivElement>(null);
-  const defaultIsInView = useInView(visualizationRef, { once: false, amount: 0.3 });
-  const isInView = providedIsInView !== undefined ? providedIsInView : defaultIsInView;
-  const wasInView = useRef(false);
-  
-  // Track viewport state change
-  useEffect(() => {
-    if (isInView) {
-      wasInView.current = true;
-    } else if (!isInView && wasInView.current) {
-      wasInView.current = false;
-    }
-  }, [isInView]);
-  
-  // State
-  const [hasLoaded, setHasLoaded] = useState(false);
-  const [isLowEndDevice, setIsLowEndDevice] = useState(false);
-
-  // Effects
-  useEffect(() => {
-    setHasLoaded(true);
-    setIsLowEndDevice(detectLowEndDevice());
-  }, []);
-
-  // Main animation variants
-  const mainAnim = {
-    initial: { opacity: 0, scale: 0.9 },
-    animate: { 
-      opacity: hasLoaded ? 1 : 0,
-      scale: hasLoaded ? 1 : 0.9,
-      transition: { 
-        duration: 0.8, // Slightly longer for smoother effect
-        ease: ANIMATION_EASING.swissEaseSmooth
-      }
-    }
-  };
-
-  const fadeInUp = {
-    hidden: { opacity: 0, y: isMobile ? 10 : 15 },
-    visible: (delay: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: isMobile
-          ? isLowEndDevice
-            ? 0.4
-            : 0.5
-          : 0.6,
-        delay: isMobile && isLowEndDevice ? delay * 0.7 : delay,
-        ease: ANIMATION_EASING.swissEaseSmooth // Use smoother easing
-      },
-    }),
-  };
-
-  // Size definitions
-  const mainSize = isMobile ? 300 : 400;
-  const secondWidth = 280;
-  const secondHeight = 280;
-
-  return (
-    <motion.div 
-      ref={visualizationRef}
-      className="relative z-0"
-      {...mainAnim}
-    >
-      {/* Floating accent elements */}
-      <AccentElements />
-      
-      <div className="relative z-10 flex justify-center">
-        {/* Main Swiss Style Visualization */}
-        <MainVisualization size={mainSize} />
-      </div>
-
-      <div className="h-full flex flex-col justify-between mt-8">
-        {/* Heading */}
-        <motion.h3
-          className="text-2xl md:text-3xl font-bold mb-3"
-          variants={fadeInUp}
-          custom={0}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          key={`heading-${isInView ? "visible" : "hidden"}`} // Force re-animation
-        >
-          <span className="text-gradient">Developer Journey</span>
-        </motion.h3>
-
-        {/* Description */}
-        <motion.p
-          className="text-muted max-w-lg mb-5"
-          variants={fadeInUp}
-          custom={0.1}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          key={`description-${isInView ? "visible" : "hidden"}`} // Force re-animation
-        >
-          A visual representation of my growth and experience in web development
-        </motion.p>
-
-        {/* Timeline visualization */}
-        <div className="relative w-full max-w-sm mx-auto mb-6">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={
-              isInView
-                ? { opacity: 1, scale: 1 }
-                : { opacity: 0, scale: 0.9 }
-            }
-            transition={{
-              duration: isMobile
-                ? isLowEndDevice
-                  ? 0.5
-                  : 0.6
-                : 0.7,
-              delay: 0.2,
-              ease: ANIMATION_EASING.swissEaseSmooth
-            }}
-            whileHover={{
-              scale: isMobile
-                ? isLowEndDevice
-                  ? 1
-                  : 1.03
-                : 1.05,
-              transition: { duration: 0.3, ease: ANIMATION_EASING.swissEaseSmooth }
-            }}
-            className="w-full"
-            style={{ height: "auto" }}
-            key={`timeline-${isInView ? "visible" : "hidden"}`} // Force re-animation
-          >
-            <TimelineVisualization 
-              width={secondWidth} 
-              height={secondHeight} 
-              isInView={isInView} 
-            />
-          </motion.div>
-        </div>
-
-        {/* Stats cards */}
-        <motion.div
-          initial={{ opacity: 0, y: isMobile ? 10 : 15 }}
-          animate={
-            isInView
-              ? { opacity: 1, y: 0 }
-              : { opacity: 0, y: isMobile ? 10 : 15 }
-          }
-          transition={{
-            duration: isMobile
-              ? isLowEndDevice
-                ? 0.5
-                : 0.6
-              : 0.7,
-            delay: 0.3,
-            ease: ANIMATION_EASING.swissEaseSmooth
-          }}
-          className="grid grid-cols-3 gap-3"
-          key={`stats-${isInView ? "visible" : "hidden"}`} // Force re-animation
-        >
-          {STATS.map((stat) => (
-            <StatsCard
-              key={`stat-${stat.label}-${isInView ? "visible" : "hidden"}`}
-              value={stat.value}
-              label={stat.label}
-              delay={stat.delay}
-              isInView={isInView}
-            />
-          ))}
-        </motion.div>
-      </div>
-    </motion.div>
-  );
-});
-
-/**
- * Animated floating accent elements
- */
-function AccentElements() {
+const AccentElements = memo(function AccentElements() {
   return (
     <>
       <motion.div 
@@ -285,12 +126,12 @@ function AccentElements() {
       />
     </>
   );
-}
+});
 
 /**
  * Main animated geometric visualization
  */
-function MainVisualization({ size }: { size: number }) {
+const MainVisualization = memo(function MainVisualization({ size }: { size: number }) {
   return (
     <motion.div 
       style={{ width: `${size}px`, height: `${size}px` }}
@@ -481,18 +322,49 @@ function MainVisualization({ size }: { size: number }) {
       </motion.div>
     </motion.div>
   );
-}
+});
+
+/**
+ * Timeline node component
+ */
+const TimelineNode = memo(function TimelineNode({ 
+  position, 
+  value, 
+  delay, 
+  duration, 
+  isInView,
+  animationPattern,
+  transitionDuration,
+  transitionDelay = 0,
+  color = "bg-[var(--accent)]"
+}: TimelineNodeProps) {
+  return (
+    <motion.div 
+      className={`absolute ${position} top-1/2 -translate-y-1/2 w-6 h-6 rounded-sm ${color} flex items-center justify-center`}
+      animate={animationPattern}
+      transition={{
+        duration: transitionDuration,
+        ease: ANIMATION_EASING.swissEaseSmooth,
+        repeat: Infinity,
+        repeatType: "mirror",
+        delay: transitionDelay
+      }}
+    >
+      <NumberCounter
+        end={value}
+        duration={duration}
+        delay={delay}
+        isInView={isInView}
+        className="text-xs"
+      />
+    </motion.div>
+  );
+});
 
 /**
  * Timeline visualization component
  */
-interface TimelineProps {
-  width: number;
-  height: number;
-  isInView: boolean;
-}
-
-function TimelineVisualization({ width, height, isInView }: TimelineProps) {
+const TimelineVisualization = memo(function TimelineVisualization({ width, height, isInView }: TimelineProps) {
   return (
     <motion.div 
       style={{ width: `${width}px`, height: `${height}px`, margin: "0 auto" }}
@@ -652,67 +524,11 @@ function TimelineVisualization({ width, height, isInView }: TimelineProps) {
       </motion.div>
     </motion.div>
   );
-}
-
-/**
- * Timeline node component
- */
-interface TimelineNodeProps {
-  position: string;
-  value: number;
-  delay: number;
-  duration: number;
-  isInView: boolean;
-  animationPattern: TargetAndTransition;
-  transitionDuration: number;
-  transitionDelay?: number;
-  color?: string;
-}
-
-function TimelineNode({ 
-  position, 
-  value, 
-  delay, 
-  duration, 
-  isInView,
-  animationPattern,
-  transitionDuration,
-  transitionDelay = 0,
-  color = "bg-[var(--accent)]"
-}: TimelineNodeProps) {
-  return (
-    <motion.div 
-      className={`absolute ${position} top-1/2 -translate-y-1/2 w-6 h-6 rounded-sm ${color} flex items-center justify-center`}
-      animate={animationPattern}
-      transition={{
-        duration: transitionDuration,
-        ease: ANIMATION_EASING.swissEaseSmooth,
-        repeat: Infinity,
-        repeatType: "mirror",
-        delay: transitionDelay
-      }}
-    >
-      <NumberCounter
-        end={value}
-        duration={duration}
-        delay={delay}
-        isInView={isInView}
-        className="text-xs"
-      />
-    </motion.div>
-  );
-}
+});
 
 /**
  * Stats card component
  */
-interface StatsCardProps {
-  value: number;
-  label: string;
-  delay: number;
-  isInView: boolean;
-}
-
 const StatsCard = memo(function StatsCard({
   value,
   label,
@@ -772,6 +588,175 @@ const StatsCard = memo(function StatsCard({
           repeatType: "mirror"
         }}
       />
+    </motion.div>
+  );
+});
+
+/**
+ * Creates a Swiss-style visualization with explosive animations
+ */
+const LottieVisualization = memo(function LottieVisualization({ 
+  isInView: providedIsInView,
+  isMobile: providedIsMobile
+}: LottieVisualizationProps) {
+  // Device detection
+  const defaultIsMobile = useIsMobile();
+  const isMobile = providedIsMobile !== undefined ? providedIsMobile : defaultIsMobile;
+  
+  // References and viewport detection
+  const visualizationRef = useRef<HTMLDivElement>(null);
+  const defaultIsInView = useInView(visualizationRef, { once: false, amount: 0.3 });
+  const isInView = providedIsInView !== undefined ? providedIsInView : defaultIsInView;
+  const wasInView = useRef(false);
+  
+  // Performance optimizations
+  const [hasLoaded, setHasLoaded] = useState(false);
+  const [isLowEndDevice, setIsLowEndDevice] = useState(false);
+
+  // Track viewport state change
+  useEffect(() => {
+    if (isInView) {
+      wasInView.current = true;
+    } else if (!isInView && wasInView.current) {
+      wasInView.current = false;
+    }
+  }, [isInView]);
+  
+  // Initialization effects
+  useEffect(() => {
+    setHasLoaded(true);
+    setIsLowEndDevice(detectLowEndDevice());
+  }, []);
+
+  // Memoized animation variants
+  const mainAnim = useMemo(() => ({
+    initial: { opacity: 0, scale: 0.9 },
+    animate: { 
+      opacity: hasLoaded ? 1 : 0,
+      scale: hasLoaded ? 1 : 0.9,
+      transition: { 
+        duration: 0.8,
+        ease: ANIMATION_EASING.swissEaseSmooth
+      }
+    }
+  }), [hasLoaded]);
+
+  const fadeInUp = useMemo(() => ({
+    hidden: { opacity: 0, y: isMobile ? 10 : 15 },
+    visible: (delay: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: isMobile
+          ? isLowEndDevice
+            ? 0.4
+            : 0.5
+          : 0.6,
+        delay: isMobile && isLowEndDevice ? delay * 0.7 : delay,
+        ease: ANIMATION_EASING.swissEaseSmooth
+      },
+    }),
+  }), [isMobile, isLowEndDevice]);
+
+  // Size calculations
+  const mainSize = isMobile ? 300 : 400;
+  const secondWidth = 280;
+  const secondHeight = 280;
+
+  // Transition properties for timeline container
+  const timelineContainerTransition = useMemo(() => ({
+    duration: isMobile ? (isLowEndDevice ? 0.5 : 0.6) : 0.7,
+    delay: 0.2,
+    ease: ANIMATION_EASING.swissEaseSmooth
+  }), [isMobile, isLowEndDevice]);
+
+  // Stats container transition 
+  const statsContainerTransition = useMemo(() => ({
+    duration: isMobile ? (isLowEndDevice ? 0.5 : 0.6) : 0.7,
+    delay: 0.3,
+    ease: ANIMATION_EASING.swissEaseSmooth
+  }), [isMobile, isLowEndDevice]);
+
+  return (
+    <motion.div 
+      ref={visualizationRef}
+      className="relative z-0"
+      {...mainAnim}
+    >
+      {/* Floating accent elements */}
+      <AccentElements />
+      
+      <div className="relative z-10 flex justify-center">
+        {/* Main Swiss Style Visualization */}
+        <MainVisualization size={mainSize} />
+      </div>
+
+      <div className="h-full flex flex-col justify-between mt-8">
+        {/* Heading */}
+        <motion.h3
+          className="text-2xl md:text-3xl font-bold mb-3"
+          variants={fadeInUp}
+          custom={0}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          key={`heading-${isInView ? "visible" : "hidden"}`}
+        >
+          <span className="text-gradient">Developer Journey</span>
+        </motion.h3>
+
+        {/* Description */}
+        <motion.p
+          className="text-muted max-w-lg mb-5"
+          variants={fadeInUp}
+          custom={0.1}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          key={`description-${isInView ? "visible" : "hidden"}`}
+        >
+          A visual representation of my growth and experience in web development
+        </motion.p>
+
+        {/* Timeline visualization */}
+        <div className="relative w-full max-w-sm mx-auto mb-6">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+            transition={timelineContainerTransition}
+            whileHover={{
+              scale: isMobile ? (isLowEndDevice ? 1 : 1.03) : 1.05,
+              transition: { duration: 0.3, ease: ANIMATION_EASING.swissEaseSmooth }
+            }}
+            className="w-full"
+            style={{ height: "auto" }}
+            key={`timeline-${isInView ? "visible" : "hidden"}`}
+          >
+            <TimelineVisualization 
+              width={secondWidth} 
+              height={secondHeight} 
+              isInView={isInView} 
+            />
+          </motion.div>
+        </div>
+
+        {/* Stats cards */}
+        <motion.div
+          initial={{ opacity: 0, y: isMobile ? 10 : 15 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: isMobile ? 10 : 15 }}
+          transition={statsContainerTransition}
+          className="grid grid-cols-3 gap-3"
+          key={`stats-${isInView ? "visible" : "hidden"}`}
+        >
+          {STATS.map((stat) => (
+            <StatsCard
+              key={`stat-${stat.label}-${isInView ? "visible" : "hidden"}`}
+              value={stat.value}
+              label={stat.label}
+              delay={stat.delay}
+              isInView={isInView}
+            />
+          ))}
+        </motion.div>
+      </div>
     </motion.div>
   );
 });

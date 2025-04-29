@@ -1,12 +1,39 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, memo, useMemo } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import SwissMotion from "./SwissMotion";
 import ShapeAnimation from "./ShapeAnimation";
 import ParallaxLayer from "./ParallaxLayer";
 import TextAnimation from "./TextAnimation";
 import { useIsMobile } from "@/hooks/useIsMobile";
+
+// Types
+interface BackgroundElementsProps {
+  isMobile: boolean;
+}
+
+interface HeroContentProps {
+  showCVDropdown: boolean;
+  setShowCVDropdown: (show: boolean) => void;
+  handleCVDownload: (lang: string) => void;
+  isMobile: boolean;
+}
+
+interface ButtonGroupProps {
+  showCVDropdown: boolean;
+  setShowCVDropdown: (show: boolean) => void;
+  handleCVDownload: (lang: string) => void;
+  isMobile: boolean;
+}
+
+interface TechKeywordsProps {
+  className?: string;
+}
+
+interface HeroHeadingProps {
+  isMobile: boolean;
+}
 
 // Animation constants
 const ANIMATION = {
@@ -26,6 +53,28 @@ const ANIMATION = {
   }
 };
 
+// Tech keywords array for easy modification
+const TECH_KEYWORDS = ["REACT", "NEXTJS", "TYPESCRIPT", "NODEJS", "AWS"];
+
+// Grid intersection points data
+const GRID_POINTS = [
+  { top: "1/4", left: "1/4", color: "var(--accent)", delay: 2.2 },
+  { top: "1/4", left: "2/4", color: "var(--accent-secondary)", delay: 2.3 },
+  { top: "1/4", left: "3/4", color: "var(--accent-tertiary)", delay: 2.4 },
+  { top: "2/4", left: "1/4", color: "var(--accent-tertiary)", delay: 2.5 },
+  { top: "2/4", left: "2/4", color: "var(--accent)", delay: 2.6 },
+  { top: "2/4", left: "3/4", color: "var(--accent-secondary)", delay: 2.7 },
+  { top: "3/4", left: "1/4", color: "var(--accent-secondary)", delay: 2.8 },
+  { top: "3/4", left: "2/4", color: "var(--accent-tertiary)", delay: 2.9 },
+  { top: "3/4", left: "3/4", color: "var(--accent)", delay: 3.0 }
+];
+
+// Helper function for smooth scrolling
+const smoothScroll = (elementId: string) => {
+  document.getElementById(elementId)?.scrollIntoView({ behavior: 'smooth' });
+};
+
+// Main Hero component
 export default function Hero() {
   const heroRef = useRef<HTMLDivElement>(null);
   const [showCVDropdown, setShowCVDropdown] = useState(false);
@@ -97,7 +146,7 @@ export default function Hero() {
 }
 
 // Background elements component
-function BackgroundElements({ isMobile }: { isMobile: boolean }) {
+const BackgroundElements = memo(function BackgroundElements({ isMobile }: BackgroundElementsProps) {
   // Render fewer and simpler elements on mobile
   if (isMobile) {
     return (
@@ -223,20 +272,141 @@ function BackgroundElements({ isMobile }: { isMobile: boolean }) {
       </ParallaxLayer>
     </>
   );
-}
+});
+
+// Tech keywords component
+const TechKeywords = memo(function TechKeywords({ className = "" }: TechKeywordsProps) {
+  return (
+    <SwissMotion 
+      type="stagger"
+      delay={1.2}
+      staggerChildren={0.08}
+      className={`flex flex-wrap gap-2 text-xs ${className}`}
+    >
+      {TECH_KEYWORDS.map((tech) => (
+        <SwissMotion
+          key={tech}
+          type="fade"
+          whileHover="scale"
+        >
+          <span className="text-xs uppercase tracking-wider px-2 py-1 swiss-border">
+            {tech}
+          </span>
+        </SwissMotion>
+      ))}
+    </SwissMotion>
+  );
+});
 
 // Left side hero content
-function HeroContent({ 
+const HeroContent = memo(function HeroContent({ 
   showCVDropdown, 
   setShowCVDropdown, 
   handleCVDownload,
   isMobile
-}: { 
-  showCVDropdown: boolean; 
-  setShowCVDropdown: (show: boolean) => void; 
-  handleCVDownload: (lang: string) => void;
-  isMobile: boolean;
-}) {
+}: HeroContentProps) {
+  // Memoize the mobile visual renderer to prevent unnecessary re-renders
+  const MobileVisual = useMemo(() => (
+    <div className="mt-16">
+      <SwissMotion
+        type="scale"
+        delay={0.5}
+        duration={ANIMATION.duration.medium}
+      >
+        <div className="w-40 h-40 swiss-grid-pattern relative mx-auto">
+          {/* Swiss style accent borders */}
+          <SwissMotion type="reveal" delay={0.6} duration={0.4}>
+            <div className="absolute left-0 top-0 w-full h-2 bg-[var(--accent)]"></div>
+          </SwissMotion>
+          <SwissMotion type="reveal" delay={0.8} duration={0.4}>
+            <div className="absolute right-0 top-0 w-2 h-full bg-[var(--accent-secondary)]"></div>
+          </SwissMotion>
+          
+          {/* Swiss design elements */}
+          <motion.div
+            className="absolute top-1/4 left-1/4 w-1/3 h-1/3 border border-[var(--accent)] bg-[var(--background)] opacity-90"
+            initial={{ scale: 0, rotate: -15 }}
+            animate={{ 
+              scale: [0, 1.3, 0.85, 1.15, 1],
+              rotate: [-25, 8, -8, 3, 0],
+              x: [15, -8, 4, -2, 0],
+              y: [-8, 12, -4, 2, 0]
+            }}
+            transition={{ 
+              duration: 1.0, 
+              delay: 0.5, 
+              ease: ANIMATION.easing.explosive,
+              times: [0, 0.35, 0.6, 0.85, 1]
+            }}
+          />
+          <motion.div
+            className="absolute bottom-1/4 right-1/4 w-1/3 h-1/3 bg-[var(--accent-secondary)] opacity-25"
+            initial={{ scale: 0, rotate: 15 }}
+            animate={{ 
+              scale: [0, 0.7, 1.2, 0.9, 1],
+              rotate: [25, -15, 10, -5, 0],
+              x: [-20, 12, -6, 2, 0],
+              y: [12, -15, 6, -2, 0]
+            }}
+            transition={{ 
+              duration: 1.1, 
+              delay: 0.6, 
+              ease: ANIMATION.easing.explosive,
+              times: [0, 0.25, 0.55, 0.8, 1]
+            }}
+          />
+          
+          {/* Grid lines */}
+          <motion.div 
+            className="absolute top-1/2 left-0 w-full h-[1px] bg-[var(--foreground)] opacity-20"
+            initial={{ scaleX: 0 }}
+            animate={{ 
+              scaleX: [0, 1.2, 0.9, 1.1, 1],
+              opacity: [0, 0.3, 0.2, 0.35, 0.25]
+            }}
+            transition={{ 
+              duration: ANIMATION.duration.medium,
+              delay: 0.9, 
+              ease: ANIMATION.easing.explosive,
+              times: [0, 0.3, 0.6, 0.8, 1]
+            }}
+          />
+          <motion.div 
+            className="absolute top-0 left-1/2 w-[1px] h-full bg-[var(--foreground)] opacity-20"
+            initial={{ scaleY: 0 }}
+            animate={{ 
+              scaleY: [0, 1.15, 0.9, 1.05, 1],
+              opacity: [0, 0.3, 0.2, 0.25, 0.2] 
+            }}
+            transition={{ 
+              duration: ANIMATION.duration.medium,
+              delay: 1.0, 
+              ease: ANIMATION.easing.explosive,
+              times: [0, 0.25, 0.55, 0.75, 1]
+            }}
+          />
+
+          {/* Additional energetic element */}
+          <motion.div
+            className="absolute top-3/4 left-3/4 w-6 h-6 bg-[var(--accent)] opacity-70"
+            initial={{ scale: 0, rotate: 0 }}
+            animate={{ 
+              scale: [0, 1.4, 0.7, 1.2, 1],
+              rotate: [0, 45, -15, 20, 0],
+              opacity: [0, 0.8, 0.5, 0.7, 0.6]
+            }}
+            transition={{ 
+              duration: 0.9, 
+              delay: 1.2,
+              ease: ANIMATION.easing.explosive,
+              times: [0, 0.3, 0.5, 0.75, 1]
+            }}
+          />
+        </div>
+      </SwissMotion>
+    </div>
+  ), []);
+
   return (
     <div className="md:swiss-asymmetric-left flex flex-col justify-center mb-8 md:mb-0">
       <SwissMotion
@@ -290,112 +460,13 @@ function HeroContent({
       {isMobile && <TechKeywords className="mt-4" />}
       
       {/* Mobile-only Visual */}
-      {isMobile && (
-        <div className="mt-16">
-          <SwissMotion
-            type="scale"
-            delay={0.5}
-            duration={ANIMATION.duration.medium}
-          >
-            <div className="w-40 h-40 swiss-grid-pattern relative mx-auto">
-              {/* Swiss style accent borders */}
-              <SwissMotion type="reveal" delay={0.6} duration={0.4}>
-                <div className="absolute left-0 top-0 w-full h-2 bg-[var(--accent)]"></div>
-              </SwissMotion>
-              <SwissMotion type="reveal" delay={0.8} duration={0.4}>
-                <div className="absolute right-0 top-0 w-2 h-full bg-[var(--accent-secondary)]"></div>
-              </SwissMotion>
-              
-              {/* Swiss design elements */}
-              <motion.div
-                className="absolute top-1/4 left-1/4 w-1/3 h-1/3 border border-[var(--accent)] bg-[var(--background)] opacity-90"
-                initial={{ scale: 0, rotate: -15 }}
-                animate={{ 
-                  scale: [0, 1.3, 0.85, 1.15, 1],
-                  rotate: [-25, 8, -8, 3, 0],
-                  x: [15, -8, 4, -2, 0],
-                  y: [-8, 12, -4, 2, 0]
-                }}
-                transition={{ 
-                  duration: 1.0, 
-                  delay: 0.5, 
-                  ease: ANIMATION.easing.explosive,
-                  times: [0, 0.35, 0.6, 0.85, 1]
-                }}
-              />
-              <motion.div
-                className="absolute bottom-1/4 right-1/4 w-1/3 h-1/3 bg-[var(--accent-secondary)] opacity-25"
-                initial={{ scale: 0, rotate: 15 }}
-                animate={{ 
-                  scale: [0, 0.7, 1.2, 0.9, 1],
-                  rotate: [25, -15, 10, -5, 0],
-                  x: [-20, 12, -6, 2, 0],
-                  y: [12, -15, 6, -2, 0]
-                }}
-                transition={{ 
-                  duration: 1.1, 
-                  delay: 0.6, 
-                  ease: ANIMATION.easing.explosive,
-                  times: [0, 0.25, 0.55, 0.8, 1]
-                }}
-              />
-              
-              {/* Grid lines */}
-              <motion.div 
-                className="absolute top-1/2 left-0 w-full h-[1px] bg-[var(--foreground)] opacity-20"
-                initial={{ scaleX: 0 }}
-                animate={{ 
-                  scaleX: [0, 1.2, 0.9, 1.1, 1],
-                  opacity: [0, 0.3, 0.2, 0.35, 0.25]
-                }}
-                transition={{ 
-                  duration: ANIMATION.duration.medium,
-                  delay: 0.9, 
-                  ease: ANIMATION.easing.explosive,
-                  times: [0, 0.3, 0.6, 0.8, 1]
-                }}
-              />
-              <motion.div 
-                className="absolute top-0 left-1/2 w-[1px] h-full bg-[var(--foreground)] opacity-20"
-                initial={{ scaleY: 0 }}
-                animate={{ 
-                  scaleY: [0, 1.15, 0.9, 1.05, 1],
-                  opacity: [0, 0.3, 0.2, 0.25, 0.2] 
-                }}
-                transition={{ 
-                  duration: ANIMATION.duration.medium,
-                  delay: 1.0, 
-                  ease: ANIMATION.easing.explosive,
-                  times: [0, 0.25, 0.55, 0.75, 1]
-                }}
-              />
-
-              {/* Additional energetic element */}
-              <motion.div
-                className="absolute top-3/4 left-3/4 w-6 h-6 bg-[var(--accent)] opacity-70"
-                initial={{ scale: 0, rotate: 0 }}
-                animate={{ 
-                  scale: [0, 1.4, 0.7, 1.2, 1],
-                  rotate: [0, 45, -15, 20, 0],
-                  opacity: [0, 0.8, 0.5, 0.7, 0.6]
-                }}
-                transition={{ 
-                  duration: 0.9, 
-                  delay: 1.2,
-                  ease: ANIMATION.easing.explosive,
-                  times: [0, 0.3, 0.5, 0.75, 1]
-                }}
-              />
-            </div>
-          </SwissMotion>
-        </div>
-      )}
+      {isMobile && MobileVisual}
     </div>
   );
-}
+});
 
 // Hero heading with animated elements
-function HeroHeading({ isMobile }: { isMobile: boolean }) {
+const HeroHeading = memo(function HeroHeading({ isMobile }: HeroHeadingProps) {
   // Smaller text and fewer animations on mobile
   const textClass = isMobile ? "text-3xl sm:text-4xl font-bold mb-4" : "swiss-heading-1 mt-3 mb-4 relative";
   
@@ -480,28 +551,32 @@ function HeroHeading({ isMobile }: { isMobile: boolean }) {
       </div>
     </h1>
   );
-}
+});
 
 // Button group with dropdown
-function ButtonGroup({ 
+const ButtonGroup = memo(function ButtonGroup({ 
   showCVDropdown, 
   setShowCVDropdown, 
   handleCVDownload,
   isMobile
-}: { 
-  showCVDropdown: boolean; 
-  setShowCVDropdown: (show: boolean) => void; 
-  handleCVDownload: (lang: string) => void;
-  isMobile: boolean;
-}) {
+}: ButtonGroupProps) {
   const buttonSize = isMobile ? "text-xs" : "text-sm";
+  
+  // Handler to view projects section
+  const handleViewProjects = () => smoothScroll('projects');
+  
+  // Handler for CV button click
+  const handleCVButtonClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowCVDropdown(!showCVDropdown);
+  };
   
   return (
     <div className="flex flex-wrap gap-3 md:gap-4">
       <SwissMotion type="fade" delay={0.9} whileHover="lift" whileTap="press">
         <button 
           className={`swiss-button ${buttonSize}`}
-          onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+          onClick={handleViewProjects}
         >
           VIEW PROJECTS
         </button>
@@ -511,10 +586,7 @@ function ButtonGroup({
         <SwissMotion type="fade" delay={1.1} whileHover="lift" whileTap="press">
           <button
             className={`swiss-button-outline ${buttonSize}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              setShowCVDropdown(!showCVDropdown);
-            }}
+            onClick={handleCVButtonClick}
           >
             DOWNLOAD CV
           </button>
@@ -545,34 +617,10 @@ function ButtonGroup({
       </div>
     </div>
   );
-}
-
-// Tech keywords component
-function TechKeywords({ className = "" }: { className?: string }) {
-  return (
-    <SwissMotion 
-      type="stagger"
-      delay={1.2}
-      staggerChildren={0.08}
-      className={`flex flex-wrap gap-2 text-xs ${className}`}
-    >
-      {["REACT", "NEXTJS", "TYPESCRIPT", "NODEJS", "AWS"].map((tech) => (
-        <SwissMotion
-          key={tech}
-          type="fade"
-          whileHover="scale"
-        >
-          <span className="text-xs uppercase tracking-wider px-2 py-1 swiss-border">
-            {tech}
-          </span>
-        </SwissMotion>
-      ))}
-    </SwissMotion>
-  );
-}
+});
 
 // Right side visual component
-function HeroVisual() {
+const HeroVisual = memo(function HeroVisual() {
   return (
     <div className="swiss-asymmetric-right flex items-center justify-center relative">
       <SwissMotion
@@ -592,10 +640,10 @@ function HeroVisual() {
       </SwissMotion>
     </div>
   );
-}
+});
 
 // Accent borders for the visual grid
-function AccentBorders() {
+const AccentBorders = memo(function AccentBorders() {
   return (
     <>
       <SwissMotion type="reveal" delay={0.6} duration={0.4}>
@@ -609,40 +657,10 @@ function AccentBorders() {
       </SwissMotion>
     </>
   );
-}
-
-// Grid canvas with all the dynamic elements
-function GridCanvas() {
-  return (
-    <motion.div 
-      className="absolute inset-0 flex items-center justify-center"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5, delay: 1.4 }}
-    >
-      {/* Central geometric composition */}
-      <div className="relative w-4/5 h-4/5">
-        {/* Animated grid lines */}
-        <GridLines />
-        
-        {/* Animated grid intersections */}
-        <GridIntersections />
-        
-        {/* Geometric shapes */}
-        <GeometricShapes />
-        
-        {/* Typography elements */}
-        <TypographyElements />
-        
-        {/* Floating elements */}
-        <FloatingElements />
-      </div>
-    </motion.div>
-  );
-}
+});
 
 // Grid lines animation
-function GridLines() {
+const GridLines = memo(function GridLines() {
   return (
     <>
       {/* Horizontal grid lines */}
@@ -684,25 +702,13 @@ function GridLines() {
       ))}
     </>
   );
-}
+});
 
 // Grid intersections animation
-function GridIntersections() {
-  const gridPoints = [
-    { top: "1/4", left: "1/4", color: "var(--accent)", delay: 2.2 },
-    { top: "1/4", left: "2/4", color: "var(--accent-secondary)", delay: 2.3 },
-    { top: "1/4", left: "3/4", color: "var(--accent-tertiary)", delay: 2.4 },
-    { top: "2/4", left: "1/4", color: "var(--accent-tertiary)", delay: 2.5 },
-    { top: "2/4", left: "2/4", color: "var(--accent)", delay: 2.6 },
-    { top: "2/4", left: "3/4", color: "var(--accent-secondary)", delay: 2.7 },
-    { top: "3/4", left: "1/4", color: "var(--accent-secondary)", delay: 2.8 },
-    { top: "3/4", left: "2/4", color: "var(--accent-tertiary)", delay: 2.9 },
-    { top: "3/4", left: "3/4", color: "var(--accent)", delay: 3.0 }
-  ];
-  
+const GridIntersections = memo(function GridIntersections() {
   return (
     <>
-      {gridPoints.map((point, index) => (
+      {GRID_POINTS.map((point, index) => (
         <motion.div 
           key={index}
           className={`absolute top-${point.top} left-${point.left} w-1.5 h-1.5 rounded-full -translate-x-[3px] -translate-y-[3px]`}
@@ -722,10 +728,10 @@ function GridIntersections() {
       ))}
     </>
   );
-}
+});
 
 // Geometric shapes animation
-function GeometricShapes() {
+const GeometricShapes = memo(function GeometricShapes() {
   return (
     <>
       <motion.div
@@ -790,10 +796,10 @@ function GeometricShapes() {
       />
     </>
   );
-}
+});
 
 // Typography elements animation
-function TypographyElements() {
+const TypographyElements = memo(function TypographyElements() {
   return (
     <>
       <motion.div 
@@ -872,10 +878,10 @@ function TypographyElements() {
       </motion.div>
     </>
   );
-}
+});
 
 // Floating elements animation
-function FloatingElements() {
+const FloatingElements = memo(function FloatingElements() {
   return (
     <>
       <motion.div
@@ -924,10 +930,40 @@ function FloatingElements() {
       </motion.div>
     </>
   );
-}
+});
+
+// Grid canvas with all the dynamic elements
+const GridCanvas = memo(function GridCanvas() {
+  return (
+    <motion.div 
+      className="absolute inset-0 flex items-center justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, delay: 1.4 }}
+    >
+      {/* Central geometric composition */}
+      <div className="relative w-4/5 h-4/5">
+        {/* Animated grid lines */}
+        <GridLines />
+        
+        {/* Animated grid intersections */}
+        <GridIntersections />
+        
+        {/* Geometric shapes */}
+        <GeometricShapes />
+        
+        {/* Typography elements */}
+        <TypographyElements />
+        
+        {/* Floating elements */}
+        <FloatingElements />
+      </div>
+    </motion.div>
+  );
+});
 
 // Scroll indicator component
-function ScrollIndicator() {
+const ScrollIndicator = memo(function ScrollIndicator() {
   return (
     <SwissMotion
       type="fade" 
@@ -950,4 +986,4 @@ function ScrollIndicator() {
       />
     </SwissMotion>
   );
-}
+});

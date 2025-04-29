@@ -5,15 +5,15 @@ import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useGitHubProjects } from "@/hooks/useGitHubProjects";
 import { transformGitHubToProjects, ProjectData } from "./Projects/types";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
 import LoadingSpinner from "./Projects/LoadingSpinner";
 import ErrorMessage from "./Projects/ErrorMessage";
 import SwissMotion from "./SwissMotion";
 import ShapeAnimation from "./ShapeAnimation";
-import StaggerItem from "./StaggerItem";
 import ParallaxLayer from "./ParallaxLayer";
 import TextAnimation from "./TextAnimation";
+import FeaturedProject from "./Projects/FeaturedProject";
+import ProjectCard from "./Projects/ProjectCard";
+import { SectionHeader } from "./common";
 
 const Projects = memo(function Projects() {
   const isMobile = useIsMobile();
@@ -144,30 +144,14 @@ const Projects = memo(function Projects() {
       </ParallaxLayer>
 
       <div className="swiss-container relative z-10">
-        {/* Section header with Swiss style - Split letters animation unique to Projects */}
-        <div className="mb-16">
-          <SwissMotion type="slide" delay={0.2} duration={0.5} className="flex items-center mb-4">
-            <div className="w-8 h-8 bg-[var(--accent)] mr-4"></div>
-            <TextAnimation
-              text="PROJECTS"
-              variant="split"
-              className="swiss-heading-2"
-              delay={0.3}
-              duration={0.6}
-            />
-          </SwissMotion>
-          <div className="ml-12">
-            <SwissMotion type="reveal" delay={0.5} duration={0.6}>
-            <div className="w-24 h-1 bg-[var(--foreground)] mb-8"></div>
-            </SwissMotion>
-            <SwissMotion type="fade" delay={0.7} duration={0.6}>
-            <p className="swiss-body max-w-2xl">
-              A curated selection of projects that demonstrate my technical expertise, 
-              problem-solving abilities, and creative approach to development.
-            </p>
-            </SwissMotion>
-          </div>
-        </div>
+        {/* Section header with Swiss style using dedicated component */}
+        <SectionHeader 
+          title="PROJECTS"
+          description="A curated selection of projects that demonstrate my technical expertise, problem-solving abilities, and creative approach to development."
+          accentColor="primary"
+          textAnimationVariant="split"
+          motionDelay={0.2}
+        />
 
         {/* Project grid with Swiss style */}
         <motion.div
@@ -186,56 +170,12 @@ const Projects = memo(function Projects() {
             
             <SwissMotion type="stagger" staggerChildren={0.2} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {customProjects.map((project, idx) => (
-                <StaggerItem 
-                  key={project.id}
-                  type="scale"
-                  whileHover="scale"
-                  whileTap="press"
-                  index={idx} // Pass index for staggered animations
-                  className="swiss-card relative overflow-hidden group"
-                >
-                  <SwissMotion type="reveal" delay={0.1} duration={0.4}>
-                  <div className="absolute top-0 left-0 w-1/4 h-1 bg-[var(--accent)]"></div>
-                  </SwissMotion>
-                  
-                  <SwissMotion type="reveal" delay={0.3} duration={0.4}>
-                  <div className="absolute bottom-0 right-0 w-1 h-1/4 bg-[var(--accent-secondary)]"></div>
-                  </SwissMotion>
-                  
-                  <TextAnimation 
-                    text={project.title}
-                    variant="reveal"
-                    className="text-xl font-bold mb-3"
-                    delay={0.4 + (idx * 0.1)}
-                  />
-                  
-                  <p className="text-[var(--muted)] mb-4 text-sm">{project.description}</p>
-                  
-                  <SwissMotion type="stagger" staggerChildren={0.05} delay={0.5} className="flex flex-wrap gap-2 mb-6">
-                    {project.tags.map((tag) => (
-                      <StaggerItem 
-                        key={`${project.id}-${tag}`}
-                        type="fade"
-                        whileHover="glow"
-                      >
-                        <span className="text-xs px-2 py-1 bg-[var(--card-hover)] rounded-sm">
-                        {tag}
-                      </span>
-                      </StaggerItem>
-                    ))}
-                  </SwissMotion>
-                  
-                  <a
-                    href={project.link}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center text-sm font-medium mt-auto text-[var(--accent)] hover:underline"
-                  >
-                    <SwissMotion type="reveal" delay={0.6 + (idx * 0.1)}>
-                      View Project <ArrowUpRight size={14} className="ml-1 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-                    </SwissMotion>
-                  </a>
-                </StaggerItem>
+                <FeaturedProject 
+                  key={project.id} 
+                  project={project} 
+                  index={idx} 
+                  reversed={idx % 2 !== 0}
+                />
               ))}
             </SwissMotion>
           </div>
@@ -277,89 +217,11 @@ const Projects = memo(function Projects() {
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
               >
                 {githubData.map((project: ProjectData, index) => (
-                  <SwissMotion
-                    key={project.id} 
-                    gridLayout={{
-                      columns: isMobile ? 1 : (githubData.length < 3 ? 2 : 3),
-                      rows: Math.ceil(githubData.length / (isMobile ? 1 : (githubData.length < 3 ? 2 : 3))),
-                      itemIndex: index
-                    }}
-                    whileHover="scale"
-                    whileTap="press"
-                    className="swiss-card relative"
-                  >
-                    {/* Portfolio grid pattern animation - signature for Projects cards */}
-                    <motion.div 
-                      className="absolute top-2 right-2 w-8 h-8 grid grid-cols-2 grid-rows-2 gap-px opacity-20 pointer-events-none"
-                      initial={{ opacity: 0, scale: 0.5 }}
-                      animate={{ opacity: 0.2, scale: 1 }}
-                      transition={{ delay: 0.6 + (index * 0.1), duration: 0.5 }}
-                    >
-                      {[0, 1, 2, 3].map(i => (
-                        <div key={i} className="bg-[var(--accent)]"></div>
-                      ))}
-                    </motion.div>
-                    
-                    <div className="absolute top-0 right-0 w-1/5 h-1 bg-[var(--accent-tertiary)]"></div>
-                    
-                    <h4 className="font-bold mb-3">{project.title}</h4>
-                    <p className="text-[var(--muted)] mb-4 text-sm line-clamp-3">{project.description}</p>
-                    
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {project.tags.map((tag, i) => (
-                        <motion.span 
-                          key={`${project.id}-${tag}-${i}`} 
-                          className="text-xs px-2 py-1 bg-[var(--card-hover)] rounded-sm"
-                          whileHover={{ 
-                            backgroundColor: "var(--accent)",
-                            color: "var(--card)",
-                            transition: { duration: 0.3 }
-                          }}
-                        >
-                          {tag}
-                        </motion.span>
-                      ))}
-                    </div>
-                    
-                    <div className="flex items-center justify-between mt-auto">
-                      <div className="flex items-center">
-                        <motion.span 
-                          className="flex items-center text-xs text-[var(--muted)]"
-                          whileHover={{ 
-                            scale: 1.1, 
-                            color: "var(--accent)",
-                            transition: { duration: 0.3 }
-                          }}
-                        >
-                          ★ {project.stars}
-                        </motion.span>
-                        {project.language && (
-                          <span className="ml-4 flex items-center text-xs text-[var(--muted)]">
-                            <span 
-                              className="inline-block w-2 h-2 rounded-full mr-1"
-                              style={{ backgroundColor: getLanguageColor(project.language) }}
-                            ></span>
-                            {project.language}
-                          </span>
-                        )}
-                      </div>
-                      
-                      <Link 
-                      href={project.link}
-                      target="_blank"
-                        className="text-sm font-medium text-[var(--accent)] hover:underline"
-                      >
-                        <motion.div
-                          whileHover={{ 
-                            rotate: 45,
-                            transition: { duration: 0.3 }
-                          }}
-                        >
-                          <ArrowUpRight size={14} />
-                  </motion.div>
-                      </Link>
-                    </div>
-                  </SwissMotion>
+                  <ProjectCard 
+                    key={project.id}
+                    project={project}
+                    index={index}
+                  />
                 ))}
               </SwissMotion>
             </div>
@@ -369,30 +231,5 @@ const Projects = memo(function Projects() {
     </section>
   );
 });
-
-// Helper function to get language color
-function getLanguageColor(language: string): string {
-  const colors: Record<string, string> = {
-    TypeScript: "#3178c6",
-    JavaScript: "#f1e05a",
-    HTML: "#e34c26",
-    CSS: "#563d7c",
-    Python: "#3572A5",
-    Java: "#b07219",
-    Go: "#00ADD8",
-    Rust: "#dea584",
-    Ruby: "#701516",
-    C: "#555555",
-    "C++": "#f34b7d",
-    "C#": "#178600",
-    PHP: "#4F5D95",
-    Shell: "#89e051",
-    Swift: "#ffac45",
-    Kotlin: "#F18E33",
-    Dart: "#00B4AB",
-  };
-
-  return colors[language] || "#8b949e"; // Default color if language not found
-}
 
 export default Projects;

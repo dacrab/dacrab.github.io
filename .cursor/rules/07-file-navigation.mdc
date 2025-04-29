@@ -1,0 +1,41 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# File Navigation Guide
+
+## Core Directories
+- `/src/app` - Next.js app router pages and layouts
+- `/src/components` - React components
+- `/src/hooks` - Custom React hooks
+- `/src/services` - API services
+- `/src/types` - TypeScript type definitions
+- `/src/utils` - Utility functions
+- `/public` - Static assets
+
+## Main Section Components
+Each main section of the portfolio has its component structure:
+
+### Hero Section
+- [src/components/Hero.tsx](mdc:src/components/Hero.tsx) - Main component
+
+### About Section
+- [src/components/About.tsx](mdc:src/components/About.tsx) - Main component
+- [src/components/About/](mdc:src/components/About/) - Subcomponents
+
+### Projects Section
+- [src/components/Projects.tsx](mdc:src/components/Projects.tsx) - Main component
+- [src/components/Projects/](mdc:src/components/Projects/) - Subcomponents
+- [src/hooks/useGitHubProjects.ts](mdc:src/hooks/useGitHubProjects.ts) - GitHub projects data
+
+### Experience Section
+- [src/components/Experience.tsx](mdc:src/components/Experience.tsx) - Main component
+- [src/components/Experience/](mdc:src/components/Experience/) - Subcomponents
+
+### Contact Section
+- [src/components/Contact.tsx](mdc:src/components/Contact.tsx) - Main component
+- [src/components/Contact/](mdc:src/components/Contact/) - Subcomponents
+
+## Common Components
+- [src/components/common/](mdc:src/components/common/) - Shared components used across sections

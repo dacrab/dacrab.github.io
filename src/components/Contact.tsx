@@ -8,6 +8,7 @@ import ShapeAnimation from "./ShapeAnimation";
 import ParallaxLayer from "./ParallaxLayer";
 import StaggerItem from "./StaggerItem";
 import TextAnimation from "./TextAnimation";
+import { SectionHeader, SocialLink } from "./common";
 
 export default function Contact() {
   const ref = useRef<HTMLElement>(null);
@@ -98,27 +99,15 @@ export default function Contact() {
       </div>
 
       <div className="swiss-container relative z-10">
-        {/* Section header with Swiss style - Contact-specific 3D tilt effect */}
-        <SwissMotion type="slide" delay={0.2} duration={0.8} className="mb-16 perspective">
-          <motion.div 
-            className="flex items-center mb-4"
-            whileHover={{ rotateX: 5, rotateY: 5, transition: { duration: 0.4 } }}
-          >
-            <div className="w-8 h-8 bg-[var(--accent-secondary)] mr-4"></div>
-            <h2 className="swiss-heading-2">CONTACT</h2>
-          </motion.div>
-          <div className="ml-12">
-            <SwissMotion type="reveal" delay={0.5} duration={0.6}>
-              <div className="w-24 h-1 bg-[var(--foreground)] mb-8"></div>
-            </SwissMotion>
-            <SwissMotion type="fade" delay={0.7} duration={0.6}>
-              <p className="swiss-body max-w-2xl">
-                I&apos;m currently available for freelance work and collaboration opportunities.
-                Feel free to reach out if you have a project in mind or just want to connect.
-              </p>
-            </SwissMotion>
-          </div>
-        </SwissMotion>
+        {/* Section header with common component */}
+        <SectionHeader 
+          title="CONTACT"
+          description="I'm currently available for freelance work and collaboration opportunities. Feel free to reach out if you have a project in mind or just want to connect."
+          accentColor="secondary"
+          textAnimationVariant="typewriter"
+          motionDelay={0.2}
+          className="perspective"
+        />
 
         <motion.div
           className="swiss-grid"
@@ -190,7 +179,7 @@ export default function Contact() {
               
               <TextAnimation
                 text="CONNECT WITH ME"
-                variant="reveal"
+                variant="gradient"
                 delay={0.7}
                 duration={1.0}
                 className="swiss-heading-3 mb-8"
@@ -198,26 +187,15 @@ export default function Contact() {
               
               <SwissMotion type="grid" staggerChildren={0.08} className="grid grid-cols-2 gap-6">
                 {socialLinks.map((social, index) => (
-                  <SwissMotion 
-                    key={social.name} 
-                    type="scale" 
+                  <SocialLink
+                    key={social.name}
+                    href={social.url}
+                    icon={social.icon}
+                    label={social.name}
                     delay={0.8 + (index * 0.1)}
-                    whileHover="scale" 
+                    iconSize={24}
                     className="flex flex-col items-center"
-                  >
-                    <a
-                      href={social.url}
-                      className="w-16 h-16 swiss-border flex items-center justify-center mb-3 hover:bg-[var(--accent)]/10 transition-colors duration-200"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={social.name}
-                    >
-                      <span className="text-[var(--foreground)] transition-colors duration-300 hover:text-[var(--accent)]">
-                        {social.icon}
-                      </span>
-                    </a>
-                    <span className="text-sm uppercase tracking-wider">{social.name}</span>
-                  </SwissMotion>
+                  />
                 ))}
               </SwissMotion>
               

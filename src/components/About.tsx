@@ -8,6 +8,7 @@ import SwissMotion from "./SwissMotion";
 import ShapeAnimation from "./ShapeAnimation";
 import ParallaxLayer from "./ParallaxLayer";
 import StaggerItem from "./StaggerItem";
+import { SectionHeader } from "./common";
 
 export default function About() {
   const ref = useRef<HTMLElement>(null);
@@ -76,26 +77,14 @@ export default function About() {
       </ParallaxLayer>
 
       <div className="swiss-container relative z-10">
-        {/* Section header with Swiss style - Horizontal reveal animation unique to About */}
-        <SwissMotion type="reveal" delay={0.2} duration={1.0} className="mb-16">
-          <div className="flex items-center mb-4">
-            <SwissMotion type="rotate" delay={0.4} duration={0.7}>
-              <div className="w-8 h-8 bg-[var(--accent-tertiary)] mr-4"></div>
-            </SwissMotion>
-            <h2 className="swiss-heading-2">ABOUT</h2>
-          </div>
-          <div className="ml-12">
-            <SwissMotion type="reveal" delay={0.5} duration={0.6}>
-              <div className="w-24 h-1 bg-[var(--foreground)] mb-8"></div>
-            </SwissMotion>
-            <SwissMotion type="fade" delay={0.7} duration={0.6}>
-              <p className="swiss-body max-w-2xl">
-                I&apos;m a full-stack developer with a passion for creating elegant, 
-                user-centered digital experiences with clean and efficient code.
-              </p>
-            </SwissMotion>
-          </div>
-        </SwissMotion>
+        {/* Section header with common component */}
+        <SectionHeader 
+          title="ABOUT"
+          description="I'm a full-stack developer with a passion for creating elegant, user-centered digital experiences with clean and efficient code."
+          accentColor="tertiary"
+          textAnimationVariant="reveal"
+          motionDelay={0.2}
+        />
 
         {/* Content with Swiss style grid and alternating animations */}
         <motion.div 

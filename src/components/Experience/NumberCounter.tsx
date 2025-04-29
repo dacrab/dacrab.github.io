@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, memo } from "react";
+import { useEffect, useRef, useState, memo, useCallback } from "react";
 import { motion } from "framer-motion";
 
 interface NumberCounterProps {
@@ -19,71 +19,67 @@ const NumberCounter = memo(function NumberCounter({
   className = "text-accent text-2xl font-bold",
 }: NumberCounterProps) {
   const [count, setCount] = useState(0);
-  const raf = useRef<number | null>(null);
-  const previousInView = useRef<boolean>(false);
+  const rafRef = useRef<number | null>(null);
+  const previousInViewRef = useRef<boolean>(false);
+
+  const cleanupAnimation = useCallback(() => {
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+  }, []);
+
+  const handleOutOfView = useCallback(() => {
+    setCount(0);
+    previousInViewRef.current = false;
+    cleanupAnimation();
+  }, [cleanupAnimation]);
+
+  const animateCount = useCallback((timestamp: number, startTime: number | null, hasStarted: boolean) => {
+    if (!hasStarted) {
+      startTime = timestamp + delay * 1000;
+      hasStarted = true;
+    }
+    
+    if (timestamp < (startTime ?? 0)) {
+      rafRef.current = requestAnimationFrame((ts) => animateCount(ts, startTime, hasStarted));
+      return;
+    }
+    
+    const elapsed = timestamp - (startTime ?? 0);
+    const progress = Math.min(elapsed / (duration * 1000), 1);
+    
+    const eased = progress === 1 
+      ? 1 
+      : progress < 0.5
+        ? 4 * progress * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+    
+    setCount(Math.floor(eased * end));
+    
+    if (progress < 1) {
+      rafRef.current = requestAnimationFrame((ts) => animateCount(ts, startTime, hasStarted));
+    } else {
+      setCount(end);
+    }
+  }, [delay, duration, end]);
 
   useEffect(() => {
-    // Reset to 0 when element goes out of view
-    if (!isInView && previousInView.current) {
-      setCount(0);
-      previousInView.current = false;
-      return;
-    }
-
-    // Skip if not in view
     if (!isInView) {
+      if (previousInViewRef.current) handleOutOfView();
       return;
     }
 
-    // Update reference
-    previousInView.current = true;
-    
-    // Always start from 0 when animation begins
+    previousInViewRef.current = true;
     setCount(0);
+    cleanupAnimation();
     
-    let start: number | null = null;
-    let started = false;
+    rafRef.current = requestAnimationFrame((timestamp) => 
+      animateCount(timestamp, null, false)
+    );
 
-    const animate = (timestamp: number) => {
-      if (!started) {
-        start = timestamp + delay * 1000;
-        started = true;
-      }
-      
-      if (timestamp < (start ?? 0)) {
-        raf.current = requestAnimationFrame(animate);
-        return;
-      }
-      
-      const elapsed = timestamp - (start ?? 0);
-      const progress = Math.min(elapsed / (duration * 1000), 1);
-      
-      // Improved easing function for smoother animation
-      // Using cubic bezier-like easing for a more natural feel
-      const eased = progress === 1 
-        ? 1 
-        : progress < 0.5
-          ? 4 * progress * progress * progress
-          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-      
-      const val = Math.floor(eased * end);
-      setCount(val);
-      
-      if (progress < 1) {
-        raf.current = requestAnimationFrame(animate);
-      } else {
-        setCount(end);
-      }
-    };
-
-    raf.current = requestAnimationFrame(animate);
-    
-    return () => {
-      if (raf.current !== null) {
-        cancelAnimationFrame(raf.current);
-      }
-    };
-  }, [end, duration, delay, isInView]);
+    return cleanupAnimation;
+  }, [end, duration, delay, isInView, cleanupAnimation, handleOutOfView, animateCount]);
 
   return (
     <motion.div
@@ -96,11 +92,10 @@ const NumberCounter = memo(function NumberCounter({
       transition={{ 
         duration: 0.4,
         delay,
-        ease: [0.25, 0.1, 0.25, 1.0] // Improved easing curve
+        ease: [0.25, 0.1, 0.25, 1.0]
       }}
     >
-      {count}
-      {suffix}
+      {count}{suffix}
     </motion.div>
   );
 });

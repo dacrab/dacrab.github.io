@@ -9,6 +9,33 @@ interface SkillProgressionsProps {
 }
 
 const SkillProgressions = memo(function SkillProgressions({ isInView, isMobile }: SkillProgressionsProps) {
+  // Animation constants
+  const ANIMATION = {
+    DURATION: {
+      MOBILE: {
+        SHORT: 0.3,
+        MEDIUM: 0.4,
+        LONG: 0.8
+      },
+      DESKTOP: {
+        SHORT: 0.4,
+        MEDIUM: 0.5,
+        LONG: 1.0
+      }
+    },
+    DELAY: {
+      BASE: 0.2,
+      INCREMENT: {
+        MOBILE: 0.08,
+        DESKTOP: 0.1
+      }
+    },
+    EASING: {
+      SMOOTH: [0.25, 0.1, 0.25, 1.0],
+      EASE_OUT: "easeOut"
+    }
+  };
+
   // Track previous view state to handle reset
   const wasInView = useRef(false);
   
@@ -24,9 +51,9 @@ const SkillProgressions = memo(function SkillProgressions({ isInView, isMobile }
     initial: { opacity: 0, y: isMobile ? 8 : 10 },
     animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : isMobile ? 8 : 10 },
     transition: { 
-      duration: isMobile ? 0.4 : 0.5, 
+      duration: isMobile ? ANIMATION.DURATION.MOBILE.MEDIUM : ANIMATION.DURATION.DESKTOP.MEDIUM,
       delay: 0.6,
-      ease: [0.25, 0.1, 0.25, 1.0] // Improved easing for smoother animation
+      ease: ANIMATION.EASING.SMOOTH
     }
   });
 
@@ -48,8 +75,8 @@ const SkillProgressions = memo(function SkillProgressions({ isInView, isMobile }
         {SKILL_PROGRESSIONS.map((skill, index) => {
           // Cap delay for better mobile performance
           const cappedIdx = Math.min(index, isMobile ? 3 : 4);
-          // Slightly longer base delay to ensure proper sequence
-          const delay = 0.2 + cappedIdx * (isMobile ? 0.08 : 0.1);
+          const delay = ANIMATION.DELAY.BASE + cappedIdx * 
+            (isMobile ? ANIMATION.DELAY.INCREMENT.MOBILE : ANIMATION.DELAY.INCREMENT.DESKTOP);
 
           return (
             <motion.div
@@ -57,9 +84,9 @@ const SkillProgressions = memo(function SkillProgressions({ isInView, isMobile }
               initial={{ opacity: 0, x: isMobile ? -8 : -10 }}
               animate={{ opacity: isInView ? 1 : 0, x: isInView ? 0 : isMobile ? -8 : -10 }}
               transition={{ 
-                duration: isMobile ? 0.4 : 0.5, 
+                duration: isMobile ? ANIMATION.DURATION.MOBILE.MEDIUM : ANIMATION.DURATION.DESKTOP.MEDIUM,
                 delay,
-                ease: [0.25, 0.1, 0.25, 1.0] // Smoother easing
+                ease: ANIMATION.EASING.SMOOTH
               }}
               className="group"
             >
@@ -70,9 +97,9 @@ const SkillProgressions = memo(function SkillProgressions({ isInView, isMobile }
                     initial={{ scale: 0.8 }}
                     animate={{ scale: isInView ? 1 : 0.8 }}
                     transition={{ 
-                      duration: isMobile ? 0.3 : 0.4, 
+                      duration: isMobile ? ANIMATION.DURATION.MOBILE.SHORT : ANIMATION.DURATION.DESKTOP.SHORT,
                       delay: delay + 0.05,
-                      ease: "easeOut"
+                      ease: ANIMATION.EASING.EASE_OUT
                     }}
                   />
                   <span className="text-base font-medium group-hover:text-[var(--accent)] transition-colors duration-200">
@@ -81,7 +108,7 @@ const SkillProgressions = memo(function SkillProgressions({ isInView, isMobile }
                 </div>
                 <NumberCounter
                   end={skill.percentage}
-                  duration={isMobile ? 1.0 : 1.2} // Slightly longer for smoother counting
+                  duration={isMobile ? 1.0 : 1.2}
                   delay={delay + 0.15}
                   suffix="%"
                   isInView={isInView}
@@ -94,16 +121,15 @@ const SkillProgressions = memo(function SkillProgressions({ isInView, isMobile }
                   style={{
                     background: "var(--accent)",
                     willChange: "width",
-                    originX: 0 // Ensure animation starts from left
+                    originX: 0
                   }}
                   initial={{ width: 0 }}
                   animate={{ width: isInView ? `${skill.percentage}%` : "0%" }}
-                  // Always start from 0 width when not in view
                   key={`${skill.name}-${isInView ? "visible" : "hidden"}`}
                   transition={{ 
-                    duration: isMobile ? 0.8 : 1.0, 
-                    delay: delay + 0.15, 
-                    ease: [0.25, 0.1, 0.25, 1.0] // Smoother cubic bezier curve
+                    duration: isMobile ? ANIMATION.DURATION.MOBILE.LONG : ANIMATION.DURATION.DESKTOP.LONG,
+                    delay: delay + 0.15,
+                    ease: ANIMATION.EASING.SMOOTH
                   }}
                 />
               </div>
@@ -116,9 +142,7 @@ const SkillProgressions = memo(function SkillProgressions({ isInView, isMobile }
         {...getFooterAnim()}
         className="mt-auto swiss-card relative"
       >
-        {/* Swiss style accent elements for card */}
         <div className="absolute top-0 right-0 w-1/5 h-1 bg-[var(--accent-tertiary)]"></div>
-        
         <h4 className="font-bold mb-3">PROFESSIONAL APPROACH</h4>
         <p className="text-sm text-[var(--muted)]">
           As a developer, I focus on creating clean, maintainable code while delivering responsive and user-friendly interfaces. 
