@@ -1,6 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Enable static exports for GitHub Pages
+  output: process.env.GITHUB_ACTIONS === 'true' ? 'export' : undefined,
+  
+  // For username.github.io repositories, no basePath is needed
+  // as the site is served from the root domain
+  basePath: '',
+  
   images: {
     remotePatterns: [
       {
@@ -14,6 +21,8 @@ const nextConfig: NextConfig = {
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
     formats: ['image/webp'],
+    // Add unoptimized option for GitHub Pages compatibility
+    unoptimized: process.env.GITHUB_ACTIONS === 'true',
   },
   
   reactStrictMode: true,

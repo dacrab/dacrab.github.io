@@ -56,10 +56,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
-          # Automatically inject basePath in your Next.js configuration file and disable
-          # server side image optimization (https://nextjs.org/docs/api-reference/next/image#unoptimized).
-          #
-          # You may remove this line if you want to manage the configuration yourself.
+          # For username.github.io repositories, let Next.js handle config
           static_site_generator: next
       - name: Restore cache
         uses: actions/cache@v4
@@ -73,8 +70,18 @@ jobs:
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+      - name: Convert next.config.ts to JS
+        run: |
+          echo "// next.config.js - Generated from next.config.ts for GitHub Pages deployment" > next.config.js
+          npx tsx -e "import config from './next.config.ts'; console.log('module.exports = ' + JSON.stringify(config) + ';');" >> next.config.js
+      - name: Update next.config.js for static export
+        run: |
+          sed -i -e 's/module.exports = /module.exports = Object.assign(/' next.config.js
+          sed -i -e 's/};$/}, { output: "export" });/' next.config.js
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
+      - name: Add .nojekyll file
+        run: touch ./out/.nojekyll
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
