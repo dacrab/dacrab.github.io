@@ -1,8 +1,10 @@
 import type { NextConfig } from "next";
 
+const isGitHubActions = process.env.GITHUB_ACTIONS === 'true';
+
 const nextConfig: NextConfig = {
   // Enable static exports for GitHub Pages
-  output: process.env.GITHUB_ACTIONS === 'true' ? 'export' : undefined,
+  output: isGitHubActions ? 'export' : undefined,
   
   // For username.github.io repositories, no basePath is needed
   // as the site is served from the root domain
@@ -22,47 +24,50 @@ const nextConfig: NextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
     formats: ['image/webp'],
     // Add unoptimized option for GitHub Pages compatibility
-    unoptimized: process.env.GITHUB_ACTIONS === 'true',
+    unoptimized: isGitHubActions,
   },
   
   reactStrictMode: true,
   
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'X-DNS-Prefetch-Control',
-            value: 'on',
-          },
-          {
-            key: 'Link',
-            value: [
-              '<https://cdn.jsdelivr.net>; rel=preconnect; crossorigin=anonymous',
-              '<https://fonts.googleapis.com>; rel=preconnect',
-              '<https://fonts.gstatic.com>; rel=preconnect; crossorigin=anonymous',
-            ].join(', '),
-          },
-          {
-            // Enable HTTP/2 Server Push if supported
-            key: 'X-HTTP2-Push',
-            value: '*',
-          },
-          {
-            // Instruct browsers to eagerly fetch critical resources
-            key: 'X-Early-Data',
-            value: '1',
-          },
-          {
-            // Allow cross-origin for critical resources
-            key: 'Cross-Origin-Resource-Policy',
-            value: 'cross-origin',
-          }
-        ],
-      },
-    ];
-  },
+  // Only apply headers in development or production mode, not for static export
+  ...(isGitHubActions ? {} : {
+    async headers() {
+      return [
+        {
+          source: '/:path*',
+          headers: [
+            {
+              key: 'X-DNS-Prefetch-Control',
+              value: 'on',
+            },
+            {
+              key: 'Link',
+              value: [
+                '<https://cdn.jsdelivr.net>; rel=preconnect; crossorigin=anonymous',
+                '<https://fonts.googleapis.com>; rel=preconnect',
+                '<https://fonts.gstatic.com>; rel=preconnect; crossorigin=anonymous',
+              ].join(', '),
+            },
+            {
+              // Enable HTTP/2 Server Push if supported
+              key: 'X-HTTP2-Push',
+              value: '*',
+            },
+            {
+              // Instruct browsers to eagerly fetch critical resources
+              key: 'X-Early-Data',
+              value: '1',
+            },
+            {
+              // Allow cross-origin for critical resources
+              key: 'Cross-Origin-Resource-Policy',
+              value: 'cross-origin',
+            }
+          ],
+        },
+      ];
+    }
+  }),
   
   productionBrowserSourceMaps: true,
   
