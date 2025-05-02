@@ -41,7 +41,7 @@ jobs:
             exit 0
           elif [ -f "${{ github.workspace }}/package.json" ]; then
             echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
+            echo "command=install" >> $GITHUB_OUTPUT
             echo "runner=npx --no-install" >> $GITHUB_OUTPUT
             exit 0
           else
@@ -69,15 +69,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-      - name: Convert next.config.ts to JS
+        run: npm install
+      - name: Create simple next.config.js
         run: |
-          echo "// next.config.js - Generated from next.config.ts for GitHub Pages deployment" > next.config.js
-          npx tsx -e "import config from './next.config.ts'; console.log('module.exports = ' + JSON.stringify(config) + ';');" >> next.config.js
-      - name: Update next.config.js for static export
-        run: |
-          sed -i -e 's/module.exports = /module.exports = Object.assign(/' next.config.js
-          sed -i -e 's/};$/}, { output: "export" });/' next.config.js
+          echo '// next.config.js - GitHub Pages deployment config' > next.config.js
+          echo 'module.exports = {' >> next.config.js
+          echo '  output: "export",' >> next.config.js
+          echo '  basePath: "",' >> next.config.js
+          echo '  images: {' >> next.config.js
+          echo '    unoptimized: true,' >> next.config.js
+          echo '    remotePatterns: [{ protocol: "https", hostname: "**" }]' >> next.config.js
+          echo '  },' >> next.config.js
+          echo '  reactStrictMode: true' >> next.config.js
+          echo '};' >> next.config.js
       - name: Build with Next.js
         run: ${{ steps.detect-package-manager.outputs.runner }} next build
       - name: Add .nojekyll file
