@@ -12,8 +12,9 @@ export const smoothScroll = (elementId: string): void => {
  */
 export const handleCVDownload = (lang: string): void => {
   const link = document.createElement("a");
-  link.href = `/CV_${lang}.pdf`;
-  link.setAttribute("download", `CV_${lang}.pdf`);
+  const fileName = `CV_Vaggelis_Kavouras_${lang === "english" ? "English" : "Greek"}.pdf`;
+  link.href = `/assets/cv/${fileName}`;
+  link.setAttribute("download", fileName);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
