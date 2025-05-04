@@ -1,29 +1,45 @@
 "use client";
 
 import React from 'react';
-import Link from 'next/link';
+import { SocialLink as SocialLinkType } from './contactData';
+import SwissMotion from '@/components/SwissMotion';
+import ShapeAnimation from '@/components/ShapeAnimation';
 
-export interface SocialLinkProps {
-  name: string;
-  url: string;
-  icon: React.ReactNode;
+interface SocialLinkProps {
+  link: SocialLinkType;
+  index: number;
 }
 
-export default function SocialLink({ name, url, icon }: SocialLinkProps) {
+export default function SocialLink({ link, index }: SocialLinkProps) {
+  const Icon = link.icon;
+
   return (
-    <div className="flex flex-col items-center">
-      <Link
-        href={url}
-        className="w-16 h-16 swiss-border flex items-center justify-center mb-3 hover:bg-[var(--accent)]/10 transition-colors duration-200"
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={name}
+    <SwissMotion
+      type="scale"
+      delay={0.4 + index * 0.1}
+      duration={0.5}
+      whileHover="scale"
+      className="relative"
+    >
+      <a 
+        href={link.url} 
+        target="_blank" 
+        rel="noreferrer" 
+        aria-label={link.name}
+        className="group relative block p-3 border border-[var(--border)] rounded-sm bg-[var(--card)] hover:bg-[var(--card-hover)] transition-colors duration-200"
       >
-        <span className="text-[var(--foreground)] transition-colors duration-300 hover:text-[var(--accent)]">
-          {icon}
-        </span>
-      </Link>
-      <span className="text-sm uppercase tracking-wider">{name}</span>
-    </div>
+        <div className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <ShapeAnimation
+            type="square"
+            size={6}
+            color="var(--accent)"
+            variant="pulse"
+            loop={true}
+            delay={0}
+          />
+        </div>
+        <Icon className="w-5 h-5 text-[var(--foreground)] group-hover:text-[var(--accent)] transition-colors duration-200" />
+      </a>
+    </SwissMotion>
   );
 } 

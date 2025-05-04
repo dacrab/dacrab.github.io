@@ -1,6 +1,9 @@
 import { useRef } from 'react';
 import { motion, useInView } from "framer-motion";
 import NumberCounter from "../Experience/NumberCounter";
+import SwissMotion from "@/components/SwissMotion";
+import ShapeAnimation from "@/components/ShapeAnimation";
+import TextAnimation from "@/components/TextAnimation";
 
 // Animation constants
 const EASING = {
@@ -14,12 +17,29 @@ const ProfileImage = () => {
   const isStatsInView = useInView(statsRef, { once: true, amount: 0.5 });
 
   return (
-    <div className="swiss-card relative">
-      {/* Accent line */}
-      <div className="absolute top-0 right-0 w-1 h-full bg-[var(--accent-tertiary)]" />
+    <SwissMotion
+      type="fade"
+      delay={0.2}
+      duration={0.7}
+      className="swiss-card relative"
+    >
+      {/* Accent line with animation */}
+      <SwissMotion 
+        type="reveal" 
+        delay={0.4} 
+        duration={0.5} 
+        style={{ height: '100%' }}
+      >
+        <div className="absolute top-0 right-0 w-1 h-full bg-[var(--accent-tertiary)]" />
+      </SwissMotion>
 
       {/* Main image container */}
-      <div className="aspect-square w-full max-w-md relative overflow-hidden bg-[var(--card)] mx-auto">
+      <SwissMotion
+        type="scale"
+        delay={0.5}
+        duration={0.6}
+        className="aspect-square w-full max-w-md relative overflow-hidden bg-[var(--card)] mx-auto"
+      >
         {/* Background grid pattern */}
         <motion.div 
           className="absolute inset-0 swiss-grid-pattern opacity-10"
@@ -62,6 +82,19 @@ const ProfileImage = () => {
                 repeatType: "mirror"
               }}
             />
+
+            {/* Add animated shape element */}
+            <div className="absolute top-12 left-12">
+              <ShapeAnimation
+                type="circle"
+                size={16}
+                color="var(--accent)"
+                variant="pulse"
+                loop={true}
+                delay={0.8}
+                duration={2}
+              />
+            </div>
 
             {/* Profile avatar */}
             <div className="absolute inset-0 flex items-center justify-center">
@@ -140,59 +173,64 @@ const ProfileImage = () => {
               </div>
             </div>
 
-            {/* Text labels */}
-            <motion.div 
-              className="absolute top-4 left-4 text-xs font-bold tracking-widest opacity-70 uppercase"
-              animate={{ opacity: [0.7, 0.3, 0.7], x: [0, 3, 0] }}
-              transition={{
-                duration: 3,
-                ease: "easeInOut",
-                repeat: Infinity,
-                repeatType: "mirror"
-              }}
-            >
-              PORTFOLIO
-            </motion.div>
-            <motion.div 
-              className="absolute bottom-4 right-4 text-xs font-bold tracking-widest opacity-70 uppercase"
-              animate={{ opacity: [0.7, 0.3, 0.7], x: [0, -3, 0] }}
-              transition={{
-                duration: 3,
-                ease: "easeInOut",
-                repeat: Infinity,
-                repeatType: "mirror",
-                delay: 0.5
-              }}
-            >
-              DEVELOPER
-            </motion.div>
+            {/* Text labels with TextAnimation */}
+            <div className="absolute top-4 left-4">
+              <TextAnimation
+                text="PORTFOLIO"
+                variant="char-by-char"
+                delay={0.7}
+                className="text-xs font-bold tracking-widest uppercase"
+                mobileOptimized={true}
+              />
+            </div>
+            <div className="absolute bottom-4 right-4">
+              <TextAnimation
+                text="DEVELOPER"
+                variant="char-by-char"
+                delay={0.9}
+                className="text-xs font-bold tracking-widest uppercase"
+                mobileOptimized={true}
+              />
+            </div>
           </div>
         </motion.div>
 
         {/* Top accent line */}
-        <div className="absolute top-0 left-0 w-full h-1 bg-[var(--accent)]" />
-      </div>
+        <SwissMotion type="reveal" delay={0.6} duration={0.4}>
+          <div className="absolute top-0 left-0 w-full h-1 bg-[var(--accent)]" />
+        </SwissMotion>
+      </SwissMotion>
 
       {/* Stats section */}
-      <div ref={statsRef} className="mt-8 grid grid-cols-2 gap-6">
-        <StatItem 
-          end={1} 
-          duration={1.5} 
-          delay={0.3} 
-          suffix="+" 
-          label="Years Experience"
-          isInView={isStatsInView}
-        />
-        <StatItem 
-          end={15} 
-          duration={2} 
-          delay={0.5} 
-          suffix="+" 
-          label="Projects"
-          isInView={isStatsInView}
-        />
+      <div ref={statsRef}>
+        <SwissMotion
+          type="stagger"
+          delay={1}
+          className="mt-8 grid grid-cols-2 gap-6"
+        >
+          <SwissMotion type="slide" delay={0.1}>
+            <StatItem 
+              end={1} 
+              duration={1.5} 
+              delay={0.3} 
+              suffix="+" 
+              label="Years Experience"
+              isInView={isStatsInView}
+            />
+          </SwissMotion>
+          <SwissMotion type="slide" delay={0.2}>
+            <StatItem 
+              end={15} 
+              duration={2} 
+              delay={0.5} 
+              suffix="+" 
+              label="Projects"
+              isInView={isStatsInView}
+            />
+          </SwissMotion>
+        </SwissMotion>
       </div>
-    </div>
+    </SwissMotion>
   );
 };
 
@@ -205,16 +243,19 @@ const StatItem = ({ end, duration, delay, suffix, label, isInView }: {
   label: string;
   isInView: boolean;
 }) => (
-  <div className="text-center">
-    <NumberCounter 
-      end={end}
-      duration={duration}
-      delay={delay}
-      suffix={suffix}
-      isInView={isInView}
-      className="text-3xl font-bold mb-1"
-    />
-    <div className="text-sm uppercase tracking-wider text-[var(--muted)]">{label}</div>
+  <div className="flex flex-col items-center">
+    <div className="text-3xl font-bold mb-2 flex items-baseline">
+      <NumberCounter 
+        end={end}
+        duration={duration}
+        delay={delay}
+        isInView={isInView}
+      />
+      <span className="text-[var(--accent)]">{suffix}</span>
+    </div>
+    <div className="text-sm uppercase tracking-wider text-[var(--foreground-secondary)]">
+      {label}
+    </div>
   </div>
 );
 

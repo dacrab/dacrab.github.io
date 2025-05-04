@@ -1,4 +1,6 @@
 import React from 'react';
+import TextAnimation from '@/components/TextAnimation';
+import SwissMotion from '@/components/SwissMotion';
 
 interface SectionHeaderProps {
   title: string;
@@ -20,15 +22,32 @@ export default function SectionHeader({
   return (
     <div className="mb-16">
       <div className="flex items-center mb-4">
-        <div className={`w-8 h-8 ${accentColorMap[accentColor]} mr-4`}></div>
-        <h2 className="swiss-heading-2">{title.toUpperCase()}</h2>
+        <SwissMotion 
+          type="slide" 
+          delay={0.1} 
+          duration={0.5} 
+          className="mr-4"
+        >
+          <div className={`w-8 h-8 ${accentColorMap[accentColor]}`}></div>
+        </SwissMotion>
+        <TextAnimation 
+          text={title.toUpperCase()} 
+          variant="split" 
+          delay={0.3} 
+          className="swiss-heading-2"
+        />
       </div>
-      <div className="ml-12">
-        <div className="w-24 h-1 bg-[var(--foreground)] mb-8"></div>
-        <p className="swiss-body max-w-2xl">
-          {description}
-        </p>
-      </div>
+      <SwissMotion type="fade" delay={0.4} className="ml-12">
+        <SwissMotion type="reveal" delay={0.5} duration={0.4}>
+          <div className="w-24 h-1 bg-[var(--foreground)] mb-8"></div>
+        </SwissMotion>
+        <TextAnimation
+          text={description}
+          variant="reveal"
+          delay={0.6}
+          className="swiss-body max-w-2xl"
+        />
+      </SwissMotion>
     </div>
   );
 }
