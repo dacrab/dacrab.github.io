@@ -1,18 +1,27 @@
 "use client";
 
 import { ReactNode } from "react";
-import { motion, Variants } from "framer-motion";
+import { motion, Variants, TargetAndTransition } from "framer-motion";
+
+// Swiss-style animation curves
+const swissPrecisionEase = [0.19, 1, 0.22, 1];
+const swissSharpEase = [0.17, 0.67, 0.83, 0.67];
+
+type AnimationType = "fade" | "slide" | "scale" | "rotate" | "reveal";
+type Direction = "up" | "down" | "left" | "right";
+type HoverEffect = "lift" | "glow" | "scale" | "rotate" | "none";
+type TapEffect = "press" | "none";
 
 interface StaggerItemProps {
   children: ReactNode;
   className?: string;
   index?: number;
-  type?: "fade" | "slide" | "scale" | "rotate" | "reveal";
-  direction?: "up" | "down" | "left" | "right";
+  type?: AnimationType;
+  direction?: Direction;
   delay?: number;
   duration?: number;
-  whileHover?: "lift" | "glow" | "scale" | "rotate" | "none";
-  whileTap?: "press" | "none";
+  whileHover?: HoverEffect;
+  whileTap?: TapEffect;
 }
 
 export default function StaggerItem({
@@ -25,133 +34,66 @@ export default function StaggerItem({
   whileHover = "none",
   whileTap = "none"
 }: StaggerItemProps) {
-  // Calculate initial and animate values based on type and direction
+  // Animation variants based on type and direction
   const getVariants = (): Variants => {
-    // Animation type variants
-    switch (type) {
-      case "slide": {
-        if (direction === "up") {
-          return {
-            hidden: { opacity: 0, y: 20 },
-            visible: { 
-              opacity: 1, 
-              y: 0,
-              transition: { 
-                duration, 
-                delay,
-                ease: [0.19, 1, 0.22, 1] // Swiss-style precision curve
-              }
-            }
-          };
-        } else if (direction === "down") {
-          return {
-            hidden: { opacity: 0, y: -20 },
-            visible: { 
-              opacity: 1, 
-              y: 0,
-              transition: { 
-                duration, 
-                delay,
-                ease: [0.19, 1, 0.22, 1] 
-              }
-            }
-          };
-        } else if (direction === "left") {
-          return {
-            hidden: { opacity: 0, x: 20 },
-            visible: { 
-              opacity: 1, 
-              x: 0,
-              transition: { 
-                duration, 
-                delay,
-                ease: [0.19, 1, 0.22, 1] 
-              }
-            }
-          };
-        } else { // right
-          return {
-            hidden: { opacity: 0, x: -20 },
-            visible: { 
-              opacity: 1, 
-              x: 0,
-              transition: { 
-                duration, 
-                delay,
-                ease: [0.19, 1, 0.22, 1] 
-              }
-            }
-          };
+    const baseTransition = { 
+      duration, 
+      delay,
+      ease: type === "slide" ? swissPrecisionEase : swissSharpEase
+    };
+
+    // Define animation variants by type
+    const variants: Record<AnimationType, Variants> = {
+      fade: {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: baseTransition }
+      },
+      scale: {
+        hidden: { opacity: 0, scale: 0.9 },
+        visible: { opacity: 1, scale: 1, transition: baseTransition }
+      },
+      rotate: {
+        hidden: { opacity: 0, rotate: -3 },
+        visible: { opacity: 1, rotate: 0, transition: baseTransition }
+      },
+      reveal: {
+        hidden: { clipPath: "inset(0 100% 0 0)" },
+        visible: { clipPath: "inset(0 0% 0 0)", transition: baseTransition }
+      },
+      slide: {
+        hidden: getSlideInitialState(direction),
+        visible: { 
+          opacity: 1, 
+          x: 0, 
+          y: 0, 
+          transition: baseTransition
         }
       }
-      case "scale":
-        return {
-          hidden: { opacity: 0, scale: 0.9 },
-          visible: { 
-            opacity: 1, 
-            scale: 1,
-            transition: { 
-              duration, 
-              delay,
-              ease: [0.17, 0.67, 0.83, 0.67] // Swiss-style precision curve 
-            }
-          }
-        };
-      case "rotate":
-        return {
-          hidden: { opacity: 0, rotate: -3 },
-          visible: { 
-            opacity: 1, 
-            rotate: 0,
-            transition: { 
-              duration, 
-              delay,
-              ease: [0.17, 0.67, 0.83, 0.67] // Swiss-style precision curve 
-            }
-          }
-        };
-      case "reveal":
-        return {
-          hidden: { clipPath: "inset(0 100% 0 0)" },
-          visible: { 
-            clipPath: "inset(0 0% 0 0)",
-            transition: { 
-              duration, 
-              delay,
-              ease: [0.17, 0.67, 0.83, 0.67] // Swiss-style precision curve 
-            }
-          }
-        };
-      case "fade":
-      default:
-        return {
-          hidden: { opacity: 0 },
-          visible: { 
-            opacity: 1,
-            transition: { 
-              duration, 
-              delay,
-              ease: [0.17, 0.67, 0.83, 0.67] // Swiss-style precision curve 
-            }
-          }
-        };
+    };
+
+    return variants[type];
+  };
+  
+  // Helper function to get initial state for slide animations
+  const getSlideInitialState = (direction: Direction) => {
+    switch (direction) {
+      case "up": return { opacity: 0, y: 20 };
+      case "down": return { opacity: 0, y: -20 };
+      case "left": return { opacity: 0, x: 20 };
+      case "right": return { opacity: 0, x: -20 };
     }
   };
   
-  // Swiss style hover variants
-  const hoverVariants = {
+  // Swiss style hover and tap effects
+  const hoverEffects: Record<HoverEffect, TargetAndTransition> = {
     lift: { y: -8, transition: { duration: 0.3, ease: "easeOut" } },
-    glow: { 
-      boxShadow: "0 0 10px 2px rgba(var(--accent-rgb), 0.3)", 
-      transition: { duration: 0.3 } 
-    },
+    glow: { boxShadow: "0 0 10px 2px rgba(var(--accent-rgb), 0.3)", transition: { duration: 0.3 } },
     scale: { scale: 1.03, transition: { duration: 0.3, ease: "easeOut" } },
     rotate: { rotate: 1, transition: { duration: 0.3, ease: "easeOut" } },
     none: {}
   };
 
-  // Swiss style tap variants
-  const tapVariants = {
+  const tapEffects: Record<TapEffect, TargetAndTransition> = {
     press: { scale: 0.98, transition: { duration: 0.1 } },
     none: {}
   };
@@ -160,10 +102,10 @@ export default function StaggerItem({
     <motion.div
       className={className}
       variants={getVariants()}
-      whileHover={hoverVariants[whileHover]}
-      whileTap={tapVariants[whileTap]}
+      whileHover={hoverEffects[whileHover]}
+      whileTap={tapEffects[whileTap]}
     >
       {children}
     </motion.div>
   );
-} 
+}

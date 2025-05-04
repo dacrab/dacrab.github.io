@@ -28,15 +28,15 @@ export interface TimelineEntryProps {
 // ==========================================================================
 const ANIMATION_CONFIG = {
   MOBILE: {
-    DURATION: 0.25,
-    DELAY_BASE: 0.15,
-    DELAY_STEP: 0.04,
+    DURATION: 0.3,
+    DELAY_BASE: 0.2,
+    DELAY_STEP: 0.06,
     MAX_INDEX: 2
   },
   DESKTOP: {
-    DURATION: 0.3,
-    DELAY_BASE: 0.2,
-    DELAY_STEP: 0.05,
+    DURATION: 0.4,
+    DELAY_BASE: 0.3,
+    DELAY_STEP: 0.08,
     MAX_INDEX: 3
   }
 };
@@ -101,15 +101,15 @@ const TimelineEntry = memo(function TimelineEntry({
     <div className={containerClasses}>
       <SwissMotion 
         type="fade" 
-        delay={delayBase + delayStep + 0.1} 
+        delay={delayBase + delayStep + 0.15} 
         duration={config.DURATION} 
         className={dateClasses}
       >
         <TextAnimation
           text={date}
           variant="reveal"
-          delay={0.1}
-          duration={0.3}
+          delay={0.15}
+          duration={0.35}
         />
       </SwissMotion>
 
@@ -137,7 +137,7 @@ const TimelineEntry = memo(function TimelineEntry({
               size={8}
               color={`var(--accent-${accentColor === 'primary' ? 'tertiary' : 'primary'})`}
               variant="pulse"
-              delay={delayBase + delayStep + 0.1}
+              delay={delayBase + delayStep + 0.2}
               duration={1.5}
               loop={true}
             />
@@ -148,28 +148,28 @@ const TimelineEntry = memo(function TimelineEntry({
           <TextAnimation
             text={title}
             variant="reveal"
-            delay={delayBase + delayStep + 0.15}
+            delay={delayBase + delayStep + 0.25}
             className="text-base md:text-lg font-bold mb-1"
           />
           <TextAnimation
             text={company}
             variant="reveal"
-            delay={delayBase + delayStep + 0.2}
+            delay={delayBase + delayStep + 0.35}
             className="text-sm md:text-base text-[var(--accent)] mb-3"
           />
 
-          <SwissMotion type="stagger" delay={delayBase + delayStep + 0.25} className="text-[var(--muted)] text-sm space-y-2 mb-4">
+          <SwissMotion type="stagger" delay={delayBase + delayStep + 0.45} className="text-[var(--muted)] text-sm space-y-2 mb-4">
             {description.map((paragraph, i) => (
-              <SwissMotion key={i} type="fade" delay={0.05 * i} className="flex items-start">
+              <SwissMotion key={i} type="fade" delay={0.08 * i} className="flex items-start">
                 <span className={`text-[var(--accent-${accentColor})] mr-2 text-lg leading-tight`}>•</span>
                 <span>{paragraph}</span>
               </SwissMotion>
             ))}
           </SwissMotion>
 
-          <SwissMotion type="stagger" delay={delayBase + delayStep + 0.3} className="flex flex-wrap gap-1.5">
+          <SwissMotion type="stagger" delay={delayBase + delayStep + 0.55} className="flex flex-wrap gap-1.5">
             {technologies.map((tech, i) => (
-              <SwissMotion key={tech} type="fade" delay={0.02 * i} whileHover="lift">
+              <SwissMotion key={tech} type="fade" delay={0.04 * i} whileHover="lift">
                 <span 
                   className={`
                     text-xs px-2 py-1 bg-[var(--card-hover)] rounded-sm

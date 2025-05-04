@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useInView, Transition } from "framer-motion";
 
 export type ShapeType = "square" | "circle" | "triangle" | "line" | "diagonal" | "cross";
@@ -31,15 +31,20 @@ export default function ShapeAnimation({
 }: ShapeAnimationProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: !loop, amount: 0.3 });
+  const [isMounted, setIsMounted] = useState(false);
   
-  // Determine if size is a number or string
+  // Only run animations on client side
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  
+  // Convert size to string with px if it's a number
   const shapeSize = typeof size === 'number' ? `${size}px` : size;
   
   // Swiss style easing functions
-  const swissEase = [0.19, 1, 0.22, 1]; // Smooth Swiss-style precision curve
-  const swissEaseCrisp = [0.17, 0.67, 0.83, 0.67]; // Crisp Swiss-style precision curve
+  const swissEase = [0.19, 1, 0.22, 1]; // Smooth
+  const swissEaseCrisp = [0.17, 0.67, 0.83, 0.67]; // Crisp
   
-  // Create transition object with typed repeatType
   const baseTransition = {
     duration,
     delay,
@@ -49,8 +54,11 @@ export default function ShapeAnimation({
     repeatDelay: 1
   };
   
-  // Animation variants based on shape type and animation variant
+  // Animation variants based on animation type
   const getAnimationProps = () => {
+    // Return empty animation properties for server-side rendering
+    if (!isMounted) return { initial: {}, animate: {} };
+    
     switch (variant) {
       case "float":
         return {
@@ -84,15 +92,8 @@ export default function ShapeAnimation({
           initial: { pathLength: 0, opacity: 0 },
           animate: isInView ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 },
           transition: {
-            pathLength: { 
-              duration,
-              delay,
-              ease: swissEaseCrisp 
-            },
-            opacity: { 
-              duration: duration * 0.5, 
-              delay 
-            }
+            pathLength: { duration, delay, ease: swissEaseCrisp },
+            opacity: { duration: duration * 0.5, delay }
           }
         };
       case "path":
@@ -114,18 +115,11 @@ export default function ShapeAnimation({
     }
   };
   
-  // Simplify SVG path for cross and diagonal shapes
+  // SVG shape renderer
   const renderSvgShape = (svgPath: string) => {
     const pathTransition: Transition = {
-      pathLength: { 
-        duration, 
-        delay, 
-        ease: swissEaseCrisp 
-      },
-      opacity: { 
-        duration: duration * 0.5, 
-        delay 
-      }
+      pathLength: { duration, delay, ease: swissEaseCrisp },
+      opacity: { duration: duration * 0.5, delay }
     };
     
     return (
@@ -136,8 +130,8 @@ export default function ShapeAnimation({
         viewBox="0 0 100 100"
         className={`inline-block ${className}`}
         style={{ willChange: "transform" }}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
+        initial={isMounted ? { opacity: 0 } : {}}
+        animate={isMounted ? { opacity: 1 } : {}}
         transition={{ duration, delay }}
       >
         <motion.path
@@ -146,8 +140,8 @@ export default function ShapeAnimation({
           strokeWidth={strokeWidth}
           fill="none"
           strokeLinecap="round"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={isInView ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
+          initial={isMounted ? { pathLength: 0, opacity: 0 } : {}}
+          animate={isMounted && isInView ? { pathLength: 1, opacity: 1 } : {}}
           transition={pathTransition}
         />
       </motion.svg>
@@ -158,8 +152,18 @@ export default function ShapeAnimation({
   const renderShape = () => {
     const animProps = getAnimationProps();
     
+    // Handle SVG drawing variants first
+    if (variant === "draw") {
+      switch (type) {
+        case "line": return renderSvgShape("M10 50 L90 50");
+        case "diagonal": return renderSvgShape("M10 10 L90 90");
+        case "cross": return renderSvgShape("M10 10 L90 90 M10 90 L90 10");
+      }
+    }
+    
+    // Handle regular shapes
     switch (type) {
-      case "square":
+      case "square": {
         return (
           <motion.div
             ref={ref}
@@ -173,7 +177,9 @@ export default function ShapeAnimation({
             {...animProps}
           />
         );
-      case "circle":
+      }
+        
+      case "circle": {
         return (
           <motion.div
             ref={ref}
@@ -187,7 +193,9 @@ export default function ShapeAnimation({
             {...animProps}
           />
         );
-      case "triangle":
+      }
+        
+      case "triangle": {
         const triangleSize = typeof size === 'number' ? size : parseInt(size);
         return (
           <motion.div
@@ -204,12 +212,9 @@ export default function ShapeAnimation({
             {...animProps}
           />
         );
-      case "line":
-        // Handle line drawing animation differently if variant is "draw"
-        if (variant === "draw") {
-          return renderSvgShape("M10 50 L90 50");
-        }
+      }
         
+      case "line": {
         const lineWidth = typeof size === 'number' ? size : parseInt(size);
         return (
           <motion.div
@@ -224,16 +229,14 @@ export default function ShapeAnimation({
             {...animProps}
           />
         );
-      case "diagonal":
-        if (variant === "draw") {
-          return renderSvgShape("M10 10 L90 90");
-        }
+      }
         
+      case "diagonal": {
         return (
           <motion.div
             ref={ref}
             className={`inline-block relative ${className}`}
-            style={{ width: shapeSize, height: shapeSize }}
+            style={{ width: shapeSize, height: shapeSize, willChange: "transform" }}
             {...animProps}
           >
             <div 
@@ -250,16 +253,14 @@ export default function ShapeAnimation({
             />
           </motion.div>
         );
-      case "cross":
-        if (variant === "draw") {
-          return renderSvgShape("M10 10 L90 90 M10 90 L90 10");
-        }
+      }
         
+      case "cross": {
         return (
           <motion.div
             ref={ref}
             className={`inline-block relative ${className}`}
-            style={{ width: shapeSize, height: shapeSize }}
+            style={{ width: shapeSize, height: shapeSize, willChange: "transform" }}
             {...animProps}
           >
             <div 
@@ -288,10 +289,12 @@ export default function ShapeAnimation({
             />
           </motion.div>
         );
+      }
+        
       default:
         return null;
     }
   };
   
   return renderShape();
-} 
+}
