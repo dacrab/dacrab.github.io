@@ -4,8 +4,8 @@ import { ReactNode } from "react";
 import { motion, MotionStyle, Variants } from "framer-motion";
 
 export type SwissMotionType = 
-  | "slide" 
   | "fade" 
+  | "slide" 
   | "scale" 
   | "rotate" 
   | "stagger" 
@@ -49,6 +49,10 @@ export default function SwissMotion({
   whileTap = "none",
   gridLayout
 }: SwissMotionProps) {
+  // Swiss style easing curves
+  const swissPrecisionEase = [0.17, 0.67, 0.83, 0.67];
+  const swissSharpEase = [0.19, 1, 0.22, 1];
+  const swissParallaxEase = [0.08, 0.82, 0.17, 1];
   
   // Swiss style animation variants
   const variants: { [key in SwissMotionType]: Variants } = {
@@ -56,11 +60,7 @@ export default function SwissMotion({
       hidden: { opacity: 0 },
       visible: { 
         opacity: 1,
-        transition: { 
-          duration, 
-          delay,
-          ease: [0.17, 0.67, 0.83, 0.67] // Swiss-style precision curve
-        }
+        transition: { duration, delay, ease: swissPrecisionEase }
       }
     },
     slide: {
@@ -68,11 +68,7 @@ export default function SwissMotion({
       visible: {
         opacity: 1,
         x: 0,
-        transition: {
-          duration,
-          delay,
-          ease: [0.19, 1, 0.22, 1] // Swiss-style precision curve
-        }
+        transition: { duration, delay, ease: swissSharpEase }
       }
     },
     scale: {
@@ -80,11 +76,7 @@ export default function SwissMotion({
       visible: {
         opacity: 1,
         scale: 1,
-        transition: {
-          duration,
-          delay,
-          ease: [0.17, 0.67, 0.83, 0.67] // Swiss-style precision curve
-        }
+        transition: { duration, delay, ease: swissPrecisionEase }
       }
     },
     rotate: {
@@ -92,11 +84,7 @@ export default function SwissMotion({
       visible: {
         opacity: 1,
         rotate: 0,
-        transition: {
-          duration,
-          delay,
-          ease: [0.17, 0.67, 0.83, 0.67] // Swiss-style precision curve
-        }
+        transition: { duration, delay, ease: swissPrecisionEase }
       }
     },
     stagger: {
@@ -113,35 +101,33 @@ export default function SwissMotion({
     grid: {
       hidden: { opacity: 0, y: 20 },
       visible: customParams => {
-        if (!customParams) return { 
-          opacity: 1, 
-          y: 0,
-          transition: { 
-            duration, 
-            delay, 
-            ease: [0.19, 1, 0.22, 1] 
-          }
-        };
+        if (!customParams) {
+          return { 
+            opacity: 1, 
+            y: 0,
+            transition: { duration, delay, ease: swissSharpEase }
+          };
+        }
         
-        const columns = typeof customParams === 'object' && 'columns' in customParams ? customParams.columns : 3;
-        const rows = typeof customParams === 'object' && 'rows' in customParams ? customParams.rows : 3;
-        const itemIndex = typeof customParams === 'object' && 'itemIndex' in customParams ? customParams.itemIndex : 0;
+        const columns = customParams.columns || 3;
+        const rows = customParams.rows || 3;
+        const itemIndex = customParams.itemIndex || 0;
         
         const col = itemIndex % columns;
         const row = Math.floor(itemIndex / columns) % rows;
-        const startPosition = [0, 0.3, 0.6]; // Start at different times based on grid position
+        const startPosition = [0, 0.3, 0.6]; // Start positions for wave effect
         const timeOffset = 0.2; // Delay increment
         
-        // Calculate delay based on grid position for a wave-like effect
-        const staggerDelay = (startPosition[col] + startPosition[row]) * timeOffset;
+        // Calculate delay for wave-like effect
+        const staggerDelay = (startPosition[col % 3] + startPosition[row % 3]) * timeOffset;
         
         return {
           opacity: 1,
           y: 0, 
           transition: {
-            duration: duration, 
+            duration, 
             delay: delay + staggerDelay,
-            ease: [0.19, 1, 0.22, 1] // Swiss-style precision curve
+            ease: swissSharpEase
           }
         };
       }
@@ -150,11 +136,7 @@ export default function SwissMotion({
       hidden: { clipPath: "inset(0 100% 0 0)" },
       visible: {
         clipPath: "inset(0 0% 0 0)",
-        transition: {
-          duration,
-          delay,
-          ease: [0.17, 0.67, 0.83, 0.67] // Swiss-style precision curve
-        }
+        transition: { duration, delay, ease: swissPrecisionEase }
       }
     },
     parallax: {
@@ -165,7 +147,7 @@ export default function SwissMotion({
         transition: {
           duration: duration * 1.5,
           delay,
-          ease: [0.08, 0.82, 0.17, 1] // Swiss-style smooth parallax
+          ease: swissParallaxEase
         }
       }
     },
@@ -203,19 +185,18 @@ export default function SwissMotion({
     none: {}
   };
 
-  // Custom props based on animation type
+  // Get motion props based on animation type
   const getMotionProps = () => {
     const commonProps = {
       initial: "hidden",
       whileInView: "visible",
-      viewport: { once: viewport.once, margin: viewport.margin },
+      viewport,
       style: {
         ...style,
         willChange: type === "parallax" ? "transform, opacity" : "auto"
       }
     };
 
-    // For grid layout animations
     if (type === "grid" && gridLayout) {
       return {
         ...commonProps,
@@ -224,7 +205,6 @@ export default function SwissMotion({
       };
     }
 
-    // For stagger animations (parent container)
     if (type === "stagger") {
       return {
         ...commonProps,
@@ -232,7 +212,6 @@ export default function SwissMotion({
       };
     }
 
-    // For regular animations
     return {
       ...commonProps,
       variants: variants[type],
@@ -246,4 +225,4 @@ export default function SwissMotion({
       {children}
     </motion.div>
   );
-} 
+}

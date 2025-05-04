@@ -1,121 +1,71 @@
 /* Swiss Style Animation Keyframes */
 
-/* Grid Reveal Animation */
-@keyframes swiss-grid-reveal {
-  0% {
-    opacity: 0;
-    transform: scale(0.97);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-/* Diagonal Line Animation */
-@keyframes swiss-line-draw {
-  0% {
-    background-size: 0% 100%;
-  }
-  100% {
-    background-size: 100% 100%;
-  }
-}
-
-/* Swiss-style precision fade in */
+/* Fade and Scale Animations */
 @keyframes swiss-fade-in {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* Horizontal Line Draw */
+@keyframes swiss-grid-reveal {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Line Drawing Animations */
+@keyframes swiss-line-draw {
+  from { background-size: 0% 100%; }
+  to { background-size: 100% 100%; }
+}
+
 @keyframes swiss-horizontal-line {
-  0% {
-    width: 0%;
-  }
-  100% {
-    width: 100%;
-  }
+  from { width: 0%; }
+  to { width: 100%; }
 }
 
-/* Vertical Line Draw */
 @keyframes swiss-vertical-line {
-  0% {
-    height: 0%;
-  }
-  100% {
-    height: 100%;
-  }
+  from { height: 0%; }
+  to { height: 100%; }
 }
 
-/* Swiss Style Text Reveal */
+/* Text and Border Animations */
 @keyframes swiss-text-reveal {
-  0% {
-    clip-path: inset(0 100% 0 0);
-  }
-  100% {
-    clip-path: inset(0 0% 0 0);
-  }
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0% 0 0); }
 }
 
-/* Swiss Style Border Animation */
 @keyframes swiss-border-draw {
-  0% {
-    border-color: transparent;
-  }
-  100% {
-    border-color: var(--accent);
-  }
+  from { border-color: transparent; }
+  to { border-color: var(--accent); }
 }
 
-/* Swiss Style Accent Shimmer */
-@keyframes swiss-shimmer {
-  0% {
-    background-position: -100% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-/* Swiss-style precise rotation */
+/* Movement Animations */
 @keyframes swiss-rotation {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(90deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(90deg); }
 }
 
-/* Swiss-style subtle float animation */
 @keyframes swiss-float {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-  100% {
-    transform: translateY(0);
-  }
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
 }
 
-/* Utility animation classes */
+@keyframes swiss-shimmer {
+  from { background-position: -100% 0; }
+  to { background-position: 200% 0; }
+}
+
+/* Animation Utility Classes */
+.swiss-animate-fade-in {
+  animation: swiss-fade-in 0.6s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
+}
+
 .swiss-animate-grid-reveal {
   animation: swiss-grid-reveal 0.7s cubic-bezier(0.19, 1, 0.22, 1) forwards;
 }
 
 .swiss-animate-line-draw {
   animation: swiss-line-draw 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
-}
-
-.swiss-animate-fade-in {
-  animation: swiss-fade-in 0.6s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
 }
 
 .swiss-animate-horizontal-line {
@@ -153,43 +103,14 @@
   animation: swiss-float 4s ease-in-out infinite;
 }
 
-/* Delay utility classes */
-.delay-100 {
-  animation-delay: 100ms;
-}
-
-.delay-200 {
-  animation-delay: 200ms;
-}
-
-.delay-300 {
-  animation-delay: 300ms;
-}
-
-.delay-400 {
-  animation-delay: 400ms;
-}
-
-.delay-500 {
-  animation-delay: 500ms;
-}
-
-.delay-600 {
-  animation-delay: 600ms;
-}
-
-.delay-700 {
-  animation-delay: 700ms;
-}
-
-.delay-800 {
-  animation-delay: 800ms;
-}
-
-.delay-900 {
-  animation-delay: 900ms;
-}
-
-.delay-1000 {
-  animation-delay: 1000ms;
-} 
+/* Animation Delay Utilities */
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-700 { animation-delay: 700ms; }
+.delay-800 { animation-delay: 800ms; }
+.delay-900 { animation-delay: 900ms; }
+.delay-1000 { animation-delay: 1000ms; }
