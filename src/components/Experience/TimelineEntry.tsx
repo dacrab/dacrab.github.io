@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
 import { memo, useMemo } from "react";
 
+// ==========================================================================
+// Type Definitions
+// ==========================================================================
 export interface TimelineEntryProps {
   position: "left" | "right";
   desktopPosition?: "left" | "right";
@@ -14,6 +17,27 @@ export interface TimelineEntryProps {
   isMobile: boolean;
 }
 
+// ==========================================================================
+// Constants
+// ==========================================================================
+const ANIMATION_CONFIG = {
+  MOBILE: {
+    DURATION: 0.25,
+    DELAY_BASE: 0.15,
+    DELAY_STEP: 0.04,
+    MAX_INDEX: 2
+  },
+  DESKTOP: {
+    DURATION: 0.3,
+    DELAY_BASE: 0.2,
+    DELAY_STEP: 0.05,
+    MAX_INDEX: 3
+  }
+};
+
+// ==========================================================================
+// Component
+// ==========================================================================
 const TimelineEntry = memo(function TimelineEntry({
   position,
   desktopPosition,
@@ -27,8 +51,11 @@ const TimelineEntry = memo(function TimelineEntry({
   isMobile
 }: TimelineEntryProps) {
   const effectivePosition = desktopPosition || position;
+  const config = isMobile ? ANIMATION_CONFIG.MOBILE : ANIMATION_CONFIG.DESKTOP;
 
-  // Memoized class names
+  // ==========================================================================
+  // Memoized Values
+  // ==========================================================================
   const { containerClasses, contentGridColClass, contentClasses, dotClasses, dateClasses, mobileDateClasses } = useMemo(() => ({
     containerClasses: `relative grid grid-cols-[auto_1fr] md:grid-cols-[160px_auto_160px] items-start mb-2`,
     contentGridColClass: effectivePosition === "left" 
@@ -53,25 +80,27 @@ const TimelineEntry = memo(function TimelineEntry({
     transform: "translateX(-50%)"
   }), [effectivePosition]);
 
-  // Animation config
   const { delayBase, delayStep } = useMemo(() => ({
-    delayBase: isMobile ? 0.15 : 0.2,
-    delayStep: Math.min(index, isMobile ? 2 : 3) * (isMobile ? 0.04 : 0.05)
-  }), [isMobile, index]);
+    delayBase: config.DELAY_BASE,
+    delayStep: Math.min(index, config.MAX_INDEX) * config.DELAY_STEP
+  }), [config, index]);
 
   const getAnimation = useMemo(() => ({
     getAnim: (extraDelay = 0) => ({
       initial: { opacity: 0, y: isMobile ? 8 : 10 },
       animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : isMobile ? 8 : 10 },
-      transition: { duration: isMobile ? 0.25 : 0.3, delay: delayBase + delayStep + extraDelay }
+      transition: { duration: config.DURATION, delay: delayBase + delayStep + extraDelay }
     }),
     getFadeAnim: (extraDelay = 0) => ({
       initial: { opacity: 0 },
       animate: { opacity: isInView ? 1 : 0 },
-      transition: { duration: isMobile ? 0.25 : 0.3, delay: delayBase + delayStep + extraDelay }
+      transition: { duration: config.DURATION, delay: delayBase + delayStep + extraDelay }
     })
-  }), [isMobile, isInView, delayBase, delayStep]);
+  }), [isMobile, isInView, config, delayBase, delayStep]);
 
+  // ==========================================================================
+  // Render
+  // ==========================================================================
   return (
     <div className={containerClasses}>
       <div className={dateClasses}>
@@ -80,18 +109,21 @@ const TimelineEntry = memo(function TimelineEntry({
 
       <div className={contentGridColClass}>
         <motion.div className={contentClasses} {...getAnimation.getAnim()}>
+          {/* Decorative elements */}
           <div className="absolute top-0 left-0 w-1/4 h-1 bg-[var(--accent)]" />
           <div className="absolute bottom-0 right-0 w-1 h-1/4 bg-[var(--accent-secondary)]" />
           
+          {/* Timeline dot */}
           <div className={dotClasses} style={dotStyles}>
             <motion.div
               className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white"
               initial={{ scale: 0 }}
               animate={{ scale: isInView ? 1 : 0 }}
-              transition={{ duration: isMobile ? 0.25 : 0.3, delay: delayBase + delayStep }}
+              transition={{ duration: config.DURATION, delay: delayBase + delayStep }}
             />
           </div>
 
+          {/* Content */}
           <span className={mobileDateClasses}>{date}</span>
           <motion.h4 className="text-base md:text-lg font-bold mb-1" {...getAnimation.getFadeAnim(0.1)}>
             {title}

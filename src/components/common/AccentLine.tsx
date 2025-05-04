@@ -2,6 +2,7 @@ import React from 'react';
 import { memo } from "react";
 import SwissMotion from "../SwissMotion";
 
+// Types
 type AccentPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'custom';
 type AccentType = 'horizontal' | 'vertical';
 type AccentColor = 'primary' | 'secondary' | 'tertiary' | 'foreground';
@@ -11,11 +12,26 @@ interface AccentLineProps {
   type?: AccentType;
   width?: string | number;
   height?: string | number;
-  positionClasses?: string; // Custom positioning classes when position is 'custom'
+  positionClasses?: string;
   color?: AccentColor;
   delay?: number;
   className?: string;
 }
+
+// Constants
+const COLOR_MAP = {
+  primary: 'bg-[var(--accent)]',
+  secondary: 'bg-[var(--accent-secondary)]',
+  tertiary: 'bg-[var(--accent-tertiary)]',
+  foreground: 'bg-[var(--foreground)]'
+};
+
+const POSITION_MAP = {
+  'top-left': 'left-0 top-0',
+  'top-right': 'right-0 top-0',
+  'bottom-left': 'left-0 bottom-0',
+  'bottom-right': 'right-0 bottom-0'
+};
 
 const AccentLine = memo(function AccentLine({
   position = 'top-left',
@@ -27,50 +43,30 @@ const AccentLine = memo(function AccentLine({
   delay = 0,
   className = ''
 }: AccentLineProps) {
-  // Map color options to CSS variables
-  const colorMap = {
-    primary: 'bg-[var(--accent)]',
-    secondary: 'bg-[var(--accent-secondary)]',
-    tertiary: 'bg-[var(--accent-tertiary)]',
-    foreground: 'bg-[var(--foreground)]'
-  };
+  // Helpers
+  const getPositionClasses = () => 
+    position === 'custom' ? positionClasses : POSITION_MAP[position];
 
-  // Generate positioning classes based on position prop
-  const getPositionClasses = () => {
-    if (position === 'custom') return positionClasses;
-    
-    const positions = {
-      'top-left': 'left-0 top-0',
-      'top-right': 'right-0 top-0',
-      'bottom-left': 'left-0 bottom-0',
-      'bottom-right': 'right-0 bottom-0'
-    };
-    
-    return positions[position];
-  };
-
-  // Handle width/height values (string or number)
-  const getDimension = (dimension: string | number) => {
+  const getDimensionValue = (dimension: string | number) => {
     if (typeof dimension === 'number') return `${dimension}px`;
-    if (dimension.includes('px') || dimension.includes('%') || dimension.includes('rem')) return dimension;
-    return `w-${dimension}`;
+    if (['px', '%', 'rem'].some(unit => dimension.includes(unit))) return dimension;
+    return '';
   };
-  
-  const widthClass = type === 'horizontal' ? 
-    (typeof width === 'string' && !width.includes('px') && !width.includes('%') && !width.includes('rem') ? `w-${width}` : '') : 
-    '';
-    
-  const heightClass = type === 'vertical' ? 
-    (typeof height === 'string' && !height.includes('px') && !height.includes('%') && !height.includes('rem') ? `h-${height}` : '') : 
-    '';
+
+  const getDimensionClass = (dimension: string | number, dimensionType: 'width' | 'height') => {
+    if (typeof dimension === 'string' && !['px', '%', 'rem'].some(unit => dimension.includes(unit))) {
+      return `${dimensionType === 'width' ? 'w' : 'h'}-${dimension}`;
+    }
+    return '';
+  };
+
+  // Derived values
+  const widthClass = type === 'horizontal' ? getDimensionClass(width, 'width') : '';
+  const heightClass = type === 'vertical' ? getDimensionClass(height, 'height') : '';
 
   const inlineStyle = {
-    width: type === 'horizontal' ? 
-      (typeof width === 'number' || width.includes('px') || width.includes('%') || width.includes('rem') ? getDimension(width) : 'auto') : 
-      (type === 'vertical' ? '1px' : 'auto'),
-    height: type === 'vertical' ? 
-      (typeof height === 'number' || height.includes('px') || height.includes('%') || height.includes('rem') ? getDimension(height) : 'auto') : 
-      (type === 'horizontal' ? '1px' : 'auto')
+    width: type === 'horizontal' ? getDimensionValue(width) : '1px',
+    height: type === 'vertical' ? getDimensionValue(height) : '1px'
   };
 
   return (
@@ -78,7 +74,7 @@ const AccentLine = memo(function AccentLine({
       type="reveal"
       delay={delay}
       duration={0.4}
-      className={`absolute ${getPositionClasses()} ${widthClass} ${heightClass} ${colorMap[color]} ${className}`}
+      className={`absolute ${getPositionClasses()} ${widthClass} ${heightClass} ${COLOR_MAP[color]} ${className}`}
       style={inlineStyle}
     >
       <div />
@@ -86,4 +82,4 @@ const AccentLine = memo(function AccentLine({
   );
 });
 
-export default AccentLine; 
+export default AccentLine;

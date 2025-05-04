@@ -1,29 +1,33 @@
 import React from 'react';
 
-export default function BioSection() {
-  // Calculate age dynamically
-  const calculateAge = () => {
-    const birthYear = 2004;
-    const currentYear = new Date().getFullYear();
-    const currentMonth = new Date().getMonth();
-    const currentDay = new Date().getDate();
-    
-    // Assuming birthday is December 31 (most conservative estimate)
-    // For a more accurate calculation, you could include the exact birth month and day
-    let age = currentYear - birthYear;
-    
-    // If we haven't reached the birthday this year yet, subtract 1
-    if (currentMonth < 11 || (currentMonth === 11 && currentDay < 31)) {
-      age--;
-    }
-    
-    return age;
-  };
+// Constants
+const BIRTH_YEAR = 2004;
+const BIRTH_MONTH = 4; // May (0-indexed)
+const BIRTH_DAY = 25;
+const SKILLS = ["REACT", "NEXT.JS", "TYPESCRIPT", "TAILWIND", "UI/UX", "RESPONSIVE"];
 
+const calculateAge = () => {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth();
+  const currentDay = now.getDate();
+  
+  let age = currentYear - BIRTH_YEAR;
+  
+  // Adjust age if birthday hasn't occurred yet this year
+  if (currentMonth < BIRTH_MONTH || (currentMonth === BIRTH_MONTH && currentDay < BIRTH_DAY)) {
+    age--;
+  }
+  
+  return age;
+};
+
+export default function BioSection() {
   return (
     <div className="swiss-card relative">
-      <div className="absolute top-0 left-0 w-1/3 h-1 bg-[var(--accent)]"></div>
-      
+      {/* Decorative accent line */}
+      <div className="absolute top-0 left-0 w-1/3 h-1 bg-[var(--accent)]" />
+
       <h3 className="swiss-heading-3 mb-8">MY STORY</h3>
       
       <div className="space-y-6">
@@ -46,13 +50,13 @@ export default function BioSection() {
         </p>
       </div>
       
-      {/* Swiss style skills display */}
+      {/* Skills section */}
       <div className="mt-12 pt-8 border-t border-[var(--border)]">
         <h4 className="text-lg font-bold uppercase tracking-wider mb-4">KEY SKILLS</h4>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3">
-          {["REACT", "NEXT.JS", "TYPESCRIPT", "TAILWIND", "UI/UX", "RESPONSIVE"].map(skill => (
+          {SKILLS.map(skill => (
             <div key={skill} className="flex items-center">
-              <div className="w-2 h-2 bg-[var(--accent)] mr-2"></div>
+              <div className="w-2 h-2 bg-[var(--accent)] mr-2" />
               <span className="text-sm uppercase tracking-wide">{skill}</span>
             </div>
           ))}
