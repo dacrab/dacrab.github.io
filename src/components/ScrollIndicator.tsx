@@ -14,35 +14,43 @@ interface ScrollIndicatorProps {
 export default function ScrollIndicator({
   className = "",
   color = "var(--accent)",
-  thickness = 2,
+  thickness = 3,
   position = "top",
   hideAtTop = true
 }: ScrollIndicatorProps) {
+  // Client-side only state
+  const [mounted, setMounted] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { scrollYProgress } = useScroll();
   
-  // Add smooth spring physics
+  // Create spring animation for smooth scrolling
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001
   });
   
-  // Handle top scroll check for visibility
+  // Handle client-side only effects
   useEffect(() => {
-    if (!hideAtTop) return;
+    setMounted(true);
     
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      setIsScrolled(scrollTop > 50);
-    };
-    
-    window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Initialize
-    
-    return () => window.removeEventListener("scroll", handleScroll);
+    if (hideAtTop) {
+      const handleScroll = () => {
+        setIsScrolled(window.scrollY > 50);
+      };
+      
+      handleScroll(); // Initialize
+      window.addEventListener("scroll", handleScroll);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
   }, [hideAtTop]);
   
+  // Return null during SSR and initial render
+  if (!mounted) {
+    return null;
+  }
+  
+  // Consistent style properties to avoid hydration mismatches
   return (
     <motion.div
       className={`fixed left-0 right-0 z-50 ${position === "top" ? "top-0" : "bottom-0"} ${className}`}
@@ -61,4 +69,4 @@ export default function ScrollIndicator({
       />
     </motion.div>
   );
-} 
+}

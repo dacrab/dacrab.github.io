@@ -3,7 +3,9 @@ import { memo, useState, useEffect, useRef, useMemo } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import NumberCounter from "./NumberCounter";
 
-// Types
+// ==========================================================================
+// Type Definitions
+// ==========================================================================
 interface LottieVisualizationProps {
   isInView?: boolean;
   isMobile?: boolean;
@@ -34,11 +36,28 @@ interface StatsCardProps {
   isInView: boolean;
 }
 
-// Animation constants
+interface AnimationTransition {
+  duration: number;
+  ease: number[] | string;
+  repeat?: number;
+  repeatType?: "mirror" | "reverse" | "loop";
+  delay?: number;
+}
+
+// ==========================================================================
+// Constants
+// ==========================================================================
 const ANIMATION_EASING = {
   swissEaseExplosive: [0, 0.9, 0.1, 1], // Extremely sharp, explosive curve
   swissEaseCrisp: [0.12, 0.8, 0.88, 0.58], // More explosive Swiss-style precision curve
   swissEaseSmooth: [0.25, 0.1, 0.25, 1.0], // Smoother cubic bezier curve for animations
+};
+
+const DEFAULT_ANIMATION_TRANSITION: AnimationTransition = {
+  duration: 5,
+  ease: ANIMATION_EASING.swissEaseSmooth,
+  repeat: Infinity,
+  repeatType: "mirror"
 };
 
 // Stats data
@@ -48,8 +67,69 @@ const STATS = [
   { value: 10, label: "Skills", delay: 0.5 },
 ];
 
+// Timeline node configuration
+const TIMELINE_NODES = [
+  {
+    position: "left-0",
+    value: 1,
+    delay: 0.2,
+    duration: 1.2,
+    animationPattern: {
+      scale: [1, 1.2, 1, 0.9, 1],
+      y: ["-50%", "-60%", "-50%", "-40%", "-50%"]
+    },
+    transitionDuration: 3,
+    transitionDelay: 0,
+    color: "bg-[var(--accent)]"
+  },
+  {
+    position: "left-1/3",
+    value: 5,
+    delay: 0.4,
+    duration: 1.4,
+    animationPattern: {
+      scale: [1, 1.2, 1, 0.9, 1],
+      y: ["-50%", "-40%", "-50%", "-60%", "-50%"]
+    },
+    transitionDuration: 3.5,
+    transitionDelay: 0.3,
+    color: "bg-[var(--accent-secondary)]"
+  },
+  {
+    position: "left-2/3",
+    value: 10,
+    delay: 0.6,
+    duration: 1.6,
+    animationPattern: {
+      scale: [1, 0.9, 1, 1.2, 1],
+      y: ["-50%", "-60%", "-50%", "-40%", "-50%"]
+    },
+    transitionDuration: 4,
+    transitionDelay: 0.1,
+    color: "bg-[var(--accent-tertiary)]"
+  },
+  {
+    position: "right-0",
+    value: 15,
+    delay: 0.8,
+    duration: 1.8,
+    animationPattern: {
+      scale: [1, 1.2, 1, 0.9, 1],
+      y: ["-50%", "-40%", "-50%", "-60%", "-50%"]
+    },
+    transitionDuration: 3.3,
+    transitionDelay: 0.4,
+    color: "bg-[var(--accent)]"
+  }
+];
+
+// ==========================================================================
+// Utility Functions
+// ==========================================================================
+
 /**
- * Utility: detect low-end device (cores, memory, connection)
+ * Detects if the device is a low-end device based on hardware concurrency,
+ * available memory, and network connection
  */
 function detectLowEndDevice(): boolean {
   if (typeof navigator === "undefined") return false;
@@ -76,6 +156,22 @@ function detectLowEndDevice(): boolean {
 }
 
 /**
+ * Creates a standard infinite animation transition with customizable properties
+ */
+function createInfiniteTransition(
+  options: Partial<AnimationTransition> = {}
+): AnimationTransition {
+  return {
+    ...DEFAULT_ANIMATION_TRANSITION,
+    ...options
+  };
+}
+
+// ==========================================================================
+// Subcomponents
+// ==========================================================================
+
+/**
  * Floating accent elements for visual decoration
  */
 const AccentElements = memo(function AccentElements() {
@@ -88,12 +184,7 @@ const AccentElements = memo(function AccentElements() {
           scale: [1, 1.1, 1, 0.9, 1],
           x: [0, 5, 0, -5, 0]
         }}
-        transition={{
-          duration: 5,
-          ease: ANIMATION_EASING.swissEaseSmooth,
-          repeat: Infinity,
-          repeatType: "mirror"
-        }}
+        transition={createInfiniteTransition({ duration: 5 })}
       />
       <motion.div 
         className="absolute right-1/4 bottom-1/6 w-10 h-10 bg-[var(--accent-secondary)] opacity-70 z-0"
@@ -102,13 +193,7 @@ const AccentElements = memo(function AccentElements() {
           scale: [1, 0.9, 1, 1.1, 1],
           y: [0, 8, 0, -8, 0]
         }}
-        transition={{
-          duration: 6,
-          ease: ANIMATION_EASING.swissEaseSmooth,
-          repeat: Infinity,
-          repeatType: "mirror",
-          delay: 0.5
-        }}
+        transition={createInfiniteTransition({ duration: 6, delay: 0.5 })}
       />
       <motion.div 
         className="absolute left-10 bottom-1/4 w-1 h-16 bg-[var(--accent)] z-0"
@@ -116,13 +201,7 @@ const AccentElements = memo(function AccentElements() {
           height: ["4rem", "5rem", "4rem", "3rem", "4rem"],
           y: [0, -5, 0, 5, 0]
         }}
-        transition={{
-          duration: 4,
-          ease: ANIMATION_EASING.swissEaseSmooth,
-          repeat: Infinity,
-          repeatType: "mirror",
-          delay: 0.2
-        }}
+        transition={createInfiniteTransition({ duration: 4, delay: 0.2 })}
       />
     </>
   );
@@ -140,12 +219,7 @@ const MainVisualization = memo(function MainVisualization({ size }: { size: numb
         rotate: [0, 0.5, 0, -0.5, 0],
         scale: [1, 1.01, 1, 0.99, 1]
       }}
-      transition={{
-        duration: 7,
-        ease: ANIMATION_EASING.swissEaseSmooth,
-        repeat: Infinity,
-        repeatType: "mirror"
-      }}
+      transition={createInfiniteTransition({ duration: 7 })}
     >
       {/* Background grid */}
       <motion.div 
@@ -169,12 +243,7 @@ const MainVisualization = memo(function MainVisualization({ size }: { size: numb
           rotate: [0, 15, 0, -15, 0],
           scale: [1, 1.1, 1, 0.9, 1]
         }}
-        transition={{
-          duration: 5,
-          ease: ANIMATION_EASING.swissEaseSmooth,
-          repeat: Infinity,
-          repeatType: "mirror"
-        }}
+        transition={createInfiniteTransition({ duration: 5 })}
       />
       <motion.div 
         className="absolute top-1/4 left-1/4 w-1/4 h-1/4 bg-[var(--accent-tertiary)] opacity-60"
@@ -182,13 +251,7 @@ const MainVisualization = memo(function MainVisualization({ size }: { size: numb
           x: [0, 8, 0, -8, 0],
           y: [0, -8, 0, 8, 0]
         }}
-        transition={{
-          duration: 6,
-          ease: ANIMATION_EASING.swissEaseSmooth,
-          repeat: Infinity,
-          repeatType: "mirror",
-          delay: 0.3
-        }}
+        transition={createInfiniteTransition({ duration: 6, delay: 0.3 })}
       />
       <motion.div 
         className="absolute bottom-1/4 right-1/4 w-1/5 h-1/5 bg-[var(--accent-secondary)] opacity-70"
@@ -196,13 +259,7 @@ const MainVisualization = memo(function MainVisualization({ size }: { size: numb
           rotate: [0, -20, 0, 20, 0],
           x: [0, -10, 0, 10, 0]
         }}
-        transition={{
-          duration: 5.5,
-          ease: ANIMATION_EASING.swissEaseSmooth,
-          repeat: Infinity,
-          repeatType: "mirror",
-          delay: 0.7
-        }}
+        transition={createInfiniteTransition({ duration: 5.5, delay: 0.7 })}
       />
       
       {/* Swiss style lines */}
@@ -212,12 +269,7 @@ const MainVisualization = memo(function MainVisualization({ size }: { size: numb
           scaleX: [1, 0.8, 1, 0.9, 1],
           y: [0, 5, 0, -5, 0]
         }}
-        transition={{
-          duration: 4,
-          ease: ANIMATION_EASING.swissEaseSmooth,
-          repeat: Infinity,
-          repeatType: "mirror"
-        }}
+        transition={createInfiniteTransition({ duration: 4 })}
       />
       <motion.div 
         className="absolute left-1/2 top-0 w-1 h-full bg-[var(--accent-secondary)] opacity-40"
@@ -225,13 +277,7 @@ const MainVisualization = memo(function MainVisualization({ size }: { size: numb
           scaleY: [1, 0.85, 1, 0.9, 1],
           x: [0, -5, 0, 5, 0]
         }}
-        transition={{
-          duration: 4.5,
-          ease: ANIMATION_EASING.swissEaseSmooth,
-          repeat: Infinity,
-          repeatType: "mirror",
-          delay: 0.2
-        }}
+        transition={createInfiniteTransition({ duration: 4.5, delay: 0.2 })}
       />
       
       {/* Typography */}
@@ -274,51 +320,24 @@ const MainVisualization = memo(function MainVisualization({ size }: { size: numb
           x: [0, 5, 0, -5, 0],
           opacity: [0.7, 0.9, 0.7, 0.5, 0.7]
         }}
-        transition={{
-          duration: 5,
-          ease: ANIMATION_EASING.swissEaseSmooth,
-          repeat: Infinity,
-          repeatType: "mirror"
-        }}
+        transition={createInfiniteTransition({ duration: 5 })}
       >
-        <motion.div 
-          className="h-1 w-16 bg-[var(--text)]"
-          animate={{ 
-            width: ["4rem", "5rem", "4rem", "3.5rem", "4rem"]
-          }}
-          transition={{
-            duration: 4,
-            ease: ANIMATION_EASING.swissEaseSmooth,
-            repeat: Infinity,
-            repeatType: "mirror"
-          }}
-        />
-        <motion.div 
-          className="h-1 w-24 bg-[var(--text)]"
-          animate={{ 
-            width: ["6rem", "4.5rem", "6rem", "5rem", "6rem"] 
-          }}
-          transition={{
-            duration: 4.5,
-            ease: ANIMATION_EASING.swissEaseSmooth,
-            repeat: Infinity,
-            repeatType: "mirror",
-            delay: 0.2
-          }}
-        />
-        <motion.div 
-          className="h-1 w-20 bg-[var(--text)]"
-          animate={{ 
-            width: ["5rem", "6rem", "5rem", "4rem", "5rem"]
-          }}
-          transition={{
-            duration: 4.2,
-            ease: ANIMATION_EASING.swissEaseSmooth,
-            repeat: Infinity,
-            repeatType: "mirror",
-            delay: 0.4
-          }}
-        />
+        {[
+          { width: ["4rem", "5rem", "4rem", "3.5rem", "4rem"], duration: 4, delay: 0 },
+          { width: ["6rem", "4.5rem", "6rem", "5rem", "6rem"], duration: 4.5, delay: 0.2 },
+          { width: ["5rem", "6rem", "5rem", "4rem", "5rem"], duration: 4.2, delay: 0.4 }
+        ].map((line, index) => (
+          <motion.div 
+            key={`code-line-${index}`}
+            className="h-1 bg-[var(--text)]"
+            style={{ width: typeof line.width[0] === 'string' ? line.width[0] : `${line.width[0]}rem` }}
+            animate={{ width: line.width }}
+            transition={createInfiniteTransition({ 
+              duration: line.duration, 
+              delay: line.delay 
+            })}
+          />
+        ))}
       </motion.div>
     </motion.div>
   );
@@ -342,13 +361,10 @@ const TimelineNode = memo(function TimelineNode({
     <motion.div 
       className={`absolute ${position} top-1/2 -translate-y-1/2 w-6 h-6 rounded-sm ${color} flex items-center justify-center`}
       animate={animationPattern}
-      transition={{
+      transition={createInfiniteTransition({
         duration: transitionDuration,
-        ease: ANIMATION_EASING.swissEaseSmooth,
-        repeat: Infinity,
-        repeatType: "mirror",
         delay: transitionDelay
-      }}
+      })}
     >
       <NumberCounter
         end={value}
@@ -364,7 +380,11 @@ const TimelineNode = memo(function TimelineNode({
 /**
  * Timeline visualization component
  */
-const TimelineVisualization = memo(function TimelineVisualization({ width, height, isInView }: TimelineProps) {
+const TimelineVisualization = memo(function TimelineVisualization({ 
+  width, 
+  height, 
+  isInView 
+}: TimelineProps) {
   return (
     <motion.div 
       style={{ width: `${width}px`, height: `${height}px`, margin: "0 auto" }}
@@ -373,12 +393,7 @@ const TimelineVisualization = memo(function TimelineVisualization({ width, heigh
         rotate: [0, 0.5, 0, -0.5, 0],
         scale: [1, 1.02, 1, 0.98, 1]
       }}
-      transition={{
-        duration: 5,
-        ease: ANIMATION_EASING.swissEaseSmooth,
-        repeat: Infinity,
-        repeatType: "mirror"
-      }}
+      transition={createInfiniteTransition({ duration: 5 })}
     >
       {/* Background pattern */}
       <motion.div 
@@ -405,71 +420,24 @@ const TimelineVisualization = memo(function TimelineVisualization({ width, heigh
               scaleX: [1, 1.05, 1, 0.95, 1],
               opacity: [0.3, 0.4, 0.3, 0.2, 0.3]
             }}
-            transition={{
-              duration: 4,
-              ease: ANIMATION_EASING.swissEaseSmooth,
-              repeat: Infinity,
-              repeatType: "mirror"
-            }}
+            transition={createInfiniteTransition({ duration: 4 })}
           />
           
           {/* Timeline nodes */}
-          <TimelineNode 
-            position="left-0" 
-            value={1} 
-            delay={0.2} 
-            duration={1.2}
-            isInView={isInView} 
-            animationPattern={{
-              scale: [1, 1.2, 1, 0.9, 1],
-              y: ["-50%", "-60%", "-50%", "-40%", "-50%"]
-            }}
-            transitionDuration={3}
-          />
-          
-          <TimelineNode 
-            position="left-1/3" 
-            value={5} 
-            delay={0.4} 
-            duration={1.4}
-            isInView={isInView} 
-            animationPattern={{
-              scale: [1, 1.2, 1, 0.9, 1],
-              y: ["-50%", "-40%", "-50%", "-60%", "-50%"]
-            }}
-            transitionDuration={3.5}
-            transitionDelay={0.3}
-            color="bg-[var(--accent-secondary)]"
-          />
-          
-          <TimelineNode 
-            position="left-2/3" 
-            value={10} 
-            delay={0.6} 
-            duration={1.6}
-            isInView={isInView} 
-            animationPattern={{
-              scale: [1, 0.9, 1, 1.2, 1],
-              y: ["-50%", "-60%", "-50%", "-40%", "-50%"]
-            }}
-            transitionDuration={4}
-            transitionDelay={0.1}
-            color="bg-[var(--accent-tertiary)]"
-          />
-          
-          <TimelineNode 
-            position="right-0" 
-            value={15} 
-            delay={0.8} 
-            duration={1.8}
-            isInView={isInView} 
-            animationPattern={{
-              scale: [1, 1.2, 1, 0.9, 1],
-              y: ["-50%", "-40%", "-50%", "-60%", "-50%"]
-            }}
-            transitionDuration={3.3}
-            transitionDelay={0.4}
-          />
+          {TIMELINE_NODES.map((node, index) => (
+            <TimelineNode 
+              key={`timeline-node-${index}`}
+              position={node.position}
+              value={node.value}
+              delay={node.delay}
+              duration={node.duration}
+              isInView={isInView}
+              animationPattern={node.animationPattern}
+              transitionDuration={node.transitionDuration}
+              transitionDelay={node.transitionDelay}
+              color={node.color}
+            />
+          ))}
           
           {/* Labels */}
           <motion.div 
@@ -478,12 +446,7 @@ const TimelineVisualization = memo(function TimelineVisualization({ width, heigh
               x: [0, 3, 0, -3, 0],
               opacity: [1, 0.7, 1, 0.7, 1]
             }}
-            transition={{
-              duration: 3,
-              ease: ANIMATION_EASING.swissEaseSmooth,
-              repeat: Infinity,
-              repeatType: "mirror"
-            }}
+            transition={createInfiniteTransition({ duration: 3 })}
           >
             Start
           </motion.div>
@@ -493,13 +456,7 @@ const TimelineVisualization = memo(function TimelineVisualization({ width, heigh
               x: [0, -3, 0, 3, 0],
               opacity: [1, 0.7, 1, 0.7, 1]
             }}
-            transition={{
-              duration: 3,
-              ease: ANIMATION_EASING.swissEaseSmooth,
-              repeat: Infinity,
-              repeatType: "mirror",
-              delay: 0.5
-            }}
+            transition={createInfiniteTransition({ duration: 3, delay: 0.5 })}
           >
             Now
           </motion.div>
@@ -581,16 +538,15 @@ const StatsCard = memo(function StatsCard({
           scale: [1, 1.2, 1, 0.9, 1],
           rotate: [0, 10, 0, -10, 0]
         }}
-        transition={{
-          duration: 4,
-          ease: ANIMATION_EASING.swissEaseSmooth,
-          repeat: Infinity,
-          repeatType: "mirror"
-        }}
+        transition={createInfiniteTransition({ duration: 4 })}
       />
     </motion.div>
   );
 });
+
+// ==========================================================================
+// Main Component
+// ==========================================================================
 
 /**
  * Creates a Swiss-style visualization with explosive animations
@@ -663,14 +619,13 @@ const LottieVisualization = memo(function LottieVisualization({
   const secondWidth = 280;
   const secondHeight = 280;
 
-  // Transition properties for timeline container
+  // Transition properties for containers
   const timelineContainerTransition = useMemo(() => ({
     duration: isMobile ? (isLowEndDevice ? 0.5 : 0.6) : 0.7,
     delay: 0.2,
     ease: ANIMATION_EASING.swissEaseSmooth
   }), [isMobile, isLowEndDevice]);
 
-  // Stats container transition 
   const statsContainerTransition = useMemo(() => ({
     duration: isMobile ? (isLowEndDevice ? 0.5 : 0.6) : 0.7,
     delay: 0.3,

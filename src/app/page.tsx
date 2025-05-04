@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import Hero from "@/components/Hero";
+import Hero from "@/components/Hero/index";
 import LazySection from "@/components/LazySection";
 import ScrollIndicator from "@/components/ScrollIndicator";
 

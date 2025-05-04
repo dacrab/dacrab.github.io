@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  /* Swiss Style color palette */
-  --background: #ffffff;
-  --foreground: #000000;
+  /* Swiss Style color palette with softer black and white */
+  --background: #f8f8f8;
+  --foreground: #1a1a1a;
   --accent: #ff0000;
   --accent-light: #ff3333;
   --accent-dark: #cc0000;
@@ -15,8 +15,8 @@
   --border: #dddddd;
   
   /* RGB variables for rgba() functions */
-  --background-rgb: 255, 255, 255;
-  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 248, 248, 248;
+  --foreground-rgb: 26, 26, 26;
   --card-rgb: 245, 245, 245;
   --border-rgb: 221, 221, 221;
   --accent-rgb: 255, 0, 0;
@@ -48,8 +48,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #000000;
-    --foreground: #ffffff;
+    --background: #121212;
+    --foreground: #f2f2f2;
     --accent: #ff0000;
     --accent-light: #ff3333;
     --accent-dark: #cc0000;
@@ -61,8 +61,8 @@
     --border: #333333;
     
     /* RGB variables for rgba() functions */
-    --background-rgb: 0, 0, 0;
-    --foreground-rgb: 255, 255, 255;
+    --background-rgb: 18, 18, 18;
+    --foreground-rgb: 242, 242, 242;
     --card-rgb: 26, 26, 26;
     --border-rgb: 51, 51, 51;
     --accent-rgb: 255, 0, 0;

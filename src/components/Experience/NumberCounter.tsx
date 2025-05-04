@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState, memo, useCallback } from "react";
 import { motion } from "framer-motion";
 
+// ==========================================================================
+// Type Definitions
+// ==========================================================================
 interface NumberCounterProps {
   end: number;
   duration: number;
@@ -10,20 +13,40 @@ interface NumberCounterProps {
   className?: string;
 }
 
+// ==========================================================================
+// Constants
+// ==========================================================================
+const DEFAULT_CLASSNAME = "text-accent text-2xl font-bold";
+const EASING = [0.25, 0.1, 0.25, 1.0];
+
+// ==========================================================================
+// Animation Helpers
+// ==========================================================================
+const easeInOutCubic = (progress: number) => {
+  return progress === 1 
+    ? 1 
+    : progress < 0.5
+      ? 4 * progress * progress * progress
+      : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+};
+
+// ==========================================================================
+// Component
+// ==========================================================================
 const NumberCounter = memo(function NumberCounter({
   end,
   duration,
   delay = 0,
   suffix = "",
   isInView = true,
-  className = "text-accent text-2xl font-bold",
+  className = DEFAULT_CLASSNAME,
 }: NumberCounterProps) {
   const [count, setCount] = useState(0);
   const rafRef = useRef<number | null>(null);
   const previousInViewRef = useRef<boolean>(false);
 
   const cleanupAnimation = useCallback(() => {
-    if (rafRef.current !== null) {
+    if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
       rafRef.current = null;
     }
@@ -48,14 +71,9 @@ const NumberCounter = memo(function NumberCounter({
     
     const elapsed = timestamp - (startTime ?? 0);
     const progress = Math.min(elapsed / (duration * 1000), 1);
+    const easedProgress = easeInOutCubic(progress);
     
-    const eased = progress === 1 
-      ? 1 
-      : progress < 0.5
-        ? 4 * progress * progress * progress
-        : 1 - Math.pow(-2 * progress + 2, 3) / 2;
-    
-    setCount(Math.floor(eased * end));
+    setCount(Math.floor(easedProgress * end));
     
     if (progress < 1) {
       rafRef.current = requestAnimationFrame((ts) => animateCount(ts, startTime, hasStarted));
@@ -92,7 +110,7 @@ const NumberCounter = memo(function NumberCounter({
       transition={{ 
         duration: 0.4,
         delay,
-        ease: [0.25, 0.1, 0.25, 1.0]
+        ease: EASING
       }}
     >
       {count}{suffix}

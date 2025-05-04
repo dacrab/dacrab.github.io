@@ -1,4 +1,6 @@
-// Type definitions for Experience components
+// ==========================================================================
+// Type Definitions
+// ==========================================================================
 export interface ExperienceItem {
   id: number;
   role: string;
@@ -8,7 +10,6 @@ export interface ExperienceItem {
   skills: string[];
 }
 
-// Timeline entry props interface
 export interface TimelineEntryProps {
   position: 'left' | 'right';
   desktopPosition?: 'left' | 'right';
@@ -19,15 +20,17 @@ export interface TimelineEntryProps {
   technologies: string[];
   isInView: boolean;
   index: number;
+  isMobile: boolean;
 }
 
-// Skill data interface
 export interface SkillProgression {
   name: string;
   percentage: number;
 }
 
-// Sample experience data
+// ==========================================================================
+// Constants
+// ==========================================================================
 export const EXPERIENCES: ExperienceItem[] = [
   {
     id: 1,
@@ -45,11 +48,10 @@ export const EXPERIENCES: ExperienceItem[] = [
   }
 ];
 
-// Sample skill progression data
 export const SKILL_PROGRESSIONS: SkillProgression[] = [
   { name: "Next.js & React", percentage: 85 },
   { name: "TypeScript", percentage: 80 },
   { name: "TailwindCSS", percentage: 85 },
   { name: "Responsive Design", percentage: 85 },
   { name: "WordPress", percentage: 75 }
-]; 
+];
