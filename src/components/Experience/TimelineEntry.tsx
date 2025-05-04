@@ -1,5 +1,8 @@
-import { motion } from "framer-motion";
 import { memo, useMemo } from "react";
+import SwissMotion from "@/components/SwissMotion";
+import TextAnimation from "@/components/TextAnimation";
+import ShapeAnimation from "@/components/ShapeAnimation";
+import CardContainer from "@/components/common/CardContainer";
 
 // ==========================================================================
 // Type Definitions
@@ -15,6 +18,9 @@ export interface TimelineEntryProps {
   isInView: boolean;
   index: number;
   isMobile: boolean;
+  accentColor?: 'primary' | 'secondary' | 'tertiary';
+  backgroundPattern?: 'none' | 'grid' | 'dots' | 'diagonal';
+  showShapes?: boolean;
 }
 
 // ==========================================================================
@@ -48,7 +54,10 @@ const TimelineEntry = memo(function TimelineEntry({
   technologies,
   isInView,
   index,
-  isMobile
+  isMobile,
+  accentColor = 'primary',
+  backgroundPattern = 'grid',
+  showShapes = true
 }: TimelineEntryProps) {
   const effectivePosition = desktopPosition || position;
   const config = isMobile ? ANIMATION_CONFIG.MOBILE : ANIMATION_CONFIG.DESKTOP;
@@ -62,7 +71,7 @@ const TimelineEntry = memo(function TimelineEntry({
       ? "col-span-1 md:col-start-1 md:col-end-3" 
       : "col-span-1 md:col-start-2 md:col-end-4",
     contentClasses: [
-      "swiss-card relative p-4 md:p-5 ml-6 md:ml-0 md:mr-0",
+      "relative p-4 md:p-5 ml-6 md:ml-0 md:mr-0",
       effectivePosition === "left" ? "md:mr-6" : "md:ml-6"
     ].join(" "),
     dotClasses: "absolute z-10 left-0 md:left-50% top-2 md:top-5 w-3 h-3 md:w-4 md:h-4 bg-[var(--accent)]",
@@ -85,70 +94,99 @@ const TimelineEntry = memo(function TimelineEntry({
     delayStep: Math.min(index, config.MAX_INDEX) * config.DELAY_STEP
   }), [config, index]);
 
-  const getAnimation = useMemo(() => ({
-    getAnim: (extraDelay = 0) => ({
-      initial: { opacity: 0, y: isMobile ? 8 : 10 },
-      animate: { opacity: isInView ? 1 : 0, y: isInView ? 0 : isMobile ? 8 : 10 },
-      transition: { duration: config.DURATION, delay: delayBase + delayStep + extraDelay }
-    }),
-    getFadeAnim: (extraDelay = 0) => ({
-      initial: { opacity: 0 },
-      animate: { opacity: isInView ? 1 : 0 },
-      transition: { duration: config.DURATION, delay: delayBase + delayStep + extraDelay }
-    })
-  }), [isMobile, isInView, config, delayBase, delayStep]);
-
   // ==========================================================================
   // Render
   // ==========================================================================
   return (
     <div className={containerClasses}>
-      <div className={dateClasses}>
-        <span>{date}</span>
-      </div>
+      <SwissMotion 
+        type="fade" 
+        delay={delayBase + delayStep + 0.1} 
+        duration={config.DURATION} 
+        className={dateClasses}
+      >
+        <TextAnimation
+          text={date}
+          variant="reveal"
+          delay={0.1}
+          duration={0.3}
+        />
+      </SwissMotion>
 
       <div className={contentGridColClass}>
-        <motion.div className={contentClasses} {...getAnimation.getAnim()}>
-          {/* Decorative elements */}
-          <div className="absolute top-0 left-0 w-1/4 h-1 bg-[var(--accent)]" />
-          <div className="absolute bottom-0 right-0 w-1 h-1/4 bg-[var(--accent-secondary)]" />
-          
+        <CardContainer
+          accent={true}
+          accentPosition={effectivePosition === "left" ? "top-left" : "top-right"}
+          accentColor={accentColor}
+          accentType="horizontal"
+          accentWidth="1/4"
+          motionType={isMobile ? "slide" : "scale"}
+          delay={delayBase + delayStep}
+          duration={config.DURATION * 1.2}
+          whileHover="lift"
+          className={contentClasses}
+          animated={isInView}
+          backgroundPattern={backgroundPattern}
+          showShape={showShapes}
+          shapeType="square"
+        >
           {/* Timeline dot */}
           <div className={dotClasses} style={dotStyles}>
-            <motion.div
-              className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white"
-              initial={{ scale: 0 }}
-              animate={{ scale: isInView ? 1 : 0 }}
-              transition={{ duration: config.DURATION, delay: delayBase + delayStep }}
+            <ShapeAnimation
+              type="square"
+              size={8}
+              color={`var(--accent-${accentColor === 'primary' ? 'tertiary' : 'primary'})`}
+              variant="pulse"
+              delay={delayBase + delayStep + 0.1}
+              duration={1.5}
+              loop={true}
             />
           </div>
 
           {/* Content */}
           <span className={mobileDateClasses}>{date}</span>
-          <motion.h4 className="text-base md:text-lg font-bold mb-1" {...getAnimation.getFadeAnim(0.1)}>
-            {title}
-          </motion.h4>
-          <motion.h5 className="text-sm md:text-base text-[var(--accent)] mb-3" {...getAnimation.getFadeAnim(0.15)}>
-            {company}
-          </motion.h5>
+          <TextAnimation
+            text={title}
+            variant="reveal"
+            delay={delayBase + delayStep + 0.15}
+            className="text-base md:text-lg font-bold mb-1"
+          />
+          <TextAnimation
+            text={company}
+            variant="reveal"
+            delay={delayBase + delayStep + 0.2}
+            className="text-sm md:text-base text-[var(--accent)] mb-3"
+          />
 
-          <motion.div className="text-[var(--muted)] text-sm space-y-2 mb-4" {...getAnimation.getFadeAnim(0.2)}>
+          <SwissMotion type="stagger" delay={delayBase + delayStep + 0.25} className="text-[var(--muted)] text-sm space-y-2 mb-4">
             {description.map((paragraph, i) => (
-              <p key={i} className="flex items-start">
-                <span className="text-[var(--accent)] mr-2 text-lg leading-tight">•</span>
+              <SwissMotion key={i} type="fade" delay={0.05 * i} className="flex items-start">
+                <span className={`text-[var(--accent-${accentColor})] mr-2 text-lg leading-tight`}>•</span>
                 <span>{paragraph}</span>
-              </p>
+              </SwissMotion>
             ))}
-          </motion.div>
+          </SwissMotion>
 
-          <motion.div className="flex flex-wrap gap-1.5" {...getAnimation.getFadeAnim(0.25)}>
-            {technologies.map((tech) => (
-              <span key={tech} className="text-xs px-2 py-1 bg-[var(--card-hover)] rounded-sm">
-                {tech}
-              </span>
+          <SwissMotion type="stagger" delay={delayBase + delayStep + 0.3} className="flex flex-wrap gap-1.5">
+            {technologies.map((tech, i) => (
+              <SwissMotion key={tech} type="fade" delay={0.02 * i} whileHover="lift">
+                <span 
+                  className={`
+                    text-xs px-2 py-1 bg-[var(--card-hover)] rounded-sm
+                    relative group overflow-hidden
+                  `}
+                >
+                  {/* Subtle accent line for technologies */}
+                  <span 
+                    className="absolute bottom-0 left-0 h-[2px] w-0 group-hover:w-full transition-all duration-300 ease-out"
+                    style={{ backgroundColor: `var(--accent-${accentColor})` }}
+                  />
+                  {tech}
+                </span>
+              </SwissMotion>
             ))}
-          </motion.div>
-        </motion.div>
+          </SwissMotion>
+        </CardContainer>
       </div>
     </div>
   );

@@ -4,8 +4,9 @@ import SwissMotion from "../SwissMotion";
 
 // Types
 type AccentPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'custom';
-type AccentType = 'horizontal' | 'vertical';
+type AccentType = 'horizontal' | 'vertical' | 'diagonal';
 type AccentColor = 'primary' | 'secondary' | 'tertiary' | 'foreground';
+type AccentAnimation = 'reveal' | 'slide' | 'fade' | 'draw';
 
 interface AccentLineProps {
   position?: AccentPosition;
@@ -15,7 +16,11 @@ interface AccentLineProps {
   positionClasses?: string;
   color?: AccentColor;
   delay?: number;
+  duration?: number;
   className?: string;
+  animationType?: AccentAnimation;
+  rotate?: number;
+  animateOnHover?: boolean;
 }
 
 // Constants
@@ -41,7 +46,11 @@ const AccentLine = memo(function AccentLine({
   positionClasses = '',
   color = 'primary',
   delay = 0,
-  className = ''
+  duration = 0.4,
+  className = '',
+  animationType = 'reveal',
+  rotate = 0,
+  animateOnHover = false
 }: AccentLineProps) {
   // Helpers
   const getPositionClasses = () => 
@@ -61,23 +70,49 @@ const AccentLine = memo(function AccentLine({
   };
 
   // Derived values
-  const widthClass = type === 'horizontal' ? getDimensionClass(width, 'width') : '';
-  const heightClass = type === 'vertical' ? getDimensionClass(height, 'height') : '';
+  const widthClass = type === 'horizontal' || type === 'diagonal' ? getDimensionClass(width, 'width') : '';
+  const heightClass = type === 'vertical' || type === 'diagonal' ? getDimensionClass(height, 'height') : '';
 
   const inlineStyle = {
-    width: type === 'horizontal' ? getDimensionValue(width) : '1px',
-    height: type === 'vertical' ? getDimensionValue(height) : '1px'
+    width: type === 'horizontal' || type === 'diagonal' ? getDimensionValue(width) : '1px',
+    height: type === 'vertical' || type === 'diagonal' ? getDimensionValue(height) : '1px',
+    transform: rotate ? `rotate(${rotate}deg)` : undefined,
+    transformOrigin: 'center',
+  };
+  
+  // Get motion animation type based on the animationType
+  const getMotionType = () => {
+    switch (animationType) {
+      case 'slide': return 'slide';
+      case 'fade': return 'fade';
+      case 'draw': return 'scale'; // Use scale for draw-like effect
+      default: return 'reveal';
+    }
+  };
+  
+  // Get hover animation
+  const getHoverAnimation = () => {
+    if (!animateOnHover) return undefined;
+    
+    if (type === 'horizontal') {
+      return 'scale'; // Scale horizontally
+    } else if (type === 'vertical') {
+      return 'lift'; // Lift vertically
+    } else {
+      return 'glow'; // Glow for diagonal
+    }
   };
 
   return (
     <SwissMotion
-      type="reveal"
+      type={getMotionType()}
       delay={delay}
-      duration={0.4}
+      duration={duration}
+      whileHover={getHoverAnimation()}
       className={`absolute ${getPositionClasses()} ${widthClass} ${heightClass} ${COLOR_MAP[color]} ${className}`}
       style={inlineStyle}
     >
-      <div />
+      <div className={type === 'diagonal' ? 'h-full w-full' : ''} />
     </SwissMotion>
   );
 });
