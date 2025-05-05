@@ -1,0 +1,39 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Performance Optimization Guide
+
+This project implements various performance optimization techniques to ensure fast loading and rendering.
+
+## Code Splitting
+- Use dynamic imports for large components that aren't needed immediately
+- Leverage Next.js automatic code splitting
+
+```tsx
+// Example dynamic import
+const DynamicComponent = dynamic(() => import('../components/HeavyComponent'), {
+  loading: () => <LoadingSpinner />
+});
+```
+
+## Image Optimization
+- Use Next.js Image component with appropriate sizing
+- Implement proper image formats (WebP, AVIF)
+- Use responsive images based on viewport size
+
+## Lazy Loading
+- Use [src/components/LazySection.tsx](mdc:src/components/LazySection.tsx) for sections below the fold
+- Implement lazy loading for images not in the initial viewport
+- Use the Intersection Observer API via [src/hooks/useLazyLoadSection.ts](mdc:src/hooks/useLazyLoadSection.ts)
+
+## Caching
+- Implement appropriate caching strategies for API responses
+- Use SWR or React Query for data fetching with caching
+
+## Animation Performance
+- Use hardware-accelerated properties (transform, opacity) for animations
+- Avoid animating expensive CSS properties (box-shadow, filter)
+- Use will-change CSS property judiciously for complex animations
+- Use Framer Motion's `<LazyMotion>` for code splitting

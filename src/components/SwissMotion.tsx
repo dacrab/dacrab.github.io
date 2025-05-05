@@ -1,7 +1,8 @@
 "use client";
 
 import { ReactNode } from "react";
-import { motion, MotionStyle, Variants } from "framer-motion";
+import { motion, MotionStyle, Variants, TargetAndTransition, VariantLabels } from "framer-motion";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 export type SwissMotionType = 
   | "fade" 
@@ -13,6 +14,9 @@ export type SwissMotionType =
   | "reveal" 
   | "parallax"
   | "pulse";
+
+type HoverEffect = "lift" | "glow" | "scale" | "rotate" | "none";
+type TapEffect = "press" | "none";
 
 interface GridLayoutProps {
   columns: number;
@@ -30,10 +34,19 @@ interface SwissMotionProps {
   viewport?: { once?: boolean; margin?: string };
   staggerChildren?: number;
   staggerDirection?: 1 | -1;
-  whileHover?: "lift" | "glow" | "scale" | "rotate" | "none";
-  whileTap?: "press" | "none";
+  whileHover?: HoverEffect;
+  whileTap?: TapEffect;
   gridLayout?: GridLayoutProps;
+  disableOnMobile?: boolean;
+  mobileOptimized?: boolean;
 }
+
+// Swiss style easing curves
+const EASING = {
+  precision: [0.17, 0.67, 0.83, 0.67],
+  sharp: [0.19, 1, 0.22, 1],
+  parallax: [0.08, 0.82, 0.17, 1]
+};
 
 export default function SwissMotion({
   children,
@@ -47,28 +60,53 @@ export default function SwissMotion({
   staggerDirection = 1,
   whileHover = "none",
   whileTap = "none",
-  gridLayout
+  gridLayout,
+  disableOnMobile = false,
+  mobileOptimized = true
 }: SwissMotionProps) {
-  // Swiss style easing curves
-  const swissPrecisionEase = [0.17, 0.67, 0.83, 0.67];
-  const swissSharpEase = [0.19, 1, 0.22, 1];
-  const swissParallaxEase = [0.08, 0.82, 0.17, 1];
+  const isMobile = useIsMobile();
+  
+  // Handle mobile optimizations
+  const shouldDisableAnimation = isMobile && disableOnMobile;
+  
+  // Apply mobile optimization factors
+  const optimized = {
+    duration: isMobile && mobileOptimized ? duration * 0.6 : duration,
+    delay: isMobile && mobileOptimized ? delay * 0.5 : delay,
+    staggerChildren: isMobile && mobileOptimized ? Math.min(staggerChildren * 0.5, 0.05) : staggerChildren
+  };
+  
+  // Simplify animation type for mobile
+  const getEffectiveType = (): SwissMotionType => {
+    if (!isMobile || !mobileOptimized) return type;
+    
+    // Convert complex animations to simpler ones on mobile
+    const mobileTypeMap: Partial<Record<SwissMotionType, SwissMotionType>> = {
+      parallax: "slide",
+      grid: "stagger",
+      rotate: "fade"
+    };
+    
+    return mobileTypeMap[type] || type;
+  };
+  
+  const effectiveType = shouldDisableAnimation ? "fade" : getEffectiveType();
   
   // Swiss style animation variants
-  const variants: { [key in SwissMotionType]: Variants } = {
+  const createVariants = (): Record<SwissMotionType, Variants> => ({
     fade: {
       hidden: { opacity: 0 },
       visible: { 
         opacity: 1,
-        transition: { duration, delay, ease: swissPrecisionEase }
+        transition: { duration: optimized.duration, delay: optimized.delay, ease: EASING.precision }
       }
     },
     slide: {
-      hidden: { opacity: 0, x: -40 },
+      hidden: { opacity: 0, x: isMobile ? -20 : -40 },
       visible: {
         opacity: 1,
         x: 0,
-        transition: { duration, delay, ease: swissSharpEase }
+        transition: { duration: optimized.duration, delay: optimized.delay, ease: EASING.sharp }
       }
     },
     scale: {
@@ -76,15 +114,15 @@ export default function SwissMotion({
       visible: {
         opacity: 1,
         scale: 1,
-        transition: { duration, delay, ease: swissPrecisionEase }
+        transition: { duration: optimized.duration, delay: optimized.delay, ease: EASING.precision }
       }
     },
     rotate: {
-      hidden: { opacity: 0, rotate: -5 },
+      hidden: { opacity: 0, rotate: isMobile ? -2 : -5 },
       visible: {
         opacity: 1,
         rotate: 0,
-        transition: { duration, delay, ease: swissPrecisionEase }
+        transition: { duration: optimized.duration, delay: optimized.delay, ease: EASING.precision }
       }
     },
     stagger: {
@@ -92,42 +130,51 @@ export default function SwissMotion({
       visible: {
         opacity: 1,
         transition: {
-          staggerChildren,
+          staggerChildren: optimized.staggerChildren,
           staggerDirection,
-          delayChildren: delay
+          delayChildren: optimized.delay
         }
       }
     },
     grid: {
-      hidden: { opacity: 0, y: 20 },
+      hidden: { opacity: 0, y: isMobile ? 10 : 20 },
       visible: customParams => {
         if (!customParams) {
           return { 
             opacity: 1, 
             y: 0,
-            transition: { duration, delay, ease: swissSharpEase }
+            transition: { duration: optimized.duration, delay: optimized.delay, ease: EASING.sharp }
           };
         }
         
-        const columns = customParams.columns || 3;
-        const rows = customParams.rows || 3;
-        const itemIndex = customParams.itemIndex || 0;
-        
+        const { columns = 3, rows = 3, itemIndex = 0 } = customParams;
         const col = itemIndex % columns;
         const row = Math.floor(itemIndex / columns) % rows;
-        const startPosition = [0, 0.3, 0.6]; // Start positions for wave effect
-        const timeOffset = 0.2; // Delay increment
         
-        // Calculate delay for wave-like effect
-        const staggerDelay = (startPosition[col % 3] + startPosition[row % 3]) * timeOffset;
+        // Simplified wave effect for mobile
+        if (isMobile && mobileOptimized) {
+          return {
+            opacity: 1,
+            y: 0,
+            transition: {
+              duration: optimized.duration,
+              delay: optimized.delay + (col + row) * 0.1,
+              ease: EASING.sharp
+            }
+          };
+        }
+        
+        // Full effect for desktop
+        const startPosition = [0, 0.3, 0.6]; // Start positions for wave effect
+        const staggerDelay = (startPosition[col % 3] + startPosition[row % 3]) * 0.2;
         
         return {
           opacity: 1,
           y: 0, 
           transition: {
-            duration, 
-            delay: delay + staggerDelay,
-            ease: swissSharpEase
+            duration: optimized.duration, 
+            delay: optimized.delay + staggerDelay,
+            ease: EASING.sharp
           }
         };
       }
@@ -136,18 +183,18 @@ export default function SwissMotion({
       hidden: { clipPath: "inset(0 100% 0 0)" },
       visible: {
         clipPath: "inset(0 0% 0 0)",
-        transition: { duration, delay, ease: swissPrecisionEase }
+        transition: { duration: optimized.duration, delay: optimized.delay, ease: EASING.precision }
       }
     },
     parallax: {
-      hidden: { opacity: 0, y: 50 },
+      hidden: { opacity: 0, y: isMobile ? 30 : 50 },
       visible: {
         opacity: 1,
         y: 0,
         transition: {
-          duration: duration * 1.5,
-          delay,
-          ease: swissParallaxEase
+          duration: isMobile ? optimized.duration : optimized.duration * 1.5,
+          delay: optimized.delay,
+          ease: EASING.parallax
         }
       }
     },
@@ -157,55 +204,80 @@ export default function SwissMotion({
         opacity: 1, 
         scale: 1,
         transition: {
-          duration: 1.8,
-          delay,
+          duration: isMobile ? 1.2 : 1.8,
+          delay: optimized.delay,
           ease: "easeInOut",
-          repeat: Infinity,
+          repeat: isMobile ? 2 : Infinity,
           repeatType: "reverse"
         }
       }
     }
+  });
+
+  const variants = createVariants();
+
+  // Get effective hover effect for mobile
+  const getEffectiveHoverEffect = (): HoverEffect => {
+    if (!isMobile) return whileHover;
+    
+    const mobileHoverMap: Partial<Record<HoverEffect, HoverEffect>> = {
+      lift: "scale",
+      rotate: "none",
+      glow: "scale"
+    };
+    
+    return mobileHoverMap[whileHover] || whileHover;
   };
 
   // Swiss style hover variants
-  const hoverVariants = {
-    lift: { y: -8, transition: { duration: 0.3, ease: "easeOut" } },
+  const hoverVariants: Record<HoverEffect, TargetAndTransition | VariantLabels> = {
+    lift: { y: isMobile ? -4 : -8, transition: { duration: 0.3, ease: "easeOut" } },
     glow: { 
       boxShadow: "0 0 10px 2px rgba(var(--accent-rgb), 0.3)", 
       transition: { duration: 0.3 } 
     },
-    scale: { scale: 1.03, transition: { duration: 0.3, ease: "easeOut" } },
-    rotate: { rotate: 1, transition: { duration: 0.3, ease: "easeOut" } },
+    scale: { scale: isMobile ? 1.02 : 1.03, transition: { duration: 0.3, ease: "easeOut" } },
+    rotate: { rotate: isMobile ? 0.5 : 1, transition: { duration: 0.3, ease: "easeOut" } },
     none: {}
   };
 
   // Swiss style tap variants
-  const tapVariants = {
+  const tapVariants: Record<TapEffect, TargetAndTransition | VariantLabels> = {
     press: { scale: 0.98, transition: { duration: 0.1 } },
     none: {}
   };
 
   // Get motion props based on animation type
   const getMotionProps = () => {
+    // For disabled animations on mobile, just return simple fade
+    if (shouldDisableAnimation) {
+      return {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        transition: { duration: 0.3 },
+        style
+      };
+    }
+    
     const commonProps = {
       initial: "hidden",
       whileInView: "visible",
       viewport,
       style: {
         ...style,
-        willChange: type === "parallax" ? "transform, opacity" : "auto"
+        willChange: effectiveType === "parallax" ? "transform, opacity" : "auto"
       }
     };
 
-    if (type === "grid" && gridLayout) {
+    if (effectiveType === "grid" && gridLayout) {
       return {
         ...commonProps,
         custom: gridLayout,
-        variants: variants[type]
+        variants: variants[effectiveType]
       };
     }
 
-    if (type === "stagger") {
+    if (effectiveType === "stagger") {
       return {
         ...commonProps,
         variants: variants.stagger
@@ -214,8 +286,8 @@ export default function SwissMotion({
 
     return {
       ...commonProps,
-      variants: variants[type],
-      whileHover: hoverVariants[whileHover],
+      variants: variants[effectiveType],
+      whileHover: hoverVariants[getEffectiveHoverEffect()],
       whileTap: tapVariants[whileTap]
     };
   };

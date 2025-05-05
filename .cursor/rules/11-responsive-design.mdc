@@ -1,0 +1,43 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Responsive Design Guide
+
+This project implements responsive design using the following patterns and tools.
+
+## Breakpoints
+Use TailwindCSS breakpoints consistently throughout the application:
+- `sm`: 640px and up
+- `md`: 768px and up
+- `lg`: 1024px and up
+- `xl`: 1280px and up
+- `2xl`: 1536px and up
+
+## Mobile-First Approach
+- Start with mobile layouts and add complexity for larger screens
+- Use the [src/hooks/useIsMobile.ts](mdc:src/hooks/useIsMobile.ts) hook for client-side responsive logic
+
+## Responsive Components
+Components should adapt to different screen sizes using:
+- Flexbox and Grid layouts
+- Tailwind's responsive modifiers (e.g., `md:flex-row`)
+- Container queries where appropriate
+
+```tsx
+// Example responsive class usage:
+<div className="flex flex-col md:flex-row">
+  {/* Content */}
+</div>
+```
+
+## Images and Media
+- Use Next.js Image component with appropriate responsive options
+- Ensure images have proper alt text for accessibility
+- Consider loading different image sizes based on viewport
+
+## Text and Typography
+- Use relative units (rem) for font sizes
+- Adjust line heights and letter spacing for readability
+- Use Tailwind's typography classes consistently

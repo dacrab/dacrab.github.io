@@ -28,10 +28,10 @@ export default function HighlightBox({
   const [isHovered, setIsHovered] = useState(false);
   const isMobile = useIsMobile();
   
-  // Swiss-style precision curves
+  // Swiss-style precision curves - simplified for mobile
   const easing = {
-    precise: [0.17, 0.67, 0.83, 0.67],
-    smooth: [0.19, 1, 0.22, 1]
+    precise: isMobile ? [0.2, 0.5, 0.8, 1] : [0.17, 0.67, 0.83, 0.67],
+    smooth: isMobile ? [0.2, 0.7, 0.4, 1] : [0.19, 1, 0.22, 1]
   };
   
   // Accent color mapping
@@ -41,22 +41,29 @@ export default function HighlightBox({
     tertiary: 'var(--accent-tertiary)'
   };
   
+  // Optimize durations and delays for mobile
+  const optimizedDuration = isMobile ? 0.4 : 0.5;
+  const optimizedDelay = isMobile ? delay * 0.7 : delay;
+  
+  // Skip some animations on mobile
+  const shouldAnimateOnHover = !isMobile;
+  
   return (
     <motion.div
       ref={ref}
       className={`relative overflow-hidden p-5 border border-[var(--border)] rounded-sm ${className}`}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: isMobile ? 10 : 20 }}
       animate={{ 
         opacity: isInView ? 1 : 0, 
-        y: isInView ? 0 : 20 
+        y: isInView ? 0 : isMobile ? 10 : 20 
       }}
       transition={{ 
-        duration: 0.5, 
-        delay, 
+        duration: optimizedDuration, 
+        delay: optimizedDelay, 
         ease: easing.smooth
       }}
-      onHoverStart={() => !isMobile && setIsHovered(true)}
-      onHoverEnd={() => !isMobile && setIsHovered(false)}
+      onHoverStart={() => shouldAnimateOnHover && setIsHovered(true)}
+      onHoverEnd={() => shouldAnimateOnHover && setIsHovered(false)}
     >
       {/* Top accent line - classic Swiss design element */}
       <motion.div 
@@ -67,8 +74,8 @@ export default function HighlightBox({
           scaleX: isInView ? 1 : 0
         }}
         transition={{ 
-          duration: 0.6, 
-          delay: delay + 0.2, 
+          duration: optimizedDuration * 1.2, 
+          delay: optimizedDelay + 0.2, 
           ease: easing.precise
         }}
       />
@@ -77,18 +84,18 @@ export default function HighlightBox({
       {title && (
         <motion.h4 
           className="text-lg font-bold mb-3 inline-flex"
-          initial={{ opacity: 0, x: -10 }}
+          initial={{ opacity: 0, x: isMobile ? -5 : -10 }}
           animate={{ 
             opacity: isInView ? 1 : 0, 
-            x: isInView ? 0 : -10
+            x: isInView ? 0 : isMobile ? -5 : -10
           }}
           transition={{ 
-            duration: 0.4, 
-            delay: delay + 0.3, 
+            duration: optimizedDuration * 0.8, 
+            delay: optimizedDelay + 0.3, 
             ease: easing.precise
           }}
         >
-          {/* Swiss-style square accent */}
+          {/* Swiss-style square accent - simplified on mobile */}
           <motion.span 
             className="inline-block mr-2 w-3 h-3"
             style={{ 
@@ -96,7 +103,7 @@ export default function HighlightBox({
               opacity: isHovered ? 1 : 0.7
             }}
             animate={{ 
-              rotate: isHovered ? 45 : 0
+              rotate: shouldAnimateOnHover && isHovered ? 45 : 0
             }}
             transition={{ 
               duration: 0.3, 
@@ -107,24 +114,26 @@ export default function HighlightBox({
         </motion.h4>
       )}
       
-      {/* Background grid pattern - Swiss style */}
-      <motion.div 
-        className="absolute inset-0 swiss-grid-pattern"
-        initial={{ opacity: 0 }}
-        animate={{ 
-          opacity: isHovered ? 0.05 : 0,
-          backgroundPosition: isHovered ? ["0% 0%", "2% 2%"] : "0% 0%"
-        }}
-        transition={{ 
-          opacity: { duration: 0.3, ease: easing.precise },
-          backgroundPosition: { 
-            duration: 5, 
-            ease: "linear", 
-            repeat: Infinity, 
-            repeatType: "mirror" as const
-          }
-        }}
-      />
+      {/* Background grid pattern - disabled on mobile */}
+      {!isMobile && (
+        <motion.div 
+          className="absolute inset-0 swiss-grid-pattern"
+          initial={{ opacity: 0 }}
+          animate={{ 
+            opacity: isHovered ? 0.05 : 0,
+            backgroundPosition: isHovered ? ["0% 0%", "2% 2%"] : "0% 0%"
+          }}
+          transition={{ 
+            opacity: { duration: 0.3, ease: easing.precise },
+            backgroundPosition: { 
+              duration: 5, 
+              ease: "linear", 
+              repeat: Infinity, 
+              repeatType: "mirror" as const
+            }
+          }}
+        />
+      )}
       
       {/* Content container with staggered animation */}
       <motion.div
@@ -133,28 +142,30 @@ export default function HighlightBox({
           opacity: isInView ? 1 : 0
         }}
         transition={{ 
-          duration: 0.5, 
-          delay: delay + 0.4, 
+          duration: optimizedDuration, 
+          delay: optimizedDelay + (isMobile ? 0.3 : 0.4), 
           ease: easing.precise
         }}
       >
         {children}
       </motion.div>
       
-      {/* Side accent line - dynamic on hover */}
-      <motion.div 
-        className="absolute right-0 top-0 w-1 h-full"
-        style={{ backgroundColor: accentColorMap[accentColor] }}
-        initial={{ scaleY: 0 }}
-        animate={{ 
-          scaleY: isHovered ? 1 : 0,
-          opacity: isHovered ? 1 : 0
-        }}
-        transition={{ 
-          duration: 0.4, 
-          ease: easing.precise
-        }}
-      />
+      {/* Side accent line - dynamic on hover, disabled on mobile */}
+      {!isMobile && (
+        <motion.div 
+          className="absolute right-0 top-0 w-1 h-full"
+          style={{ backgroundColor: accentColorMap[accentColor] }}
+          initial={{ scaleY: 0 }}
+          animate={{ 
+            scaleY: isHovered ? 1 : 0,
+            opacity: isHovered ? 1 : 0
+          }}
+          transition={{ 
+            duration: 0.4, 
+            ease: easing.precise
+          }}
+        />
+      )}
     </motion.div>
   );
 } 
