@@ -8,6 +8,12 @@ import ProjectDescription from "./ProjectDescription";
 import ShapeAnimation from "../ShapeAnimation";
 import AccentLine from "../common/AccentLine";
 
+// Animation constants
+const ANIMATION = {
+  baseDelay: 0.1,
+  duration: 0.5
+};
+
 interface FeaturedProjectProps extends ProjectBaseProps {
   reversed?: boolean;
   index?: number;
@@ -18,7 +24,6 @@ interface FeaturedProjectProps extends ProjectBaseProps {
 const FeaturedProject = memo(function FeaturedProject({ 
   project, 
   reversed = false,
-  index = 0,
   accentColor = 'primary',
   backgroundPattern = 'grid'
 }: FeaturedProjectProps) {
@@ -78,8 +83,8 @@ const FeaturedProject = memo(function FeaturedProject({
   return (
     <SwissMotion
       type="scale"
-      delay={0.2 + (index * 0.1)}
-      duration={0.7}
+      delay={ANIMATION.baseDelay}
+      duration={ANIMATION.duration}
       whileHover="lift"
       className={`swiss-card relative ${reversed ? 'swiss-grid-reversed' : ''}`}
     >
@@ -89,7 +94,7 @@ const FeaturedProject = memo(function FeaturedProject({
         type="horizontal"
         width="1/3"
         color={accentColor}
-        delay={0.3 + (index * 0.1)}
+        delay={ANIMATION.baseDelay}
         animationType="reveal"
         animateOnHover={true}
       />
@@ -99,18 +104,18 @@ const FeaturedProject = memo(function FeaturedProject({
         type="vertical"
         height="1/4"
         color={accentColor === 'primary' ? 'secondary' : 'primary'}
-        delay={0.4 + (index * 0.1)}
+        delay={ANIMATION.baseDelay}
         animationType="reveal"
       />
       
       {/* Background pattern */}
       {renderBackgroundPattern()}
       
-      {/* Decorative Swiss-style shape element */}
+      {/* Decorative Swiss-style shape element - simplified animation */}
       <SwissMotion
         type="fade"
-        delay={0.5 + (index * 0.1)}
-        duration={0.4}
+        delay={ANIMATION.baseDelay}
+        duration={ANIMATION.duration}
         className={`absolute ${reversed ? 'left-4 bottom-4' : 'right-4 top-4'} opacity-10`}
       >
         <ShapeAnimation
@@ -118,7 +123,7 @@ const FeaturedProject = memo(function FeaturedProject({
           variant="rotate"
           color={`var(--accent-${accentColor})`}
           size={20}
-          delay={0.1}
+          delay={0}
           duration={3}
           loop={true}
         />
@@ -127,20 +132,19 @@ const FeaturedProject = memo(function FeaturedProject({
       <div className="mb-6 relative z-10">
         <ProjectTitle 
           title={project.title}
-          delay={0.3 + (index * 0.1)}
+          delay={ANIMATION.baseDelay}
           isFeatured={true}
         />
         
         <ProjectDescription
           description={project.description}
-          delay={0.4 + (index * 0.1)}
+          delay={ANIMATION.baseDelay}
           isFeatured={true}
         />
         
         <SwissMotion 
           type="stagger" 
-          staggerChildren={0.05} 
-          delay={0.5 + (index * 0.1)} 
+          delay={ANIMATION.baseDelay} 
           className="flex flex-wrap gap-2 mb-6"
         >
           {project.tags.map((tag, tagIndex) => (
@@ -151,14 +155,14 @@ const FeaturedProject = memo(function FeaturedProject({
               index={tagIndex}
               useAccentColor={true}
               showBorder={tagIndex === 0}
-              animationVariant={tagIndex % 2 === 0 ? 'fade' : 'scale'}
+              animationVariant="fade"
             />
           ))}
         </SwissMotion>
         
         <ProjectLink 
           href={project.link} 
-          delay={0.6 + (index * 0.1)}
+          delay={ANIMATION.baseDelay}
           isButtonStyle={true}
           accentColor={accentColor}
           showShape={true}
