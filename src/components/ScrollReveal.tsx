@@ -1,12 +1,24 @@
 "use client";
 
-import React, { ReactNode, useRef } from "react";
+import React, { ReactNode, useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 
+interface NavigatorWithMemory extends Navigator {
+  deviceMemory?: number;
+}
+
+// Swiss-style animation curves
+const EASE = {
+  precision: [0.17, 0.67, 0.83, 0.67],
+  simplified: [0.2, 0.5, 0.8, 1]
+};
+
+type Direction = "up" | "down" | "left" | "right" | "none";
+
 interface ScrollRevealProps {
   children: ReactNode;
-  direction?: "up" | "down" | "left" | "right" | "none";
+  direction?: Direction;
   className?: string;
   distance?: number;
   duration?: number;
@@ -16,6 +28,7 @@ interface ScrollRevealProps {
   style?: React.CSSProperties;
   viewport?: { amount?: number; once?: boolean };
   mobileOptimized?: boolean;
+  disableOnMobile?: boolean;
 }
 
 export default function ScrollReveal({
@@ -29,53 +42,73 @@ export default function ScrollReveal({
   once = true,
   style = {},
   viewport,
-  mobileOptimized = true
+  mobileOptimized = true,
+  disableOnMobile = false
 }: ScrollRevealProps) {
   const ref = useRef(null);
   const isMobile = useIsMobile();
-
-  // Optimize values for mobile if needed
-  const optimizedDistance = isMobile && mobileOptimized ? Math.min(distance * 0.7, 30) : distance;
-  const optimizedDuration = isMobile && mobileOptimized ? Math.min(duration * 0.8, 0.5) : duration;
-  const optimizedDelay = isMobile && mobileOptimized ? delay * 0.7 : delay;
-  const optimizedThreshold = isMobile && mobileOptimized ? Math.min(threshold * 0.8, 0.15) : threshold;
-
+  const [isLowEndDevice, setIsLowEndDevice] = useState(false);
+  
+  // Calculate optimized values
+  const optimized = {
+    threshold: isMobile && mobileOptimized ? Math.min(threshold * 0.6, 0.1) : threshold,
+    distance: isMobile && mobileOptimized ? Math.min(distance * 0.5, 20) : distance,
+    duration: isMobile && mobileOptimized ? Math.min(duration * 0.7, 0.4) : duration,
+    delay: isMobile && mobileOptimized ? delay * 0.5 : delay,
+    direction: isMobile && mobileOptimized && (direction === "left" || direction === "right") ? "up" : direction,
+    ease: isMobile ? EASE.simplified : EASE.precision
+  };
+  
+  // Initialize isInView hook
   const isInView = useInView(ref, {
-    amount: viewport?.amount ?? optimizedThreshold,
-    once: viewport?.once ?? once
+    amount: viewport?.amount || optimized.threshold,
+    once: viewport?.once || once
   });
 
-  // Animation props based on direction - Swiss style with clean motion
+  // Check for low-end device
+  useEffect(() => {
+    if (typeof navigator === "undefined") return;
+    
+    const hasLowCores = navigator.hardwareConcurrency !== undefined && navigator.hardwareConcurrency < 4;
+    const nav = navigator as NavigatorWithMemory;
+    const hasLowMemory = nav.deviceMemory !== undefined && nav.deviceMemory < 4;
+    setIsLowEndDevice(hasLowCores || hasLowMemory);
+  }, []);
+
+  // Skip animation for low-end or mobile devices when configured
+  if ((isMobile && disableOnMobile) || (isMobile && isLowEndDevice)) {
+    return <div className={className} style={style}>{children}</div>;
+  }
+
+  // Generate animation properties based on direction
   const getMotionProps = () => {
-    if (direction === "none") {
+    // Simple fade animation
+    if (optimized.direction === "none") {
       return {
         initial: { opacity: 0 },
         animate: { opacity: isInView ? 1 : 0 },
         transition: { 
-          duration: optimizedDuration, 
-          delay: optimizedDelay,
-          ease: [0.17, 0.67, 0.83, 0.67] // Swiss-style precision animation
+          duration: optimized.duration, 
+          delay: optimized.delay,
+          ease: optimized.ease
         }
       };
     }
 
-    const axis = direction === "left" || direction === "right" ? "x" : "y";
-    const sign = direction === "right" || direction === "up" ? 1 : -1;
+    // Directional animation
+    const axis = optimized.direction === "left" || optimized.direction === "right" ? "x" : "y";
+    const sign = optimized.direction === "right" || optimized.direction === "up" ? 1 : -1;
     
-    // Define with correct typing that includes x and y properties
-    const initial: { opacity: number; x?: number; y?: number } = { opacity: 0 };
-    initial[axis] = optimizedDistance * sign;
-    
-    const animate: { opacity: number; x?: number; y?: number } = { opacity: isInView ? 1 : 0 };
-    animate[axis] = isInView ? 0 : optimizedDistance * sign;
+    const initial = { opacity: 0, [axis]: optimized.distance * sign };
+    const animate = { opacity: isInView ? 1 : 0, [axis]: isInView ? 0 : optimized.distance * sign };
     
     return {
       initial,
       animate,
       transition: { 
-        duration: optimizedDuration, 
-        delay: optimizedDelay,
-        ease: [0.25, 0.1, 0.25, 1] // Swiss-style clean motion
+        duration: optimized.duration, 
+        delay: optimized.delay,
+        ease: optimized.ease
       }
     };
   };
@@ -87,7 +120,7 @@ export default function ScrollReveal({
       {...getMotionProps()}
       style={{
         ...style,
-        willChange: direction !== "none" ? "transform, opacity" : "opacity"
+        willChange: isMobile ? "auto" : (optimized.direction !== "none" ? "transform, opacity" : "opacity")
       }}
     >
       {children}

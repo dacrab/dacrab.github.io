@@ -1,0 +1,27 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Technology Stack Guide
+
+This portfolio site uses the following technologies:
+
+## Core Framework
+- Next.js 15 with App Router
+- React 19
+- TypeScript 5
+
+## Styling and Animation
+- TailwindCSS 4 - For utility-first styling
+- Framer Motion - For advanced animations
+- React Intersection Observer - For scroll-triggered effects
+
+## UI Components
+- Lucide React - For icons
+
+## Configuration Files
+- [next.config.ts](mdc:next.config.ts) - Next.js configuration
+- [tsconfig.json](mdc:tsconfig.json) - TypeScript configuration
+- [postcss.config.mjs](mdc:postcss.config.mjs) - PostCSS configuration
+- [eslint.config.mjs](mdc:eslint.config.mjs) - ESLint configuration

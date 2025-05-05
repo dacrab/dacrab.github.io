@@ -1,18 +1,27 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
-import { motion, useInView } from "framer-motion";
+import { useRef, useState, useEffect, createElement } from "react";
+import { motion, useInView, Variants } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
+
+// Define interface for Navigator with deviceMemory property
+interface NavigatorWithMemory extends Navigator {
+  deviceMemory?: number;
+}
+
+type AnimationVariant = "split" | "reveal" | "typewriter" | "gradient" | "char-by-char";
+type ElementType = "span" | "div";
 
 interface TextAnimationProps {
   text: string;
-  variant?: "split" | "reveal" | "typewriter" | "gradient" | "char-by-char";
+  variant?: AnimationVariant;
   className?: string;
   delay?: number;
   duration?: number;
   once?: boolean;
   mobileOptimized?: boolean;
-  as?: "span" | "div";
+  as?: ElementType;
+  disableOnMobile?: boolean;
 }
 
 export default function TextAnimation({
@@ -23,12 +32,10 @@ export default function TextAnimation({
   duration = 0.5,
   once = false,
   mobileOptimized = true,
-  as = "span"
+  as = "span",
+  disableOnMobile = false
 }: TextAnimationProps) {
-  // Create refs for both element types
-  const spanRef = useRef<HTMLSpanElement>(null);
-  const divRef = useRef<HTMLDivElement>(null);
-  const ref = as === "span" ? spanRef : divRef;
+  const ref = useRef<HTMLElement>(null);
   
   const isMobile = useIsMobile();
   const isInView = useInView(ref, { amount: 0.2, once });
@@ -36,41 +43,109 @@ export default function TextAnimation({
 
   // Performance optimization detection
   useEffect(() => {
-    if (typeof navigator !== "undefined" && navigator.hardwareConcurrency !== undefined) {
-      setIsLowEndDevice(navigator.hardwareConcurrency < 4);
-    }
-  }, []);
+    if (typeof navigator === "undefined") return;
+    
+    const hasLowCores = navigator.hardwareConcurrency !== undefined && navigator.hardwareConcurrency < 4;
+    const nav = navigator as NavigatorWithMemory;
+    const hasLowMemory = nav.deviceMemory !== undefined && nav.deviceMemory < 4;
+    const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isComplexAnimation = ["typewriter", "char-by-char", "gradient"].includes(variant);
+    
+    setIsLowEndDevice(hasLowCores || hasLowMemory || (isMobileDevice && isComplexAnimation));
+  }, [variant]);
 
-  // Skip animations for low-end mobile devices
-  if (isMobile && isLowEndDevice) {
-    return as === "span" ? (
-      <span ref={spanRef} className={className}>{text}</span>
-    ) : (
-      <div ref={divRef} className={className}>{text}</div>
-    );
+  // Skip animations for mobile or low-end devices if disableOnMobile is true
+  if ((isMobile && disableOnMobile) || (isMobile && isLowEndDevice)) {
+    return createElement(as, { ref, className }, text);
   }
 
-  // Animation timing optimizations
-  const optimizedDuration = isMobile && mobileOptimized ? duration * 0.6 : duration;
-  const optimizedDelay = isMobile && mobileOptimized ? delay * 0.5 : delay;
+  // Animation timing and variant optimizations
+  const optimizedDuration = isMobile && mobileOptimized ? duration * 0.5 : duration;
+  const optimizedDelay = isMobile && mobileOptimized ? delay * 0.3 : delay;
+  
+  // Simplify animation variants on mobile
+  const effectiveVariant = isMobile && mobileOptimized
+    ? variant === "char-by-char" ? "split" : variant === "gradient" ? "reveal" : variant
+    : variant;
   
   // Common animation ease curve
   const swissEase = [0.17, 0.67, 0.83, 0.67];
 
+  // Group text for optimized animations
+  const getGroupedText = (text: string, groupSize: number = 2): string[] => {
+    const items = variant === "split" ? text.split(" ") : text.split("");
+    if (!isMobile || !mobileOptimized) return items;
+    
+    return items.reduce((acc: string[], item, i) => {
+      const groupIndex = Math.floor(i / groupSize);
+      if (!acc[groupIndex]) acc[groupIndex] = item;
+      else acc[groupIndex] += variant === "split" ? ` ${item}` : item;
+      return acc;
+    }, []);
+  };
+
+  // Animation variants
+  const revealVariants: Variants = {
+    hidden: { y: "100%" },
+    visible: { 
+      y: 0,
+      transition: { 
+        duration: optimizedDuration,
+        delay: optimizedDelay,
+        ease: swissEase
+      }
+    }
+  };
+
+  const splitVariants: Variants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: (i: number) => ({
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: optimizedDuration,
+        delay: optimizedDelay + i * (isMobile ? 0.03 : 0.1),
+        ease: swissEase
+      }
+    })
+  };
+
+  const typewriterVariants: Variants = {
+    hidden: { width: 0 },
+    visible: { 
+      width: "100%",
+      transition: {
+        duration: optimizedDuration * (isMobile ? 1.2 : 1.5),
+        delay: optimizedDelay,
+        ease: swissEase,
+        times: isMobile ? undefined : Array.from({ length: 20 }).map((_, i) => i / 19)
+      }
+    }
+  };
+
+  const charByCharVariants: Variants = {
+    hidden: { opacity: 0, y: 5 },
+    visible: (i: number) => ({
+      opacity: 1, 
+      y: 0,
+      transition: {
+        duration: 0.2,
+        delay: optimizedDelay + i * (isMobile ? 0.01 : 0.03),
+        ease: swissEase
+      }
+    })
+  };
+
   // Render the appropriate animation variant
   const renderAnimatedContent = () => {
-    switch (variant) {
+    switch (effectiveVariant) {
       case "reveal":
         return (
           <span className="overflow-hidden">
             <motion.span 
-              initial={{ y: "100%" }}
-              animate={{ y: isInView ? 0 : "100%" }}
-              transition={{ 
-                duration: optimizedDuration,
-                delay: optimizedDelay,
-                ease: swissEase
-              }}
+              variants={revealVariants}
+              initial="hidden"
+              animate={isInView ? "visible" : "hidden"}
             >
               {text}
             </motion.span>
@@ -78,22 +153,17 @@ export default function TextAnimation({
         );
         
       case "split": {
-        const words = text.split(" ");
+        const wordGroups = getGroupedText(text);
+        
         return (
           <span>
-            {words.map((word, i) => (
+            {wordGroups.map((word, i) => (
               <motion.span
                 key={i}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ 
-                  opacity: isInView ? 1 : 0, 
-                  y: isInView ? 0 : 10 
-                }}
-                transition={{
-                  duration: optimizedDuration,
-                  delay: optimizedDelay + i * (isMobile ? 0.05 : 0.1),
-                  ease: swissEase
-                }}
+                custom={i}
+                variants={splitVariants}
+                initial="hidden"
+                animate={isInView ? "visible" : "hidden"}
                 className="inline-block mr-[0.25em]"
               >
                 {word}
@@ -106,28 +176,25 @@ export default function TextAnimation({
       case "typewriter":
         return (
           <motion.span
-            initial={{ width: 0 }}
-            animate={{ width: isInView ? "100%" : 0 }}
-            transition={{
-              duration: optimizedDuration * 1.5,
-              delay: optimizedDelay,
-              ease: swissEase,
-              times: Array.from({ length: 20 }).map((_, i) => i / 19)
-            }}
+            variants={typewriterVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
             style={{ whiteSpace: "nowrap", overflow: "hidden", display: "inline-block" }}
           >
             {text}
-            <motion.span
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isInView ? [0, 1, 0] : 0 }}
-              transition={{
-                duration: 0.8,
-                repeat: Infinity,
-                repeatDelay: 0.2,
-                delay: optimizedDelay + optimizedDuration
-              }}
-              className="inline-block ml-[2px] w-[2px] h-[1.2em] bg-[var(--accent)] align-middle"
-            />
+            {!isMobile && (
+              <motion.span
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isInView ? [0, 1, 0] : 0 }}
+                transition={{
+                  duration: 0.8,
+                  repeat: Infinity,
+                  repeatDelay: 0.2,
+                  delay: optimizedDelay + optimizedDuration
+                }}
+                className="inline-block ml-[2px] w-[2px] h-[1.2em] bg-[var(--accent)] align-middle"
+              />
+            )}
           </motion.span>
         );
         
@@ -136,10 +203,12 @@ export default function TextAnimation({
           <motion.span 
             initial={{ backgroundPosition: "0% 50%" }}
             animate={{ 
-              backgroundPosition: isInView ? ["0% 50%", "100% 50%", "0% 50%"] : "0% 50%"
+              backgroundPosition: isInView ? 
+                ["0% 50%", isMobile ? "50% 50%" : "100% 50%", "0% 50%"] : 
+                "0% 50%"
             }}
             transition={{
-              duration: 5,
+              duration: isMobile ? 3 : 5,
               ease: "linear",
               repeat: Infinity,
               delay: optimizedDelay
@@ -158,24 +227,19 @@ export default function TextAnimation({
         );
         
       case "char-by-char": {
-        const chars = text.split("");
+        const charGroups = getGroupedText(text, 3);
+        
         return (
           <span>
-            {chars.map((char, i) => (
+            {charGroups.map((char, i) => (
               <motion.span
                 key={i}
-                initial={{ opacity: 0, y: 5 }}
-                animate={{ 
-                  opacity: isInView ? 1 : 0, 
-                  y: isInView ? 0 : 5 
-                }}
-                transition={{
-                  duration: 0.2,
-                  delay: optimizedDelay + i * 0.03,
-                  ease: swissEase
-                }}
+                custom={i}
+                variants={charByCharVariants}
+                initial="hidden"
+                animate={isInView ? "visible" : "hidden"}
               >
-                {char === " " ? <span>&nbsp;</span> : char}
+                {char === " " && char.length === 1 ? <span>&nbsp;</span> : char}
               </motion.span>
             ))}
           </span>
@@ -187,16 +251,10 @@ export default function TextAnimation({
     }
   };
 
-  // Render the component with the appropriate wrapper
-  const wrapperClass = `${variant === "reveal" || variant === "split" || variant === "typewriter" || variant === "gradient" || variant === "char-by-char" ? "inline-flex items-center" : ""} ${className}`;
+  // Determine wrapper class based on variant
+  const needsFlexWrapper = ["reveal", "split", "typewriter", "gradient", "char-by-char"].includes(variant);
+  const wrapperClass = `${needsFlexWrapper ? "inline-flex items-center" : ""} ${className}`;
   
-  return as === "span" ? (
-    <span ref={spanRef} className={wrapperClass}>
-      {renderAnimatedContent()}
-    </span>
-  ) : (
-    <div ref={divRef} className={wrapperClass}>
-      {renderAnimatedContent()}
-    </div>
-  );
+  // Render the component with the appropriate wrapper
+  return createElement(as, { ref, className: wrapperClass }, renderAnimatedContent());
 }
