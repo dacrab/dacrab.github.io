@@ -1,43 +1,76 @@
-import React from 'react';
-import StaggerItem from '../StaggerItem';
+import React, { memo } from 'react';
+import SwissMotion from '../SwissMotion';
 import { getTagColor } from './types';
+
+// Common animation settings
+const ANIMATION = {
+  duration: 0.3
+};
 
 interface ProjectTagProps {
   tag: string;
   projectId: number;
-  index: number;
+  index?: number;
   className?: string;
   useAccentColor?: boolean;
   showBorder?: boolean;
-  animationVariant?: 'fade' | 'scale' | 'slide';
+  animationVariant?: 'fade' | 'scale' | 'slide' | 'reveal';
 }
 
-export default function ProjectTag({ 
-  tag, 
-  projectId, 
-  index, 
+const ProjectTag = memo(function ProjectTag({
+  tag,
+  projectId,
+  index = 0,
   className = '',
   useAccentColor = false,
   showBorder = false,
   animationVariant = 'fade'
 }: ProjectTagProps) {
+  // Generate tag ID
+  const tagId = `${projectId}-tag-${index}`;
+
+  // Determine color classes - improved contrast
+  const getColorClasses = () => {
+    if (useAccentColor) {
+      return 'bg-[var(--accent)] text-[var(--card)]';
+    }
+    // Improved background color with better contrast
+    return 'bg-[var(--card-secondary)] text-[var(--foreground)]';
+  };
+
+  // Determine border classes
+  const getBorderClasses = () => {
+    if (showBorder) {
+      return useAccentColor 
+        ? 'border border-[var(--accent)]' 
+        : 'border border-[var(--border)]';
+    }
+    // Always add a subtle border for non-accent tags to improve visibility
+    return 'border border-[var(--border-subtle)]';
+  };
+
   const tagColor = useAccentColor ? getTagColor(tag) : undefined;
   
   return (
-    <StaggerItem 
-      key={`${projectId}-${tag}-${index}`}
+    <SwissMotion
       type={animationVariant}
-      whileHover="scale"
+      duration={ANIMATION.duration}
+      className="inline-block"
     >
-      <span 
+      <div
+        id={tagId}
         className={`
-          text-xs px-2 py-1 
-          ${showBorder ? 'border border-[var(--card-hover-dark)]' : 'bg-[var(--card-hover)]'} 
-          rounded-sm inline-block group relative overflow-hidden
-          transition-colors duration-300 hover:bg-[var(--card-hover-dark)]
+          px-2 py-1 text-xs rounded
+          ${getColorClasses()}
+          ${getBorderClasses()}
           ${className}
+          relative overflow-hidden
         `}
-        style={tagColor ? { backgroundColor: `${tagColor}15` } : undefined}
+        style={tagColor ? { 
+          backgroundColor: useAccentColor ? `${tagColor}30` : 'var(--card-secondary)',
+          color: useAccentColor ? tagColor : 'var(--foreground)',
+          borderColor: tagColor 
+        } : undefined}
       >
         {/* Subtle accent line */}
         <span 
@@ -46,7 +79,9 @@ export default function ProjectTag({
         />
         
         {tag}
-      </span>
-    </StaggerItem>
+      </div>
+    </SwissMotion>
   );
-} 
+});
+
+export default ProjectTag; 

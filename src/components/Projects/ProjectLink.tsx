@@ -3,6 +3,11 @@ import { ArrowUpRight } from "lucide-react";
 import SwissMotion from "../SwissMotion";
 import ShapeAnimation from "../ShapeAnimation";
 
+// Common animation settings
+const ANIMATION = {
+  duration: 0.4
+};
+
 interface ProjectLinkProps {
   href: string;
   label?: string;
@@ -22,11 +27,11 @@ export default function ProjectLink({
   label = "View Project", 
   className = "",
   delay = 0,
-  duration = 0.5,
+  duration = ANIMATION.duration,
   isButtonStyle = false,
   variant = 'default',
   accentColor = 'primary',
-  motionType = 'reveal',
+  motionType = 'fade',
   showShape = false,
   iconSize = 14
 }: ProjectLinkProps) {
@@ -78,7 +83,7 @@ export default function ProjectLink({
               variant="float"
               color={colorVarMap[accentColor]}
               size={8}
-              delay={0.1}
+              delay={0}
               duration={2}
               loop
             />

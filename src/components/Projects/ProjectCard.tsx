@@ -8,6 +8,12 @@ import ShapeAnimation from "../ShapeAnimation";
 import TextAnimation from "../TextAnimation";
 import AccentLine from "../common/AccentLine";
 
+// Animation constants
+const ANIMATION = {
+  baseDelay: 0.1,
+  duration: 0.4
+};
+
 interface ProjectCardProps {
   project: ProjectData;
   index?: number;
@@ -21,7 +27,6 @@ interface ProjectCardProps {
 
 export default function ProjectCard({ 
   project, 
-  index = 0,
   accentColor = 'tertiary',
   showShapes = true,
   backgroundPattern = 'none',
@@ -29,9 +34,6 @@ export default function ProjectCard({
   textAnimationType = 'reveal',
   hoverEffect = 'lift'
 }: ProjectCardProps) {
-  // Base delay for animations
-  const baseDelay = 0.3 + (index * 0.08);
-  
   // Get accent color class
   const getColorClass = () => {
     const colorMap = {
@@ -88,44 +90,30 @@ export default function ProjectCard({
     return patterns[backgroundPattern];
   };
   
-  // Render decorative shapes
+  // Render decorative shapes - simplified
   const renderShapes = () => {
     if (!showShapes) return null;
     
     return (
-      <>
-        <div className="absolute top-4 right-4 z-0">
-          <ShapeAnimation
-            type="square"
-            size={12}
-            color="var(--accent-secondary)"
-            variant="rotate"
-            delay={baseDelay + 0.4}
-            duration={3}
-            loop={true}
-          />
-        </div>
-        
-        <div className="absolute bottom-4 left-4 opacity-30 z-0">
-          <ShapeAnimation
-            type="circle"
-            size={10}
-            color="var(--accent)"
-            variant="pulse"
-            delay={baseDelay + 0.6}
-            duration={2.5}
-            loop={true}
-          />
-        </div>
-      </>
+      <div className="absolute top-4 right-4 z-0">
+        <ShapeAnimation
+          type="square"
+          size={12}
+          color="var(--accent-secondary)"
+          variant="rotate"
+          delay={0}
+          duration={3}
+          loop={true}
+        />
+      </div>
     );
   };
   
   return (
     <SwissMotion
       type={animationType}
-      delay={baseDelay}
-      duration={0.6}
+      delay={ANIMATION.baseDelay}
+      duration={ANIMATION.duration}
       whileHover={hoverEffect !== 'none' ? hoverEffect : undefined}
       className="swiss-card relative h-full flex flex-col group"
     >
@@ -135,7 +123,7 @@ export default function ProjectCard({
         type="horizontal"
         width="1/5"
         color={accentColor}
-        delay={baseDelay + 0.2}
+        delay={ANIMATION.baseDelay}
         animationType="reveal"
         animateOnHover={true}
       />
@@ -152,7 +140,7 @@ export default function ProjectCard({
         <TextAnimation
           text={project.title}
           variant={textAnimationType}
-          delay={baseDelay + 0.3}
+          delay={ANIMATION.baseDelay}
           className="text-xl font-bold mb-2"
         />
         
@@ -160,15 +148,14 @@ export default function ProjectCard({
         <TextAnimation
           text={project.description}
           variant={textAnimationType}
-          delay={baseDelay + 0.5}
+          delay={ANIMATION.baseDelay}
           className="text-[var(--foreground-secondary)] mb-4 text-sm"
         />
         
         {/* Tags */}
         <SwissMotion 
           type="stagger" 
-          staggerChildren={0.05} 
-          delay={baseDelay + 0.7} 
+          delay={ANIMATION.baseDelay}
           className="flex flex-wrap gap-2 mb-6"
         >
           {project.tags.map((tag, i) => (
@@ -179,37 +166,28 @@ export default function ProjectCard({
               index={i}
               useAccentColor={i === 0}
               showBorder={i === 0}
-              animationVariant={i % 2 === 0 ? 'fade' : 'scale'}
+              animationVariant="fade"
             />
           ))}
         </SwissMotion>
         
-        {/* Bottom section */}
-        <SwissMotion 
-          type="stagger" 
-          delay={baseDelay + 0.9} 
-          duration={0.5} 
-          className="mt-auto"
-        >
-          <SwissMotion type="fade" delay={0.2}>
-            <ProjectMeta 
-              stars={project.stars} 
-              language={project.language}
-              delay={baseDelay + 1.0}
-            />
-          </SwissMotion>
+        {/* Bottom section - simplified */}
+        <div className="mt-auto">
+          <ProjectMeta 
+            stars={project.stars} 
+            language={project.language}
+            delay={ANIMATION.baseDelay}
+          />
           
-          <SwissMotion type="fade" delay={0.4}>
-            <ProjectLink 
-              href={project.link} 
-              label="View on GitHub"
-              delay={baseDelay + 1.1}
-              accentColor={accentColor}
-              variant="minimal"
-              motionType="fade"
-            />
-          </SwissMotion>
-        </SwissMotion>
+          <ProjectLink 
+            href={project.link} 
+            label="View on GitHub"
+            delay={ANIMATION.baseDelay}
+            accentColor={accentColor}
+            variant="minimal"
+            motionType="fade"
+          />
+        </div>
       </div>
     </SwissMotion>
   );

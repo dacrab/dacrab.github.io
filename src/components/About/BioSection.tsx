@@ -1,14 +1,25 @@
 import React from 'react';
+import Image from 'next/image';
 import SwissMotion from '@/components/SwissMotion';
 import TextAnimation from '@/components/TextAnimation';
 import ShapeAnimation from '@/components/ShapeAnimation';
 import { useIsMobile } from '@/hooks/useIsMobile';
+import { SKILLS_BY_CATEGORY } from './types';
 
 // Constants
 const BIRTH_YEAR = 2004;
 const BIRTH_MONTH = 4; // May (0-indexed)
 const BIRTH_DAY = 25;
-const SKILLS = ["REACT", "NEXT.JS", "TYPESCRIPT", "TAILWIND", "UI/UX", "RESPONSIVE"];
+
+// Get a flattened array of skills with relevant categories
+const SKILLS = Object.entries(SKILLS_BY_CATEGORY)
+  .flatMap(([category, skills]) => 
+    skills.map(skill => ({
+      ...skill,
+      category
+    }))
+  )
+  .slice(0, 6); // Limit to 6 skills
 
 const calculateAge = () => {
   const now = new Date();
@@ -141,7 +152,7 @@ export default function BioSection() {
         </SwissMotion>
       </SwissMotion>
       
-      {/* Skills section - simplified for mobile */}
+      {/* Skills section - Updated with icons */}
       <SwissMotion 
         type="fade" 
         delay={getOptimizedDelay(0.8)} 
@@ -155,10 +166,10 @@ export default function BioSection() {
           className="text-lg font-bold uppercase tracking-wider mb-4"
           mobileOptimized={true}
         />
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-6">
           {SKILLS.map((skill, i) => (
             <SwissMotion
-              key={skill}
+              key={skill.name}
               type={isMobile ? "fade" : "slide"}
               delay={getOptimizedDelay(0.9 + i * (isMobile ? 0.02 : 0.05))}
               duration={getOptimizedDuration(0.4)}
@@ -166,20 +177,21 @@ export default function BioSection() {
               whileHover={isMobile ? undefined : "lift"}
               mobileOptimized={true}
             >
-              {/* Conditionally render shape animations based on device */}
-              {isMobile ? (
-                <div className="w-2 h-2 bg-[var(--accent)] mr-2" />
-              ) : (
-                <ShapeAnimation
-                  type="square"
-                  size={8}
-                  delay={1.1 + i * 0.05}
-                  color="var(--accent)"
-                  className="mr-2"
-                  mobileOptimized={true}
-                />
-              )}
-              <span className="text-sm uppercase tracking-wide">{skill}</span>
+              <div className="relative mr-3 flex items-center justify-center">
+                {/* Icon container with Swiss-style square border */}
+                <div className="w-8 h-8 border border-[var(--border)] bg-[var(--card-secondary)] flex items-center justify-center p-1.5">
+                  <Image 
+                    src={skill.icon} 
+                    alt={skill.name} 
+                    width={24} 
+                    height={24}
+                    className="object-contain"
+                  />
+                </div>
+                {/* Swiss-style accent decoration */}
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-[var(--accent)]" />
+              </div>
+              <span className="text-sm uppercase tracking-wide">{skill.name}</span>
             </SwissMotion>
           ))}
         </div>

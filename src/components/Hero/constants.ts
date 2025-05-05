@@ -16,8 +16,29 @@ export const ANIMATION = {
   }
 };
 
-// Tech keywords array
-export const TECH_KEYWORDS = ["REACT", "NEXTJS", "TYPESCRIPT", "NODEJS", "AWS"];
+// Tech keywords array with icons - using the same technologies from About/types.ts
+export const TECH_KEYWORDS = [
+  { 
+    name: "NEXT.JS", 
+    icon: "https://cdn.simpleicons.org/nextdotjs/000000/FFFFFF"
+  },
+  { 
+    name: "TYPESCRIPT", 
+    icon: "https://cdn.simpleicons.org/typescript/3178C6" 
+  },
+  { 
+    name: "TAILWIND CSS", 
+    icon: "https://cdn.simpleicons.org/tailwindcss/06B6D4" 
+  },
+  { 
+    name: "FRAMER MOTION", 
+    icon: "https://cdn.simpleicons.org/framer/0055FF" 
+  },
+  { 
+    name: "SUPABASE", 
+    icon: "https://cdn.simpleicons.org/supabase/3ECF8E" 
+  }
+];
 
 // Grid intersection points data
 export const GRID_POINTS = [

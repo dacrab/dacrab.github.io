@@ -10,7 +10,6 @@ import ErrorMessage from "./Projects/ErrorMessage";
 import SwissMotion from "./SwissMotion";
 import ShapeAnimation from "./ShapeAnimation";
 import ParallaxLayer from "./ParallaxLayer";
-import TextAnimation from "./TextAnimation";
 import FeaturedProject from "./Projects/FeaturedProject";
 import ProjectCard from "./Projects/ProjectCard";
 import { SectionHeader } from "./common";
@@ -42,6 +41,14 @@ const CUSTOM_PROJECTS = [
   }
 ];
 
+// Animation constants
+const ANIMATION = {
+  standard: {
+    duration: 0.5,
+    ease: [0.2, 0.65, 0.3, 0.9]
+  }
+};
+
 const Projects = memo(function Projects() {
   const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -53,12 +60,12 @@ const Projects = memo(function Projects() {
     if (isInView && !hasBeenVisible) setHasBeenVisible(true);
   }, [isInView, hasBeenVisible]);
 
-  // Animations
+  // Single simplified scroll animation
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   });
-  const contentY = useTransform(scrollYProgress, [0, 1], [40, -40]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [20, -20]);
 
   // Data fetching
   const { projects: githubProjects, loading, error } = useGitHubProjects(
@@ -77,40 +84,31 @@ const Projects = memo(function Projects() {
       : [];
   }, [githubProjects, error, loading]);
 
-  // Render helpers
+  // Simplified grid cells with single animation approach
   const renderGridCells = () => (
-    Array.from({ length: GRID_CONFIG.cells * GRID_CONFIG.rows }).map((_, i) => {
-      const row = Math.floor(i / GRID_CONFIG.cells);
-      const col = i % GRID_CONFIG.cells;
-      return (
-        <motion.div
-          key={`grid-${i}`}
-          className="border border-[var(--foreground)]"
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 0.8, scale: 1 }}
-          transition={{ 
-            duration: 0.5, 
-            delay: 0.1 + (col * 0.1) + (row * 0.1),
-            ease: [0.19, 1, 0.22, 1]
-          }}
-        />
-      );
-    })
+    Array.from({ length: GRID_CONFIG.cells * GRID_CONFIG.rows }).map((_, i) => (
+      <motion.div
+        key={`grid-${i}`}
+        className="border border-[var(--foreground)]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.6 }}
+        transition={{ 
+          duration: ANIMATION.standard.duration,
+          delay: 0.1,
+          ease: ANIMATION.standard.ease
+        }}
+      />
+    ))
   );
 
   const renderGitHubProjects = () => (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <SwissMotion type="slide" delay={0.4}>
-          <TextAnimation
-            text="GITHUB PROJECTS"
-            variant="reveal"
-            className="swiss-heading-3"
-            delay={0.5}
-          />
+        <SwissMotion type="slide" delay={0.2}>
+          <h3 className="swiss-heading-3">GITHUB PROJECTS</h3>
         </SwissMotion>
         {loading && (
-          <SwissMotion type="fade" delay={0.2}>
+          <SwissMotion type="fade" delay={0.1}>
             <div className="flex items-center">
               <LoadingSpinner size="small" />
               <span className="ml-2 text-sm text-[var(--muted)]">Loading projects...</span>
@@ -122,7 +120,7 @@ const Projects = memo(function Projects() {
       {error && <ErrorMessage message={error.message} />}
       
       {!loading && githubData.length === 0 && !error && (
-        <SwissMotion type="fade" delay={0.2}>
+        <SwissMotion type="fade" delay={0.1}>
           <div className="swiss-card text-center py-12">
             <p className="text-[var(--muted)]">No GitHub projects found. Check back later!</p>
           </div>
@@ -150,7 +148,7 @@ const Projects = memo(function Projects() {
       ref={containerRef}
       className="py-24 md:py-32 relative overflow-hidden"
     >
-      {/* Background elements */}
+      {/* Simplified background elements */}
       <div className="absolute left-0 top-0 w-full h-full pointer-events-none z-0">
         <div className={`absolute ${GRID_CONFIG.position} ${GRID_CONFIG.size.base} ${GRID_CONFIG.opacity} ${GRID_CONFIG.size.md}`}>
           <div className={`grid grid-cols-${GRID_CONFIG.cells} grid-rows-${GRID_CONFIG.rows} gap-${GRID_CONFIG.gap} w-full h-full`}>
@@ -159,6 +157,7 @@ const Projects = memo(function Projects() {
         </div>
       </div>
       
+      {/* Reduced number of shape animations */}
       <ParallaxLayer speed={0.1} direction="right" className="absolute left-0 top-1/3 z-0">
         <ShapeAnimation 
           type="line" 
@@ -166,31 +165,20 @@ const Projects = memo(function Projects() {
           size={150} 
           strokeWidth={32}
           variant="draw"
-          delay={0.3}
-          duration={1.5}
+          delay={0.2}
+          duration={1}
         />
       </ParallaxLayer>
       
-      <ParallaxLayer speed={0.15} direction="left" className="absolute right-24 top-64 z-0">
+      <ParallaxLayer speed={0.1} direction="left" className="absolute right-24 bottom-64 z-0">
         <ShapeAnimation 
           type="cross" 
           color="var(--accent)" 
           size={80} 
           strokeWidth={4}
           variant="draw"
-          delay={0.5}
-          duration={1.0}
-        />
-      </ParallaxLayer>
-      
-      <ParallaxLayer speed={0.2} direction="up" className="absolute right-1/4 bottom-24 z-0">
-        <ShapeAnimation 
-          type="square" 
-          color="var(--accent-tertiary)" 
-          size={64} 
-          variant="float"
-          delay={0.7}
-          loop={true}
+          delay={0.2}
+          duration={1}
         />
       </ParallaxLayer>
 
@@ -199,22 +187,17 @@ const Projects = memo(function Projects() {
           title="PROJECTS"
           description="A curated selection of projects that demonstrate my technical expertise, problem-solving abilities, and creative approach to development."
           accentColor="primary"
-          textAnimationVariant="split"
-          motionDelay={0.2}
+          textAnimationVariant="reveal"
+          motionDelay={0.1}
         />
 
         <motion.div style={{ y: contentY }}>
           <div className="mb-16">
-            <SwissMotion type="slide" delay={0.3} className="mb-8">
-              <TextAnimation
-                text="FEATURED WORK"
-                variant="reveal"
-                className="swiss-heading-3"
-                delay={0.4}
-              />
+            <SwissMotion type="slide" delay={0.2} className="mb-8">
+              <h3 className="swiss-heading-3">FEATURED WORK</h3>
             </SwissMotion>
             
-            <SwissMotion type="stagger" staggerChildren={0.2} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <SwissMotion type="stagger" className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {CUSTOM_PROJECTS.map((project, idx) => (
                 <FeaturedProject 
                   key={project.id} 
