@@ -1,17 +1,47 @@
-/* Swiss Style Animation Keyframes */
+/* Swiss Style Animation System - Enhanced */
 
-/* Fade and Scale Animations */
+/* ===== Animation Timing Functions ===== */
+:root {
+  /* Swiss precision timing curves */
+  --ease-precise: cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  --ease-sharp: cubic-bezier(0.19, 1, 0.22, 1);   /* Extremely Swiss-like ease */
+  --ease-dramatic: cubic-bezier(0.25, 0.8, 0, 1); /* For stronger entries */
+  --ease-out-grid: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ease-in-out-smooth: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ===== Fade and Scale Animations ===== */
 @keyframes swiss-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
+@keyframes swiss-fade-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes swiss-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 @keyframes swiss-grid-reveal {
-  from { opacity: 0; transform: scale(0.97); }
+  from { opacity: 0; transform: scale(0.98); }
   to { opacity: 1; transform: scale(1); }
 }
 
-/* Line Drawing Animations */
+@keyframes swiss-reveal-clip {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0% 0); }
+}
+
+@keyframes swiss-scale-in {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* ===== Line Drawing Animations - Swiss precision ===== */
 @keyframes swiss-line-draw {
   from { background-size: 0% 100%; }
   to { background-size: 100% 100%; }
@@ -27,18 +57,90 @@
   to { height: 100%; }
 }
 
-/* Text and Border Animations */
+@keyframes swiss-diagonal-line {
+  from { 
+    clip-path: polygon(0 0, 0 0, 0 0);
+    opacity: 0.7;
+  }
+  to { 
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
+    opacity: 1;
+  }
+}
+
+/* ===== Swiss Typography Animations ===== */
 @keyframes swiss-text-reveal {
   from { clip-path: inset(0 100% 0 0); }
   to { clip-path: inset(0 0% 0 0); }
 }
 
+@keyframes swiss-char-fade {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes swiss-text-slide {
+  from { transform: translateX(-20px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes swiss-split-text {
+  from { 
+    letter-spacing: -0.5em; 
+    opacity: 0;
+  }
+  to { 
+    letter-spacing: normal; 
+    opacity: 1;
+  }
+}
+
+/* ===== Border and Shape Animations ===== */
 @keyframes swiss-border-draw {
   from { border-color: transparent; }
   to { border-color: var(--accent); }
 }
 
-/* Movement Animations */
+@keyframes swiss-square-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(90deg); }
+}
+
+@keyframes swiss-circle-pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes swiss-triangle-morph {
+  0% { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+  50% { clip-path: polygon(100% 0%, 0% 0%, 50% 100%); }
+  100% { clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+}
+
+/* ===== Grid and Layout Animations ===== */
+@keyframes swiss-grid-cell-reveal {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 0.8; 
+    transform: translateY(0);
+  }
+}
+
+@keyframes swiss-stagger-fade {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes swiss-layout-shift {
+  from { grid-template-columns: 1fr; }
+  to { grid-template-columns: 1fr 1fr; }
+}
+
+/* ===== Movement Animations ===== */
 @keyframes swiss-rotation {
   from { transform: rotate(0deg); }
   to { transform: rotate(90deg); }
@@ -55,33 +157,74 @@
   to { background-position: 200% 0; }
 }
 
-/* Animation Utility Classes */
+@keyframes swiss-parallax-scroll {
+  from { transform: translateY(var(--parallax-from, 30px)); }
+  to { transform: translateY(var(--parallax-to, -30px)); }
+}
+
+/* ===== Interactive Element Animations ===== */
+@keyframes swiss-button-hover {
+  from { background-position: 0% 0%; }
+  to { background-position: 100% 0%; }
+}
+
+@keyframes swiss-focus-ring {
+  0% { box-shadow: 0 0 0 0px rgba(var(--accent-rgb), 0.4); }
+  100% { box-shadow: 0 0 0 4px rgba(var(--accent-rgb), 0); }
+}
+
+@keyframes swiss-card-lift {
+  from { transform: translateY(0); box-shadow: 0 0 0 rgba(0,0,0,0.1); }
+  to { transform: translateY(-6px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); }
+}
+
+/* ===== Animation Utility Classes ===== */
 .swiss-animate-fade-in {
-  animation: swiss-fade-in 0.6s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
+  animation: swiss-fade-in 0.6s var(--ease-precise) forwards;
+}
+
+.swiss-animate-fade-up {
+  animation: swiss-fade-up 0.7s var(--ease-sharp) forwards;
+}
+
+.swiss-animate-fade-down {
+  animation: swiss-fade-down 0.7s var(--ease-sharp) forwards;
 }
 
 .swiss-animate-grid-reveal {
-  animation: swiss-grid-reveal 0.7s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  animation: swiss-grid-reveal 0.7s var(--ease-sharp) forwards;
 }
 
 .swiss-animate-line-draw {
-  animation: swiss-line-draw 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
+  animation: swiss-line-draw 0.8s var(--ease-precise) forwards;
 }
 
 .swiss-animate-horizontal-line {
-  animation: swiss-horizontal-line 0.7s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  animation: swiss-horizontal-line 0.7s var(--ease-sharp) forwards;
 }
 
 .swiss-animate-vertical-line {
-  animation: swiss-vertical-line 0.7s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  animation: swiss-vertical-line 0.7s var(--ease-sharp) forwards;
+}
+
+.swiss-animate-diagonal-line {
+  animation: swiss-diagonal-line 0.9s var(--ease-precise) forwards;
 }
 
 .swiss-animate-text-reveal {
-  animation: swiss-text-reveal 0.7s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+  animation: swiss-text-reveal 0.7s var(--ease-sharp) forwards;
+}
+
+.swiss-animate-text-slide {
+  animation: swiss-text-slide 0.6s var(--ease-dramatic) forwards;
+}
+
+.swiss-animate-split-text {
+  animation: swiss-split-text 0.8s var(--ease-out-grid) forwards;
 }
 
 .swiss-animate-border-draw {
-  animation: swiss-border-draw 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
+  animation: swiss-border-draw 0.8s var(--ease-precise) forwards;
 }
 
 .swiss-animate-shimmer {
@@ -100,10 +243,42 @@
 }
 
 .swiss-animate-float {
-  animation: swiss-float 4s ease-in-out infinite;
+  animation: swiss-float 4s var(--ease-in-out-smooth) infinite;
 }
 
-/* Animation Delay Utilities */
+.swiss-animate-grid-cell {
+  animation: swiss-grid-cell-reveal 0.5s var(--ease-sharp) forwards;
+}
+
+.swiss-animate-stagger {
+  animation: swiss-stagger-fade 0.6s var(--ease-sharp) forwards;
+}
+
+.swiss-animate-circle-pulse {
+  animation: swiss-circle-pulse 2s var(--ease-in-out-smooth) infinite;
+}
+
+.swiss-animate-triangle-morph {
+  animation: swiss-triangle-morph 12s var(--ease-in-out-smooth) infinite;
+}
+
+.swiss-animate-card-lift {
+  animation: swiss-card-lift 0.4s var(--ease-sharp) forwards;
+}
+
+/* Animation combiners */
+.swiss-anim-set-1 {
+  animation: swiss-fade-in 0.6s var(--ease-precise) forwards,
+             swiss-line-draw 0.8s var(--ease-sharp) 0.2s forwards;
+}
+
+.swiss-anim-set-2 {
+  animation: swiss-fade-up 0.7s var(--ease-sharp) forwards,
+             swiss-border-draw 0.6s var(--ease-precise) 0.3s forwards;
+}
+
+/* Animation delay utilities */
+.delay-0 { animation-delay: 0ms; }
 .delay-100 { animation-delay: 100ms; }
 .delay-200 { animation-delay: 200ms; }
 .delay-300 { animation-delay: 300ms; }
@@ -114,3 +289,49 @@
 .delay-800 { animation-delay: 800ms; }
 .delay-900 { animation-delay: 900ms; }
 .delay-1000 { animation-delay: 1000ms; }
+
+/* Animation repeat utilities */
+.repeat-once { animation-iteration-count: 2; }
+.repeat-twice { animation-iteration-count: 3; }
+.repeat-infinite { animation-iteration-count: infinite; }
+
+/* Animation direction utilities */
+.alternate { animation-direction: alternate; }
+.reverse { animation-direction: reverse; }
+
+/* Animation timing utilities */
+.timing-linear { animation-timing-function: linear; }
+.timing-precise { animation-timing-function: var(--ease-precise); }
+.timing-sharp { animation-timing-function: var(--ease-sharp); }
+.timing-dramatic { animation-timing-function: var(--ease-dramatic); }
+
+/* Responsive animation toggles */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Allow specific animations to be enabled/disabled at breakpoints */
+@media (max-width: 768px) {
+  .md-disable-animation {
+    animation: none !important;
+  }
+  
+  .md-simplify-animation {
+    animation-duration: 0.3s !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .sm-disable-animation {
+    animation: none !important;
+  }
+  
+  .sm-simplify-animation {
+    animation-duration: 0.2s !important;
+  }
+}

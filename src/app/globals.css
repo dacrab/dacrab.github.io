@@ -1,37 +1,64 @@
 @import "tailwindcss";
 
 :root {
-  /* Swiss Style color palette with softer black and white */
-  --background: #f8f8f8;
-  --foreground: #1a1a1a;
-  --accent: #ff0000;
-  --accent-light: #ff3333;
-  --accent-dark: #cc0000;
-  --accent-secondary: #0000ff;
-  --accent-tertiary: #ffcc00;
-  --muted: #666666;
-  --card: #f5f5f5;
-  --card-hover: #ebebeb;
-  --border: #dddddd;
+  /* Modern Swiss Style color palette - refined for digital interfaces */
+  --background: #f5f7fa;
+  --foreground: #0d1117;
+  --accent: #fa3c4c; /* Modern Swiss red - vibrant but less harsh */
+  --accent-light: #ff5d6a;
+  --accent-dark: #d52b3a;
+  --accent-secondary: #2563eb; /* Contemporary blue - more digital */
+  --accent-tertiary: #fbbf24; /* Warm yellow - easier on the eyes */
+  --muted: #64748b;
+  --foreground-secondary: #374151;
+  --card: #ffffff;
+  --card-hover: #f1f5f9;
+  --border: #e2e8f0;
+  --skill-card-bg: #f8fafc;
   
   /* RGB variables for rgba() functions */
-  --background-rgb: 248, 248, 248;
-  --foreground-rgb: 26, 26, 26;
-  --card-rgb: 245, 245, 245;
-  --border-rgb: 221, 221, 221;
-  --accent-rgb: 255, 0, 0;
-  --accent-light-rgb: 255, 51, 51;
-  --accent-dark-rgb: 204, 0, 0;
-  --accent-secondary-rgb: 0, 0, 255;
-  --accent-tertiary-rgb: 255, 204, 0;
+  --background-rgb: 245, 247, 250;
+  --foreground-rgb: 13, 17, 23;
+  --foreground-secondary-rgb: 55, 65, 81;
+  --card-rgb: 255, 255, 255;
+  --border-rgb: 226, 232, 240;
+  --accent-rgb: 250, 60, 76;
+  --accent-light-rgb: 255, 93, 106;
+  --accent-dark-rgb: 213, 43, 58;
+  --accent-secondary-rgb: 37, 99, 235;
+  --accent-tertiary-rgb: 251, 191, 36;
   
-  /* Swiss grid system variables */
+  /* Swiss grid system variables - improved rhythm */
   --grid-unit: 8px;
   --grid-column: 12;
   --grid-gap: calc(var(--grid-unit) * 3);
   
-  /* Skill card background - light theme */
-  --skill-card-bg: #ebebeb;
+  /* Swiss typographic scale - golden ratio based */
+  --font-size-xs: 0.75rem;  /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-base: 1rem;   /* 16px */
+  --font-size-lg: 1.25rem;  /* 20px */
+  --font-size-xl: 1.618rem; /* 25.9px - golden ratio */
+  --font-size-2xl: 2.618rem; /* 41.9px - golden ratio² */
+  --font-size-3xl: 4.236rem; /* 67.8px - golden ratio³ */
+  
+  /* Swiss spacing scale */
+  --space-1: var(--grid-unit);
+  --space-2: calc(var(--grid-unit) * 2);
+  --space-3: calc(var(--grid-unit) * 3);
+  --space-4: calc(var(--grid-unit) * 4);
+  --space-5: calc(var(--grid-unit) * 5);
+  --space-6: calc(var(--grid-unit) * 6);
+  --space-8: calc(var(--grid-unit) * 8);
+  --space-10: calc(var(--grid-unit) * 10);
+  --space-12: calc(var(--grid-unit) * 12);
+  --space-16: calc(var(--grid-unit) * 16);
+  --space-20: calc(var(--grid-unit) * 20);
+  
+  /* Animation timing */
+  --duration-short: 0.3s;
+  --duration-medium: 0.5s;
+  --duration-long: 0.8s;
 }
 
 @theme inline {
@@ -41,52 +68,56 @@
   --color-muted: var(--muted);
   --color-card: var(--card);
   --color-border: var(--border);
-  --font-sans: var(--font-helvetica);
-  --font-mono: var(--font-helvetica-mono);
-  --font-cursive: var(--font-helvetica);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-cursive: var(--font-sans);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #121212;
-    --foreground: #f2f2f2;
-    --accent: #ff0000;
-    --accent-light: #ff3333;
-    --accent-dark: #cc0000;
-    --accent-secondary: #0055ff;
-    --accent-tertiary: #ffcc00;
-    --muted: #999999;
-    --card: #1a1a1a;
-    --card-hover: #2a2a2a;
-    --border: #333333;
+    /* Modern dark theme - sophisticated with better contrast */
+    --background: #0d1117;
+    --foreground: #f1f5f9;
+    --accent: #ff4d5e; /* Brighter red for dark mode visibility */
+    --accent-light: #ff6b79;
+    --accent-dark: #d92b3a;
+    --accent-secondary: #3b82f6; /* Vibrant blue for dark backgrounds */
+    --accent-tertiary: #facc15; /* Bright yellow for dark mode */
+    --muted: #94a3b8; /* Higher contrast for better accessibility */
+    --foreground-secondary: #cbd5e1;
+    --card: #1e293b; /* Rich dark blue-grey instead of pure black */
+    --card-hover: #334155;
+    --border: #334155;
+    --skill-card-bg: #1e293b;
     
-    /* RGB variables for rgba() functions */
-    --background-rgb: 18, 18, 18;
-    --foreground-rgb: 242, 242, 242;
-    --card-rgb: 26, 26, 26;
-    --border-rgb: 51, 51, 51;
-    --accent-rgb: 255, 0, 0;
-    --accent-light-rgb: 255, 51, 51;
-    --accent-dark-rgb: 204, 0, 0;
-    --accent-secondary-rgb: 0, 85, 255;
-    --accent-tertiary-rgb: 255, 204, 0;
-    
-    /* Skill card background - dark theme */
-    --skill-card-bg: #1a1a1a;
+    --background-rgb: 13, 17, 23;
+    --foreground-rgb: 241, 245, 249;
+    --foreground-secondary-rgb: 203, 213, 225;
+    --card-rgb: 30, 41, 59;
+    --border-rgb: 51, 65, 85;
+    --accent-rgb: 255, 77, 94;
+    --accent-light-rgb: 255, 107, 121;
+    --accent-dark-rgb: 217, 43, 58;
+    --accent-secondary-rgb: 59, 130, 246;
+    --accent-tertiary-rgb: 250, 204, 21;
   }
 }
 
+/* Base Styles */
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
   line-height: 1.5;
   letter-spacing: 0.01em;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Swiss Style Typography Classes */
+/* Typography - improved Swiss style hierarchy */
 .swiss-heading-1 {
-  font-size: 4rem;
+  font-size: var(--font-size-3xl);
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.02em;
@@ -94,7 +125,7 @@ body {
 }
 
 .swiss-heading-2 {
-  font-size: 3rem;
+  font-size: var(--font-size-2xl);
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.01em;
@@ -102,25 +133,50 @@ body {
 }
 
 .swiss-heading-3 {
-  font-size: 2rem;
+  font-size: var(--font-size-xl);
   font-weight: 700;
   line-height: 1.2;
   text-transform: uppercase;
 }
 
 .swiss-body {
-  font-size: 1rem;
-  line-height: 1.5;
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+.swiss-body-lg {
+  font-size: var(--font-size-lg);
+  line-height: 1.6;
   letter-spacing: 0.01em;
 }
 
 .swiss-caption {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   line-height: 1.4;
   letter-spacing: 0.02em;
 }
 
-/* Swiss Grid System */
+.swiss-overline {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.text-125 {
+  font-size: 1.25rem;
+}
+
+.text-gradient {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(135deg, var(--accent) 0%, var(--accent-tertiary) 100%);
+}
+
+/* Layout & Grid System - refined Swiss grid */
 .swiss-grid {
   display: grid;
   grid-template-columns: repeat(var(--grid-column), 1fr);
@@ -135,7 +191,6 @@ body {
   padding: 0 calc(var(--grid-unit) * 3);
 }
 
-/* Swiss Style Asymmetrical Layout Helpers */
 .swiss-asymmetric-left {
   grid-column: 1 / span 8;
 }
@@ -156,13 +211,33 @@ body {
   grid-column: span 8;
 }
 
-/* Swiss Style Utility Classes */
+/* Swiss design pattern - asymmetric layout */
+.swiss-grid-reversed {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "content image";
+  gap: var(--grid-gap);
+}
+
+.swiss-grid-reversed > *:first-child {
+  grid-area: content;
+}
+
+.swiss-grid-reversed > *:last-child {
+  grid-area: image;
+}
+
+/* Borders & Dividers - refined for Swiss style */
 .swiss-border {
   border: 1px solid var(--foreground);
 }
 
 .swiss-border-accent {
   border: 1px solid var(--accent);
+}
+
+.swiss-border-thick {
+  border-width: 2px;
 }
 
 .swiss-border-left {
@@ -181,7 +256,317 @@ body {
   border-top: calc(var(--grid-unit) / 2) solid var(--accent);
 }
 
-/* Basic animations */
+.swiss-line {
+  height: 1px;
+  background-color: var(--foreground);
+  width: 100%;
+}
+
+.swiss-line-accent {
+  height: 1px;
+  background-color: var(--accent);
+  width: 100%;
+}
+
+.swiss-diagonal-divider {
+  position: relative;
+  overflow: hidden;
+  padding: calc(var(--grid-unit) * 6) 0;
+}
+
+.swiss-diagonal-divider::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 150%;
+  height: 1px;
+  background-color: var(--foreground);
+  transform: rotate(-30deg);
+  transform-origin: top left;
+}
+
+.swiss-diagonal-line {
+  position: relative;
+}
+
+.swiss-diagonal-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: var(--accent);
+  transform: rotate(-45deg);
+  transform-origin: top left;
+}
+
+/* UI Components - Swiss style refinements */
+.swiss-button {
+  background-color: var(--foreground);
+  color: var(--background);
+  padding: var(--space-3) var(--space-5);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--duration-short), transform var(--duration-short);
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.swiss-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--accent);
+  z-index: -1;
+  transform: translateX(-100%);
+  transition: transform var(--duration-short);
+}
+
+.swiss-button:hover {
+  background-color: transparent;
+}
+
+.swiss-button:hover::after {
+  transform: translateX(0);
+}
+
+.swiss-button-outline {
+  background-color: transparent;
+  color: var(--foreground);
+  padding: var(--space-3) var(--space-5);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--foreground);
+  cursor: pointer;
+  transition: background-color var(--duration-short), color var(--duration-short), border-color var(--duration-short);
+}
+
+.swiss-button-outline:hover {
+  background-color: var(--foreground);
+  color: var(--background);
+  border-color: var(--foreground);
+}
+
+.swiss-button-accent {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.swiss-button-accent:hover {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.swiss-card {
+  background-color: var(--card);
+  padding: var(--space-5);
+  position: relative;
+  transition: transform var(--duration-short), box-shadow var(--duration-short);
+}
+
+.swiss-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(var(--foreground-rgb), 0.08);
+}
+
+.swiss-card-accent {
+  position: relative;
+}
+
+.swiss-card-accent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--space-5);
+  height: calc(var(--grid-unit) / 3);
+  background-color: var(--accent);
+}
+
+.glass-effect {
+  backdrop-filter: blur(12px);
+  background-color: rgba(var(--background-rgb), 0.7);
+  border: 1px solid rgba(var(--border-rgb), 0.2);
+}
+
+.glass-card {
+  backdrop-filter: blur(12px);
+  background-color: rgba(var(--card-rgb), 0.7);
+  border: 1px solid rgba(var(--border-rgb), 0.2);
+}
+
+/* Navigation - Swiss style refinements */
+.swiss-nav-item {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+  transition: color var(--duration-short);
+}
+
+.swiss-nav-item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background-color: var(--accent);
+  transition: width var(--duration-short);
+}
+
+.swiss-nav-item:hover {
+  color: var(--accent);
+}
+
+.swiss-nav-item:hover::after,
+.swiss-nav-item.active::after {
+  width: 100%;
+}
+
+.swiss-nav-item.active {
+  color: var(--accent);
+}
+
+/* Form Elements */
+.swiss-input {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid var(--muted);
+  padding: var(--space-2) 0;
+  width: 100%;
+  color: var(--foreground);
+  transition: border-color var(--duration-short);
+  font-family: var(--font-sans);
+}
+
+.swiss-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.swiss-textarea {
+  background-color: transparent;
+  border: 1px solid var(--muted);
+  padding: var(--space-2);
+  width: 100%;
+  color: var(--foreground);
+  transition: border-color var(--duration-short);
+  resize: vertical;
+  font-family: var(--font-sans);
+}
+
+.swiss-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.focus-ring {
+  position: relative;
+}
+
+.focus-ring::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 1px solid var(--accent);
+  opacity: 0;
+  transition: opacity var(--duration-short);
+}
+
+.focus-ring:focus-within::after {
+  opacity: 1;
+}
+
+/* Decorative Elements - Swiss style patterns */
+.swiss-grid-pattern {
+  position: relative;
+}
+
+.swiss-grid-pattern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(to right, var(--border) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+  background-size: calc(var(--grid-unit) * 8) calc(var(--grid-unit) * 8);
+  opacity: 0.2;
+  z-index: -1;
+}
+
+.swiss-dot-pattern {
+  position: relative;
+}
+
+.swiss-dot-pattern::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: radial-gradient(var(--border) 1px, transparent 0);
+  background-size: calc(var(--grid-unit) * 6) calc(var(--grid-unit) * 6);
+  opacity: 0.2;
+  z-index: -1;
+}
+
+.swiss-circle {
+  width: calc(var(--grid-unit) * 10);
+  height: calc(var(--grid-unit) * 10);
+  border-radius: 50%;
+  background-color: var(--accent);
+  position: absolute;
+}
+
+/* Swiss color utilities */
+.swiss-bg-accent {
+  background-color: var(--accent);
+}
+
+.swiss-bg-accent-secondary {
+  background-color: var(--accent-secondary);
+}
+
+.swiss-bg-accent-tertiary {
+  background-color: var(--accent-tertiary);
+}
+
+.swiss-text-accent {
+  color: var(--accent);
+}
+
+.swiss-text-accent-secondary {
+  color: var(--accent-secondary);
+}
+
+.swiss-text-accent-tertiary {
+  color: var(--accent-tertiary);
+}
+
+.swiss-text-muted {
+  color: var(--muted);
+}
+
+/* Animations */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -194,51 +579,43 @@ body {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes float {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 @keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.6;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
 }
 
 @keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
 }
 
 @keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-/* Animation class utilities */
+@keyframes slowFadeIn {
+  0% { opacity: 0; }
+  30% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes subtleFloat {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  25% { transform: translateY(-5px) translateX(2px); }
+  75% { transform: translateY(5px) translateX(-2px); }
+}
+
+/* Animation Utilities */
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out forwards;
 }
@@ -265,176 +642,43 @@ body {
   animation: spin 1s linear infinite;
 }
 
-/* Swiss Style UI Components */
-.swiss-button {
-  background-color: var(--foreground);
-  color: var(--background);
-  padding: calc(var(--grid-unit) * 1.5) calc(var(--grid-unit) * 3);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
+.animate-slow-fade-in {
+  animation: slowFadeIn 1.5s forwards;
 }
 
-.swiss-button:hover {
-  background-color: var(--accent);
+.animate-subtle-float {
+  animation: subtleFloat 8s ease-in-out infinite;
 }
 
-.swiss-button-outline {
-  background-color: transparent;
-  color: var(--foreground);
-  padding: calc(var(--grid-unit) * 1.5) calc(var(--grid-unit) * 3);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  border: 1px solid var(--foreground);
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s, transform 0.2s;
+/* Interaction Utilities */
+.hover-lift {
+  transition: transform var(--duration-short) ease;
 }
 
-.swiss-button-outline:hover {
-  background-color: var(--foreground);
-  color: var(--background);
+.hover-lift:hover {
+  transform: translateY(-5px);
 }
 
-.swiss-card {
-  background-color: var(--card);
-  padding: calc(var(--grid-unit) * 3);
-  position: relative;
+.hover-glow {
+  transition: box-shadow var(--duration-short) ease;
 }
 
-.swiss-card-accent {
-  position: relative;
+.hover-glow:hover {
+  box-shadow: 0 0 16px rgba(var(--accent-rgb), 0.3);
 }
 
-.swiss-card-accent::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: calc(var(--grid-unit) * 3);
-  height: calc(var(--grid-unit) / 4);
-  background-color: var(--accent);
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s, transform 0.5s;
 }
 
-/* Swiss Style Navigation */
-.swiss-nav-item {
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  position: relative;
-  transition: color 0.2s;
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.swiss-nav-item::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -4px;
-  width: 0;
-  height: 2px;
-  background-color: var(--accent);
-  transition: width 0.2s;
-}
-
-.swiss-nav-item:hover {
-  color: var(--accent);
-}
-
-.swiss-nav-item:hover::after,
-.swiss-nav-item.active::after {
-  width: 100%;
-}
-
-.swiss-nav-item.active {
-  color: var(--accent);
-}
-
-/* Swiss Style Form Elements */
-.swiss-input {
-  background-color: transparent;
-  border: none;
-  border-bottom: 1px solid var(--muted);
-  padding: calc(var(--grid-unit)) 0;
-  width: 100%;
-  color: var(--foreground);
-  transition: border-color 0.2s;
-}
-
-.swiss-input:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-.swiss-textarea {
-  background-color: transparent;
-  border: 1px solid var(--muted);
-  padding: calc(var(--grid-unit));
-  width: 100%;
-  color: var(--foreground);
-  transition: border-color 0.2s;
-  resize: vertical;
-}
-
-.swiss-textarea:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-/* Responsive Helpers */
-@media (max-width: 768px) {
-  :root {
-    --grid-column: 6;
-  }
-  
-  .swiss-heading-1 {
-    font-size: 2.5rem;
-  }
-  
-  .swiss-heading-2 {
-    font-size: 2rem;
-  }
-  
-  .swiss-heading-3 {
-    font-size: 1.5rem;
-  }
-  
-  .swiss-asymmetric-left,
-  .swiss-asymmetric-right,
-  .swiss-asymmetric-small,
-  .swiss-asymmetric-medium,
-  .swiss-asymmetric-large {
-    grid-column: span 6;
-  }
-}
-
-/* Keep these elements from the original CSS but adapted to Swiss style */
-.parallax-container {
-  position: relative;
-  overflow: hidden;
-}
-
-.text-gradient {
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  background-image: linear-gradient(135deg, var(--accent) 0%, var(--accent-tertiary) 100%);
-}
-
-.glass-effect {
-  backdrop-filter: blur(12px);
-  background-color: rgba(var(--background-rgb), 0.7);
-  border: 1px solid rgba(var(--border-rgb), 0.2);
-}
-
-.glass-card {
-  backdrop-filter: blur(12px);
-  background-color: rgba(var(--card-rgb), 0.7);
-  border: 1px solid rgba(var(--border-rgb), 0.2);
-}
-
+/* Scroll Behavior */
 .smooth-scroll {
   scroll-behavior: smooth;
 }
@@ -457,154 +701,73 @@ body {
   background: var(--accent);
 }
 
-.hover-lift {
-  transition: transform 0.3s ease;
-}
-
-.hover-lift:hover {
-  transform: translateY(-5px);
-}
-
-/* Swiss Style Grid Patterns */
-.swiss-grid-pattern {
-  position: relative;
-}
-
-.swiss-grid-pattern::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: 
-    linear-gradient(to right, var(--border) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--border) 1px, transparent 1px);
-  background-size: calc(var(--grid-unit) * 8) calc(var(--grid-unit) * 8);
-  opacity: 0.2;
-  z-index: -1;
-}
-
-.swiss-diagonal-line {
-  position: relative;
-}
-
-.swiss-diagonal-line::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background-color: var(--accent);
-  transform: rotate(-45deg);
-  transform-origin: top left;
-}
-
-/* Keep essential animation keyframes and classes */
-@keyframes slowFadeIn {
-  0% {
-    opacity: 0;
-  }
-  30% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.animate-slow-fade-in {
-  animation: slowFadeIn 1.5s forwards;
-}
-
-@keyframes subtleFloat {
-  0%, 100% {
-    transform: translateY(0) translateX(0);
-  }
-  25% {
-    transform: translateY(-5px) translateX(2px);
-  }
-  75% {
-    transform: translateY(5px) translateX(-2px);
-  }
-}
-
-.animate-subtle-float {
-  animation: subtleFloat 8s ease-in-out infinite;
-}
-
-/* Swiss Style Decoration Elements */
-.swiss-circle {
-  width: calc(var(--grid-unit) * 10);
-  height: calc(var(--grid-unit) * 10);
-  border-radius: 50%;
-  background-color: var(--accent);
-  position: absolute;
-}
-
-.swiss-line {
-  height: 1px;
-  background-color: var(--foreground);
-  width: 100%;
-}
-
-.swiss-diagonal-divider {
+/* Layout Utilities */
+.parallax-container {
   position: relative;
   overflow: hidden;
-  padding: calc(var(--grid-unit) * 6) 0;
 }
 
-.swiss-diagonal-divider::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 150%;
-  height: 1px;
-  background-color: var(--foreground);
-  transform: rotate(-30deg);
-  transform-origin: top left;
-}
-
-.focus-ring {
-  position: relative;
-}
-
-.focus-ring::after {
-  content: '';
-  position: absolute;
-  top: -4px;
-  left: -4px;
-  right: -4px;
-  bottom: -4px;
-  border: 1px solid var(--accent);
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.focus-ring:focus-within::after {
-  opacity: 1;
-}
-
-.reveal-on-scroll {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s, transform 0.5s;
-}
-
-.reveal-on-scroll.is-revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Z-index utility */
 .-z-15 {
   z-index: -15;
 }
 
-/* Font size utility */
-.text-125 {
-  font-size: 1.25rem;
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  :root {
+    --font-size-3xl: 3.5rem;
+    --font-size-2xl: 2.25rem;
+  }
 }
 
+@media (max-width: 768px) {
+  :root {
+    --grid-column: 6;
+    --font-size-3xl: 2.75rem;
+    --font-size-2xl: 2rem;
+    --font-size-xl: 1.5rem;
+  }
+  
+  .swiss-heading-1 {
+    font-size: var(--font-size-3xl);
+  }
+  
+  .swiss-heading-2 {
+    font-size: var(--font-size-2xl);
+  }
+  
+  .swiss-heading-3 {
+    font-size: var(--font-size-xl);
+  }
+  
+  .swiss-asymmetric-left,
+  .swiss-asymmetric-right,
+  .swiss-asymmetric-small,
+  .swiss-asymmetric-medium,
+  .swiss-asymmetric-large {
+    grid-column: span 6;
+  }
+  
+  .swiss-container {
+    padding: 0 var(--space-4);
+  }
+  
+  .swiss-grid-reversed {
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "image"
+      "content";
+    gap: var(--space-6);
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --font-size-3xl: 2.5rem;
+    --font-size-2xl: 1.75rem;
+    --font-size-xl: 1.25rem;
+  }
+  
+  .swiss-container {
+    padding: 0 var(--space-3);
+  }
+}
