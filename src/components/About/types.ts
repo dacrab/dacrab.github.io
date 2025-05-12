@@ -14,10 +14,10 @@ export interface SkillCategory {
 // Skill data organized by category
 export const SKILLS_BY_CATEGORY: SkillCategory = {
   frontend: [
-    { name: "Next.js", icon: "https://cdn.simpleicons.org/nextdotjs/000000/FFFFFF", url: "https://nextjs.org/" },
+    { name: "NextJS", icon: "https://cdn.simpleicons.org/nextdotjs/000000/FFFFFF", url: "https://nextjs.org/" },
     { name: "TypeScript", icon: "https://cdn.simpleicons.org/typescript/3178C6", url: "https://www.typescriptlang.org/" },
     { name: "JavaScript", icon: "https://cdn.simpleicons.org/javascript/F7DF1E", url: "https://developer.mozilla.org/en-US/docs/Web/JavaScript" },
-    { name: "Tailwind CSS", icon: "https://cdn.simpleicons.org/tailwindcss/06B6D4", url: "https://tailwindcss.com/" },
+    { name: "TailwindCSS", icon: "https://cdn.simpleicons.org/tailwindcss/06B6D4", url: "https://tailwindcss.com/" },
     { name: "Framer Motion", icon: "https://cdn.simpleicons.org/framer/0055FF", url: "https://www.framer.com/motion/" }
   ],
   backend: [
@@ -35,4 +35,4 @@ export const SKILLS_BY_CATEGORY: SkillCategory = {
 };
 
 // Light icons that need special treatment in dark/light mode
-export const ADAPTIVE_COLOR_ICONS = ["Next.js", "GitHub", "Vercel"];
+export const ADAPTIVE_COLOR_ICONS = ["NextJS", "GitHub", "Vercel"];

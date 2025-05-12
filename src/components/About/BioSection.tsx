@@ -123,7 +123,7 @@ export default function BioSection() {
               />
             </span>, <span className="font-semibold text-[var(--accent)]">
               <TextAnimation 
-                text="Next.js" 
+                text="NextJS" 
                 variant="reveal" 
                 mobileOptimized={true}
               />

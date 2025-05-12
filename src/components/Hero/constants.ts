@@ -19,7 +19,7 @@ export const ANIMATION = {
 // Tech keywords array with icons - using the same technologies from About/types.ts
 export const TECH_KEYWORDS = [
   { 
-    name: "NEXT.JS", 
+    name: "NextJS", 
     icon: "https://cdn.simpleicons.org/nextdotjs/000000/FFFFFF"
   },
   { 
@@ -27,7 +27,7 @@ export const TECH_KEYWORDS = [
     icon: "https://cdn.simpleicons.org/typescript/3178C6" 
   },
   { 
-    name: "TAILWIND CSS", 
+    name: "TailwindCSS", 
     icon: "https://cdn.simpleicons.org/tailwindcss/06B6D4" 
   },
   { 

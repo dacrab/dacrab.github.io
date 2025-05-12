@@ -3,11 +3,12 @@ import { ArrowUpRight } from "lucide-react";
 import SwissMotion from "../SwissMotion";
 import ShapeAnimation from "../ShapeAnimation";
 
-// Common animation settings
+// Constants
 const ANIMATION = {
   duration: 0.4
 };
 
+// Types
 interface ProjectLinkProps {
   href: string;
   label?: string;
@@ -15,7 +16,7 @@ interface ProjectLinkProps {
   delay?: number;
   duration?: number;
   isButtonStyle?: boolean;
-  variant?: 'default' | 'accent' | 'outline' | 'minimal';
+  variant?: 'default' | 'accent' | 'outline' | 'outline-no-hover-color' | 'minimal';
   accentColor?: 'primary' | 'secondary' | 'tertiary';
   motionType?: 'scale' | 'reveal' | 'slide' | 'fade';
   showShape?: boolean;
@@ -35,28 +36,36 @@ export default function ProjectLink({
   showShape = false,
   iconSize = 14
 }: ProjectLinkProps) {
-  // Color mapping based on accent color
-  const colorVarMap = {
-    primary: 'var(--accent)',
-    secondary: 'var(--accent-secondary)',
-    tertiary: 'var(--accent-tertiary)'
-  };
+  // Generate button styles based on variant and accent color
+  let buttonStyles = "";
   
-  // Style variants
-  const getVariantStyles = () => {
-    if (isButtonStyle) return 'swiss-button';
+  if (isButtonStyle) {
+    buttonStyles = "swiss-button";
+  } else {
+    // Base styles for all variants
+    const baseStyles = "inline-flex items-center text-sm gap-2 px-3 py-2 rounded-sm transition-all duration-300";
+    
+    // Accent color classes
+    const accentColorClass = `var(--accent-${accentColor})`;
     
     switch (variant) {
       case 'accent':
-        return `bg-[${colorVarMap[accentColor]}] text-[var(--card)] px-3 py-2 rounded-sm`;
+        buttonStyles = `${baseStyles} bg-[${accentColorClass}] text-white`;
+        break;
       case 'outline':
-        return `border border-[${colorVarMap[accentColor]}] text-[${colorVarMap[accentColor]}] px-3 py-2 rounded-sm hover:bg-[${colorVarMap[accentColor]}] hover:text-[var(--card)]`;
+        buttonStyles = `${baseStyles} border border-[${accentColorClass}] text-[${accentColorClass}] hover:bg-[${accentColorClass}] hover:text-white`;
+        break;
+      case 'outline-no-hover-color':
+        buttonStyles = `${baseStyles} border border-[${accentColorClass}] text-[${accentColorClass}] hover:bg-[var(--accent-hover)] hover:text-[${accentColorClass}]`;
+        break;
       case 'minimal':
-        return `text-[${colorVarMap[accentColor]}] hover:underline`;
+        buttonStyles = `${baseStyles} text-[${accentColorClass}] hover:underline`;
+        break;
       default:
-        return `text-[${colorVarMap[accentColor]}] hover:underline`;
+        buttonStyles = `${baseStyles} text-[${accentColorClass}] hover:underline`;
+        break;
     }
-  };
+  }
   
   return (
     <SwissMotion 
@@ -70,9 +79,8 @@ export default function ProjectLink({
         target="_blank"
         rel="noreferrer"
         className={`
-          ${getVariantStyles()} 
-          inline-flex items-center text-sm gap-2
-          transition-all duration-300 relative group
+          ${buttonStyles}
+          relative group cursor-pointer font-medium
           ${className}
         `}
       >
@@ -81,7 +89,7 @@ export default function ProjectLink({
             <ShapeAnimation
               type="triangle"
               variant="float"
-              color={colorVarMap[accentColor]}
+              color={`var(--accent-${accentColor})`}
               size={8}
               delay={0}
               duration={2}
@@ -99,4 +107,4 @@ export default function ProjectLink({
       </a>
     </SwissMotion>
   );
-} 
+}

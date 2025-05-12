@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { ProjectBaseProps } from "./types";
 import SwissMotion from "../SwissMotion";
 import ProjectTag from "./ProjectTag";
@@ -7,6 +7,7 @@ import ProjectTitle from "./ProjectTitle";
 import ProjectDescription from "./ProjectDescription";
 import ShapeAnimation from "../ShapeAnimation";
 import AccentLine from "../common/AccentLine";
+import ProjectGallery from "./ProjectGallery";
 
 // Animation constants
 const ANIMATION = {
@@ -27,6 +28,9 @@ const FeaturedProject = memo(function FeaturedProject({
   accentColor = 'primary',
   backgroundPattern = 'grid'
 }: FeaturedProjectProps) {
+  
+  // Track if gallery should be open
+  const [galleryOpen, setGalleryOpen] = useState(false);
   
   // Render background pattern based on type
   const renderBackgroundPattern = () => {
@@ -160,14 +164,68 @@ const FeaturedProject = memo(function FeaturedProject({
           ))}
         </SwissMotion>
         
-        <ProjectLink 
-          href={project.link} 
-          delay={ANIMATION.baseDelay}
-          isButtonStyle={true}
-          accentColor={accentColor}
-          showShape={true}
-        />
+        <div className="flex flex-wrap items-center gap-4">
+          {/* Gallery button - now the primary button */}
+          {project.hasGallery ? (
+            <SwissMotion 
+              type="fade" 
+              delay={ANIMATION.baseDelay + 0.1}
+            >
+              <button 
+                onClick={() => setGalleryOpen(true)}
+                className="swiss-button flex items-center cursor-pointer"
+                aria-label="View Screenshots"
+              >
+                <span className="mr-2">View Screenshots</span>
+                {/* Gallery icon */}
+                <svg 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  viewBox="0 0 24 24" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  strokeWidth="2" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  className="w-4 h-4 mr-1"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <circle cx="8.5" cy="8.5" r="1.5"/>
+                  <polyline points="21 15 16 10 5 21"/>
+                </svg>
+                <ShapeAnimation
+                  type="square"
+                  variant="pulse"
+                  color={`var(--accent-${accentColor})`}
+                  size={12}
+                  delay={0}
+                  duration={1.5}
+                  loop={true}
+                />
+              </button>
+            </SwissMotion>
+          ) : null}
+          
+          {/* Project link - now the secondary option */}
+          <ProjectLink 
+            href={project.link} 
+            delay={ANIMATION.baseDelay + (project.hasGallery ? 0.2 : 0.1)}
+            isButtonStyle={project.hasGallery ? false : true}
+            variant={project.hasGallery ? "outline-no-hover-color" : "default"}
+            accentColor={accentColor}
+            showShape={!project.hasGallery}
+          />
+        </div>
       </div>
+      
+      {/* Gallery modal for projects with galleries */}
+      {project.hasGallery && galleryOpen && (
+        <ProjectGallery 
+          projectTitle={project.title}
+          accentColor={accentColor}
+          onClose={() => setGalleryOpen(false)}
+          galleryFolder={project.galleryFolder || 'argicon'}
+        />
+      )}
     </SwissMotion>
   );
 });
