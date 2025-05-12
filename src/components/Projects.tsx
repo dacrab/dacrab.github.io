@@ -15,38 +15,41 @@ import ProjectCard from "./Projects/ProjectCard";
 import { SectionHeader } from "./common";
 
 // Constants
-const GRID_CONFIG = {
-  cells: 3,
-  rows: 3,
-  gap: 2,
-  size: { base: 'w-40 h-40', md: 'md:left-16' },
-  opacity: 'opacity-10',
-  position: 'left-8 top-16'
-};
-
 const CUSTOM_PROJECTS = [
+  {
+    id: 90,
+    title: "Silver and Gold Money (Concept)",
+    description: "A modern landing page concept for a local pawn shop featuring services like loans, buying/selling gold and silver, and a loan calculator with a clean, professional design that builds customer trust.",
+    tags: ["Svelte", "SvelteKit", "TailwindCSS", "TypeScript"],
+    link: "#silver-and-gold",
+    hasGallery: true,
+    galleryFolder: "gsm"
+  },
   {
     id: 91,
     title: "Argicon.gr",
     description: "A professional website for a technical construction company showcasing their services, projects portfolio, and expertise in infrastructure development with a modern, responsive design.",
-    tags: ["TypeScript", "Next.js", "Tailwind CSS", "React"],
+    tags: ["TypeScript", "NextJS", "TailwindCSS", "React"],
     link: "https://argicon.gr",
+    hasGallery: true,
+    galleryFolder: "argicon"
   },
   {
     id: 92,
     title: "DesignDash.gr",
     description: "A comprehensive digital platform for a technical construction firm featuring project galleries, technical specifications, and service offerings with an emphasis on engineering excellence.",
-    tags: ["TypeScript", "Next.js", "Tailwind CSS", "React"],
+    tags: ["TypeScript", "NextJS", "TailwindCSS", "React"],
     link: "https://designdash.gr",
+    hasGallery: true,
+    galleryFolder: "designdash"
   }
 ];
 
-// Animation constants
+// Animation constants - match the format used in child components
 const ANIMATION = {
-  standard: {
-    duration: 0.5,
-    ease: [0.2, 0.65, 0.3, 0.9]
-  }
+  baseDelay: 0.1,
+  duration: 0.5,
+  ease: [0.2, 0.65, 0.3, 0.9]
 };
 
 const Projects = memo(function Projects() {
@@ -60,7 +63,7 @@ const Projects = memo(function Projects() {
     if (isInView && !hasBeenVisible) setHasBeenVisible(true);
   }, [isInView, hasBeenVisible]);
 
-  // Single simplified scroll animation
+  // Single scroll animation
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
@@ -84,63 +87,10 @@ const Projects = memo(function Projects() {
       : [];
   }, [githubProjects, error, loading]);
 
-  // Simplified grid cells with single animation approach
-  const renderGridCells = () => (
-    Array.from({ length: GRID_CONFIG.cells * GRID_CONFIG.rows }).map((_, i) => (
-      <motion.div
-        key={`grid-${i}`}
-        className="border border-[var(--foreground)]"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.6 }}
-        transition={{ 
-          duration: ANIMATION.standard.duration,
-          delay: 0.1,
-          ease: ANIMATION.standard.ease
-        }}
-      />
-    ))
-  );
-
-  const renderGitHubProjects = () => (
-    <div>
-      <div className="flex items-center justify-between mb-8">
-        <SwissMotion type="slide" delay={0.2}>
-          <h3 className="swiss-heading-3">GITHUB PROJECTS</h3>
-        </SwissMotion>
-        {loading && (
-          <SwissMotion type="fade" delay={0.1}>
-            <div className="flex items-center">
-              <LoadingSpinner size="small" />
-              <span className="ml-2 text-sm text-[var(--muted)]">Loading projects...</span>
-            </div>
-          </SwissMotion>
-        )}
-      </div>
-      
-      {error && <ErrorMessage message={error.message} />}
-      
-      {!loading && githubData.length === 0 && !error && (
-        <SwissMotion type="fade" delay={0.1}>
-          <div className="swiss-card text-center py-12">
-            <p className="text-[var(--muted)]">No GitHub projects found. Check back later!</p>
-          </div>
-        </SwissMotion>
-      )}
-      
-      <SwissMotion 
-        type="grid" 
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-      >
-        {githubData.map((project: ProjectData, index) => (
-          <ProjectCard 
-            key={project.id}
-            project={project}
-            index={index}
-          />
-        ))}
-      </SwissMotion>
-    </div>
-  );
+  // Helper function to get accent color based on index
+  const getAccentColor = (index: number): 'primary' | 'secondary' | 'tertiary' => {
+    return index % 3 === 0 ? 'primary' : index % 3 === 1 ? 'secondary' : 'tertiary';
+  };
 
   return (
     <section
@@ -148,16 +98,26 @@ const Projects = memo(function Projects() {
       ref={containerRef}
       className="py-24 md:py-32 relative overflow-hidden"
     >
-      {/* Simplified background elements */}
-      <div className="absolute left-0 top-0 w-full h-full pointer-events-none z-0">
-        <div className={`absolute ${GRID_CONFIG.position} ${GRID_CONFIG.size.base} ${GRID_CONFIG.opacity} ${GRID_CONFIG.size.md}`}>
-          <div className={`grid grid-cols-${GRID_CONFIG.cells} grid-rows-${GRID_CONFIG.rows} gap-${GRID_CONFIG.gap} w-full h-full`}>
-            {renderGridCells()}
-          </div>
+      {/* Background grid */}
+      <div className="absolute left-8 top-16 md:left-16 w-40 h-40 opacity-10 pointer-events-none z-0">
+        <div className="grid grid-cols-3 grid-rows-3 gap-2 w-full h-full">
+          {Array.from({ length: 9 }).map((_, i) => (
+            <motion.div
+              key={`grid-${i}`}
+              className="border border-[var(--foreground)]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.6 }}
+              transition={{ 
+                duration: ANIMATION.duration,
+                delay: ANIMATION.baseDelay,
+                ease: ANIMATION.ease
+              }}
+            />
+          ))}
         </div>
       </div>
       
-      {/* Reduced number of shape animations */}
+      {/* Shape animations */}
       <ParallaxLayer speed={0.1} direction="right" className="absolute left-0 top-1/3 z-0">
         <ShapeAnimation 
           type="line" 
@@ -188,10 +148,11 @@ const Projects = memo(function Projects() {
           description="A curated selection of projects that demonstrate my technical expertise, problem-solving abilities, and creative approach to development."
           accentColor="primary"
           textAnimationVariant="reveal"
-          motionDelay={0.1}
+          motionDelay={ANIMATION.baseDelay}
         />
 
         <motion.div style={{ y: contentY }}>
+          {/* Featured Projects */}
           <div className="mb-16">
             <SwissMotion type="slide" delay={0.2} className="mb-8">
               <h3 className="swiss-heading-3">FEATURED WORK</h3>
@@ -204,12 +165,57 @@ const Projects = memo(function Projects() {
                   project={project} 
                   index={idx} 
                   reversed={idx % 2 !== 0}
+                  accentColor={getAccentColor(idx)}
+                  backgroundPattern={idx % 2 === 0 ? 'grid' : 'dots'}
                 />
               ))}
             </SwissMotion>
           </div>
 
-          {githubData.length > 0 && renderGitHubProjects()}
+          {/* GitHub Projects */}
+          {(githubData.length > 0 || loading || error) && (
+            <div>
+              <div className="flex items-center justify-between mb-8">
+                <SwissMotion type="slide" delay={0.2}>
+                  <h3 className="swiss-heading-3">GITHUB PROJECTS</h3>
+                </SwissMotion>
+                
+                {loading && (
+                  <SwissMotion type="fade" delay={ANIMATION.baseDelay}>
+                    <div className="flex items-center">
+                      <LoadingSpinner size="small" />
+                      <span className="ml-2 text-sm text-[var(--muted)]">Loading projects...</span>
+                    </div>
+                  </SwissMotion>
+                )}
+              </div>
+              
+              {error && <ErrorMessage message={error.message} />}
+              
+              {!loading && githubData.length === 0 && !error && (
+                <SwissMotion type="fade" delay={ANIMATION.baseDelay}>
+                  <div className="swiss-card text-center py-12">
+                    <p className="text-[var(--muted)]">No GitHub projects found. Check back later!</p>
+                  </div>
+                </SwissMotion>
+              )}
+              
+              <SwissMotion 
+                type="grid" 
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
+                {githubData.map((project: ProjectData, index) => (
+                  <ProjectCard 
+                    key={project.id}
+                    project={project}
+                    index={index}
+                    accentColor={getAccentColor(index)}
+                    backgroundPattern="dots"
+                  />
+                ))}
+              </SwissMotion>
+            </div>
+          )}
         </motion.div>
       </div>
     </section>

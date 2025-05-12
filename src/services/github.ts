@@ -42,7 +42,7 @@ export async function fetchGitHubRepos(
   try {
     const response = await fetch(url, {
       headers,
-      // Only use Next.js cache when running on the server
+      // Only use NextJS cache when running on the server
       ...(typeof window === 'undefined' && {
         next: { revalidate: CACHE_DURATION_MS / 1000 }
       })

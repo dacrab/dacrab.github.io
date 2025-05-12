@@ -39,17 +39,17 @@ export const EXPERIENCES: ExperienceItem[] = [
     period: "October 1st, 2023 - March 31st, 2024",
     description: [
       "Developed three custom WordPress sites with responsive design and custom functionality",
-      "Built two modern websites (Argicon.gr and DesignDash.gr) for architecture and construction firms using Next.js, TypeScript, and TailwindCSS",
-      "Created Proteas - a comprehensive warehouse management system for sports facilities with role-based access control, using Next.js, Supabase, and TypeScript",
+      "Built two modern websites (Argicon.gr and DesignDash.gr) for architecture and construction firms using NextJS, TypeScript, and TailwindCSS",
+      "Created Proteas - a comprehensive warehouse management system for sports facilities with role-based access control, using NextJS, Supabase, and TypeScript",
       "Implemented responsive designs, multi-language support, and modern UI components across all projects",
       "Applied version control with Git and followed collaborative development workflows"
     ],
-    skills: ["Next.js", "React", "TypeScript", "TailwindCSS", "WordPress", "Supabase", "Git", "Framer Motion", "i18n", "Responsive Design"]
+    skills: ["NextJS", "React", "TypeScript", "TailwindCSS", "WordPress", "Supabase", "Git", "Framer Motion", "i18n", "Responsive Design"]
   }
 ];
 
 export const SKILL_PROGRESSIONS: SkillProgression[] = [
-  { name: "Next.js & React", percentage: 85 },
+  { name: "NextJS & React", percentage: 85 },
   { name: "TypeScript", percentage: 80 },
   { name: "TailwindCSS", percentage: 85 },
   { name: "Responsive Design", percentage: 85 },

@@ -184,7 +184,7 @@ export default function ProjectCard({
             label="View on GitHub"
             delay={ANIMATION.baseDelay}
             accentColor={accentColor}
-            variant="minimal"
+            variant="outline-no-hover-color"
             motionType="fade"
           />
         </div>

@@ -31,7 +31,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "DaCrab | Creative Web Developer & Designer",
   description: "A modern portfolio showcasing Swiss Style web development projects, UI/UX design, and creative coding",
-  keywords: ["web developer", "frontend", "UI/UX", "Swiss design", "React", "Next.js", "portfolio"],
+  keywords: ["web developer", "frontend", "UI/UX", "Swiss design", "React", "NextJS", "portfolio"],
   authors: [{ name: "DaCrab" }],
   openGraph: {
     type: "website",
