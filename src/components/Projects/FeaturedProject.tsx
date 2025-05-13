@@ -206,14 +206,16 @@ const FeaturedProject = memo(function FeaturedProject({
           ) : null}
           
           {/* Project link - now the secondary option */}
-          <ProjectLink 
-            href={project.link} 
-            delay={ANIMATION.baseDelay + (project.hasGallery ? 0.2 : 0.1)}
-            isButtonStyle={project.hasGallery ? false : true}
-            variant={project.hasGallery ? "outline-no-hover-color" : "default"}
-            accentColor={accentColor}
-            showShape={!project.hasGallery}
-          />
+          {project.link && (
+            <ProjectLink 
+              href={project.link} 
+              delay={ANIMATION.baseDelay + (project.hasGallery ? 0.2 : 0.1)}
+              isButtonStyle={project.hasGallery ? false : true}
+              variant={project.hasGallery ? "outline-no-hover-color" : "default"}
+              accentColor={accentColor}
+              showShape={!project.hasGallery}
+            />
+          )}
         </div>
       </div>
       

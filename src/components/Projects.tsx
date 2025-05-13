@@ -21,7 +21,7 @@ const CUSTOM_PROJECTS = [
     title: "Silver and Gold Money (Concept)",
     description: "A modern landing page concept for a local pawn shop featuring services like loans, buying/selling gold and silver, and a loan calculator with a clean, professional design that builds customer trust.",
     tags: ["Svelte", "SvelteKit", "TailwindCSS", "TypeScript"],
-    link: "#silver-and-gold",
+    link: "",
     hasGallery: true,
     galleryFolder: "gsm"
   },
