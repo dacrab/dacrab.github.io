@@ -68,7 +68,8 @@ const Projects = memo(function Projects() {
     target: containerRef,
     offset: ["start end", "end start"]
   });
-  const contentY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const featuredY = useTransform(scrollYProgress, [0, 1], [-10, 30]);
+  const githubY = useTransform(scrollYProgress, [0, 1], [10, -30]);
 
   // Data fetching
   const { projects: githubProjects, loading, error } = useGitHubProjects(
@@ -118,7 +119,7 @@ const Projects = memo(function Projects() {
       </div>
       
       {/* Shape animations */}
-      <ParallaxLayer speed={0.1} direction="right" className="absolute left-0 top-1/3 z-0">
+      <ParallaxLayer speed={0.25} direction="right" className="absolute left-0 top-1/3 z-0">
         <ShapeAnimation 
           type="line" 
           color="var(--accent-secondary)" 
@@ -130,7 +131,7 @@ const Projects = memo(function Projects() {
         />
       </ParallaxLayer>
       
-      <ParallaxLayer speed={0.1} direction="left" className="absolute right-24 bottom-64 z-0">
+      <ParallaxLayer speed={0.35} direction="up" className="absolute right-24 bottom-64 z-0">
         <ShapeAnimation 
           type="cross" 
           color="var(--accent)" 
@@ -151,9 +152,9 @@ const Projects = memo(function Projects() {
           motionDelay={ANIMATION.baseDelay}
         />
 
-        <motion.div style={{ y: contentY }}>
+        <div>
           {/* Featured Projects */}
-          <div className="mb-16">
+          <motion.div className="mb-16" style={{ y: featuredY }}>
             <SwissMotion type="slide" delay={0.2} className="mb-8">
               <h3 className="swiss-heading-3">FEATURED WORK</h3>
             </SwissMotion>
@@ -170,11 +171,11 @@ const Projects = memo(function Projects() {
                 />
               ))}
             </SwissMotion>
-          </div>
+          </motion.div>
 
           {/* GitHub Projects */}
           {(githubData.length > 0 || loading || error) && (
-            <div>
+            <motion.div style={{ y: githubY }}>
               <div className="flex items-center justify-between mb-8">
                 <SwissMotion type="slide" delay={0.2}>
                   <h3 className="swiss-heading-3">GITHUB PROJECTS</h3>
@@ -214,9 +215,9 @@ const Projects = memo(function Projects() {
                   />
                 ))}
               </SwissMotion>
-            </div>
+            </motion.div>
           )}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

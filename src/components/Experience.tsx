@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useMemo } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { SectionHeader } from "./common";
 
@@ -19,6 +19,11 @@ const getCircleCounts = (isMobile: boolean) => isMobile ? [1, 2] : [1, 2, 3];
 
 export default function Experience() {
   const isMobile = useIsMobile();
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
   
   // Memoized constants based on device
   const LINE_COUNT = useMemo(() => getLineCount(isMobile), [isMobile]);
@@ -28,6 +33,9 @@ export default function Experience() {
   const getOptimizedDelay = (baseDelay: number) => isMobile ? baseDelay * 0.7 : baseDelay;
   const getOptimizedDuration = (baseDuration: number) => isMobile ? baseDuration * 0.6 : baseDuration;
   
+  const lottieAndSkillsY = useTransform(scrollYProgress, [0, 1], [-20, 20]);
+  const timelineY = useTransform(scrollYProgress, [0, 1], [-40, 40]);
+
   // Refs for scroll animations
   const refs = {
     skills: useRef<HTMLDivElement>(null),
@@ -43,14 +51,14 @@ export default function Experience() {
   };
 
   return (
-    <section id="experience" className="py-24 md:py-32 relative overflow-hidden">
+    <section id="experience" ref={ref} className="py-24 md:py-32 relative overflow-hidden">
       {/* Decorative background elements - conditionally rendered and simplified for mobile */}
       {(!isMobile || (isMobile && LINE_COUNT > 0)) && (
         <div className="absolute left-4 md:left-12 top-0 bottom-0 w-12 z-0 flex flex-col justify-around">
           {Array.from({ length: LINE_COUNT }).map((_, i) => (
             <ParallaxLayer 
               key={`line-${i}`} 
-              speed={isMobile ? 0.03 : 0.05 + (i * 0.03)} 
+              speed={isMobile ? 0.1 : 0.2 + (i * 0.05)} 
               direction={i % 2 ? "left" : "right"}
             >
               <ShapeAnimation 
@@ -74,7 +82,7 @@ export default function Experience() {
           {CIRCLE_COUNTS.map((i) => (
             <ParallaxLayer 
               key={`circle-${i}`} 
-              speed={isMobile ? 0.05 * i : 0.1 * i} 
+              speed={isMobile ? 0.15 * i : 0.25 * i} 
               direction={i % 2 ? "right" : "left"}
             >
               <ShapeAnimation 
@@ -104,6 +112,7 @@ export default function Experience() {
 
         <motion.div 
           className="max-w-6xl mx-auto mb-16"
+          style={{ y: lottieAndSkillsY, willChange: 'transform' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ 
@@ -162,6 +171,7 @@ export default function Experience() {
           duration={getOptimizedDuration(0.8)} 
           className="mt-16 pt-16 border-t border-[var(--border)]"
           mobileOptimized={true}
+          style={{ y: timelineY, willChange: 'transform' }}
         >
           <SwissMotion 
             type={isMobile ? "fade" : "slide"} 

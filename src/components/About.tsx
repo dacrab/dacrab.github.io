@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useScroll, useTransform } from "framer-motion";
 import BioSection from "./About/BioSection";
 import ProfileImage from "./About/ProfileImage";
 import SwissMotion from "./SwissMotion";
@@ -19,7 +19,8 @@ export default function About() {
     offset: ["start end", "end start"]
   });
 
-  const contentY = useTransform(scrollYProgress, [0, 1], [30, -30]);
+  const bioY = useTransform(scrollYProgress, [0, 1], [50, -50]);
+  const profileY = useTransform(scrollYProgress, [0, 1], [10, -10]);
   
   // Signature "About" section animations - multiple diagonal lines
   const diagonalCount = 5;
@@ -32,7 +33,7 @@ export default function About() {
       className="py-24 md:py-32 relative overflow-hidden"
     >
       {/* Swiss style accent elements with unique About section animations */}
-      <ParallaxLayer speed={0.15} direction="left" className="absolute right-0 top-1/4 z-0">
+      <ParallaxLayer speed={0.35} direction="left" className="absolute right-0 top-1/4 z-0">
         <ShapeAnimation 
           type="line" 
           color="var(--accent)" 
@@ -48,7 +49,7 @@ export default function About() {
       {diagonals.map((_, i) => (
         <ParallaxLayer 
           key={`diagonal-${i}`} 
-          speed={0.05 + (i * 0.02)} 
+          speed={0.1 + (i * 0.04)} 
           direction="right" 
           className={`absolute left-1/4 z-0`}
           style={{ top: `${20 + (i * 12)}%` }}
@@ -65,7 +66,7 @@ export default function About() {
         </ParallaxLayer>
       ))}
       
-      <ParallaxLayer speed={0.2} direction="up" className="absolute left-16 top-16 z-0">
+      <ParallaxLayer speed={0.4} direction="up" className="absolute left-16 top-16 z-0">
         <ShapeAnimation 
           type="square" 
           color="var(--accent-tertiary)" 
@@ -87,15 +88,13 @@ export default function About() {
         />
 
         {/* Content with Swiss style grid and alternating animations */}
-        <motion.div 
-          className="swiss-grid"
-          style={{ y: contentY }}
-        >
+        <div className="swiss-grid">
           <SwissMotion 
             type="slide" 
             delay={0.3} 
             duration={0.7}
             className="swiss-asymmetric-left"
+            style={{ y: bioY }}
           >
             <BioSection />
           </SwissMotion>
@@ -105,10 +104,11 @@ export default function About() {
             delay={0.5} 
             duration={0.8}
             className="swiss-asymmetric-right mt-12 md:mt-0"
+            style={{ y: profileY }}
           >
             <ProfileImage />
           </SwissMotion>
-        </motion.div>
+        </div>
         
         {/* About section signature: Staggered grid of squares at the bottom */}
         <SwissMotion type="stagger" staggerChildren={0.05} delay={0.7} className="mt-16 grid grid-cols-6 md:grid-cols-12 gap-2 max-w-4xl mx-auto">

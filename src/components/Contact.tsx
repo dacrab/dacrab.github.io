@@ -17,7 +17,8 @@ export default function Contact() {
     offset: ["start end", "end start"]
   });
 
-  const contentY = useTransform(scrollYProgress, [0, 1], [20, -20]);
+  const contactInfoY = useTransform(scrollYProgress, [0, 1], [-10, 30]);
+  const socialLinksY = useTransform(scrollYProgress, [0, 1], [10, -30]);
 
   return (
     <section
@@ -28,7 +29,7 @@ export default function Contact() {
       {/* Simplified background elements */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         {/* Single horizontal line animation */}
-        <ParallaxLayer speed={0.1} direction="right" className="absolute left-0 top-1/3 z-0">
+        <ParallaxLayer speed={0.25} direction="right" className="absolute left-0 top-1/3 z-0">
           <ShapeAnimation 
             type="line" 
             color="var(--accent)" 
@@ -41,7 +42,7 @@ export default function Contact() {
         </ParallaxLayer>
         
         {/* Single clean geometric shape */}
-        <ParallaxLayer speed={0.08} direction="up" className="absolute right-16 bottom-1/4 z-0">
+        <ParallaxLayer speed={0.35} direction="up" className="absolute right-16 bottom-1/4 z-0">
           <ShapeAnimation 
             type="square" 
             color="var(--accent-secondary)" 
@@ -64,9 +65,8 @@ export default function Contact() {
           className="mb-16 md:mb-20"
         />
 
-        <motion.div
+        <div
           className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12"
-          style={{ y: contentY }}
         >
           {/* Contact Information - Cleaner layout */}
           <SwissMotion 
@@ -74,6 +74,7 @@ export default function Contact() {
             delay={0.3} 
             duration={0.6} 
             className="lg:col-span-5"
+            style={{ y: contactInfoY }}
           >
             <div className="swiss-card relative overflow-hidden p-8 md:p-10">
               {/* Swiss style accent line */}
@@ -137,6 +138,7 @@ export default function Contact() {
             delay={0.4} 
             duration={0.6} 
             className="lg:col-span-7"
+            style={{ y: socialLinksY }}
           >
             <div className="swiss-card relative p-8 md:p-10">
               {/* Swiss style accent lines */}
@@ -207,7 +209,7 @@ export default function Contact() {
               </div>
             </div>
           </SwissMotion>
-        </motion.div>
+        </div>
 
         {/* Refined footer note */}
         <SwissMotion type="fade" delay={0.7} className="mt-16 text-center flex flex-col items-center">
