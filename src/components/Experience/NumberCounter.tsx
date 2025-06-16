@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 // ==========================================================================
 // Type Definitions
 // ==========================================================================
+type CubicBezier = [number, number, number, number];
+
 interface NumberCounterProps {
   end: number;
   duration: number;
@@ -17,7 +19,7 @@ interface NumberCounterProps {
 // Constants
 // ==========================================================================
 const DEFAULT_CLASSNAME = "text-accent text-2xl font-bold";
-const EASING = [0.25, 0.1, 0.25, 1.0];
+const EASING: CubicBezier = [0.25, 0.1, 0.25, 1.0];
 
 // ==========================================================================
 // Animation Helpers

@@ -1,5 +1,22 @@
+type CubicBezier = [number, number, number, number];
+
 // Animation constants
-export const ANIMATION = {
+export const ANIMATION: {
+  easing: {
+    explosive: CubicBezier;
+    crisp: CubicBezier;
+    smooth: CubicBezier;
+  };
+  duration: {
+    short: number;
+    medium: number;
+    long: number;
+    fast: number;
+  };
+  delay: {
+    stagger: number;
+  };
+} = {
   easing: {
     explosive: [0, 0.9, 0.1, 1], // Extremely sharp, explosive curve
     crisp: [0.12, 0.8, 0.88, 0.58], // More explosive Swiss-style precision curve

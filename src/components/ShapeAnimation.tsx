@@ -1,8 +1,10 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { motion, useInView, Transition } from "framer-motion";
+import { motion, useInView, type Transition } from "framer-motion";
 import { useIsMobile } from "@/hooks/useIsMobile";
+
+type CubicBezier = [number, number, number, number];
 
 export type ShapeType = "square" | "circle" | "triangle" | "line" | "diagonal" | "cross";
 export type AnimationVariant = "float" | "rotate" | "pulse" | "draw" | "path";
@@ -49,8 +51,8 @@ export default function ShapeAnimation({
   const shouldDisableAnimation = isMobile && disableOnMobile;
   
   // Animation settings
-  const swissEase = [0.19, 1, 0.22, 1]; // Smooth
-  const swissEaseCrisp = [0.17, 0.67, 0.83, 0.67]; // Crisp
+  const swissEase: CubicBezier = [0.19, 1, 0.22, 1]; // Smooth
+  const swissEaseCrisp: CubicBezier = [0.17, 0.67, 0.83, 0.67]; // Crisp
   
   // Mobile optimizations
   const optimizedDuration = isMobile && mobileOptimized ? duration * 0.6 : duration;

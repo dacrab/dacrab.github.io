@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, Easing } from "framer-motion";
 import { memo, useRef, useMemo } from "react";
 import NumberCounter from "./NumberCounter";
 import { SKILL_PROGRESSIONS } from "./types";
@@ -7,6 +7,8 @@ import SwissMotion from "@/components/SwissMotion";
 // ==========================================================================
 // Type Definitions
 // ==========================================================================
+type CubicBezier = [number, number, number, number];
+
 interface SkillProgressionsProps {
   isInView: boolean;
   isMobile: boolean;
@@ -15,7 +17,20 @@ interface SkillProgressionsProps {
 // ==========================================================================
 // Animation Constants
 // ==========================================================================
-const ANIMATION = {
+const ANIMATION: {
+  DURATION: {
+    MOBILE: { [key: string]: number };
+    DESKTOP: { [key: string]: number };
+  };
+  DELAY: {
+    BASE: { [key: string]: number };
+    INCREMENT: { [key: string]: number };
+  };
+  EASING: {
+    SMOOTH: { [key: string]: CubicBezier };
+    EASE_OUT: Easing;
+  };
+} = {
   DURATION: {
     MOBILE: { SHORT: 0.2, MEDIUM: 0.3, LONG: 0.5 },
     DESKTOP: { SHORT: 0.4, MEDIUM: 0.5, LONG: 1.0 }

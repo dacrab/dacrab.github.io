@@ -1,4 +1,4 @@
-import { motion, useInView, TargetAndTransition } from "framer-motion";
+import { motion, useInView, TargetAndTransition, Transition } from "framer-motion";
 import { memo, useState, useEffect, useRef, useMemo } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import NumberCounter from "./NumberCounter";
@@ -10,6 +10,8 @@ interface LottieVisualizationProps {
   isInView?: boolean;
   isMobile?: boolean;
 }
+
+type CubicBezier = [number, number, number, number];
 
 interface TimelineProps {
   width: number;
@@ -36,28 +38,13 @@ interface StatsCardProps {
   isInView: boolean;
 }
 
-interface AnimationTransition {
-  duration: number;
-  ease: number[] | string;
-  repeat?: number;
-  repeatType?: "mirror" | "reverse" | "loop";
-  delay?: number;
-}
-
 // ==========================================================================
 // Constants
 // ==========================================================================
-const ANIMATION_EASING = {
+const ANIMATION_EASING: { [key: string]: CubicBezier } = {
   swissEaseExplosive: [0, 0.9, 0.1, 1], // Extremely sharp, explosive curve
   swissEaseCrisp: [0.12, 0.8, 0.88, 0.58], // More explosive Swiss-style precision curve
   swissEaseSmooth: [0.25, 0.1, 0.25, 1.0], // Smoother cubic bezier curve for animations
-};
-
-const DEFAULT_ANIMATION_TRANSITION: AnimationTransition = {
-  duration: 5,
-  ease: ANIMATION_EASING.swissEaseSmooth,
-  repeat: Infinity,
-  repeatType: "mirror"
 };
 
 // Stats data
@@ -159,10 +146,13 @@ function detectLowEndDevice(): boolean {
  * Creates a standard infinite animation transition with customizable properties
  */
 function createInfiniteTransition(
-  options: Partial<AnimationTransition> = {}
-): AnimationTransition {
+  options: Partial<Transition> = {}
+): Transition {
   return {
-    ...DEFAULT_ANIMATION_TRANSITION,
+    duration: 5,
+    ease: ANIMATION_EASING.swissEaseSmooth,
+    repeat: Infinity,
+    repeatType: "mirror",
     ...options
   };
 }

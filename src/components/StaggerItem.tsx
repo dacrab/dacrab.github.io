@@ -9,10 +9,15 @@ interface NavigatorWithMemory extends Navigator {
   deviceMemory?: number;
 }
 
+type CubicBezier = [number, number, number, number];
+
 // Swiss-style animation curves
-const EASE = {
+const EASE: {
+  precision: CubicBezier;
+  sharp: CubicBezier;
+} = {
   precision: [0.19, 1, 0.22, 1],
-  sharp: [0.17, 0.67, 0.83, 0.67]
+  sharp: [0.17, 0.67, 0.83, 0.67],
 };
 
 type AnimationType = "fade" | "slide" | "scale" | "rotate" | "reveal";

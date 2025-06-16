@@ -105,23 +105,23 @@ export default function Navbar() {
         stiffness: isMobile ? 200 : 300,
         damping: isMobile ? 25 : 20,
         duration: isMobile ? 0.5 : 0.7
-      }
+      } as const
     }
   };
 
   const menuVariants = {
-    hidden: { opacity: 0, height: 0, y: -10, transition: { duration: 0.2, ease: "easeInOut" } },
+    hidden: { opacity: 0, height: 0, y: -10, transition: { duration: 0.2, ease: "easeInOut" } as const },
     visible: {
       opacity: 1,
       height: "auto",
       y: 0,
-      transition: { duration: 0.3, ease: "easeOut", staggerChildren: 0.05, delayChildren: 0.05 }
+      transition: { duration: 0.3, ease: "easeOut", staggerChildren: 0.05, delayChildren: 0.05 } as const
     }
   };
 
   const navItemVariants = {
     hidden: { opacity: 0, x: -10 },
-    visible: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 200, damping: 20 } }
+    visible: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 200, damping: 20 } as const }
   };
 
   const handleLogoClick = useCallback(() => {

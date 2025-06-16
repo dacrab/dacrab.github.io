@@ -9,6 +9,8 @@ interface NavigatorWithMemory extends Navigator {
   deviceMemory?: number;
 }
 
+type CubicBezier = [number, number, number, number];
+
 type AnimationVariant = "split" | "reveal" | "typewriter" | "gradient" | "char-by-char";
 type ElementType = "span" | "div";
 
@@ -69,7 +71,7 @@ export default function TextAnimation({
     : variant;
   
   // Common animation ease curve
-  const swissEase = [0.17, 0.67, 0.83, 0.67];
+  const swissEase: CubicBezier = [0.17, 0.67, 0.83, 0.67];
 
   // Group text for optimized animations
   const getGroupedText = (text: string, groupSize: number = 2): string[] => {

@@ -1,16 +1,21 @@
-import { Variants } from "framer-motion";
+import { Variants, Transition } from "framer-motion";
 
 // Animation utility functions for consistent, optimized animations
 
 const variantCache = new Map<string, unknown>();
 
-const transitions = {
+type CubicBezier = [number, number, number, number];
+
+const customEaseOut: CubicBezier = [0, 0, 0.2, 1];
+const smoothRevealCurve: CubicBezier = [0.215, 0.61, 0.355, 1];
+
+const transitions: { [key: string]: Transition } = {
   spring: { type: "spring", stiffness: 260, damping: 20 },
   springMobile: { type: "spring", stiffness: 200, damping: 25 },
   snappy: { type: "spring", stiffness: 320, damping: 30 },
   snappyMobile: { type: "spring", stiffness: 250, damping: 35 },
-  easeOut: { type: "tween", ease: [0, 0, 0.2, 1] },
-  smoothReveal: { type: "tween", ease: [0.215, 0.61, 0.355, 1] },
+  easeOut: { type: "tween", ease: customEaseOut },
+  smoothReveal: { type: "tween", ease: smoothRevealCurve },
 };
 
 const defaults = {
@@ -50,7 +55,7 @@ const getTransition = (
   duration: number,
   delay: number,
   isMobile: boolean
-) => {
+): Transition => {
   const optimizedDuration = getOptimizedValue(duration, isMobile, 0.8, 0.4);
   const optimizedDelay = getOptimizedValue(delay, isMobile, 0.7);
   let base;
@@ -79,7 +84,7 @@ export const fadeIn = (
       transition: getTransition("spring", duration, delay, isMobile),
     },
   };
-  variantCache.set(key, variant as Variants);
+  variantCache.set(key, variant);
   return variant;
 };
 
@@ -98,7 +103,7 @@ export const scaleIn = (
       transition: getTransition("snappy", duration, delay, isMobile),
     },
   };
-  variantCache.set(key, variant as Variants);
+  variantCache.set(key, variant);
   return variant;
 };
 
@@ -118,7 +123,7 @@ export const staggerContainer = (
       },
     },
   };
-  variantCache.set(key, variant as Variants);
+  variantCache.set(key, variant);
   return variant;
 };
 
@@ -140,7 +145,7 @@ export const revealSection = (
       },
     },
   };
-  variantCache.set(key, variant as Variants);
+  variantCache.set(key, variant);
   return variant;
 };
 
@@ -170,7 +175,7 @@ export const cardAnimation = (
       ? { y: -5, boxShadow: "0 10px 20px rgba(0,0,0,0.1)", transition: { duration: 0.3 } }
       : { y: -10, scale: 1.03, boxShadow: "0 20px 30px rgba(0,0,0,0.15)", transition: { duration: 0.4 } },
   };
-  variantCache.set(key, variant as Variants);
+  variantCache.set(key, variant);
   return variant;
 };
 
@@ -189,7 +194,7 @@ export const svgPathAnimation = (
       transition: {
         pathLength: {
           delay: getOptimizedValue(delay, isMobile, 0.7),
-          type: "spring",
+          type: "spring" as const,
           duration: getOptimizedValue(duration, isMobile, 0.8, 1.5),
           bounce: 0,
         },
@@ -200,7 +205,7 @@ export const svgPathAnimation = (
       },
     },
   };
-  variantCache.set(key, variant as Variants);
+  variantCache.set(key, variant);
   return variant;
 };
 
@@ -212,19 +217,22 @@ export const svgShapeAnimation = (
 ): Variants => {
   const key = `svgShape-${delay}-${duration}-${opacity}-${isMobile}`;
   if (variantCache.has(key)) return variantCache.get(key) as Variants;
+
+  const transition: Transition = {
+    delay: getOptimizedValue(delay, isMobile, 0.7),
+    duration: getOptimizedValue(duration, isMobile, 0.8, 0.8),
+    ease: "easeOut",
+  };
+
   const variant = {
     hidden: { scale: 0, opacity: 0 },
     visible: {
       scale: 1,
       opacity: isMobile ? Math.min(opacity * 0.8, 0.8) : opacity,
-      transition: {
-        delay: getOptimizedValue(delay, isMobile, 0.7),
-        duration: getOptimizedValue(duration, isMobile, 0.8, 0.8),
-        ease: "easeOut",
-      },
+      transition,
     },
   };
-  variantCache.set(key, variant as Variants);
+  variantCache.set(key, variant);
   return variant;
 };
 
@@ -335,7 +343,7 @@ export const emojiAnimation = (
           repeatDelay: 3,
           duration: 1.5,
           delay: d,
-          ease: [0.215, 0.61, 0.355, 1],
+          ease: smoothRevealCurve,
           times: [0, 0.2, 0.3, 0.4, 0.6, 0.8, 1],
         },
         className: "inline-block origin-bottom-right",
@@ -400,7 +408,7 @@ export const textAnimation = (
         transition: {
           duration: optimizedDuration,
           delay: optimizedDelay,
-          ease: isMobile ? "easeOut" : [0.215, 0.61, 0.355, 1],
+          ease: isMobile ? "easeOut" : smoothRevealCurve,
         },
         style: { willChange: "transform, opacity" },
       },
@@ -418,7 +426,7 @@ export const textAnimation = (
         transition: {
           duration: optimizedDuration,
           delay: optimizedDelay,
-          ease: isMobile ? "easeOut" : [0.215, 0.61, 0.355, 1],
+          ease: isMobile ? "easeOut" : smoothRevealCurve,
         },
         style: { willChange: "clip-path" },
       },
@@ -432,7 +440,7 @@ export const textAnimation = (
         transition: {
           duration: optimizedDuration,
           delay: optimizedDelay,
-          ease: isMobile ? "easeOut" : [0.215, 0.61, 0.355, 1],
+          ease: isMobile ? "easeOut" : smoothRevealCurve,
         },
         style: { willChange: "transform, opacity" },
       },
