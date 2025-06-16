@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, Transition, Variants } from "framer-motion";
 import { memo, useMemo } from "react";
 import TimelineEntry from "./TimelineEntry";
 import { EXPERIENCES } from "./types";
@@ -11,6 +11,11 @@ interface TimelineProps {
   isInView: boolean;
   isMobile: boolean;
 }
+
+type PulseAnimation = {
+  scale: number[];
+  opacity: number[];
+};
 
 // ==========================================================================
 // Animation Constants
@@ -49,7 +54,15 @@ const Timeline = memo(function Timeline({ isInView, isMobile }: TimelineProps) {
   // ==========================================================================
   // Animation Configurations
   // ==========================================================================
-  const animations = useMemo(() => ({
+  const animations: {
+    main: Variants;
+    verticalLine: Transition;
+    endMarker: Variants;
+    endMarkerPulse: {
+      animate: PulseAnimation;
+      transition: Transition;
+    };
+  } = useMemo(() => ({
     main: {
       initial: { opacity: 0, y: isMobile ? 5 : 15 },
       animate: { 
@@ -86,7 +99,7 @@ const Timeline = memo(function Timeline({ isInView, isMobile }: TimelineProps) {
       transition: { 
         duration: isMobile ? ANIMATION.PULSE.MOBILE : ANIMATION.PULSE.DESKTOP, 
         repeat: Infinity, 
-        repeatType: "reverse" as const 
+        repeatType: "reverse"
       }
     }
   }), [isInView, isMobile]);

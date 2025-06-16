@@ -45,8 +45,14 @@ const CUSTOM_PROJECTS = [
   }
 ];
 
+type CubicBezier = [number, number, number, number];
+
 // Animation constants - match the format used in child components
-const ANIMATION = {
+const ANIMATION: {
+  baseDelay: number;
+  duration: number;
+  ease: CubicBezier;
+} = {
   baseDelay: 0.1,
   duration: 0.5,
   ease: [0.2, 0.65, 0.3, 0.9]

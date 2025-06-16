@@ -5,8 +5,10 @@ import SwissMotion from "@/components/SwissMotion";
 import ShapeAnimation from "@/components/ShapeAnimation";
 import TextAnimation from "@/components/TextAnimation";
 
+type CubicBezier = [number, number, number, number];
+
 // Animation constants
-const EASING = {
+const EASING: { [key: string]: CubicBezier } = {
   swiss: [0.22, 0.9, 0.36, 0.95],
   crisp: [0.12, 0.8, 0.88, 0.58],
   explosive: [0, 0.9, 0.1, 1]

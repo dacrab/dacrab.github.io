@@ -41,11 +41,17 @@ interface SwissMotionProps {
   mobileOptimized?: boolean;
 }
 
+type CubicBezier = [number, number, number, number];
+
 // Swiss style easing curves
-const EASING = {
+const EASING: {
+  precision: CubicBezier;
+  sharp: CubicBezier;
+  parallax: CubicBezier;
+} = {
   precision: [0.17, 0.67, 0.83, 0.67],
   sharp: [0.19, 1, 0.22, 1],
-  parallax: [0.08, 0.82, 0.17, 1]
+  parallax: [0.08, 0.82, 0.17, 1],
 };
 
 export default function SwissMotion({

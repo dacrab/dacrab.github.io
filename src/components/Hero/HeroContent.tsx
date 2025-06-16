@@ -143,14 +143,14 @@ const HeroContent = memo(function HeroContent({
             through thoughtful design and modern development techniques.
             <motion.span 
               className="absolute right-0 -bottom-2 w-full h-[2px] block"
-              initial={{ scaleX: 0, originX: 0 }}
+              initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ 
                 duration: ANIMATION.duration.long, 
                 delay: 1.2, 
                 ease: ANIMATION.easing.crisp 
               }}
-              style={{ background: 'var(--accent-secondary)', opacity: 0.3 }}
+              style={{ background: 'var(--accent-secondary)', opacity: 0.3, transformOrigin: 'left' }}
             />
           </span>
         </div>
