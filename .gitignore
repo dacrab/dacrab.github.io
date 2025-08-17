@@ -15,16 +15,19 @@
 
 # next.js
 /.next/
+/.astro/
 /out/
 
 # production
 /build
+/dist
 
 # misc
 .DS_Store
 *.pem
 
 # debug
+.vscode
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

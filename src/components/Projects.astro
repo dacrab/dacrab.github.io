@@ -1,0 +1,575 @@
+---
+// Simplified Projects section with reliable gallery
+const projects = [
+  {
+    id: 1,
+    title: "Silver and Gold Money",
+    subtitle: "Pawn Shop Landing Page",
+    description: "A modern landing page concept for a local pawn shop featuring services like loans, buying/selling gold and silver, and a loan calculator with a clean, professional design that builds customer trust.",
+    technologies: ["Svelte", "SvelteKit", "TailwindCSS", "TypeScript"],
+    link: "https://gsm-beta.vercel.app/",
+    featured: true,
+    gallery: [
+      { image: "/gsm/home-en.png", title: "Homepage (English)" },
+      { image: "/gsm/home-el.png", title: "Homepage (Greek)" },
+      { image: "/gsm/about-en.png", title: "About Page (English)" },
+      { image: "/gsm/about-el.png", title: "About Page (Greek)" },
+      { image: "/gsm/services-en.png", title: "Services (English)" },
+      { image: "/gsm/services-el.png", title: "Services (Greek)" },
+      { image: "/gsm/loans-en.png", title: "Loans Calculator (English)" },
+      { image: "/gsm/loans-el.png", title: "Loans Calculator (Greek)" },
+      { image: "/gsm/calculator-en.png", title: "Gold Calculator (English)" },
+      { image: "/gsm/calculator-el.png", title: "Gold Calculator (Greek)" },
+      { image: "/gsm/sell-en.png", title: "Sell Gold/Silver (English)" },
+      { image: "/gsm/sell-el.png", title: "Sell Gold/Silver (Greek)" },
+      { image: "/gsm/stores-en.png", title: "Store Locations (English)" },
+      { image: "/gsm/stores-el.png", title: "Store Locations (Greek)" },
+      { image: "/gsm/contact-en.png", title: "Contact (English)" },
+      { image: "/gsm/contact-el.png", title: "Contact (Greek)" }
+    ]
+  },
+  {
+    id: 2,
+    title: "Argicon.gr",
+    subtitle: "Technical Construction Company",
+    description: "A professional website for a technical construction company showcasing their services, projects portfolio, and expertise in infrastructure development with a modern, responsive design.",
+    technologies: ["TypeScript", "NextJS", "TailwindCSS", "React"],
+    link: "https://argicon.gr",
+    featured: true,
+    gallery: [
+      { image: "/argicon/home-en.png", title: "Homepage (English)" },
+      { image: "/argicon/home-el.png", title: "Homepage (Greek)" },
+      { image: "/argicon/projects-en.png", title: "Projects Portfolio (English)" },
+      { image: "/argicon/projects-el.png", title: "Projects Portfolio (Greek)" },
+      { image: "/argicon/services-en.png", title: "Services (English)" },
+      { image: "/argicon/services-el.png", title: "Services (Greek)" },
+      { image: "/argicon/contact-en.png", title: "Contact (English)" },
+      { image: "/argicon/contact-el.png", title: "Contact (Greek)" }
+    ]
+  },
+  {
+    id: 3,
+    title: "DesignDash.gr",
+    subtitle: "Digital Construction Platform",
+    description: "A comprehensive digital platform for a technical construction firm featuring project galleries, technical specifications, and service offerings with an emphasis on engineering excellence.",
+    technologies: ["TypeScript", "NextJS", "TailwindCSS", "React"],
+    link: "https://designdash.gr",
+    featured: true,
+    gallery: [
+      { image: "/designdash/home-en.png", title: "Homepage (English)" },
+      { image: "/designdash/home-el.png", title: "Homepage (Greek)" },
+      { image: "/designdash/about-en.png", title: "About (English)" },
+      { image: "/designdash/about-el.png", title: "About (Greek)" },
+      { image: "/designdash/projects-en.png", title: "Projects (English)" },
+      { image: "/designdash/projects-el.png", title: "Projects (Greek)" },
+      { image: "/designdash/services-en.png", title: "Services (English)" },
+      { image: "/designdash/services-el.png", title: "Services (Greek)" },
+      { image: "/designdash/contact-en.png", title: "Contact (English)" },
+      { image: "/designdash/contact-el.png", title: "Contact (Greek)" }
+    ]
+  }
+];
+---
+
+<section id="projects" class="swiss-section">
+  <div class="swiss-container">
+    <!-- Section header -->
+    <div class="swiss-section-header">
+      <div class="swiss-section-title">Projects</div>
+      <h2 class="swiss-heading-2">Featured Work</h2>
+      <p class="swiss-section-description">
+        A curated selection of projects that demonstrate technical expertise and design principles.
+      </p>
+    </div>
+    
+    <!-- Featured Projects -->
+    <div class="projects-grid">
+      {projects.map((project, index) => (
+        <article class="project-card" data-project-id={project.id}>
+          <div class="project-content">
+            <div class="project-meta">
+              <span class="project-number">{String(index + 1).padStart(2, '0')}</span>
+              <div class="project-tech">
+                {project.technologies.slice(0, 2).map(tech => (
+                  <span class="tech-tag">{tech}</span>
+                ))}
+              </div>
+            </div>
+            
+            <div class="project-info">
+              <h3 class="project-title">{project.title}</h3>
+              <p class="project-subtitle">{project.subtitle}</p>
+              <p class="project-description">{project.description}</p>
+              
+              <div class="project-technologies">
+                {project.technologies.map(tech => (
+                  <span class="tech-badge">{tech}</span>
+                ))}
+              </div>
+              
+              <div class="project-actions">
+                <a href={project.link} class="swiss-button swiss-button-primary" target="_blank" rel="noopener noreferrer">
+                  View Project
+                </a>
+                <button class="swiss-button swiss-button-outline open-gallery-btn" data-project-id={project.id}>
+                  View Gallery ({project.gallery.length})
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="project-image">
+            <img src={project.gallery[0].image} alt={project.title} loading="lazy" />
+            <div class="project-overlay">
+              <span class="gallery-count">{project.gallery.length} Screenshots</span>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+    
+    <!-- Current Work Section -->
+    <div class="current-work-section">
+      <div class="section-divider">
+        <div class="divider-line"></div>
+        <h3 class="swiss-heading-3">Current Work</h3>
+        <div class="divider-line"></div>
+      </div>
+      
+      <div class="current-work-grid" id="current-work-grid">
+        <div class="loading-spinner">Loading current projects...</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Enhanced Gallery Modal -->
+  <dialog class="gallery-modal" id="gallery-modal">
+    <div class="gallery-container">
+      <!-- Top Header with Title, Language Switcher & Close -->
+      <div class="gallery-header">
+        <div class="gallery-project-info">
+          <h3 class="gallery-project-title" id="gallery-title">Project Gallery</h3>
+          <span class="gallery-page-counter" id="gallery-counter">1 / 8</span>
+        </div>
+        
+        <div class="gallery-controls">
+          <div class="gallery-language-switcher">
+            <button class="lang-btn active" data-lang="en">English</button>
+            <button class="lang-btn" data-lang="gr">Greek</button>
+          </div>
+          <button class="gallery-close-btn" id="gallery-close">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Image Area (Scrollable) -->
+      <div class="gallery-main-container">
+        <div class="gallery-image-container">
+          <img id="main-gallery-image" src="" alt="" class="gallery-main-image" />
+        </div>
+        
+        <!-- Navigation arrows -->
+        <button class="gallery-nav-btn gallery-prev" id="gallery-prev">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="15,18 9,12 15,6"></polyline>
+          </svg>
+        </button>
+        <button class="gallery-nav-btn gallery-next" id="gallery-next">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9,18 15,12 9,6"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Bottom Page Navigation -->
+      <div class="gallery-page-navigation">
+        <div class="gallery-page-buttons" id="gallery-page-buttons">
+          <!-- Page buttons will be populated here -->
+        </div>
+      </div>
+    </div>
+  </dialog>
+  
+  <!-- Background decorations -->
+  <div class="swiss-decoration swiss-decoration-line projects-line-1"></div>
+  <div class="swiss-decoration swiss-decoration-circle projects-circle-1"></div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Type definitions
+    interface GalleryImage {
+      src: string;
+      title: string;
+    }
+
+    interface ProjectGallery {
+      title: string;
+      images: GalleryImage[];
+    }
+
+    // Simple project data - embedded for reliability
+    const projectGalleries: Record<number, ProjectGallery> = {
+      1: {
+        title: "Silver and Gold Money",
+        images: [
+          { src: "/gsm/home-en.png", title: "Homepage (English)" },
+          { src: "/gsm/home-el.png", title: "Homepage (Greek)" },
+          { src: "/gsm/about-en.png", title: "About Page (English)" },
+          { src: "/gsm/about-el.png", title: "About Page (Greek)" },
+          { src: "/gsm/services-en.png", title: "Services (English)" },
+          { src: "/gsm/services-el.png", title: "Services (Greek)" },
+          { src: "/gsm/loans-en.png", title: "Loans Calculator (English)" },
+          { src: "/gsm/loans-el.png", title: "Loans Calculator (Greek)" },
+          { src: "/gsm/calculator-en.png", title: "Gold Calculator (English)" },
+          { src: "/gsm/calculator-el.png", title: "Gold Calculator (Greek)" },
+          { src: "/gsm/sell-en.png", title: "Sell Gold/Silver (English)" },
+          { src: "/gsm/sell-el.png", title: "Sell Gold/Silver (Greek)" },
+          { src: "/gsm/stores-en.png", title: "Store Locations (English)" },
+          { src: "/gsm/stores-el.png", title: "Store Locations (Greek)" },
+          { src: "/gsm/contact-en.png", title: "Contact (English)" },
+          { src: "/gsm/contact-el.png", title: "Contact (Greek)" }
+        ]
+      },
+      2: {
+        title: "Argicon.gr",
+        images: [
+          { src: "/argicon/en-home.png", title: "Homepage (English)" },
+          { src: "/argicon/el-home.png", title: "Homepage (Greek)" },
+          { src: "/argicon/en-projects.png", title: "Projects Portfolio (English)" },
+          { src: "/argicon/el-projects.png", title: "Projects Portfolio (Greek)" },
+          { src: "/argicon/en-services.png", title: "Services (English)" },
+          { src: "/argicon/el-services.png", title: "Services (Greek)" },
+          { src: "/argicon/en-contact.png", title: "Contact (English)" },
+          { src: "/argicon/el-contact.png", title: "Contact (Greek)" }
+        ]
+      },
+      3: {
+        title: "DesignDash.gr",
+        images: [
+          { src: "/designdash/home-en.png", title: "Homepage (English)" },
+          { src: "/designdash/home-el.png", title: "Homepage (Greek)" },
+          { src: "/designdash/about-en.png", title: "About (English)" },
+          { src: "/designdash/about-el.png", title: "About (Greek)" },
+          { src: "/designdash/projects-en.png", title: "Projects (English)" },
+          { src: "/designdash/projects-el.png", title: "Projects (Greek)" },
+          { src: "/designdash/services-en.png", title: "Services (English)" },
+          { src: "/designdash/services-el.png", title: "Services (Greek)" },
+          { src: "/designdash/contact-en.png", title: "Contact (English)" },
+          { src: "/designdash/contact-el.png", title: "Contact (Greek)" }
+        ]
+      }
+    };
+
+    // Gallery state
+    let currentProject: ProjectGallery | null = null;
+    let currentLanguage: 'en' | 'gr' = 'en';
+    let currentImageIndex = 0;
+    let filteredImages: GalleryImage[] = [];
+
+    // Gallery elements
+    const modal = document.getElementById('gallery-modal') as HTMLDialogElement;
+    const modalTitle = document.getElementById('gallery-title');
+    const modalClose = document.getElementById('gallery-close');
+    const modalCounter = document.getElementById('gallery-counter');
+    const mainImage = document.getElementById('main-gallery-image') as HTMLImageElement;
+    const pageButtonsContainer = document.getElementById('gallery-page-buttons');
+    const prevBtn = document.getElementById('gallery-prev') as HTMLButtonElement;
+    const nextBtn = document.getElementById('gallery-next') as HTMLButtonElement;
+    const langButtons = document.querySelectorAll('.lang-btn');
+
+    // Open gallery buttons
+    const galleryButtons = document.querySelectorAll('.open-gallery-btn');
+    galleryButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const projectId = parseInt(button.getAttribute('data-project-id') || '1');
+        openGallery(projectId);
+      });
+    });
+
+    // Filter images by language
+    function filterImagesByLanguage(images: GalleryImage[], lang: 'en' | 'gr'): GalleryImage[] {
+      const langSuffix = lang === 'en' ? '-en.' : '-el.';
+      return images.filter(img => img.src.includes(langSuffix));
+    }
+
+    // Extract page name from image path
+    function extractPageName(imagePath: string): string {
+      const filename = imagePath.split('/').pop() || '';
+      const pageName = filename.split('-')[0]; // Get part before first dash
+      return pageName.charAt(0).toUpperCase() + pageName.slice(1); // Capitalize
+    }
+
+    // Open gallery function
+    function openGallery(projectId: number) {
+      const project = projectGalleries[projectId];
+      if (!project) {
+        console.error('Project not found:', projectId);
+        return;
+      }
+
+      currentProject = project;
+      currentLanguage = 'en'; // Start with English
+      currentImageIndex = 0;
+
+      // Set title
+      if (modalTitle) {
+        modalTitle.textContent = project.title;
+      }
+
+      // Reset language buttons
+      langButtons.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-lang') === 'en') {
+          btn.classList.add('active');
+        }
+      });
+
+      // Filter and display images
+      updateGalleryContent();
+
+      // Show modal
+      if (modal) {
+        modal.showModal();
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    // Update gallery content based on current language
+    function updateGalleryContent() {
+      if (!currentProject) return;
+
+      // Filter images by current language
+      filteredImages = filterImagesByLanguage(currentProject.images, currentLanguage);
+      
+      // Ensure current index is valid
+      if (currentImageIndex >= filteredImages.length) {
+        currentImageIndex = 0;
+      }
+
+      // Update main image
+      if (filteredImages.length > 0) {
+        setMainImage(filteredImages[currentImageIndex].src, filteredImages[currentImageIndex].title);
+      }
+
+      // Update counter
+      updateCounter();
+
+      // Create page buttons
+      createPageButtons();
+
+      // Update navigation buttons
+      updateNavigationButtons();
+    }
+
+    // Set main image
+    function setMainImage(src: string, title: string) {
+      if (mainImage) {
+        mainImage.src = src;
+        mainImage.alt = title;
+      }
+    }
+
+    // Update counter
+    function updateCounter() {
+      if (modalCounter) {
+        modalCounter.textContent = `${currentImageIndex + 1} / ${filteredImages.length}`;
+      }
+    }
+
+    // Create page buttons
+    function createPageButtons() {
+      if (!pageButtonsContainer) return;
+
+      pageButtonsContainer.innerHTML = '';
+      filteredImages.forEach((image: GalleryImage, index: number) => {
+        const pageBtn = document.createElement('button');
+        const pageName = extractPageName(image.src);
+        
+        pageBtn.className = `gallery-page-btn ${index === currentImageIndex ? 'active' : ''}`;
+        pageBtn.textContent = pageName;
+        pageBtn.addEventListener('click', () => {
+          currentImageIndex = index;
+          setMainImage(image.src, image.title);
+          updateCounter();
+          setActivePageButton(pageBtn);
+          updateNavigationButtons();
+        });
+        pageButtonsContainer.appendChild(pageBtn);
+      });
+    }
+
+    // Set active page button
+    function setActivePageButton(activeButton: Element) {
+      if (pageButtonsContainer) {
+        pageButtonsContainer.querySelectorAll('.gallery-page-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        activeButton.classList.add('active');
+      }
+    }
+
+    // Update navigation buttons
+    function updateNavigationButtons() {
+      if (prevBtn) {
+        prevBtn.disabled = currentImageIndex === 0;
+      }
+      if (nextBtn) {
+        nextBtn.disabled = currentImageIndex === filteredImages.length - 1;
+      }
+    }
+
+    // Navigate to previous image
+    function navigatePrevious() {
+      if (currentImageIndex > 0) {
+        currentImageIndex--;
+        const image = filteredImages[currentImageIndex];
+        setMainImage(image.src, image.title);
+        updateCounter();
+        updateNavigationButtons();
+        
+        // Update active page button
+        const pageButtons = pageButtonsContainer?.querySelectorAll('.gallery-page-btn');
+        if (pageButtons) {
+          pageButtons.forEach(btn => btn.classList.remove('active'));
+          pageButtons[currentImageIndex]?.classList.add('active');
+        }
+      }
+    }
+
+    // Navigate to next image
+    function navigateNext() {
+      if (currentImageIndex < filteredImages.length - 1) {
+        currentImageIndex++;
+        const image = filteredImages[currentImageIndex];
+        setMainImage(image.src, image.title);
+        updateCounter();
+        updateNavigationButtons();
+        
+        // Update active page button
+        const pageButtons = pageButtonsContainer?.querySelectorAll('.gallery-page-btn');
+        if (pageButtons) {
+          pageButtons.forEach(btn => btn.classList.remove('active'));
+          pageButtons[currentImageIndex]?.classList.add('active');
+        }
+      }
+    }
+
+    // Close gallery
+    function closeGallery() {
+      if (modal) {
+        modal.close();
+        document.body.style.overflow = 'auto';
+      }
+      currentProject = null;
+    }
+
+    // Language switcher
+    langButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const lang = btn.getAttribute('data-lang') as 'en' | 'gr';
+        if (lang && lang !== currentLanguage) {
+          currentLanguage = lang;
+          currentImageIndex = 0; // Reset to first image
+          
+          // Update active language button
+          langButtons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          
+          // Update gallery content
+          updateGalleryContent();
+        }
+      });
+    });
+
+    // Navigation event listeners
+    prevBtn?.addEventListener('click', navigatePrevious);
+    nextBtn?.addEventListener('click', navigateNext);
+
+    // Close events
+    modalClose?.addEventListener('click', closeGallery);
+    modal?.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        closeGallery();
+      }
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (modal?.hasAttribute('open')) {
+        switch (e.key) {
+          case 'Escape':
+            closeGallery();
+            break;
+          case 'ArrowLeft':
+            navigatePrevious();
+            break;
+          case 'ArrowRight':
+            navigateNext();
+            break;
+        }
+      }
+    });
+
+    // Fetch current work from GitHub
+    async function fetchCurrentWork() {
+      try {
+        const response = await fetch('https://api.github.com/users/dacrab/repos?sort=updated&per_page=6');
+        const repos = await response.json();
+        
+        const currentWorkGrid = document.getElementById('current-work-grid');
+        if (!currentWorkGrid) return;
+
+        currentWorkGrid.innerHTML = '';
+        
+        repos.slice(0, 6).forEach((repo: any) => {
+          const repoCard = document.createElement('article');
+          repoCard.className = 'current-work-card';
+          repoCard.innerHTML = `
+            <div class="work-header">
+              <h4 class="work-title">${repo.name}</h4>
+              <div class="work-stats">
+                <span class="work-language">${repo.language || 'Mixed'}</span>
+                ${repo.stargazers_count > 0 ? `<span class="work-stars">⭐ ${repo.stargazers_count}</span>` : ''}
+              </div>
+            </div>
+            <p class="work-description">${repo.description || 'No description available'}</p>
+            <div class="work-meta">
+              <span class="work-updated">Updated ${new Date(repo.updated_at).toLocaleDateString()}</span>
+              <a href="${repo.html_url}" class="work-link" target="_blank" rel="noopener noreferrer">
+                View on GitHub →
+              </a>
+            </div>
+          `;
+          currentWorkGrid.appendChild(repoCard);
+        });
+      } catch (error) {
+        console.error('Failed to fetch current work:', error);
+        const currentWorkGrid = document.getElementById('current-work-grid');
+        if (currentWorkGrid) {
+          currentWorkGrid.innerHTML = '<p class="error-message">Unable to load current projects. Please try again later.</p>';
+        }
+      }
+    }
+
+    // Load current work
+    fetchCurrentWork();
+
+    // Animation for project cards
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animate-in');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.project-card, .current-work-card').forEach(card => {
+      observer.observe(card);
+    });
+  });
+</script>

@@ -1,0 +1,153 @@
+---
+const navItems = [
+  { label: 'Home', href: '#home' },
+  { label: 'About', href: '#about' },
+  { label: 'Projects', href: '#projects' },
+  { label: 'Contact', href: '#contact' }
+];
+---
+
+<nav class="swiss-nav" id="navigation">
+  <div class="swiss-container">
+    <div class="swiss-nav-content">
+      <!-- Logo -->
+      <a href="#home" class="swiss-nav-logo">
+        DaCrab
+      </a>
+      
+      <!-- Desktop Navigation -->
+      <ul class="swiss-nav-links">
+        {navItems.map(item => (
+          <li>
+            <a href={item.href} class="swiss-nav-link" data-nav-link>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+      
+      <!-- Mobile menu button -->
+      <button class="swiss-nav-mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+    </div>
+    
+    <!-- Mobile Navigation -->
+    <div class="swiss-nav-mobile" id="mobile-nav">
+      <ul class="swiss-nav-mobile-links">
+        {navItems.map(item => (
+          <li>
+            <a href={item.href} class="swiss-nav-mobile-link" data-nav-link>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+
+<script>
+  // Navigation functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.getElementById('navigation');
+    const mobileToggle = document.getElementById('mobile-toggle');
+    const mobileNav = document.getElementById('mobile-nav');
+    const navLinks = document.querySelectorAll('[data-nav-link]');
+    
+    // Scroll detection for nav background
+    let scrolled = false;
+    
+    function updateNavBackground() {
+      const shouldBeScrolled = window.scrollY > 20;
+      if (shouldBeScrolled !== scrolled) {
+        scrolled = shouldBeScrolled;
+        nav?.classList.toggle('scrolled', scrolled);
+      }
+    }
+    
+    window.addEventListener('scroll', updateNavBackground, { passive: true });
+    updateNavBackground();
+    
+    // Mobile menu toggle
+    mobileToggle?.addEventListener('click', () => {
+      const isActive = mobileToggle.classList.contains('active');
+      mobileToggle.classList.toggle('active');
+      mobileNav?.classList.toggle('active');
+      
+      // Prevent scroll when menu is open
+      document.body.style.overflow = isActive ? '' : 'hidden';
+    });
+    
+    // Smooth scrolling and active link detection
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = link.getAttribute('href');
+        const target = href ? document.querySelector(href) : null;
+        
+        if (target) {
+          // Close mobile menu
+          mobileToggle?.classList.remove('active');
+          mobileNav?.classList.remove('active');
+          document.body.style.overflow = '';
+          
+          // Smooth scroll
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+          
+          // Update active link
+          updateActiveLink(href || null);
+        }
+      });
+    });
+    
+    // Update active link based on scroll position
+    function updateActiveLink(activeHref: string | null = null) {
+      if (activeHref) {
+        navLinks.forEach(link => {
+          link.classList.toggle('active', link.getAttribute('href') === activeHref);
+        });
+        return;
+      }
+      
+      const sections = ['#home', '#about', '#projects', '#contact'];
+      let current = '#home';
+      
+      for (const section of sections) {
+        const element = document.querySelector(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          if (rect.top <= 100) {
+            current = section;
+          }
+        }
+      }
+      
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === current);
+      });
+    }
+    
+    // Update active link on scroll
+    let ticking = false;
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateActiveLink();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+    
+    window.addEventListener('scroll', onScroll, { passive: true });
+    updateActiveLink();
+  });
+</script>
