@@ -1,74 +1,75 @@
 # 🚀 Modern Portfolio Website
 
-A professional portfolio website built with cutting-edge technologies, featuring Swiss Style design principles, responsive layouts, and dynamic GitHub repository integration.
+A professional portfolio website built with Astro, featuring Swiss Style design principles, responsive layouts, dynamic GitHub integration, and interactive project galleries.
 
-![Next.js](https://img.shields.io/badge/Next.js-15.2.4-black)
-![React](https://img.shields.io/badge/React-19.0.0-blue)
+![Astro](https://img.shields.io/badge/Astro-5.13.2-FF5D01)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7.2-blue)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-4.0.0-38B2AC)
-![Framer Motion](https://img.shields.io/badge/Framer_Motion-12.6.2-purple)
+![Lightning CSS](https://img.shields.io/badge/Lightning_CSS-1.30.1-yellow)
+![React](https://img.shields.io/badge/React-19.1.0-blue)
 
 ## ✨ Features
 
-- **📱 Fully Responsive Design**: Optimized for all devices from mobile to desktop
 - **🇨🇭 Swiss Style Design**: Minimalist, clean layouts with strong typography and geometric elements
-- **🎭 Stunning Animations**: Smooth transitions and eye-catching effects powered by Framer Motion
-- **💻 GitHub Integration**: Automatically fetches and displays repositories as showcased projects
-- **🔄 Dynamic Project Showcase**: Featured projects section with custom projects and auto-populated GitHub repositories
-- **🌟 Interactive UI Elements**: Engaging user experience with hover effects and responsive interactions
-- **🌙 Modern Aesthetics**: Clean, contemporary design using Tailwind CSS and custom styling
-- **🖌️ Custom Animation System**: Sophisticated animation utilities for consistent motion across the site
-- **👁️ Intersection Observer**: Elements animate as they enter the viewport for a dynamic experience
+- **📱 Fully Responsive Design**: Optimized for all devices from mobile to desktop
+- **🖼️ Interactive Project Gallery**: Modal galleries with thumbnails for each project
+- **📥 CV Download Dropdown**: Elegant dropdown with English and Greek CV options
+- **💻 Live GitHub Integration**: Automatically fetches and displays current repositories
+- **🎭 Smooth Animations**: Intersection Observer-based animations and CSS transitions
+- **🌙 Dark Mode Support**: Automatic dark/light theme detection
+- **⚡ Lightning Fast**: Built with Astro for optimal performance
 - **🔍 SEO Optimized**: Meta tags and semantic structure for improved search engine visibility
+- **🎨 Professional Contact Section**: Streamlined social media and contact information
 
 ## 🔥 Featured Projects
 
-The portfolio showcases my most significant projects, including:
+The portfolio showcases professional projects with interactive galleries:
+
+### 🏆 Silver and Gold Money
+A modern pawn shop landing page with services like loans, gold/silver trading, and calculator tools. Built with Svelte and SvelteKit.
+- **Gallery**: 8 pages including home, services, calculators, and contact
 
 ### 🏢 Argicon.gr
-A sophisticated technical construction company website built with Next.js, TypeScript, and Tailwind CSS, featuring multi-language support, responsive design, and elegant animations.
+Technical construction company website with professional portfolio showcase and service offerings.
+- **Gallery**: 4 pages featuring homepage, projects, services, and contact
 
 ### 🎨 DesignDash.gr
-A comprehensive platform for a technical construction firm with project galleries, technical specifications, and service offerings.
+Digital construction platform with comprehensive project galleries and technical specifications.
+- **Gallery**: 5 pages showcasing complete business solutions
 
-### 📊 Proteas Dashboard
-A warehouse management system for sports facilities with role-based access control, built with Next.js, Supabase, and TypeScript.
+## 🛠️ Tech Stack
 
-## 🛠️ Technologies Used
-
-- **[Next.js 15.2.4](https://nextjs.org/)**: React framework with optimized rendering and routing
-- **[React 19.0.0](https://react.dev/)**: UI library for building component-based interfaces
+- **[Astro 5.13.2](https://astro.build/)**: Static site generator with optimal performance
+- **[React 19.1.0](https://react.dev/)**: Component library for interactive elements  
 - **[TypeScript 5.7.2](https://www.typescriptlang.org/)**: Type safety and enhanced developer experience
-- **[Tailwind CSS 4.0.0](https://tailwindcss.com/)**: Utility-first CSS framework for rapid UI development
-- **[Framer Motion 12.6.2](https://www.framer.com/motion/)**: Animation library for fluid transitions
-- **[React Intersection Observer](https://github.com/thebuilder/react-intersection-observer)**: Intersection detection for scroll animations
+- **[Lightning CSS 1.30.1](https://lightningcss.dev/)**: Fast CSS bundling and optimization
+- **[React Intersection Observer](https://github.com/thebuilder/react-intersection-observer)**: Scroll-based animations
 
-## 🇨🇭 Swiss Style Design
+## 🇨🇭 Swiss Style Design Principles
 
-This portfolio embraces Swiss Style (International Typographic Style) design principles:
+This portfolio embraces Swiss Style (International Typographic Style) design:
 
-- **Bold Typography**: Clean, readable type hierarchy with proper spacing
-- **Grid-Based Layout**: Structured organization of content using a grid system
-- **Minimal Geometric Elements**: Simple shapes and clean lines in the design
-- **Strategic Use of Color**: Limited color palette with strong accent colors
-- **Asymmetrical Balance**: Dynamic layouts with visual weight distribution
-- **White Space**: Generous use of negative space to create visual hierarchy
-- **Sans-Serif Typography**: Modern, clean font choices prioritizing readability
+- **Clean Typography**: Inter font with enhanced rendering for sharp, readable text
+- **Grid-Based Layout**: Structured organization using precise grid systems
+- **Geometric Elements**: Simple shapes and clean lines throughout the design
+- **Strategic Color Use**: Limited palette with red accent color (#ff3333)
+- **Asymmetrical Balance**: Dynamic layouts with careful visual weight distribution
+- **Generous White Space**: Negative space creating clear visual hierarchy
+- **Functional Aesthetics**: Every element serves a purpose
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
 - Node.js (18.x or later)
-- npm or yarn
+- npm, yarn, or bun
 
 ### Installation
 
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/dacrab/portfolio.git
-cd portfolio
+git clone https://github.com/dacrab/dacrab.github.io.git
+cd dacrab.github.io
 ```
 
 2. **Install dependencies:**
@@ -77,98 +78,119 @@ cd portfolio
 npm install
 # or
 yarn install
+# or  
+bun install
 ```
 
-3. **Set up environment variables:**
-
-Create a `.env.local` file in the root directory:
-
-```
-NEXT_PUBLIC_GITHUB_USERNAME=your-github-username
-GITHUB_ACCESS_TOKEN=your-github-token
-```
-
-4. **Run the development server:**
+3. **Run the development server:**
 
 ```bash
 npm run dev
 # or
 yarn dev
+# or
+bun dev
 ```
 
-5. **Open [http://localhost:3000](http://localhost:3000)** to see your portfolio
+4. **Open [http://localhost:4321](http://localhost:4321)** to see the portfolio
+
+### Build for Production
+
+```bash
+npm run build
+npm run preview
+```
 
 ## 📂 Project Structure
 
 ```
 src/
-├── app/                 # Next.js App Router components
-│   ├── api/             # API routes, including GitHub integration
-│   ├── layout.tsx       # Root layout with metadata and fonts
-│   ├── page.tsx         # Main homepage
-│   └── globals.css      # Global styles and animations
-├── components/          # Reusable UI components
-│   ├── About/           # About section components
-│   ├── Contact/         # Contact form and information
-│   ├── Experience/      # Work experience timeline
-│   ├── Hero/            # Hero section elements
-│   ├── Navbar/          # Navigation components
-│   ├── Projects/        # Project showcase components
-│   └── ui/              # UI primitives and shared elements
-├── hooks/               # Custom React hooks
-│   └── useGitHubProjects.ts  # GitHub data fetching
-├── utils/               # Utility functions
-│   └── animations.ts    # Animation helpers
-└── types/               # TypeScript type definitions
+├── layouts/
+│   └── Layout.astro         # Main layout with metadata and fonts
+├── pages/
+│   └── index.astro          # Homepage
+├── components/
+│   ├── Navigation.astro     # Fixed navigation with scroll effects
+│   ├── Hero.astro          # Hero section with CV dropdown
+│   ├── About.astro         # About section with skills
+│   ├── Projects.astro      # Projects with galleries and GitHub API
+│   └── Contact.astro       # Contact section with social links
+├── styles/
+│   └── globals.css         # All styles with CSS variables
+└── public/
+    ├── cv/                 # CV files (English and Greek)
+    ├── designdash/         # DesignDash project screenshots  
+    ├── gsm/               # GSM project screenshots
+    └── argicon/           # Argicon project screenshots
 ```
 
-## 🌐 GitHub Integration
+## 🎨 Key Features
 
-This portfolio features secure GitHub integration to showcase your repositories:
+### Interactive Project Gallery
 
-### How it works
+Each project features a modal gallery with:
+- Full-screen image viewing
+- Thumbnail navigation
+- Keyboard controls (ESC to close)
+- Smooth animations and transitions
 
-1. The `useGitHubProjects` hook fetches repository data through a secure server-side API route
-2. Projects are transformed and displayed in the "More Projects" section
-3. Featured projects (custom websites you've built) are showcased at the top
+### CV Download Dropdown
 
-### Troubleshooting
+Professional CV download with:
+- Flag indicators for language selection
+- Smooth dropdown animations
+- Click-outside-to-close functionality
 
-If you encounter GitHub API rate limits:
+### GitHub Integration
 
-1. Generate a token at https://github.com/settings/tokens
-2. Add it to your `.env.local` file
-3. Restart the development server
+Live repository data featuring:
+- Most recently updated repositories
+- Language indicators and star counts
+- Direct links to GitHub projects
+- Error handling for API failures
 
-## 🎨 Customization
+### Enhanced Typography
 
-### Featured Projects
+Sharp, professional text rendering with:
+- Inter font family for optimal readability
+- Advanced font feature settings
+- Antialiased text rendering
+- Proper kerning and ligatures
 
-Edit the `customProjects` array in `src/components/Projects.tsx` to showcase your own work:
+## 🌐 GitHub API Integration
 
-```typescript
-const customProjects = useMemo(() => [
-  {
-    id: 91,
-    title: "Your Project",
-    description: "Description of your amazing project",
-    tags: ["TypeScript", "Next.js", "Tailwind CSS", "React"],
-    link: "https://yourproject.com",
-  },
-  // Add more projects
-], []);
+The portfolio automatically fetches your latest repositories:
+
+```javascript
+// Fetches 6 most recent repositories
+const response = await fetch('https://api.github.com/users/dacrab/repos?sort=updated&per_page=6');
 ```
 
-### Styling
-
-This project uses Tailwind CSS for styling. Customize the theme in `tailwind.config.js`.
+No API token required for public repositories, but rate limits apply.
 
 ## 📱 Responsive Design
 
-The portfolio is fully responsive with optimized layouts for:
-- Mobile devices (< 640px)
-- Tablets (640px - 1024px)
+Fully responsive with breakpoints for:
+- Mobile devices (< 768px)
+- Tablets (768px - 1024px)  
 - Desktops (> 1024px)
+
+## 🎭 Animations & Interactions
+
+- Intersection Observer for scroll-triggered animations
+- CSS transitions for smooth hover effects
+- Gallery modal with backdrop blur
+- Navigation scroll effects
+- Staggered element animations
+
+## 🌙 Dark Mode Support
+
+Automatic theme detection using:
+```css
+@media (prefers-color-scheme: dark) {
+  /* Dark theme variables */
+}
+```
 
 ## 📄 License
 
@@ -176,7 +198,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
-- [Next.js](https://nextjs.org/) - The React framework for production
-- [Framer Motion](https://www.framer.com/motion/) - Animation library
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
-- [Google Fonts](https://fonts.google.com/) - Typography
+- [Astro](https://astro.build/) - The web framework for content-driven websites
+- [Lightning CSS](https://lightningcss.dev/) - Fast CSS processing  
+- [Inter Font](https://rsms.me/inter/) - Professional typography
+- [React](https://react.dev/) - Component library
+- Swiss Design Movement - Design inspiration
+
+---
+
+Built with ❤️ by DaCrab using Swiss design principles and modern web technologies.
