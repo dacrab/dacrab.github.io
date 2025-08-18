@@ -1,0 +1,64 @@
+version: 2
+updates:
+  # Enable version updates for npm dependencies
+  - package-ecosystem: "bun"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "dacrab"
+    assignees:
+      - "dacrab"
+    commit-message:
+      prefix: "bun"
+      prefix-development: "bun-dev"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "bun"
+    # Group minor and patch updates to reduce noise
+    groups:
+      astro:
+        patterns:
+          - "astro*"
+          - "@astrojs/*"
+      react:
+        patterns:
+          - "react*"
+          - "@types/react*"
+      typescript:
+        patterns:
+          - "typescript*"
+          - "@typescript-eslint/*"
+          - "@types/*"
+      eslint:
+        patterns:
+          - "eslint*"
+          - "@eslint/*"
+      development:
+        dependency-type: "development"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "dacrab"
+    assignees:
+      - "dacrab"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "github-actions"
+      - "ci"
