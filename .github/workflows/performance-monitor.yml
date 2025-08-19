@@ -1,0 +1,78 @@
+name: Performance Monitor
+
+on:
+  schedule:
+    # Run weekly performance check
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  performance-audit:
+    name: Performance Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache Bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build and measure performance
+        run: |
+          echo "=== Build Performance Report ===" > performance-report.txt
+          echo "Date: $(date)" >> performance-report.txt
+          echo "" >> performance-report.txt
+          
+          # Measure build time
+          start_time=$(date +%s)
+          bun run build
+          end_time=$(date +%s)
+          build_time=$((end_time - start_time))
+          
+          echo "Build time: ${build_time}s" >> performance-report.txt
+          
+          # Check bundle size
+          if [ -d "dist" ]; then
+            total_size=$(du -sh dist | cut -f1)
+            echo "Bundle size: $total_size" >> performance-report.txt
+          fi
+          
+          # Check dependency count
+          dep_count=$(bun pm ls --json 2>/dev/null | jq '. | length' || echo "N/A")
+          echo "Dependencies: $dep_count packages" >> performance-report.txt
+          
+          cat performance-report.txt
+
+      - name: Create performance issue (if needed)
+        if: ${{ always() }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            // Read performance report
+            let report = '';
+            try {
+              report = fs.readFileSync('performance-report.txt', 'utf8');
+            } catch (e) {
+              report = 'Performance report generation failed';
+            }
+            
+            // Create issue only if there are performance concerns
+            // This is a placeholder - you can add specific thresholds
+            console.log('Performance Report:', report);

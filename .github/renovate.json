@@ -65,7 +65,9 @@
   "bun": {
     "enabled": true
   },
-  "prHourlyLimit": 2,
-  "prConcurrentLimit": 3,
-  "branchConcurrentLimit": 5
+  "prHourlyLimit": 3,
+  "prConcurrentLimit": 2,
+  "branchConcurrentLimit": 3,
+  "stabilityDays": 3,
+  "platformAutomerge": true
 }
