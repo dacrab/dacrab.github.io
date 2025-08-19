@@ -5,4 +5,13 @@ import react from '@astrojs/react';
 export default defineConfig({
   site: 'https://dacrab.github.io',
   base: '/',
+  integrations: [react()],
+  build: {
+    assets: 'assets'
+  },
+  vite: {
+    css: {
+      transformer: 'lightningcss'
+    }
+  }
 });
