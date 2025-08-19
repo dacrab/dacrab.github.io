@@ -37,25 +37,25 @@ jobs:
           echo "=== Build Performance Report ===" > performance-report.txt
           echo "Date: $(date)" >> performance-report.txt
           echo "" >> performance-report.txt
-          
+
           # Measure build time
           start_time=$(date +%s)
           bun run build
           end_time=$(date +%s)
           build_time=$((end_time - start_time))
-          
+
           echo "Build time: ${build_time}s" >> performance-report.txt
-          
+
           # Check bundle size
           if [ -d "dist" ]; then
             total_size=$(du -sh dist | cut -f1)
             echo "Bundle size: $total_size" >> performance-report.txt
           fi
-          
+
           # Check dependency count
           dep_count=$(bun pm ls --json 2>/dev/null | jq '. | length' || echo "N/A")
           echo "Dependencies: $dep_count packages" >> performance-report.txt
-          
+
           cat performance-report.txt
 
       - name: Create performance issue (if needed)
@@ -64,7 +64,7 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            
+
             // Read performance report
             let report = '';
             try {
@@ -72,7 +72,7 @@ jobs:
             } catch (e) {
               report = 'Performance report generation failed';
             }
-            
+
             // Create issue only if there are performance concerns
             // This is a placeholder - you can add specific thresholds
             console.log('Performance Report:', report);

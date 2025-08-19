@@ -1,9 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended",
-    "npm:unpublishSafe"
-  ],
+  "extends": ["config:recommended", "npm:unpublishSafe"],
   "schedule": ["before 6am on monday"],
   "timezone": "Europe/Athens",
   "labels": ["dependencies"],
@@ -36,19 +33,19 @@
     },
     {
       "description": "Group TypeScript and ESLint packages",
-      "matchPackageNames": ["typescript", "@typescript-eslint/**", "eslint", "eslint-**"],
+      "matchPackageNames": [
+        "typescript",
+        "@typescript-eslint/**",
+        "eslint",
+        "eslint-**"
+      ],
       "groupName": "Linting packages",
       "groupSlug": "linting"
     },
     {
       "description": "Automerge patch updates for trusted packages",
       "matchUpdateTypes": ["patch"],
-      "matchPackageNames": [
-        "astro",
-        "@astrojs/**",
-        "typescript",
-        "@types/**"
-      ],
+      "matchPackageNames": ["astro", "@astrojs/**", "typescript", "@types/**"],
       "automerge": true,
       "automergeType": "pr"
     }
