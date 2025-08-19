@@ -60,7 +60,7 @@ block_on_failing_checks = true
 
 # Required status checks (customize based on your CI)
 required_checks = [
-    "CI Pipeline"
+    "Quality Checks & Build"
 ]
 
 [notification]
