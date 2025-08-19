@@ -9,9 +9,4 @@ export default defineConfig({
   build: {
     assets: 'assets',
   },
-  vite: {
-    css: {
-      transformer: 'lightningcss',
-    },
-  },
 });
