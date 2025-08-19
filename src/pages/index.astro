@@ -17,21 +17,19 @@ import Contact from '../components/Contact.astro';
   </main>
 </Layout>
 
-
-
 <script>
   // Global app initialization
   document.addEventListener('DOMContentLoaded', () => {
     // Add loading complete class to body
     document.body.classList.add('loaded');
-    
+
     // Performance optimization: preload critical resources
     const criticalImages = [
       '/gsm/home-en.png',
       '/argicon/en-home.png',
-      '/designdash/home-en.png'
+      '/designdash/home-en.png',
     ];
-    
+
     criticalImages.forEach(src => {
       const link = document.createElement('link');
       link.rel = 'preload';
@@ -39,61 +37,67 @@ import Contact from '../components/Contact.astro';
       link.href = src;
       document.head.appendChild(link);
     });
-    
+
     // Smooth scrolling enhancement for better control
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', (e) => {
+      anchor.addEventListener('click', e => {
         e.preventDefault();
         const link = e.target as HTMLAnchorElement;
         const targetId = link.getAttribute('href')?.substring(1);
-        const targetElement = targetId ? document.getElementById(targetId) : null;
-        
+        const targetElement = targetId
+          ? document.getElementById(targetId)
+          : null;
+
         if (targetElement) {
           const navHeight = 80; // Height of fixed navigation
           const elementPosition = targetElement.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - navHeight;
-          
+          const offsetPosition =
+            elementPosition + window.pageYOffset - navHeight;
+
           window.scrollTo({
             top: offsetPosition,
-            behavior: 'smooth'
+            behavior: 'smooth',
           });
         }
       });
     });
-    
+
     // Add intersection observer for revealing content
     const revealElements = document.querySelectorAll('section');
-    const revealObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
-        }
-      });
-    }, {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    });
-    
+    const revealObserver = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px',
+      }
+    );
+
     revealElements.forEach(el => {
       el.classList.add('reveal-element');
       revealObserver.observe(el);
     });
-    
+
     // Performance monitoring
     if ('PerformanceObserver' in window) {
-      const perfObserver = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
+      const perfObserver = new PerformanceObserver(list => {
+        list.getEntries().forEach(entry => {
           // Log performance metrics for development
           if (entry.entryType === 'navigation') {
             const navEntry = entry as PerformanceNavigationTiming;
-            console.log(`Page loaded in ${navEntry.loadEventEnd - navEntry.fetchStart}ms`);
+            console.log(
+              `Page loaded in ${navEntry.loadEventEnd - navEntry.fetchStart}ms`
+            );
           }
         });
       });
-      
+
       perfObserver.observe({ entryTypes: ['navigation'] });
     }
   });
 </script>
-
-

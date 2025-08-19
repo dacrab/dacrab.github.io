@@ -18,4 +18,4 @@ jobs:
         uses: hmarr/auto-approve-action@v4
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          review-message: "Auto-approved Renovate dependency update"
+          review-message: 'Auto-approved Renovate dependency update'

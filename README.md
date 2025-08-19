@@ -1,6 +1,7 @@
 # 🚀 Modern Portfolio Website
 
-A professional portfolio website built with Astro, featuring Swiss Style design principles, responsive layouts, dynamic GitHub integration, and interactive project galleries.
+A professional portfolio website built with Astro, featuring Swiss Style design principles,
+responsive layouts, dynamic GitHub integration, and interactive project galleries.
 
 ![Astro](https://img.shields.io/badge/Astro-5.13.2-FF5D01)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7.2-blue)
@@ -25,24 +26,33 @@ A professional portfolio website built with Astro, featuring Swiss Style design 
 The portfolio showcases professional projects with interactive galleries:
 
 ### 🏆 Silver and Gold Money
-A modern pawn shop landing page with services like loans, gold/silver trading, and calculator tools. Built with Svelte and SvelteKit.
+
+A modern pawn shop landing page with services like loans, gold/silver trading, and calculator tools.
+Built with Svelte and SvelteKit.
+
 - **Gallery**: 8 pages including home, services, calculators, and contact
 
 ### 🏢 Argicon.gr
+
 Technical construction company website with professional portfolio showcase and service offerings.
+
 - **Gallery**: 4 pages featuring homepage, projects, services, and contact
 
 ### 🎨 DesignDash.gr
+
 Digital construction platform with comprehensive project galleries and technical specifications.
+
 - **Gallery**: 5 pages showcasing complete business solutions
 
 ## 🛠️ Tech Stack
 
 - **[Astro 5.13.2](https://astro.build/)**: Static site generator with optimal performance
-- **[React 19.1.0](https://react.dev/)**: Component library for interactive elements  
-- **[TypeScript 5.7.2](https://www.typescriptlang.org/)**: Type safety and enhanced developer experience
+- **[React 19.1.0](https://react.dev/)**: Component library for interactive elements
+- **[TypeScript 5.7.2](https://www.typescriptlang.org/)**: Type safety and enhanced developer
+  experience
 - **[Lightning CSS 1.30.1](https://lightningcss.dev/)**: Fast CSS bundling and optimization
-- **[React Intersection Observer](https://github.com/thebuilder/react-intersection-observer)**: Scroll-based animations
+- **[React Intersection Observer](https://github.com/thebuilder/react-intersection-observer)**:
+  Scroll-based animations
 
 ## 🇨🇭 Swiss Style Design Principles
 
@@ -78,7 +88,7 @@ cd dacrab.github.io
 npm install
 # or
 yarn install
-# or  
+# or
 bun install
 ```
 
@@ -119,7 +129,7 @@ src/
 │   └── globals.css         # All styles with CSS variables
 └── public/
     ├── cv/                 # CV files (English and Greek)
-    ├── designdash/         # DesignDash project screenshots  
+    ├── designdash/         # DesignDash project screenshots
     ├── gsm/               # GSM project screenshots
     └── argicon/           # Argicon project screenshots
 ```
@@ -129,6 +139,7 @@ src/
 ### Interactive Project Gallery
 
 Each project features a modal gallery with:
+
 - Full-screen image viewing
 - Thumbnail navigation
 - Keyboard controls (ESC to close)
@@ -137,6 +148,7 @@ Each project features a modal gallery with:
 ### CV Download Dropdown
 
 Professional CV download with:
+
 - Flag indicators for language selection
 - Smooth dropdown animations
 - Click-outside-to-close functionality
@@ -144,6 +156,7 @@ Professional CV download with:
 ### GitHub Integration
 
 Live repository data featuring:
+
 - Most recently updated repositories
 - Language indicators and star counts
 - Direct links to GitHub projects
@@ -152,6 +165,7 @@ Live repository data featuring:
 ### Enhanced Typography
 
 Sharp, professional text rendering with:
+
 - Inter font family for optimal readability
 - Advanced font feature settings
 - Antialiased text rendering
@@ -171,8 +185,9 @@ No API token required for public repositories, but rate limits apply.
 ## 📱 Responsive Design
 
 Fully responsive with breakpoints for:
+
 - Mobile devices (< 768px)
-- Tablets (768px - 1024px)  
+- Tablets (768px - 1024px)
 - Desktops (> 1024px)
 
 ## 🎭 Animations & Interactions
@@ -186,6 +201,7 @@ Fully responsive with breakpoints for:
 ## 🌙 Dark Mode Support
 
 Automatic theme detection using:
+
 ```css
 @media (prefers-color-scheme: dark) {
   /* Dark theme variables */
@@ -199,7 +215,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - [Astro](https://astro.build/) - The web framework for content-driven websites
-- [Lightning CSS](https://lightningcss.dev/) - Fast CSS processing  
+- [Lightning CSS](https://lightningcss.dev/) - Fast CSS processing
 - [Inter Font](https://rsms.me/inter/) - Professional typography
 - [React](https://react.dev/) - Component library
 - Swiss Design Movement - Design inspiration

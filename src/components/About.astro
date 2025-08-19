@@ -9,34 +9,38 @@
       <div class="swiss-section-title">About</div>
       <h2 class="swiss-heading-2">Clean Code, Clean Design</h2>
       <p class="swiss-section-description">
-        I believe in the power of simplicity and the beauty of functional design.
+        I believe in the power of simplicity and the beauty of functional
+        design.
       </p>
     </div>
-    
+
     <!-- About content -->
     <div class="swiss-about-content">
       <!-- Main about text -->
       <div class="about-text">
         <div class="about-intro">
           <p class="swiss-body-large">
-            I'm a passionate <strong>web developer</strong> who draws inspiration from Swiss design principles—
-            emphasizing clarity, functionality, and purposeful aesthetics in every project I create.
+            I'm a passionate <strong>web developer</strong> who draws inspiration
+            from Swiss design principles— emphasizing clarity, functionality, and
+            purposeful aesthetics in every project I create.
           </p>
         </div>
-        
+
         <div class="about-details">
           <p class="swiss-body">
-            With a background in modern web technologies and a keen eye for detail, I specialize in 
-            creating digital experiences that are not only visually appealing but also highly functional 
-            and user-centered.
+            With a background in modern web technologies and a keen eye for
+            detail, I specialize in creating digital experiences that are not
+            only visually appealing but also highly functional and
+            user-centered.
           </p>
-          
+
           <p class="swiss-body">
-            My approach combines clean code with intuitive design, ensuring that every project delivers 
-            both technical excellence and exceptional user experience.
+            My approach combines clean code with intuitive design, ensuring that
+            every project delivers both technical excellence and exceptional
+            user experience.
           </p>
         </div>
-        
+
         <!-- Skills grid -->
         <div class="skills-section">
           <h3 class="swiss-heading-4">Core Technologies</h3>
@@ -68,27 +72,33 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Visual element -->
       <div class="about-visual">
         <div class="swiss-principles">
           <div class="principle-item">
             <div class="principle-number">01</div>
             <h4 class="principle-title">Clarity</h4>
-            <p class="principle-description">Clear communication through purposeful design choices</p>
+            <p class="principle-description">
+              Clear communication through purposeful design choices
+            </p>
           </div>
           <div class="principle-item">
             <div class="principle-number">02</div>
             <h4 class="principle-title">Function</h4>
-            <p class="principle-description">Form follows function in every design decision</p>
+            <p class="principle-description">
+              Form follows function in every design decision
+            </p>
           </div>
           <div class="principle-item">
             <div class="principle-number">03</div>
             <h4 class="principle-title">Precision</h4>
-            <p class="principle-description">Attention to detail in both code and visual execution</p>
+            <p class="principle-description">
+              Attention to detail in both code and visual execution
+            </p>
           </div>
         </div>
-        
+
         <!-- Decorative Swiss elements -->
         <div class="about-decoration">
           <div class="decoration-grid">
@@ -108,7 +118,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Background decorative elements -->
   <div class="swiss-decoration swiss-decoration-line about-line-1"></div>
   <div class="swiss-decoration swiss-decoration-square about-square-1"></div>
@@ -119,19 +129,21 @@
     // Intersection Observer for animations
     const observerOptions = {
       threshold: 0.2,
-      rootMargin: '0px 0px -50px 0px'
+      rootMargin: '0px 0px -50px 0px',
     };
-    
-    const observer = new IntersectionObserver((entries) => {
+
+    const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('animate-in');
         }
       });
     }, observerOptions);
-    
+
     // Observe elements for animation
-    const animateElements = document.querySelectorAll('.principle-item, .skill-item');
+    const animateElements = document.querySelectorAll(
+      '.principle-item, .skill-item'
+    );
     animateElements.forEach(el => {
       const element = el as HTMLElement;
       element.style.opacity = '0';
@@ -139,7 +151,7 @@
       element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
       observer.observe(el);
     });
-    
+
     // Add animation styles
     const style = document.createElement('style');
     style.textContent = `
@@ -149,11 +161,11 @@
       }
     `;
     document.head.appendChild(style);
-    
+
     // Animate grid cells
     const gridCells = document.querySelectorAll('.grid-cell');
     let cellIndex = 0;
-    
+
     setInterval(() => {
       gridCells.forEach(cell => cell.classList.remove('active'));
       gridCells[cellIndex]?.classList.add('active');

@@ -7,7 +7,7 @@ import astro from 'eslint-plugin-astro';
 export default [
   // Base ESLint recommended rules
   eslint.configs.recommended,
-  
+
   // TypeScript configuration
   {
     files: ['**/*.{js,ts,tsx,mjs}'],
@@ -22,12 +22,15 @@ export default [
       '@typescript-eslint': tseslint,
     },
     rules: {
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_' },
+      ],
       '@typescript-eslint/no-explicit-any': 'warn',
       'no-console': 'warn',
     },
   },
-  
+
   // Astro configuration
   {
     files: ['**/*.astro'],
@@ -47,7 +50,7 @@ export default [
       'astro/no-set-text-directive': 'error',
     },
   },
-  
+
   // Global ignores
   {
     ignores: [

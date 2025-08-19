@@ -7,11 +7,11 @@ export default defineConfig({
   base: '/',
   integrations: [react()],
   build: {
-    assets: 'assets'
+    assets: 'assets',
   },
   vite: {
     css: {
-      transformer: 'lightningcss'
-    }
-  }
+      transformer: 'lightningcss',
+    },
+  },
 });
