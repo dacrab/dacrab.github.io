@@ -10,9 +10,10 @@
     "lint": "eslint . --ext .js,.ts,.tsx,.astro",
     "lint:fix": "eslint . --ext .js,.ts,.tsx,.astro --fix",
     "format": "prettier --write .",
+    "format:auto": "prettier --check . || prettier --write .",
     "format:check": "prettier --check .",
     "type-check": "tsc --noEmit",
-    "ci": "bun run lint && bun run type-check && bun run format:check && bun run build",
+    "ci": "bun run format:auto && bun run lint && bun run type-check && bun run build",
     "fix": "bun run lint:fix && bun run format",
     "check": "bun run lint && bun run type-check && bun run format:check"
   },

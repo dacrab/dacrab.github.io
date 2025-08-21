@@ -267,16 +267,24 @@ const projects = [
     let filteredImages: GalleryItem[] = [];
 
     // Gallery elements
-    const modal = document.getElementById('gallery-modal') as HTMLDialogElement | null;
+    const modal = document.getElementById(
+      'gallery-modal'
+    ) as HTMLDialogElement | null;
     const modalTitle = document.getElementById('gallery-title');
     const modalClose = document.getElementById('gallery-close');
     const modalCounter = document.getElementById('gallery-counter');
-    const mainImage = document.getElementById('main-gallery-image') as HTMLImageElement | null;
+    const mainImage = document.getElementById(
+      'main-gallery-image'
+    ) as HTMLImageElement | null;
     const pageButtonsContainer = document.getElementById(
       'gallery-page-buttons'
     );
-    const prevBtn = document.getElementById('gallery-prev') as HTMLButtonElement | null;
-    const nextBtn = document.getElementById('gallery-next') as HTMLButtonElement | null;
+    const prevBtn = document.getElementById(
+      'gallery-prev'
+    ) as HTMLButtonElement | null;
+    const nextBtn = document.getElementById(
+      'gallery-next'
+    ) as HTMLButtonElement | null;
     const langButtons = document.querySelectorAll('.lang-btn');
 
     // Observer reference (initialized later)
@@ -295,16 +303,24 @@ const projects = [
           imagesRaw = [];
         }
         const images: GalleryItem[] = Array.isArray(imagesRaw)
-          ? (imagesRaw as any[]).map((it: any) => ({ image: it.image ?? it.src ?? '', title: it.title }))
+          ? (imagesRaw as any[]).map((it: any) => ({
+              image: it.image ?? it.src ?? '',
+              title: it.title,
+            }))
           : [];
         openGallery(title, images);
       });
     });
 
     // Filter images by language
-    function filterImagesByLanguage(images: GalleryItem[], lang: 'en' | 'gr'): GalleryItem[] {
+    function filterImagesByLanguage(
+      images: GalleryItem[],
+      lang: 'en' | 'gr'
+    ): GalleryItem[] {
       const langSuffix = lang === 'en' ? '-en.' : '-el.';
-      return images.filter((img: GalleryItem) => (img.image || '').includes(langSuffix));
+      return images.filter((img: GalleryItem) =>
+        (img.image || '').includes(langSuffix)
+      );
     }
 
     // Extract page name from image path

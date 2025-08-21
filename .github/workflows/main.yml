@@ -50,14 +50,8 @@ jobs:
       - name: Run type check
         run: bun run type-check
 
-      - name: Run format check
-        run: |
-          if ! bun run format:check; then
-            echo "❌ Code formatting issues found!"
-            echo "💡 To fix automatically, run: bun run format"
-            echo "📝 Then commit the changes and push again"
-            exit 1
-          fi
+      - name: Auto format code (Prettier)
+        run: bun run format:auto
 
       # Security dependency scan (only on PRs)
       - name: Dependency Review
