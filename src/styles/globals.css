@@ -10,30 +10,45 @@
 }
 
 :root {
-  /* Swiss Color System */
-  --swiss-red: #ff3333;
-  --swiss-black: #1a1a1a;
-  --swiss-white: #ffffff;
-  --swiss-gray-100: #f8f9fa;
-  --swiss-gray-200: #e9ecef;
-  --swiss-gray-300: #dee2e6;
-  --swiss-gray-400: #ced4da;
-  --swiss-gray-500: #adb5bd;
-  --swiss-gray-600: #6c757d;
-  --swiss-gray-700: #495057;
-  --swiss-gray-800: #343a40;
-  --swiss-gray-900: #212529;
+  /* Nord Color Palette - Polar Night (Dark) */
+  --nord-polar-night-1: #2e3440; /* Darkest */
+  --nord-polar-night-2: #3b4252;
+  --nord-polar-night-3: #434c5e;
+  --nord-polar-night-4: #4c566a; /* Lightest dark */
 
-  /* Light Mode Colors */
-  --color-primary: var(--swiss-red);
-  --color-background: var(--swiss-white);
-  --color-background-rgb: 255, 255, 255;
-  --color-surface: var(--swiss-gray-100);
-  --color-text: var(--swiss-black);
-  --color-text-secondary: var(--swiss-gray-700);
-  --color-text-muted: var(--swiss-gray-500);
-  --color-border: var(--swiss-gray-300);
-  --color-accent: var(--swiss-red);
+  /* Nord Color Palette - Snow Storm (Light) */
+  --nord-snow-storm-1: #d8dee9; /* Darkest light */
+  --nord-snow-storm-2: #e5e9f0;
+  --nord-snow-storm-3: #eceff4; /* Lightest */
+
+  /* Nord Color Palette - Frost (Blue Accents) */
+  --nord-frost-1: #8fbcbb; /* Teal */
+  --nord-frost-2: #88c0d0; /* Light blue */
+  --nord-frost-3: #81a1c1; /* Medium blue */
+  --nord-frost-4: #5e81ac; /* Dark blue */
+
+  /* Nord Color Palette - Aurora (Bright Accents) */
+  --nord-aurora-red: #bf616a;
+  --nord-aurora-orange: #d08770;
+  --nord-aurora-yellow: #ebcb8b;
+  --nord-aurora-green: #a3be8c;
+  --nord-aurora-purple: #b48ead;
+
+  /* Light Mode Colors - Nord Theme */
+  --color-primary: var(--nord-frost-3); /* Beautiful medium blue */
+  --color-secondary: var(--nord-aurora-red); /* Warm accent red */
+  --color-accent: var(--nord-frost-1); /* Teal accent */
+  --color-success: var(--nord-aurora-green);
+  --color-warning: var(--nord-aurora-yellow);
+  --color-purple: var(--nord-aurora-purple);
+  --color-orange: var(--nord-aurora-orange);
+  --color-background: var(--nord-snow-storm-3);
+  --color-background-rgb: 236, 239, 244;
+  --color-surface: var(--nord-snow-storm-2);
+  --color-text: var(--nord-polar-night-1);
+  --color-text-secondary: var(--nord-polar-night-3);
+  --color-text-muted: var(--nord-polar-night-4);
+  --color-border: var(--nord-snow-storm-1);
 
   /* Swiss Typography Scale */
   --font-family:
@@ -90,16 +105,299 @@
   --z-modal: 1040;
 }
 
-/* Dark Mode Support */
+/* Modern Animations & Micro-interactions */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(129, 161, 193, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(129, 161, 193, 0); }
+}
+
+@keyframes bounce-in {
+  0% { 
+    opacity: 0;
+    transform: scale(0.3) translateY(30px);
+  }
+  50% { 
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% { 
+    transform: scale(0.9);
+  }
+  100% { 
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Enhanced hover effects */
+.swiss-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.swiss-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 20px 40px rgba(46, 52, 64, 0.15),
+    0 8px 16px rgba(129, 161, 193, 0.25);
+}
+
+/* Emoji animations */
+.skill-icon,
+.contact-icon,
+.social-icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.skill-item:hover .skill-icon,
+.contact-card:hover .contact-icon,
+.social-link:hover .social-icon {
+  transform: scale(1.2) rotate(5deg);
+}
+
+/* Button pulse effect for important CTAs */
+.swiss-button-primary {
+  animation: pulse-glow 2s infinite;
+}
+
+.swiss-button-primary:hover {
+  animation: none;
+}
+
+/* ABSTRACT & UNPREDICTABLE LAYOUT SYSTEM */
+
+/* Subtle floating elements */
+.abstract-shape {
+  position: absolute;
+  background: linear-gradient(45deg, var(--nord-frost-1), var(--nord-aurora-purple));
+  opacity: 0.03;
+  animation: float 8s ease-in-out infinite;
+  z-index: -1;
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+}
+
+.abstract-shape-1 {
+  width: 120px;
+  height: 120px;
+  top: 15%;
+  right: 5%;
+  animation-delay: 0s;
+}
+
+.abstract-shape-2 {
+  width: 80px;
+  height: 80px;
+  bottom: 25%;
+  left: 8%;
+  animation-delay: 3s;
+  background: linear-gradient(45deg, var(--nord-aurora-yellow), var(--nord-frost-2));
+}
+
+.abstract-shape-3 {
+  width: 100px;
+  height: 100px;
+  top: 50%;
+  right: 15%;
+  animation-delay: 6s;
+  background: linear-gradient(45deg, var(--nord-aurora-green), var(--nord-frost-3));
+}
+
+/* Subtle diagonal sections */
+.diagonal-section {
+  position: relative;
+  transform: skewY(-0.5deg);
+  margin: var(--space-16) 0;
+}
+
+.diagonal-section > * {
+  transform: skewY(0.5deg);
+}
+
+/* Subtle organic elements */
+.organic-blob {
+  position: absolute;
+  background: linear-gradient(135deg, var(--nord-frost-1), var(--nord-aurora-purple));
+  border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  opacity: 0.02;
+  animation: blob-morph 12s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes blob-morph {
+  0%, 100% {
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    border-radius: 58% 42% 75% 25% / 76% 24% 76% 24%;
+    transform: rotate(90deg) scale(1.1);
+  }
+  50% {
+    border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%;
+    transform: rotate(180deg) scale(0.9);
+  }
+  75% {
+    border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%;
+    transform: rotate(270deg) scale(1.05);
+  }
+}
+
+/* Elegant asymmetric layouts */
+.asymmetric-grid {
+  display: grid;
+  grid-template-columns: 2fr 3fr 2fr;
+  grid-template-rows: auto auto auto;
+  gap: var(--space-8);
+  position: relative;
+}
+
+.asymmetric-item-1 { 
+  grid-column: 1 / 3; 
+  grid-row: 1;
+}
+.asymmetric-item-2 { 
+  grid-column: 2 / 4; 
+  grid-row: 2;
+  margin-top: -var(--space-8);
+}
+.asymmetric-item-3 { 
+  grid-column: 1 / 2; 
+  grid-row: 3;
+}
+
+/* Subtle offset positioning */
+.offset-container {
+  position: relative;
+  margin-left: 2%;
+  margin-right: -2%;
+}
+
+.offset-container:nth-child(even) {
+  margin-left: -2%;
+  margin-right: 2%;
+}
+
+/* Curved text paths - Using transform instead */
+.curved-text {
+  font-size: var(--font-size-lg);
+  letter-spacing: 0.1em;
+  transform: rotate(-2deg);
+  display: inline-block;
+}
+
+/* Intersection overlays */
+.intersection-overlay {
+  position: absolute;
+  top: -10%;
+  right: -10%;
+  width: 120%;
+  height: 120%;
+  background: linear-gradient(45deg, 
+    transparent 40%, 
+    rgba(143, 188, 187, 0.1) 50%, 
+    transparent 60%);
+  transform: rotate(15deg);
+  z-index: -1;
+}
+
+/* Creative grid system - purposeful asymmetry */
+.creative-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--space-6);
+  position: relative;
+}
+
+.creative-item:nth-child(1) { 
+  grid-column: 1 / 8; 
+}
+.creative-item:nth-child(2) { 
+  grid-column: 8 / 13; 
+  transform: translateY(2rem);
+}
+.creative-item:nth-child(3) { 
+  grid-column: 3 / 10; 
+  transform: translateY(-1rem);
+}
+
+/* Responsive adjustments for creative layouts */
+@media (max-width: 768px) {
+  /* Simplify creative elements on mobile */
+  .creative-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  
+  .creative-item {
+    grid-column: 1 !important;
+    grid-row: auto !important;
+    transform: none !important;
+    margin: 1rem 0;
+  }
+  
+  .asymmetric-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+  
+  .asymmetric-item-1,
+  .asymmetric-item-2,
+  .asymmetric-item-3 {
+    grid-column: 1;
+    grid-row: auto;
+    transform: rotate(0deg) !important;
+  }
+  
+  /* Reduce crazy transforms on mobile */
+  .diagonal-section {
+    transform: skewY(0deg);
+  }
+  
+  .diagonal-section > * {
+    transform: skewY(0deg);
+  }
+  
+  .offset-container {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  
+  /* Hide some decorative elements on mobile */
+  .abstract-shape,
+  .organic-blob {
+    display: none;
+  }
+  
+  body::before,
+  body::after {
+    display: none;
+  }
+}
+
+/* Dark Mode Support - Nord Theme */
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: var(--swiss-gray-900);
-    --color-background-rgb: 33, 37, 41;
-    --color-surface: var(--swiss-gray-800);
-    --color-text: var(--swiss-white);
-    --color-text-secondary: var(--swiss-gray-300);
-    --color-text-muted: var(--swiss-gray-500);
-    --color-border: var(--swiss-gray-700);
+    --color-background: var(--nord-polar-night-1);
+    --color-background-rgb: 46, 52, 64;
+    --color-surface: var(--nord-polar-night-2);
+    --color-text: var(--nord-snow-storm-3);
+    --color-text-secondary: var(--nord-snow-storm-1);
+    --color-text-muted: var(--nord-polar-night-4);
+    --color-border: var(--nord-polar-night-3);
+    /* Vibrant accents in dark mode */
+    --color-primary: var(--nord-frost-2); /* Bright blue */
+    --color-secondary: var(--nord-aurora-red); /* Red accent */
+    --color-accent: var(--nord-frost-1); /* Teal */
   }
 }
 
@@ -113,7 +411,11 @@ html {
 }
 
 body {
-  background-color: var(--color-background);
+  background: 
+    radial-gradient(ellipse at 20% 20%, rgba(143, 188, 187, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 60%, rgba(180, 142, 173, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 40% 80%, rgba(163, 190, 140, 0.06) 0%, transparent 50%),
+    var(--color-background);
   color: var(--color-text);
   font-family: var(--font-family);
   font-size: var(--font-size-base);
@@ -122,6 +424,8 @@ body {
   transition:
     background-color var(--transition-normal),
     color var(--transition-normal);
+  position: relative;
+  overflow-x: hidden;
 
   /* Enhanced text rendering for sharpness */
   -webkit-font-smoothing: antialiased;
@@ -135,13 +439,47 @@ body {
   font-kerning: normal;
 }
 
-/* Swiss Typography Classes */
+/* Global abstract background elements */
+body::before {
+  content: '';
+  position: fixed;
+  top: 10%;
+  right: -5%;
+  width: 300px;
+  height: 400px;
+  background: linear-gradient(135deg, var(--nord-frost-1), var(--nord-aurora-purple));
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  opacity: 0.03;
+  z-index: -2;
+  animation: blob-morph 12s ease-in-out infinite;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  bottom: 20%;
+  left: -10%;
+  width: 400px;
+  height: 300px;
+  background: linear-gradient(135deg, var(--nord-aurora-green), var(--nord-frost-2));
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  opacity: 0.04;
+  z-index: -2;
+  animation: blob-morph 15s ease-in-out infinite reverse;
+}
+
+/* Swiss Typography Classes - Elegant Nord Enhancement */
 .swiss-heading-1 {
   font-size: var(--font-size-6xl);
   font-weight: 700;
   line-height: 1.1;
   letter-spacing: -0.025em;
   margin: 0;
+  background: linear-gradient(120deg, var(--color-text) 0%, var(--nord-frost-4) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
 }
 
 .swiss-heading-2 {
@@ -150,6 +488,8 @@ body {
   line-height: 1.2;
   letter-spacing: -0.025em;
   margin: 0;
+  color: var(--color-text);
+  position: relative;
 }
 
 .swiss-heading-3 {
@@ -242,12 +582,94 @@ body {
   grid-column: 8 / -1;
 }
 
-/* Swiss Components */
+/* Enhanced Nordic text animations */
+.wave-hand {
+  display: inline-block;
+  animation: gentle-wave 2.5s ease-in-out infinite;
+  transform-origin: 70% 70%;
+}
+
+@keyframes gentle-wave {
+  0%, 100% { transform: rotate(0deg); }
+  10%, 30%, 50%, 70% { transform: rotate(14deg); }
+  20%, 40%, 60%, 80% { transform: rotate(-8deg); }
+}
+
+.nordic-highlight {
+  background: linear-gradient(135deg, var(--nord-frost-2), var(--nord-aurora-purple), var(--nord-frost-4));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  position: relative;
+  background-size: 200% 200%;
+  animation: nordic-glow 3s ease-in-out infinite alternate;
+}
+
+@keyframes nordic-glow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.nordic-highlight::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--nord-aurora-purple), var(--nord-frost-2));
+  border-radius: 2px;
+  opacity: 0.4;
+  animation: underline-pulse 2s ease-in-out infinite;
+}
+
+@keyframes underline-pulse {
+  0%, 100% { opacity: 0.4; transform: scaleX(1); }
+  50% { opacity: 0.7; transform: scaleX(1.05); }
+}
+
+.clickable-highlight {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.bouncing-heart {
+  display: inline-block;
+  animation: gentle-bounce 2s ease-in-out infinite;
+  color: var(--nord-aurora-red);
+}
+
+@keyframes gentle-bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0) scale(1); }
+  40% { transform: translateY(-3px) scale(1.1); }
+  60% { transform: translateY(-2px) scale(1.05); }
+}
+
+/* Swiss Components - Enhanced with Nordic theme */
 .swiss-card {
-  background-color: var(--color-surface);
+  background: linear-gradient(135deg, var(--color-surface), rgba(143, 188, 187, 0.05));
   border: 1px solid var(--color-border);
   padding: var(--space-6);
   transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.swiss-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent 40%, rgba(129, 161, 193, 0.05) 50%, transparent 60%);
+  transform: rotate(15deg);
+  transition: transform 0.3s ease;
+}
+
+.swiss-card:hover::before {
+  transform: rotate(25deg) scale(1.1);
 }
 
 .swiss-card:hover {
@@ -271,6 +693,19 @@ body {
   transition: all var(--transition-fast);
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.swiss-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(129, 161, 193, 0.3);
+}
+
+.swiss-button:active {
+  transform: translateY(0);
+  transition: transform 0.1s ease;
 }
 
 .swiss-button-primary {
@@ -280,18 +715,23 @@ body {
 }
 
 .swiss-button-primary:hover {
-  background-color: transparent;
-  color: var(--color-primary);
+  background-color: var(--nord-frost-4);
+  border-color: var(--nord-frost-4);
+  color: var(--nord-snow-storm-3);
+  box-shadow: 0 6px 20px rgba(94, 129, 172, 0.4);
 }
 
 .swiss-button-outline {
   border-color: var(--color-primary);
   color: var(--color-primary);
+  background: linear-gradient(135deg, transparent 0%, rgba(129, 161, 193, 0.08) 100%);
 }
 
 .swiss-button-outline:hover {
   background-color: var(--color-primary);
-  color: var(--swiss-white);
+  color: var(--nord-snow-storm-3);
+  border-color: var(--color-primary);
+  box-shadow: 0 6px 20px rgba(129, 161, 193, 0.35);
 }
 
 .swiss-button-ghost {
@@ -1488,15 +1928,17 @@ body {
   position: relative;
   border-radius: 8px;
   overflow: hidden;
-  aspect-ratio: 16/10;
+  aspect-ratio: 9/16; /* Vertical aspect ratio to show full page screenshots */
+  height: 420px; /* Fixed height for better display */
 }
 
-.project-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform var(--transition-normal);
-}
+  .project-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top; /* Show the top of the page screenshot */
+    transition: transform var(--transition-normal);
+  }
 
 .project-overlay {
   position: absolute;
@@ -2457,9 +2899,11 @@ body.loaded {
   .project-card.featured:nth-child(even) {
     direction: ltr;
   }
-  .project-image {
-    order: -1;
-  }
+      .project-image {
+      order: -1;
+      height: 320px; /* Smaller height on mobile */
+      aspect-ratio: 4/5; /* Less extreme vertical ratio on mobile */
+    }
   .github-grid {
     grid-template-columns: 1fr;
   }

@@ -3,41 +3,45 @@
 ---
 
 <section id="home" class="swiss-hero">
+  <!-- Subtle floating elements -->
+  <div class="abstract-shape abstract-shape-1"></div>
+  <div class="abstract-shape abstract-shape-2"></div>
+  
   <div class="swiss-container">
-    <div class="swiss-hero-content">
-      <!-- Swiss geometric decorations -->
-      <div class="swiss-decoration swiss-decoration-line hero-line-1"></div>
-      <div class="swiss-decoration swiss-decoration-square hero-square-1"></div>
-      <div class="swiss-decoration swiss-decoration-circle hero-circle-1"></div>
+    <div class="swiss-hero-content asymmetric-grid">
+      <!-- Refined geometric decorations -->
+      <div class="swiss-decoration swiss-decoration-line hero-line-1" style="background: var(--nord-frost-2); opacity: 0.6;"></div>
+      <div class="swiss-decoration swiss-decoration-square hero-square-1" style="background: var(--nord-aurora-purple); opacity: 0.3;"></div>
+      <div class="swiss-decoration swiss-decoration-circle hero-circle-1" style="background: var(--nord-aurora-yellow); opacity: 0.4;"></div>
 
-      <!-- Main content -->
-      <div class="swiss-hero-text">
+      <!-- Main content - Elegant positioning -->
+      <div class="swiss-hero-text asymmetric-item-1" style="z-index: 10;">
         <div class="swiss-hero-label">
-          <span class="swiss-caption">Portfolio 2025</span>
+          <span class="swiss-caption">Hey there! <span class="wave-hand">👋</span> Welcome to my <span class="nordic-highlight">Nordic space</span></span>
         </div>
 
         <h1 class="swiss-heading-1 swiss-hero-title">
-          <span class="hero-title-line">DaCrab</span>
-          <span class="hero-title-line hero-title-secondary">Web Developer</span
+          <span class="hero-title-line">I'm Vaggelis 🦀</span>
+          <span class="hero-title-line hero-title-secondary">Crafting Digital Dreams</span
           >
         </h1>
 
-        <p class="swiss-body-large swiss-hero-description">
-          Creating digital experiences with Swiss design principles—
-          <strong>clean, functional, and purposeful</strong> solutions that prioritize
-          clarity and user experience.
+        <p class="swiss-body-large swiss-hero-description" style="max-width: 85%;">
+          I'm passionate about creating <strong>beautiful web experiences</strong> that feel both 
+          timeless and modern. Think Swiss precision meets human warmth — 
+          <em>clean code, thoughtful design, and a little bit of Nordic magic</em> ✨❄️
         </p>
 
         <div class="swiss-hero-actions">
           <a href="#projects" class="swiss-button swiss-button-primary">
-            View Projects
+            🎨 See My Work
           </a>
           <div class="cv-dropdown-wrapper">
             <button
               class="swiss-button swiss-button-outline cv-dropdown-trigger"
               id="cv-dropdown"
             >
-              Download CV
+              📄 Grab My CV
               <span class="dropdown-arrow">▼</span>
             </button>
             <div class="cv-dropdown-menu" id="cv-dropdown-menu">
@@ -47,7 +51,7 @@
                 class="cv-dropdown-item"
               >
                 <span class="cv-flag">🇬🇧</span>
-                English CV
+                English Version
               </a>
               <a
                 href="/cv/CV_Vaggelis_Kavouras_Greek.pdf"
@@ -55,28 +59,24 @@
                 class="cv-dropdown-item"
               >
                 <span class="cv-flag">🇬🇷</span>
-                Greek CV
+                Ελληνική Έκδοση
               </a>
             </div>
           </div>
           <a href="#contact" class="swiss-button swiss-button-outline">
-            Get in Touch
+            💬 Let's Chat!
           </a>
         </div>
       </div>
 
-      <!-- Swiss grid visualization -->
-      <div class="swiss-hero-visual">
-        <div class="swiss-grid-visual">
-          <div class="grid-square"></div>
-          <div class="grid-square"></div>
-          <div class="grid-square active"></div>
-          <div class="grid-square"></div>
-          <div class="grid-square"></div>
-          <div class="grid-square"></div>
-          <div class="grid-square active"></div>
-          <div class="grid-square"></div>
-          <div class="grid-square"></div>
+      <!-- Elegant Nordic visualization -->
+      <div class="swiss-hero-visual asymmetric-item-2" style="position: relative;">
+        <div class="creative-grid" style="opacity: 0.8;">
+          <div class="grid-square creative-item" style="background: var(--nord-frost-1); border-radius: 20px; opacity: 0.7;"></div>
+          <div class="grid-square creative-item" style="background: var(--nord-aurora-purple); border-radius: 15px; opacity: 0.6;"></div>
+          <div class="grid-square active creative-item" style="background: var(--nord-aurora-yellow); border-radius: 25px; opacity: 0.8;"></div>
+          <div class="grid-square creative-item" style="background: var(--nord-frost-2); border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; opacity: 0.5;"></div>
+          <div class="grid-square creative-item" style="background: var(--nord-aurora-green); border-radius: 12px; opacity: 0.6;"></div>
         </div>
       </div>
     </div>

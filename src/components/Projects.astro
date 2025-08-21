@@ -3,10 +3,10 @@
 const projects = [
   {
     id: 1,
-    title: 'Silver and Gold Money',
-    subtitle: 'Pawn Shop Landing Page',
+    title: 'Silver and Gold Money ✨',
+    subtitle: 'Trust-Building Pawn Shop Experience',
     description:
-      'A modern landing page concept for a local pawn shop featuring services like loans, buying/selling gold and silver, and a loan calculator with a clean, professional design that builds customer trust.',
+      'Breaking the stereotypes of pawn shop websites! 💎 I created a modern, trustworthy digital experience with bilingual support, interactive calculators, and a clean aesthetic that makes customers feel confident about their transactions.',
     technologies: ['Svelte', 'SvelteKit', 'TailwindCSS', 'TypeScript'],
     link: 'https://gsm-beta.vercel.app/',
     featured: true,
@@ -31,10 +31,10 @@ const projects = [
   },
   {
     id: 2,
-    title: 'Argicon.gr',
-    subtitle: 'Technical Construction Company',
+    title: 'Argicon.gr 🏗️',
+    subtitle: 'Engineering Excellence Website',
     description:
-      'A professional website for a technical construction company showcasing their services, projects portfolio, and expertise in infrastructure development with a modern, responsive design.',
+      'When construction meets digital craftsmanship! Built a robust, professional platform that showcases complex engineering projects with clarity and impact. Bilingual design that works as hard as the construction crews 💪',
     technologies: ['TypeScript', 'NextJS', 'TailwindCSS', 'React'],
     link: 'https://argicon.gr',
     featured: true,
@@ -57,10 +57,10 @@ const projects = [
   },
   {
     id: 3,
-    title: 'DesignDash.gr',
-    subtitle: 'Digital Construction Platform',
+    title: 'DesignDash.gr 🚀',
+    subtitle: 'Next-Gen Construction Platform',
     description:
-      'A comprehensive digital platform for a technical construction firm featuring project galleries, technical specifications, and service offerings with an emphasis on engineering excellence.',
+      'Where technical precision meets digital innovation! This comprehensive platform showcases complex engineering projects with beautiful galleries and detailed specifications. Making construction tech accessible and visually stunning 🎨',
     technologies: ['TypeScript', 'NextJS', 'TailwindCSS', 'React'],
     link: 'https://designdash.gr',
     featured: true,
@@ -81,74 +81,80 @@ const projects = [
 ---
 
 <section id="projects" class="swiss-section">
+  <!-- Subtle floating elements -->
+  <div class="abstract-shape-1"></div>
+  <div class="abstract-shape-2"></div>
+
   <div class="swiss-container">
-    <!-- Section header -->
-    <div class="swiss-section-header">
-      <div class="swiss-section-title">Projects</div>
-      <h2 class="swiss-heading-2">Featured Work</h2>
-      <p class="swiss-section-description">
-        A curated selection of projects that demonstrate technical expertise and
-        design principles.
+    <!-- Section header - Clean positioning -->
+    <div class="swiss-section-header asymmetric-grid">
+      <div class="swiss-section-title asymmetric-item-3" style="background: var(--nord-aurora-yellow); padding: 0.6rem 1.2rem; border-radius: 16px; display: inline-block; color: var(--nord-polar-night-1); font-weight: 600;">My Nordic Work 🎯❄️</div>
+      <h2 class="swiss-heading-2 asymmetric-item-1" style="background: linear-gradient(120deg, var(--nord-frost-4), var(--nord-aurora-purple), var(--nord-frost-1)); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Projects I'm Proud Of</h2>
+      <p class="swiss-section-description asymmetric-item-2" style="max-width: 90%;">
+        Here's a glimpse into my creative journey — each project tells a story of problem-solving, 
+        late-night coding sessions, and the joy of bringing ideas to life with Nordic aesthetics ✨❄️
       </p>
     </div>
 
-    <!-- Featured Projects -->
-    <div class="projects-grid">
+    <!-- Featured Projects - Beautiful Grid -->
+    <div class="projects-grid" style="margin: 4rem 0; display: flex; flex-direction: column; gap: 4rem;">
       {
         projects.map((project, index) => (
-          <article class="project-card" data-project-id={project.id}>
-            <div class="project-content">
-              <div class="project-meta">
-                <span class="project-number">
+          <article class={`project-card`} data-project-id={project.id} style={`background: linear-gradient(135deg, var(--color-surface), rgba(143, 188, 187, 0.03)); border-radius: ${16 + (index * 2)}px; border: 1px solid var(--color-border); display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; padding: 2rem;`}>
+            <div class="project-content" style={`position: relative; z-index: 10; ${index % 2 === 0 ? 'order: 1;' : 'order: 2;'} max-width: 100%; overflow: hidden;`}>
+              <div class="project-meta" style="margin-bottom: 1rem;">
+                <span class="project-number" style={`background: var(--nord-aurora-${['red', 'orange', 'yellow'][index]});  color: var(--nord-snow-storm-3); padding: 0.6rem; border-radius: 50%; font-weight: 600;`}>
                   {String(index + 1).padStart(2, '0')}
                 </span>
-                <div class="project-tech">
-                  {project.technologies.slice(0, 2).map(tech => (
-                    <span class="tech-tag">{tech}</span>
+                <div class="project-tech" style="margin-top: 0.5rem;">
+                  {project.technologies.slice(0, 2).map((tech, techIndex) => (
+                    <span class="tech-tag" style={`background: var(--nord-frost-${techIndex + 1}); color: var(--nord-snow-storm-3); border-radius: 12px; padding: 0.3rem 0.8rem;`}>{tech}</span>
                   ))}
                 </div>
               </div>
 
-              <div class="project-info">
-                <h3 class="project-title">{project.title}</h3>
-                <p class="project-subtitle">{project.subtitle}</p>
-                <p class="project-description">{project.description}</p>
+              <div class="project-info" style="position: relative;">
+                
+                <h3 class="project-title" style="margin-bottom: 0.8rem; word-wrap: break-word;">{project.title}</h3>
+                <p class="project-subtitle" style={`color: var(--nord-aurora-${['red', 'orange', 'purple'][index]}); font-weight: 600; margin-bottom: 0.8rem; word-wrap: break-word;`}>{project.subtitle}</p>
+                <p class="project-description" style="margin: 1rem 0; line-height: 1.6; word-wrap: break-word; overflow-wrap: break-word;">{project.description}</p>
 
-                <div class="project-technologies">
-                  {project.technologies.map(tech => (
-                    <span class="tech-badge">{tech}</span>
+                <div class="project-technologies" style="margin: 1.2rem 0; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                  {project.technologies.map((tech, techIndex) => (
+                    <span class="tech-badge" style={`background: linear-gradient(135deg, var(--nord-frost-${(techIndex % 4) + 1}), transparent); border: 1px solid var(--nord-frost-${(techIndex % 4) + 1}); border-radius: 12px; padding: 0.4rem 0.8rem; font-size: 0.85rem;`}>{tech}</span>
                   ))}
                 </div>
 
-                <div class="project-actions">
+                <div class="project-actions" style="display: flex; gap: 1rem; margin-top: 1.2rem; flex-wrap: wrap;">
                   <a
                     href={project.link}
                     class="swiss-button swiss-button-primary"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    View Project
+                    🚀 See It Live
                   </a>
                   <button
                     class="swiss-button swiss-button-outline open-gallery-btn"
                     data-title={project.title}
                     data-gallery={JSON.stringify(project.gallery)}
                   >
-                    View Gallery ({project.gallery.length})
+                    📸 Browse Gallery ({project.gallery.length})
                   </button>
                 </div>
               </div>
             </div>
 
-            <div class="project-image">
+            <div class="project-image" style={`border-radius: ${14 + (index * 2)}px; overflow: hidden; position: relative; ${index % 2 === 0 ? 'order: 2;' : 'order: 1;'} width: 100%; height: 400px;`}>
               <img
                 src={project.gallery[0].image}
                 alt={project.title}
                 loading="lazy"
+                style="transition: transform 0.3s ease; filter: saturate(1.05);"
               />
-              <div class="project-overlay">
-                <span class="gallery-count">
-                  {project.gallery.length} Screenshots
+              <div class="project-overlay" style={`background: linear-gradient(135deg, rgba(0,0,0,0.6), transparent);`}>
+                <span class="gallery-count" style="color: var(--nord-snow-storm-3); font-weight: 600; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+                  {project.gallery.length} Nordic Screenshots ❄️
                 </span>
               </div>
             </div>
@@ -161,12 +167,12 @@ const projects = [
     <div class="current-work-section">
       <div class="section-divider">
         <div class="divider-line"></div>
-        <h3 class="swiss-heading-3">Current Work</h3>
+        <h3 class="swiss-heading-3">What I'm Building Now 🛠️</h3>
         <div class="divider-line"></div>
       </div>
 
       <div class="current-work-grid" id="current-work-grid">
-        <div class="loading-spinner">Loading current projects...</div>
+        <div class="loading-spinner">Fetching my latest experiments... 🔬</div>
       </div>
     </div>
   </div>
