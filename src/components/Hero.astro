@@ -1,32 +1,30 @@
 ---
-// Hero section with Swiss design principles
+// Hero section
 ---
 
 <section id="home" class="swiss-hero">
-  <!-- Subtle floating elements -->
   <div class="abstract-shape abstract-shape-1"></div>
   <div class="abstract-shape abstract-shape-2"></div>
   
   <div class="swiss-container">
     <div class="swiss-hero-content asymmetric-grid">
-      <!-- Refined geometric decorations -->
-      <div class="swiss-decoration swiss-decoration-line hero-line-1" style="background: var(--nord-frost-2); opacity: 0.6;"></div>
-      <div class="swiss-decoration swiss-decoration-square hero-square-1" style="background: var(--nord-aurora-purple); opacity: 0.3;"></div>
-      <div class="swiss-decoration swiss-decoration-circle hero-circle-1" style="background: var(--nord-aurora-yellow); opacity: 0.4;"></div>
+      <div class="swiss-decoration swiss-decoration-line hero-line"></div>
+      <div class="swiss-decoration swiss-decoration-square hero-square"></div>
+      <div class="swiss-decoration swiss-decoration-circle hero-circle"></div>
 
-      <!-- Main content - Elegant positioning -->
-      <div class="swiss-hero-text asymmetric-item-1" style="z-index: 10;">
+      <div class="swiss-hero-text asymmetric-item-1">
         <div class="swiss-hero-label">
-          <span class="swiss-caption">Hey there! <span class="wave-hand">👋</span> Welcome to my <span class="nordic-highlight">Nordic space</span></span>
+          <span class="swiss-caption">
+            Hey there! <span class="wave-hand">👋</span> Welcome to my <span class="nordic-highlight">Nordic space</span>
+          </span>
         </div>
 
         <h1 class="swiss-heading-1 swiss-hero-title">
           <span class="hero-title-line">I'm Vaggelis 🦀</span>
-          <span class="hero-title-line hero-title-secondary">Crafting Digital Dreams</span
-          >
+          <span class="hero-title-line hero-title-secondary">Crafting Digital Dreams</span>
         </h1>
 
-        <p class="swiss-body-large swiss-hero-description" style="max-width: 85%;">
+        <p class="swiss-body-large swiss-hero-description">
           I'm passionate about creating <strong>beautiful web experiences</strong> that feel both 
           timeless and modern. Think Swiss precision meets human warmth — 
           <em>clean code, thoughtful design, and a little bit of Nordic magic</em> ✨❄️
@@ -36,52 +34,41 @@
           <a href="#projects" class="swiss-button swiss-button-primary">
             🎨 See My Work
           </a>
+          
           <div class="cv-dropdown-wrapper">
-            <button
-              class="swiss-button swiss-button-outline cv-dropdown-trigger"
-              id="cv-dropdown"
-            >
+            <button class="swiss-button swiss-button-outline cv-dropdown-trigger" id="cv-dropdown">
               📄 Grab My CV
               <span class="dropdown-arrow">▼</span>
             </button>
             <div class="cv-dropdown-menu" id="cv-dropdown-menu">
-              <a
-                href="/cv/CV_Vaggelis_Kavouras_English.pdf"
-                download
-                class="cv-dropdown-item"
-              >
+              <a href="/cv/CV_Vaggelis_Kavouras_English.pdf" download class="cv-dropdown-item">
                 <span class="cv-flag">🇬🇧</span>
                 English Version
               </a>
-              <a
-                href="/cv/CV_Vaggelis_Kavouras_Greek.pdf"
-                download
-                class="cv-dropdown-item"
-              >
+              <a href="/cv/CV_Vaggelis_Kavouras_Greek.pdf" download class="cv-dropdown-item">
                 <span class="cv-flag">🇬🇷</span>
                 Ελληνική Έκδοση
               </a>
             </div>
           </div>
+          
           <a href="#contact" class="swiss-button swiss-button-outline">
             💬 Let's Chat!
           </a>
         </div>
       </div>
 
-      <!-- Elegant Nordic visualization -->
-      <div class="swiss-hero-visual asymmetric-item-2" style="position: relative;">
-        <div class="creative-grid" style="opacity: 0.8;">
-          <div class="grid-square creative-item" style="background: var(--nord-frost-1); border-radius: 20px; opacity: 0.7;"></div>
-          <div class="grid-square creative-item" style="background: var(--nord-aurora-purple); border-radius: 15px; opacity: 0.6;"></div>
-          <div class="grid-square active creative-item" style="background: var(--nord-aurora-yellow); border-radius: 25px; opacity: 0.8;"></div>
-          <div class="grid-square creative-item" style="background: var(--nord-frost-2); border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; opacity: 0.5;"></div>
-          <div class="grid-square creative-item" style="background: var(--nord-aurora-green); border-radius: 12px; opacity: 0.6;"></div>
+      <div class="swiss-hero-visual asymmetric-item-2">
+        <div class="hero-grid">
+          <div class="grid-square grid-frost"></div>
+          <div class="grid-square grid-purple"></div>
+          <div class="grid-square grid-yellow active"></div>
+          <div class="grid-square grid-blue"></div>
+          <div class="grid-square grid-green"></div>
         </div>
       </div>
     </div>
 
-    <!-- Scroll indicator -->
     <div class="swiss-scroll-indicator">
       <div class="scroll-line"></div>
       <span class="swiss-caption">Scroll</span>
@@ -89,26 +76,77 @@
   </div>
 </section>
 
+<style>
+  .hero-line {
+    top: 20%;
+    right: 10%;
+    width: 3px;
+    height: 120px;
+    transform: rotate(15deg);
+    background: var(--nord-frost-2);
+    opacity: 0.6;
+  }
+
+  .hero-square {
+    top: 60%;
+    left: 5%;
+    width: 25px;
+    height: 25px;
+    background: var(--nord-aurora-purple);
+    opacity: 0.3;
+    transform: rotate(45deg);
+  }
+
+  .hero-circle {
+    bottom: 20%;
+    right: 20%;
+    width: 30px;
+    height: 30px;
+    background: var(--nord-aurora-yellow);
+    opacity: 0.4;
+  }
+
+  .swiss-hero-text {
+    z-index: 10;
+  }
+
+  .swiss-hero-description {
+    max-width: 85%;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+    opacity: 0.8;
+  }
+
+  .grid-frost { background: var(--nord-frost-1); border-radius: 20px; opacity: 0.7; }
+  .grid-purple { background: var(--nord-aurora-purple); border-radius: 15px; opacity: 0.6; }
+  .grid-yellow { background: var(--nord-aurora-yellow); border-radius: 25px; opacity: 0.8; }
+  .grid-blue { background: var(--nord-frost-2); border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; opacity: 0.5; }
+  .grid-green { background: var(--nord-aurora-green); border-radius: 12px; opacity: 0.6; }
+</style>
+
 <script>
-  // Add entrance animations
   document.addEventListener('DOMContentLoaded', () => {
     const heroElements = document.querySelectorAll('.swiss-hero-text > *');
     const gridSquares = document.querySelectorAll('.grid-square');
+    const cvDropdown = document.getElementById('cv-dropdown');
+    const cvDropdownMenu = document.getElementById('cv-dropdown-menu');
+    const scrollIndicator = document.querySelector('.swiss-scroll-indicator');
 
-    // Animate hero text elements
+    // Animate hero text
     heroElements.forEach((element, index) => {
       const el = element as HTMLElement;
       el.style.opacity = '0';
       el.style.transform = 'translateY(30px)';
       el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
 
-      setTimeout(
-        () => {
-          el.style.opacity = '1';
-          el.style.transform = 'translateY(0)';
-        },
-        index * 200 + 500
-      );
+      setTimeout(() => {
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+      }, index * 200 + 500);
     });
 
     // Animate grid squares
@@ -118,41 +156,59 @@
       el.style.transform = 'scale(0.8)';
       el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
 
-      setTimeout(
-        () => {
-          el.style.opacity = '1';
-          el.style.transform = 'scale(1)';
-        },
-        index * 100 + 1000
-      );
+      setTimeout(() => {
+        el.style.opacity = '1';
+        el.style.transform = 'scale(1)';
+      }, index * 100 + 1000);
     });
 
-    // Random grid square activation
+    // Random grid activation
     setInterval(() => {
       gridSquares.forEach(square => square.classList.remove('active'));
       const randomIndex = Math.floor(Math.random() * gridSquares.length);
       gridSquares[randomIndex]?.classList.add('active');
     }, 3000);
 
-    // CV Dropdown functionality
-    const cvDropdownTrigger = document.getElementById('cv-dropdown');
-    const cvDropdownMenu = document.getElementById('cv-dropdown-menu');
+    // CV Dropdown
+    cvDropdown?.addEventListener('click', e => {
+      e.preventDefault();
+      cvDropdownMenu?.classList.toggle('active');
+    });
 
-    if (cvDropdownTrigger && cvDropdownMenu) {
-      cvDropdownTrigger.addEventListener('click', e => {
-        e.preventDefault();
-        cvDropdownMenu.classList.toggle('active');
-      });
+    document.addEventListener('click', e => {
+      if (
+        cvDropdown && cvDropdownMenu &&
+        !cvDropdown.contains(e.target as Node) &&
+        !cvDropdownMenu.contains(e.target as Node)
+      ) {
+        cvDropdownMenu.classList.remove('active');
+      }
+    });
 
-      // Close dropdown when clicking outside
-      document.addEventListener('click', e => {
-        if (
-          !cvDropdownTrigger.contains(e.target as Node) &&
-          !cvDropdownMenu.contains(e.target as Node)
-        ) {
-          cvDropdownMenu.classList.remove('active');
-        }
-      });
-    }
+    // Scroll Indicator - Enhanced with smooth scrolling
+    scrollIndicator?.addEventListener('click', () => {
+      const aboutSection = document.querySelector('#about');
+      if (aboutSection) {
+        aboutSection.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'start' 
+        });
+      }
+    });
+
+    // Animate scroll indicator on load
+    setTimeout(() => {
+      if (scrollIndicator) {
+        const el = scrollIndicator as HTMLElement;
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(-50%) translateY(20px)';
+        el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        
+        setTimeout(() => {
+          el.style.opacity = '1';
+          el.style.transform = 'translateX(-50%) translateY(0)';
+        }, 100);
+      }
+    }, 2000);
   });
 </script>

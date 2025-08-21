@@ -8,7 +8,7 @@ export interface Props {
 
 const {
   title,
-  description = 'A minimalist portfolio showcasing Swiss design principles',
+  description = 'Vaggelis Kavouras - Web Developer crafting Nordic-inspired digital experiences with Swiss precision and modern creativity.',
 } = Astro.props;
 ---
 
@@ -16,48 +16,35 @@ const {
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="description" content={description} />
+    <meta name="author" content="Vaggelis Kavouras (DaCrab)" />
+    <meta name="keywords" content="web developer, Nordic design, Swiss design, React, Astro, TypeScript, portfolio" />
     <meta name="generator" content={Astro.generator} />
-
-    <!-- Preload critical fonts -->
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@200;300;400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
 
-    <!-- Meta tags -->
-    <meta name="author" content="DaCrab" />
-    <meta
-      name="keywords"
-      content="web developer, swiss design, portfolio, React, Astro, TypeScript"
-    />
-
-    <!-- Open Graph -->
+    <!-- Social Meta -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:site_name" content="DaCrab Portfolio" />
-
-    <!-- Twitter Card -->
+    <meta property="og:site_name" content="Vaggelis Kavouras Portfolio" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
 
-    <!-- Theme colors -->
-    <meta
-      name="theme-color"
-      content="#ffffff"
-      media="(prefers-color-scheme: light)"
-    />
-    <meta
-      name="theme-color"
-      content="#1a1a1a"
-      media="(prefers-color-scheme: dark)"
-    />
+    <!-- Theme Colors -->
+    <meta name="theme-color" content="#81a1c1" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#88c0d0" media="(prefers-color-scheme: dark)" />
 
     <title>{title}</title>
   </head>

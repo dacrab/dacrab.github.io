@@ -1,7 +1,7 @@
 # 🚀 Modern Portfolio Website
 
-A professional portfolio website built with Astro, featuring Swiss Style design principles,
-responsive layouts, dynamic GitHub integration, and interactive project galleries.
+A professional portfolio website built with Astro, featuring Nordic-inspired Swiss design principles,
+enhanced animations, dynamic GitHub integration, and interactive project galleries with premium UX.
 
 ![Astro](https://img.shields.io/badge/Astro-5.13.2-FF5D01)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7.2-blue)
@@ -10,16 +10,16 @@ responsive layouts, dynamic GitHub integration, and interactive project gallerie
 
 ## ✨ Features
 
-- **🇨🇭 Swiss Style Design**: Minimalist, clean layouts with strong typography and geometric elements
-- **📱 Fully Responsive Design**: Optimized for all devices from mobile to desktop
-- **🖼️ Interactive Project Gallery**: Modal galleries with thumbnails for each project
-- **📥 CV Download Dropdown**: Elegant dropdown with English and Greek CV options
-- **💻 Live GitHub Integration**: Automatically fetches and displays current repositories
-- **🎭 Smooth Animations**: Intersection Observer-based animations and CSS transitions
-- **🌙 Dark Mode Support**: Automatic dark/light theme detection
-- **⚡ Lightning Fast**: Built with Astro for optimal performance
-- **🔍 SEO Optimized**: Meta tags and semantic structure for improved search engine visibility
-- **🎨 Professional Contact Section**: Streamlined social media and contact information
+- **❄️ Nordic-Swiss Design**: Clean layouts with Nord color palette and Swiss typography principles
+- **📱 Fully Responsive Design**: Optimized for all devices with premium mobile experience
+- **🖼️ Enhanced Project Gallery**: Modal galleries with language switching and smooth animations
+- **📥 Smart CV Download**: Interactive dropdown with flag indicators and hover effects
+- **💻 Live GitHub Integration**: Real-time repository data with error handling and loading states
+- **🎭 Premium Animations**: Scroll indicators, keyword highlights, and intersection-based reveals
+- **🌙 Nordic Dark Theme**: Beautiful dark mode with enhanced contrast and readability
+- **⚡ Lightning Performance**: Optimized code structure and minimal bundle size
+- **🔍 SEO Optimized**: Meta tags, semantic structure, and accessibility features
+- **🎯 Enhanced UX**: High-contrast text, keyword highlighting, and intuitive interactions
 
 ## 🔥 Featured Projects
 
@@ -54,17 +54,18 @@ Digital construction platform with comprehensive project galleries and technical
 - **[React Intersection Observer](https://github.com/thebuilder/react-intersection-observer)**:
   Scroll-based animations
 
-## 🇨🇭 Swiss Style Design Principles
+## ❄️ Nordic-Swiss Design Philosophy
 
-This portfolio embraces Swiss Style (International Typographic Style) design:
+This portfolio combines Swiss design principles with Nordic aesthetics:
 
-- **Clean Typography**: Inter font with enhanced rendering for sharp, readable text
-- **Grid-Based Layout**: Structured organization using precise grid systems
-- **Geometric Elements**: Simple shapes and clean lines throughout the design
-- **Strategic Color Use**: Limited palette with red accent color (#ff3333)
-- **Asymmetrical Balance**: Dynamic layouts with careful visual weight distribution
-- **Generous White Space**: Negative space creating clear visual hierarchy
-- **Functional Aesthetics**: Every element serves a purpose
+- **Clean Typography**: Inter font with enhanced contrast and text shadows for optimal readability
+- **Grid-Based Layout**: Structured organization using precise grid systems and asymmetric balance
+- **Nordic Color Palette**: Based on the Nord theme with frost blues, aurora colors, and snow whites
+- **Enhanced Contrast**: High-contrast text with subtle glows and shadows for better visibility
+- **Keyword Highlighting**: Strategic highlights for important terms and skills
+- **Animated Elements**: Smooth scroll indicators, bouncing animations, and hover effects
+- **Functional Beauty**: Every element serves a purpose while maintaining visual appeal
+- **Progressive Enhancement**: Graceful fallbacks and optimized performance across all devices
 
 ## 🚀 Getting Started
 
@@ -133,6 +134,26 @@ src/
     ├── gsm/               # GSM project screenshots
     └── argicon/           # Argicon project screenshots
 ```
+
+## 🔄 Recent Improvements (2025)
+
+### Code Quality & Performance
+- **Complete Refactoring**: All components restructured with clean, modular code
+- **Inline Style Removal**: Replaced inline styles with proper CSS classes for maintainability
+- **JavaScript Optimization**: Class-based architecture with better error handling
+- **Enhanced Animations**: Improved scroll indicators with looping animations and hover effects
+
+### User Experience Enhancements
+- **High Contrast Text**: Enhanced readability with text shadows and Nordic color improvements
+- **Keyword Highlighting**: Strategic highlighting for better content scanning
+- **Compact Layout**: Optimized spacing and content density in About section
+- **Interactive Elements**: Enhanced dropdowns, galleries, and navigation with smooth transitions
+
+### Technical Improvements
+- **TypeScript Safety**: Improved type checking and eliminated undefined object errors
+- **CSS Variables**: Consistent Nord color palette with CSS custom properties
+- **Performance Monitoring**: Optimized loading states and intersection observers
+- **Mobile Optimization**: Better responsive design with enhanced mobile interactions
 
 ## 🎨 Key Features
 
@@ -222,4 +243,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Built with ❤️ by DaCrab using Swiss design principles and modern web technologies.
+Built with ❤️ by DaCrab using Nordic-Swiss design principles and cutting-edge web technologies.
+Featuring premium animations, enhanced accessibility, and optimized performance for the modern web.
