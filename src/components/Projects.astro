@@ -131,7 +131,8 @@ const projects = [
                   </a>
                   <button
                     class="swiss-button swiss-button-outline open-gallery-btn"
-                    data-project-id={project.id}
+                    data-title={project.title}
+                    data-gallery={JSON.stringify(project.gallery)}
                   >
                     View Gallery ({project.gallery.length})
                   </button>
@@ -257,119 +258,53 @@ const projects = [
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    // Type definitions
-    interface GalleryImage {
-      src: string;
-      title: string;
-    }
-
-    interface ProjectGallery {
-      title: string;
-      images: GalleryImage[];
-    }
-
-    // Simple project data - embedded for reliability
-    const projectGalleries: Record<number, ProjectGallery> = {
-      1: {
-        title: 'Silver and Gold Money',
-        images: [
-          { src: '/gsm/home-en.png', title: 'Homepage (English)' },
-          { src: '/gsm/home-el.png', title: 'Homepage (Greek)' },
-          { src: '/gsm/about-en.png', title: 'About Page (English)' },
-          { src: '/gsm/about-el.png', title: 'About Page (Greek)' },
-          { src: '/gsm/services-en.png', title: 'Services (English)' },
-          { src: '/gsm/services-el.png', title: 'Services (Greek)' },
-          { src: '/gsm/loans-en.png', title: 'Loans Calculator (English)' },
-          { src: '/gsm/loans-el.png', title: 'Loans Calculator (Greek)' },
-          { src: '/gsm/calculator-en.png', title: 'Gold Calculator (English)' },
-          { src: '/gsm/calculator-el.png', title: 'Gold Calculator (Greek)' },
-          { src: '/gsm/sell-en.png', title: 'Sell Gold/Silver (English)' },
-          { src: '/gsm/sell-el.png', title: 'Sell Gold/Silver (Greek)' },
-          { src: '/gsm/stores-en.png', title: 'Store Locations (English)' },
-          { src: '/gsm/stores-el.png', title: 'Store Locations (Greek)' },
-          { src: '/gsm/contact-en.png', title: 'Contact (English)' },
-          { src: '/gsm/contact-el.png', title: 'Contact (Greek)' },
-        ],
-      },
-      2: {
-        title: 'Argicon.gr',
-        images: [
-          { src: '/argicon/en-home.png', title: 'Homepage (English)' },
-          { src: '/argicon/el-home.png', title: 'Homepage (Greek)' },
-          {
-            src: '/argicon/en-projects.png',
-            title: 'Projects Portfolio (English)',
-          },
-          {
-            src: '/argicon/el-projects.png',
-            title: 'Projects Portfolio (Greek)',
-          },
-          { src: '/argicon/en-services.png', title: 'Services (English)' },
-          { src: '/argicon/el-services.png', title: 'Services (Greek)' },
-          { src: '/argicon/en-contact.png', title: 'Contact (English)' },
-          { src: '/argicon/el-contact.png', title: 'Contact (Greek)' },
-        ],
-      },
-      3: {
-        title: 'DesignDash.gr',
-        images: [
-          { src: '/designdash/home-en.png', title: 'Homepage (English)' },
-          { src: '/designdash/home-el.png', title: 'Homepage (Greek)' },
-          { src: '/designdash/about-en.png', title: 'About (English)' },
-          { src: '/designdash/about-el.png', title: 'About (Greek)' },
-          { src: '/designdash/projects-en.png', title: 'Projects (English)' },
-          { src: '/designdash/projects-el.png', title: 'Projects (Greek)' },
-          { src: '/designdash/services-en.png', title: 'Services (English)' },
-          { src: '/designdash/services-el.png', title: 'Services (Greek)' },
-          { src: '/designdash/contact-en.png', title: 'Contact (English)' },
-          { src: '/designdash/contact-el.png', title: 'Contact (Greek)' },
-        ],
-      },
-    };
-
+    type GalleryItem = { image: string; title?: string };
     // Gallery state
-    let currentProject: ProjectGallery | null = null;
+    let currentProjectTitle: string = '';
     let currentLanguage: 'en' | 'gr' = 'en';
-    let currentImageIndex = 0;
-    let filteredImages: GalleryImage[] = [];
+    let currentImageIndex: number = 0;
+    let allImages: GalleryItem[] = [];
+    let filteredImages: GalleryItem[] = [];
 
     // Gallery elements
-    const modal = document.getElementById('gallery-modal') as HTMLDialogElement;
+    const modal = document.getElementById('gallery-modal') as HTMLDialogElement | null;
     const modalTitle = document.getElementById('gallery-title');
     const modalClose = document.getElementById('gallery-close');
     const modalCounter = document.getElementById('gallery-counter');
-    const mainImage = document.getElementById(
-      'main-gallery-image'
-    ) as HTMLImageElement;
+    const mainImage = document.getElementById('main-gallery-image') as HTMLImageElement | null;
     const pageButtonsContainer = document.getElementById(
       'gallery-page-buttons'
     );
-    const prevBtn = document.getElementById(
-      'gallery-prev'
-    ) as HTMLButtonElement;
-    const nextBtn = document.getElementById(
-      'gallery-next'
-    ) as HTMLButtonElement;
+    const prevBtn = document.getElementById('gallery-prev') as HTMLButtonElement | null;
+    const nextBtn = document.getElementById('gallery-next') as HTMLButtonElement | null;
     const langButtons = document.querySelectorAll('.lang-btn');
+
+    // Observer reference (initialized later)
+    let observer: IntersectionObserver;
 
     // Open gallery buttons
     const galleryButtons = document.querySelectorAll('.open-gallery-btn');
     galleryButtons.forEach(button => {
       button.addEventListener('click', () => {
-        const projectId = parseInt(
-          button.getAttribute('data-project-id') || '1'
-        );
-        openGallery(projectId);
+        const title = button.getAttribute('data-title') || 'Project Gallery';
+        const raw = button.getAttribute('data-gallery') || '[]';
+        let imagesRaw: unknown;
+        try {
+          imagesRaw = JSON.parse(raw);
+        } catch (e) {
+          imagesRaw = [];
+        }
+        const images: GalleryItem[] = Array.isArray(imagesRaw)
+          ? (imagesRaw as any[]).map((it: any) => ({ image: it.image ?? it.src ?? '', title: it.title }))
+          : [];
+        openGallery(title, images);
       });
     });
 
     // Filter images by language
-    function filterImagesByLanguage(
-      images: GalleryImage[],
-      lang: 'en' | 'gr'
-    ): GalleryImage[] {
+    function filterImagesByLanguage(images: GalleryItem[], lang: 'en' | 'gr'): GalleryItem[] {
       const langSuffix = lang === 'en' ? '-en.' : '-el.';
-      return images.filter(img => img.src.includes(langSuffix));
+      return images.filter((img: GalleryItem) => (img.image || '').includes(langSuffix));
     }
 
     // Extract page name from image path
@@ -380,20 +315,15 @@ const projects = [
     }
 
     // Open gallery function
-    function openGallery(projectId: number) {
-      const project = projectGalleries[projectId];
-      if (!project) {
-        console.error('Project not found:', projectId);
-        return;
-      }
-
-      currentProject = project;
+    function openGallery(title: string, images: GalleryItem[]): void {
+      currentProjectTitle = title;
+      allImages = Array.isArray(images) ? images : [];
       currentLanguage = 'en'; // Start with English
       currentImageIndex = 0;
 
       // Set title
       if (modalTitle) {
-        modalTitle.textContent = project.title;
+        modalTitle.textContent = currentProjectTitle;
       }
 
       // Reset language buttons
@@ -416,13 +346,8 @@ const projects = [
 
     // Update gallery content based on current language
     function updateGalleryContent() {
-      if (!currentProject) return;
-
       // Filter images by current language
-      filteredImages = filterImagesByLanguage(
-        currentProject.images,
-        currentLanguage
-      );
+      filteredImages = filterImagesByLanguage(allImages, currentLanguage);
 
       // Ensure current index is valid
       if (currentImageIndex >= filteredImages.length) {
@@ -432,7 +357,7 @@ const projects = [
       // Update main image
       if (filteredImages.length > 0) {
         setMainImage(
-          filteredImages[currentImageIndex].src,
+          filteredImages[currentImageIndex].image,
           filteredImages[currentImageIndex].title
         );
       }
@@ -448,10 +373,10 @@ const projects = [
     }
 
     // Set main image
-    function setMainImage(src: string, title: string) {
+    function setMainImage(src: string, title?: string): void {
       if (mainImage) {
         mainImage.src = src;
-        mainImage.alt = title;
+        mainImage.alt = title || extractPageName(src);
       }
     }
 
@@ -463,19 +388,19 @@ const projects = [
     }
 
     // Create page buttons
-    function createPageButtons() {
+    function createPageButtons(): void {
       if (!pageButtonsContainer) return;
 
       pageButtonsContainer.innerHTML = '';
-      filteredImages.forEach((image: GalleryImage, index: number) => {
+      filteredImages.forEach((image: GalleryItem, index: number) => {
         const pageBtn = document.createElement('button');
-        const pageName = extractPageName(image.src);
+        const pageName = extractPageName(image.image);
 
         pageBtn.className = `gallery-page-btn ${index === currentImageIndex ? 'active' : ''}`;
         pageBtn.textContent = pageName;
         pageBtn.addEventListener('click', () => {
           currentImageIndex = index;
-          setMainImage(image.src, image.title);
+          setMainImage(image.image, image.title);
           updateCounter();
           setActivePageButton(pageBtn);
           updateNavigationButtons();
@@ -485,7 +410,7 @@ const projects = [
     }
 
     // Set active page button
-    function setActivePageButton(activeButton: Element) {
+    function setActivePageButton(activeButton: Element): void {
       if (pageButtonsContainer) {
         pageButtonsContainer
           .querySelectorAll('.gallery-page-btn')
@@ -497,7 +422,7 @@ const projects = [
     }
 
     // Update navigation buttons
-    function updateNavigationButtons() {
+    function updateNavigationButtons(): void {
       if (prevBtn) {
         prevBtn.disabled = currentImageIndex === 0;
       }
@@ -507,11 +432,11 @@ const projects = [
     }
 
     // Navigate to previous image
-    function navigatePrevious() {
+    function navigatePrevious(): void {
       if (currentImageIndex > 0) {
         currentImageIndex--;
         const image = filteredImages[currentImageIndex];
-        setMainImage(image.src, image.title);
+        setMainImage(image.image, image.title);
         updateCounter();
         updateNavigationButtons();
 
@@ -526,11 +451,11 @@ const projects = [
     }
 
     // Navigate to next image
-    function navigateNext() {
+    function navigateNext(): void {
       if (currentImageIndex < filteredImages.length - 1) {
         currentImageIndex++;
         const image = filteredImages[currentImageIndex];
-        setMainImage(image.src, image.title);
+        setMainImage(image.image, image.title);
         updateCounter();
         updateNavigationButtons();
 
@@ -545,12 +470,13 @@ const projects = [
     }
 
     // Close gallery
-    function closeGallery() {
+    function closeGallery(): void {
       if (modal) {
         modal.close();
         document.body.style.overflow = 'auto';
       }
-      currentProject = null;
+      currentProjectTitle = '';
+      allImages = [];
     }
 
     // Language switcher
@@ -600,6 +526,24 @@ const projects = [
       }
     });
 
+    // Intersection Observer (init later but reference available now)
+    observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    document
+      .querySelectorAll('.project-card, .current-work-card')
+      .forEach(card => {
+        observer.observe(card);
+      });
+
     // Fetch current work from GitHub
     async function fetchCurrentWork() {
       try {
@@ -635,6 +579,8 @@ const projects = [
             </div>
           `;
           currentWorkGrid.appendChild(repoCard);
+          // Observe dynamically added cards
+          observer?.observe(repoCard);
         });
       } catch (error) {
         console.error('Failed to fetch current work:', error);
@@ -649,22 +595,6 @@ const projects = [
     // Load current work
     fetchCurrentWork();
 
-    // Animation for project cards
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('animate-in');
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    document
-      .querySelectorAll('.project-card, .current-work-card')
-      .forEach(card => {
-        observer.observe(card);
-      });
+    // Animation observer already initialized above
   });
 </script>
