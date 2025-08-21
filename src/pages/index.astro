@@ -7,7 +7,7 @@ import Projects from '../components/Projects.astro';
 import Contact from '../components/Contact.astro';
 ---
 
-<Layout title="Vaggelis Kavouras | Web Developer & Swiss Design Enthusiast">
+<Layout title="Vaggelis Kavouras | Nordic Web Developer & Digital Craftsman">
   <main class="main-content">
     <Navigation />
     <Hero />
@@ -18,16 +18,15 @@ import Contact from '../components/Contact.astro';
 </Layout>
 
 <script>
-  // Global app initialization
   document.addEventListener('DOMContentLoaded', () => {
-    // Add loading complete class to body
+    // Initialize page
     document.body.classList.add('loaded');
 
-    // Performance optimization: preload critical resources
+    // Preload critical project images
     const criticalImages = [
       '/gsm/home-en.png',
-      '/argicon/home-en.png',
-      '/designdash/home-en.png',
+      '/argicon/home-en.png', 
+      '/designdash/home-en.png'
     ];
 
     criticalImages.forEach(src => {
@@ -38,33 +37,28 @@ import Contact from '../components/Contact.astro';
       document.head.appendChild(link);
     });
 
-    // Smooth scrolling enhancement for better control
+    // Enhanced smooth scrolling
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', e => {
         e.preventDefault();
-        const link = e.target as HTMLAnchorElement;
-        const targetId = link.getAttribute('href')?.substring(1);
-        const targetElement = targetId
-          ? document.getElementById(targetId)
-          : null;
+        const targetId = anchor.getAttribute('href')?.substring(1);
+        const target = targetId ? document.getElementById(targetId) : null;
 
-        if (targetElement) {
-          const navHeight = 80; // Height of fixed navigation
-          const elementPosition = targetElement.getBoundingClientRect().top;
-          const offsetPosition =
-            elementPosition + window.pageYOffset - navHeight;
+        if (target) {
+          const navHeight = 80;
+          const elementPosition = target.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - navHeight;
 
           window.scrollTo({
             top: offsetPosition,
-            behavior: 'smooth',
+            behavior: 'smooth'
           });
         }
       });
     });
 
-    // Add intersection observer for revealing content
-    const revealElements = document.querySelectorAll('section');
-    const revealObserver = new IntersectionObserver(
+    // Section reveal animations
+    const observer = new IntersectionObserver(
       entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
@@ -72,32 +66,12 @@ import Contact from '../components/Contact.astro';
           }
         });
       },
-      {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px',
-      }
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
     );
 
-    revealElements.forEach(el => {
-      el.classList.add('reveal-element');
-      revealObserver.observe(el);
+    document.querySelectorAll('section').forEach(section => {
+      section.classList.add('reveal-element');
+      observer.observe(section);
     });
-
-    // Performance monitoring
-    if ('PerformanceObserver' in window) {
-      const perfObserver = new PerformanceObserver(list => {
-        list.getEntries().forEach(entry => {
-          // Log performance metrics for development
-          if (entry.entryType === 'navigation') {
-            const navEntry = entry as PerformanceNavigationTiming;
-            console.log(
-              `Page loaded in ${navEntry.loadEventEnd - navEntry.fetchStart}ms`
-            );
-          }
-        });
-      });
-
-      perfObserver.observe({ entryTypes: ['navigation'] });
-    }
   });
 </script>
