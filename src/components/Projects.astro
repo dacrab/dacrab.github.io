@@ -604,7 +604,7 @@ const projects = [
     async function fetchCurrentWork() {
       try {
         const response = await fetch(
-          'https://api.github.com/users/dacrab/repos?sort=updated&per_page=6'
+          'https://api.github.com/users/dacrab/repos?sort=updated&per_page=20'
         );
         const repos = await response.json();
 
@@ -613,7 +613,9 @@ const projects = [
 
         currentWorkGrid.innerHTML = '';
 
-        repos.slice(0, 6).forEach((repo: any) => {
+        // Filter out forked repositories and limit to 6 results
+        const nonForkedRepos = repos.filter((repo: any) => !repo.fork);
+        nonForkedRepos.slice(0, 6).forEach((repo: any) => {
           const repoCard = document.createElement('article');
           repoCard.className = 'current-work-card';
           repoCard.innerHTML = `
