@@ -1,0 +1,29 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  eyebrowClass?: string;
+  titleClass?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  eyebrowClass = '',
+  titleClass = '',
+} = Astro.props as Props;
+---
+
+<div class="swiss-section-header asymmetric-grid">
+  {eyebrow && <div class={`swiss-section-title asymmetric-item-3 ${eyebrowClass}`}>{eyebrow}</div>}
+  <h2 class={`swiss-heading-2 asymmetric-item-1 ${titleClass}`}>{title}</h2>
+  {description && (
+    <p class="swiss-section-description asymmetric-item-2">{description}</p>
+  )}
+  <slot />
+  
+</div>
+
+

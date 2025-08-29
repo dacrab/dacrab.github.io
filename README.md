@@ -1,7 +1,8 @@
 # 🚀 Modern Portfolio Website
 
-A professional portfolio website built with Astro, featuring Nordic-inspired Swiss design principles,
-enhanced animations, dynamic GitHub integration, and interactive project galleries with premium UX.
+A professional portfolio website built with Astro, featuring Nordic-inspired Swiss design
+principles, enhanced animations, dynamic GitHub integration, and interactive project galleries with
+premium UX.
 
 ![Astro](https://img.shields.io/badge/Astro-5.13.2-FF5D01)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7.2-blue)
@@ -138,18 +139,21 @@ src/
 ## 🔄 Recent Improvements (2025)
 
 ### Code Quality & Performance
+
 - **Complete Refactoring**: All components restructured with clean, modular code
 - **Inline Style Removal**: Replaced inline styles with proper CSS classes for maintainability
 - **JavaScript Optimization**: Class-based architecture with better error handling
 - **Enhanced Animations**: Improved scroll indicators with looping animations and hover effects
 
 ### User Experience Enhancements
+
 - **High Contrast Text**: Enhanced readability with text shadows and Nordic color improvements
 - **Keyword Highlighting**: Strategic highlighting for better content scanning
 - **Compact Layout**: Optimized spacing and content density in About section
 - **Interactive Elements**: Enhanced dropdowns, galleries, and navigation with smooth transitions
 
 ### Technical Improvements
+
 - **TypeScript Safety**: Improved type checking and eliminated undefined object errors
 - **CSS Variables**: Consistent Nord color palette with CSS custom properties
 - **Performance Monitoring**: Optimized loading states and intersection observers

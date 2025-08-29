@@ -22,11 +22,14 @@ const navItems = [
         ))}
       </ul>
 
-      <button class="swiss-nav-mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation">
+      <div class="nav-actions">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" aria-pressed="false" title="Toggle theme" data-mode="system">🌓</button>
+        <button class="swiss-nav-mobile-toggle" id="mobile-toggle" aria-label="Toggle navigation">
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
-      </button>
+        </button>
+      </div>
     </div>
 
     <div class="swiss-nav-mobile" id="mobile-nav">
@@ -49,6 +52,7 @@ const navItems = [
     const mobileToggle = document.getElementById('mobile-toggle');
     const mobileNav = document.getElementById('mobile-nav');
     const navLinks = document.querySelectorAll('[data-nav-link]');
+    const themeToggle = document.getElementById('theme-toggle');
     
     let scrolled = false;
     let ticking = false;
@@ -90,7 +94,10 @@ const navItems = [
       }
 
       navLinks.forEach(link => {
-        link.classList.toggle('active', link.getAttribute('href') === current);
+        const isActive = link.getAttribute('href') === current;
+        link.classList.toggle('active', isActive);
+        if (isActive) link.setAttribute('aria-current', 'page');
+        else link.removeAttribute('aria-current');
       });
     }
 
@@ -108,6 +115,42 @@ const navItems = [
 
     // Event listeners
     mobileToggle?.addEventListener('click', toggleMobileMenu);
+
+    // Theme toggle with localStorage persistence and system fallback
+    function applyTheme(theme: 'light' | 'dark' | 'system' | null) {
+      const root = document.documentElement;
+      if (theme === 'dark' || theme === 'light') {
+        root.setAttribute('data-theme', theme);
+      } else {
+        root.removeAttribute('data-theme');
+      }
+    }
+
+    function getInitialTheme() /** @returns {'light'|'dark'|'system'} */ {
+      const stored = localStorage.getItem('theme');
+      if (stored === 'light' || stored === 'dark') return stored;
+      return 'system';
+    }
+
+    let currentTheme: 'light' | 'dark' | 'system' = getInitialTheme();
+    applyTheme(currentTheme === 'system' ? null : (currentTheme as 'light' | 'dark'));
+    if (themeToggle) {
+      themeToggle.setAttribute('data-mode', currentTheme);
+      themeToggle.setAttribute('aria-pressed', String(currentTheme !== 'system'));
+      themeToggle.title = `Theme: ${currentTheme}`;
+    }
+
+    themeToggle?.addEventListener('click', () => {
+      // cycle: system -> dark -> light -> system
+      if (currentTheme === 'system') currentTheme = 'dark';
+      else if (currentTheme === 'dark') currentTheme = 'light';
+      else currentTheme = 'system';
+      localStorage.setItem('theme', currentTheme);
+      applyTheme(currentTheme === 'system' ? null : (currentTheme as 'light' | 'dark'));
+      themeToggle.setAttribute('data-mode', currentTheme);
+      themeToggle.setAttribute('aria-pressed', String(currentTheme !== 'system'));
+      themeToggle.title = `Theme: ${currentTheme}`;
+    });
 
     navLinks.forEach(link => {
       link.addEventListener('click', e => {

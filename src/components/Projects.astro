@@ -1,4 +1,5 @@
 ---
+import SectionHeader from './SectionHeader.astro';
 // Simplified Projects section with reliable gallery
 const projects = [
   {
@@ -86,20 +87,24 @@ const projects = [
   <div class="abstract-shape-2"></div>
 
   <div class="swiss-container">
-    <div class="swiss-section-header asymmetric-grid">
-      <div class="swiss-section-title asymmetric-item-3 nordic-work-badge">My Nordic Work 🎯❄️</div>
-      <h2 class="swiss-heading-2 asymmetric-item-1 projects-gradient">Projects I'm Proud Of</h2>
-      <p class="swiss-section-description asymmetric-item-2">
-        Here's a glimpse into my creative journey — each project tells a story of problem-solving, 
-        late-night coding sessions, and the joy of bringing ideas to life with Nordic aesthetics ✨❄️
-      </p>
-    </div>
+    <SectionHeader
+      eyebrow="My Nordic Work 🎯❄️"
+      title="Projects I'm Proud Of"
+      description="Here's a glimpse into my creative journey — each project tells a story of problem-solving, late-night coding sessions, and the joy of bringing ideas to life with Nordic aesthetics ✨❄️"
+      titleClass="projects-gradient"
+      eyebrowClass="nordic-work-badge"
+    />
 
     <div class="projects-grid">
       {
         projects.map((project, index) => (
-          <article class={`project-card project-${index + 1}`} data-project-id={project.id}>
-            <div class={`project-content ${index % 2 === 0 ? 'content-left' : 'content-right'}`}>
+          <article
+            class={`project-card project-${index + 1}`}
+            data-project-id={project.id}
+          >
+            <div
+              class={`project-content ${index % 2 === 0 ? 'content-left' : 'content-right'}`}
+            >
               <div class="project-meta">
                 <span class={`project-number number-${index + 1}`}>
                   {String(index + 1).padStart(2, '0')}
@@ -113,12 +118,18 @@ const projects = [
 
               <div class="project-info">
                 <h3 class="project-title">{project.title}</h3>
-                <p class={`project-subtitle subtitle-${index + 1}`}>{project.subtitle}</p>
+                <p class={`project-subtitle subtitle-${index + 1}`}>
+                  {project.subtitle}
+                </p>
                 <p class="project-description">{project.description}</p>
 
                 <div class="project-technologies">
                   {project.technologies.map((tech, techIndex) => (
-                    <span class={`tech-badge tech-badge-${(techIndex % 4) + 1}`}>{tech}</span>
+                    <span
+                      class={`tech-badge tech-badge-${(techIndex % 4) + 1}`}
+                    >
+                      {tech}
+                    </span>
                   ))}
                 </div>
 
@@ -142,7 +153,9 @@ const projects = [
               </div>
             </div>
 
-            <div class={`project-image project-image-${index + 1} ${index % 2 === 0 ? 'image-right' : 'image-left'}`}>
+            <div
+              class={`project-image project-image-${index + 1} ${index % 2 === 0 ? 'image-right' : 'image-left'}`}
+            >
               <img
                 src={project.gallery[0].image}
                 alt={project.title}
@@ -306,14 +319,16 @@ const projects = [
     }
 
     setupGalleryEvents() {
-      const modal = document.getElementById('gallery-modal') as HTMLDialogElement;
+      const modal = document.getElementById(
+        'gallery-modal'
+      ) as HTMLDialogElement;
       const modalClose = document.getElementById('gallery-close');
       const prevBtn = document.getElementById('gallery-prev');
       const nextBtn = document.getElementById('gallery-next');
       const langButtons = document.querySelectorAll('.lang-btn');
 
       modalClose?.addEventListener('click', () => this.closeGallery());
-      modal?.addEventListener('click', (e) => {
+      modal?.addEventListener('click', e => {
         if (e.target === modal) this.closeGallery();
       });
 
@@ -329,7 +344,7 @@ const projects = [
         });
       });
 
-      document.addEventListener('keydown', (e) => {
+      document.addEventListener('keydown', e => {
         if (modal?.hasAttribute('open')) {
           switch (e.key) {
             case 'Escape':
@@ -352,7 +367,9 @@ const projects = [
       this.currentLanguage = 'en';
       this.currentImageIndex = 0;
 
-      const modal = document.getElementById('gallery-modal') as HTMLDialogElement;
+      const modal = document.getElementById(
+        'gallery-modal'
+      ) as HTMLDialogElement;
       const modalTitle = document.getElementById('gallery-title');
 
       if (modalTitle) modalTitle.textContent = title;
@@ -367,7 +384,9 @@ const projects = [
     }
 
     closeGallery() {
-      const modal = document.getElementById('gallery-modal') as HTMLDialogElement;
+      const modal = document.getElementById(
+        'gallery-modal'
+      ) as HTMLDialogElement;
       if (modal) {
         modal.close();
         document.body.style.overflow = 'auto';
@@ -378,18 +397,21 @@ const projects = [
     switchLanguage(lang: 'en' | 'gr') {
       this.currentLanguage = lang;
       this.currentImageIndex = 0;
-      
+
       const langButtons = document.querySelectorAll('.lang-btn');
       langButtons.forEach(btn => {
         btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
       });
-      
+
       this.updateGalleryContent();
     }
 
     updateGalleryContent() {
-      this.filteredImages = this.filterImagesByLanguage(this.allImages, this.currentLanguage);
-      
+      this.filteredImages = this.filterImagesByLanguage(
+        this.allImages,
+        this.currentLanguage
+      );
+
       if (this.currentImageIndex >= this.filteredImages.length) {
         this.currentImageIndex = 0;
       }
@@ -403,13 +425,18 @@ const projects = [
       this.updateNavigationButtons();
     }
 
-    filterImagesByLanguage(images: GalleryItem[], lang: 'en' | 'gr'): GalleryItem[] {
+    filterImagesByLanguage(
+      images: GalleryItem[],
+      lang: 'en' | 'gr'
+    ): GalleryItem[] {
       const langSuffix = lang === 'en' ? '-en.' : '-el.';
       return images.filter(img => img.image.includes(langSuffix));
     }
 
     setMainImage(item: GalleryItem) {
-      const mainImage = document.getElementById('main-gallery-image') as HTMLImageElement;
+      const mainImage = document.getElementById(
+        'main-gallery-image'
+      ) as HTMLImageElement;
       if (mainImage) {
         mainImage.src = item.image;
         mainImage.alt = item.title || this.extractPageName(item.image);
@@ -459,11 +486,17 @@ const projects = [
     }
 
     updateNavigationButtons() {
-      const prevBtn = document.getElementById('gallery-prev') as HTMLButtonElement;
-      const nextBtn = document.getElementById('gallery-next') as HTMLButtonElement;
-      
+      const prevBtn = document.getElementById(
+        'gallery-prev'
+      ) as HTMLButtonElement;
+      const nextBtn = document.getElementById(
+        'gallery-next'
+      ) as HTMLButtonElement;
+
       if (prevBtn) prevBtn.disabled = this.currentImageIndex === 0;
-      if (nextBtn) nextBtn.disabled = this.currentImageIndex === this.filteredImages.length - 1;
+      if (nextBtn)
+        nextBtn.disabled =
+          this.currentImageIndex === this.filteredImages.length - 1;
     }
 
     navigatePrevious() {
@@ -497,22 +530,26 @@ const projects = [
         { threshold: 0.1 }
       );
 
-      document.querySelectorAll('.project-card, .current-work-card').forEach(card => {
-        this.observer.observe(card);
-      });
+      document
+        .querySelectorAll('.project-card, .current-work-card')
+        .forEach(card => {
+          this.observer.observe(card);
+        });
     }
 
     async fetchCurrentWork() {
       try {
-        const response = await fetch('https://api.github.com/users/dacrab/repos?sort=updated&per_page=20');
+        const response = await fetch(
+          'https://api.github.com/users/dacrab/repos?sort=updated&per_page=20'
+        );
         const repos = await response.json();
         const currentWorkGrid = document.getElementById('current-work-grid');
-        
+
         if (!currentWorkGrid) return;
 
         currentWorkGrid.innerHTML = '';
         const nonForkedRepos = repos.filter((repo: any) => !repo.fork);
-        
+
         nonForkedRepos.slice(0, 6).forEach((repo: any) => {
           const repoCard = document.createElement('article');
           repoCard.className = 'current-work-card';
@@ -539,7 +576,8 @@ const projects = [
         console.error('Failed to fetch current work:', error);
         const currentWorkGrid = document.getElementById('current-work-grid');
         if (currentWorkGrid) {
-          currentWorkGrid.innerHTML = '<p class="error-message">Unable to load current projects. Please try again later.</p>';
+          currentWorkGrid.innerHTML =
+            '<p class="error-message">Unable to load current projects. Please try again later.</p>';
         }
       }
     }
@@ -552,7 +590,10 @@ const projects = [
   }
 
   // Initialize when DOM is ready
-  document.readyState === 'loading' 
-    ? document.addEventListener('DOMContentLoaded', () => new ProjectsController())
+  document.readyState === 'loading'
+    ? document.addEventListener(
+        'DOMContentLoaded',
+        () => new ProjectsController()
+      )
     : new ProjectsController();
 </script>
