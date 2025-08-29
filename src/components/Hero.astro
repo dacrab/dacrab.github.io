@@ -36,7 +36,7 @@
           </a>
           
           <div class="cv-dropdown-wrapper">
-            <button class="swiss-button swiss-button-outline cv-dropdown-trigger" id="cv-dropdown">
+            <button class="swiss-button swiss-button-outline cv-dropdown-trigger" id="cv-dropdown" aria-haspopup="menu" aria-expanded="false">
               📄 Grab My CV
               <span class="dropdown-arrow">▼</span>
             </button>
@@ -111,7 +111,7 @@
   }
 
   .swiss-hero-description {
-    max-width: 85%;
+    max-width: 70ch;
   }
 
   .hero-grid {
@@ -172,7 +172,9 @@
     // CV Dropdown
     cvDropdown?.addEventListener('click', e => {
       e.preventDefault();
+      const willBeActive = !(cvDropdownMenu?.classList.contains('active'));
       cvDropdownMenu?.classList.toggle('active');
+      cvDropdown?.setAttribute('aria-expanded', String(willBeActive));
     });
 
     document.addEventListener('click', e => {
@@ -182,6 +184,7 @@
         !cvDropdownMenu.contains(e.target as Node)
       ) {
         cvDropdownMenu.classList.remove('active');
+        cvDropdown.setAttribute('aria-expanded', 'false');
       }
     });
 
