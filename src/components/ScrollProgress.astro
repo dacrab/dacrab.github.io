@@ -1,0 +1,40 @@
+---
+// Top scroll progress bar
+---
+
+<div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+<style>
+  .scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--nord-frost-4), var(--nord-frost-2));
+    z-index: var(--z-fixed);
+    transition: width 80ms linear;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-progress { transition: none; }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if ((window as any).__scrollProgInit) return;
+    (window as any).__scrollProgInit = true;
+    const bar = document.getElementById('scroll-progress');
+    if (!bar) return;
+    const onScroll = () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+      (bar as HTMLElement).style.width = pct + '%';
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  });
+</script>
+
+

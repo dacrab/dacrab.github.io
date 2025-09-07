@@ -210,6 +210,12 @@ body {
   color: var(--nord-aurora-red);
 }
 
+/* Subtle emoji bounce utility */
+.emoji-bounce {
+  display: inline-block;
+  animation: gentle-bounce 2.2s ease-in-out infinite;
+}
+
 /* Layout Classes */
 .abstract-shape {
   position: absolute;
@@ -343,6 +349,7 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: var(--space-4);
+  position: relative;
 }
 
 .swiss-section-description {
@@ -350,6 +357,25 @@ body {
   color: var(--color-text-secondary);
   max-width: 600px;
   margin: 0 auto;
+}
+
+/* Subtle animated underline for section eyebrow */
+.swiss-section-title::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-primary), transparent);
+  transform: translateX(-50%);
+  opacity: 0.6;
+  animation: underlinePulse 3.2s ease-in-out infinite;
+}
+
+@keyframes underlinePulse {
+  0%, 100% { opacity: 0.4; width: 48px; }
+  50% { opacity: 0.9; width: 72px; }
 }
 
 /* Components */
@@ -468,10 +494,16 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   transition: color var(--transition-fast);
+  animation: logoTint 8s ease-in-out infinite;
 }
 
 .swiss-nav-logo:hover {
   color: var(--color-primary);
+}
+
+@keyframes logoTint {
+  0%, 100% { text-shadow: 0 0 0 rgba(129,161,193,0); }
+  50% { text-shadow: 0 0 14px rgba(129,161,193,0.25); }
 }
 
 .swiss-nav-links {
@@ -776,6 +808,12 @@ body {
   }
 }
 
+/* Idle glow for active decorative elements (very subtle) */
+@keyframes idleGlow {
+  0%, 100% { box-shadow: 0 0 0 rgba(129, 161, 193, 0); }
+  50% { box-shadow: 0 0 14px rgba(129, 161, 193, 0.18); }
+}
+
 .grid-square {
   width: 60px;
   height: 60px;
@@ -788,6 +826,7 @@ body {
 .grid-square.active {
   background-color: var(--color-primary);
   border-color: var(--color-primary);
+  animation: idleGlow 6s ease-in-out infinite;
 }
 
 .grid-square:hover {
@@ -812,7 +851,8 @@ body {
   transition: transform var(--transition-fast);
 }
 
-.cv-dropdown-menu.active .dropdown-arrow {
+/* Rotate arrow when trigger expanded */
+.cv-dropdown-trigger[aria-expanded="true"] .dropdown-arrow {
   transform: rotate(180deg);
 }
 
@@ -990,6 +1030,7 @@ body {
 .grid-cell.active {
   background-color: var(--color-primary);
   border-color: var(--color-primary);
+  animation: idleGlow 6s ease-in-out infinite;
 }
 
 .decoration-lines {
@@ -1052,6 +1093,18 @@ body {
   transform: translateY(-4px);
   box-shadow: var(--shadow-xl);
   border-color: var(--color-primary);
+}
+
+/* Project card tilt on hover (desktop only) */
+@media (hover: hover) and (pointer: fine) {
+  .project-card {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .project-card:hover {
+    transform: rotateX(2deg) rotateY(-2deg) translateY(-4px);
+  }
 }
 
 .project-card.animate-in {
@@ -1369,6 +1422,16 @@ body {
   backdrop-filter: blur(10px);
 }
 
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Current Work */
 .current-work-section {
   margin-top: var(--space-20);
@@ -1672,6 +1735,7 @@ body {
 .grid-item.active {
   background-color: var(--color-primary);
   border-color: var(--color-primary);
+  animation: idleGlow 6s ease-in-out infinite;
 }
 
 /* Footer */
@@ -1818,6 +1882,12 @@ body {
 
 body.loaded {
   opacity: 1;
+}
+
+/* Shared animation utility */
+.animate-in {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
 }
 
 .reveal-element,

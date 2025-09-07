@@ -1,9 +1,9 @@
 ---
 const navItems = [
-  { label: '🏠 Home', href: '#home' },
-  { label: '👋 About', href: '#about' },
-  { label: '🎯 Projects', href: '#projects' },
-  { label: '💬 Contact', href: '#contact' },
+  { label: 'Home', href: '#home' },
+  { label: 'About', href: '#about' },
+  { label: 'Projects', href: '#projects' },
+  { label: 'Contact', href: '#contact' },
 ];
 ---
 
@@ -48,6 +48,8 @@ const navItems = [
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    if ((window as any).__navInit) return;
+    (window as any).__navInit = true;
     const nav = document.getElementById('navigation');
     const mobileToggle = document.getElementById('mobile-toggle');
     const mobileNav = document.getElementById('mobile-nav');
@@ -160,7 +162,10 @@ const navItems = [
 
         if (target) {
           closeMobileMenu();
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const navHeight = 80;
+          const elementPosition = (target as HTMLElement).getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - navHeight;
+          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
           setTimeout(() => updateActiveLink(), 100);
         }
       });

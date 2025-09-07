@@ -1,5 +1,9 @@
 ---
 import '../styles/globals.css';
+import AnimatedParticles from '../components/AnimatedParticles.astro';
+import ScrollToTop from '../components/ScrollToTop.astro';
+import CursorSpotlight from '../components/CursorSpotlight.astro';
+import ScrollProgress from '../components/ScrollProgress.astro';
 
 export interface Props {
   title: string;
@@ -8,7 +12,7 @@ export interface Props {
 
 const {
   title,
-  description = 'Vaggelis Kavouras - Web Developer crafting Nordic-inspired digital experiences with Swiss precision and modern creativity.',
+  description = 'Vaggelis Kavouras - Web Developer crafting Nordic-inspired digital experiences with Nordic precision and modern creativity.',
 } = Astro.props;
 ---
 
@@ -19,7 +23,7 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="author" content="Vaggelis Kavouras (DaCrab)" />
-    <meta name="keywords" content="web developer, Nordic design, Swiss design, React, Astro, TypeScript, portfolio" />
+    <meta name="keywords" content="web developer, Nordic design, React, Astro, TypeScript, portfolio" />
     <meta name="generator" content={Astro.generator} />
     
     <!-- Favicon -->
@@ -57,8 +61,12 @@ const {
     <title>{title}</title>
   </head>
   <body>
+    <ScrollProgress />
     <a href="#main" class="skip-link">Skip to main content</a>
     <div class="swiss-grid-pattern"></div>
+    <AnimatedParticles />
+    <CursorSpotlight />
+    <ScrollToTop />
     <slot />
   </body>
 </html>
