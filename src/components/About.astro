@@ -7,32 +7,32 @@ import SectionHeader from './SectionHeader.astro';
   <div class="abstract-shape-3"></div>
   
   <div class="swiss-container">
-    <SectionHeader eyebrow="About Me 🌟" title="Where Code Meets Nordic Creativity" description="I believe great digital experiences happen when Swiss precision meets human intuition — where every pixel has purpose, and every interaction feels just right ✨❄️" titleClass="gradient-text" />
+    <SectionHeader eyebrow="About" title="Craft with clarity" description="Great products balance precision and empathy — clear structure, respectful interactions, and performance that feels effortless." titleClass="gradient-text" />
 
     <div class="swiss-about-content asymmetric-grid">
       <div class="about-text asymmetric-item-1">
         <div class="about-intro">
           <p class="swiss-body-large">
-            Hey! I'm <span class="keyword-highlight">Vaggelis</span> 👨‍💻 — a <strong>web developer from <span class="keyword-highlight">Greece</span></strong> obsessed with 
-            crafting <span class="keyword-highlight">digital experiences</span> that feel effortless and delightful. I draw inspiration 
-            from <span class="keyword-highlight">Swiss design principles</span> because there's something magical about <em><span class="keyword-highlight">Nordic clarity</span></em> ✨❄️
+            I'm <span class="keyword-highlight">Vaggelis</span>, a <strong>web developer from <span class="keyword-highlight">Greece</span></strong> focused on building 
+            <span class="keyword-highlight">robust, thoughtful</span> digital experiences. I draw from <span class="keyword-highlight">Nordic design principles</span>
+            to keep interfaces clear, consistent, and humane.
           </p>
         </div>
 
         <div class="about-details">
           <p class="swiss-body">
-            When I'm not coding, I explore <span class="keyword-highlight">new technologies</span>, read design books, 
-            or over-engineer side projects (because why keep it simple? 😅). I believe the best websites feel like they just... <span class="keyword-highlight">work</span>.
+            Outside of work, I explore <span class="keyword-highlight">new technologies</span>, study design systems, and refine tooling.
+            The best products are the ones that simply <span class="keyword-highlight">work</span>.
           </p>
 
           <p class="swiss-body">
-            My sweet spot is where <strong><span class="keyword-highlight">clean code</span> meets <span class="keyword-highlight">thoughtful design</span></strong> — building things that 
-            look good and feel <span class="keyword-highlight">intuitive</span>. Every decision has a reason, because users deserve <span class="keyword-highlight">excellence</span> 🎯
+            My sweet spot is where <strong><span class="keyword-highlight">clean code</span> meets <span class="keyword-highlight">purposeful design</span></strong> — practical, 
+            maintainable solutions that feel <span class="keyword-highlight">intuitive</span>. Every decision has a reason.
           </p>
         </div>
 
         <div class="skills-section">
-          <h3 class="swiss-heading-4 skills-title">My Nordic Toolkit ❄️🛠️</h3>
+          <h3 class="swiss-heading-4 skills-title">Core tools</h3>
           <div class="skills-grid">
             <div class="skill-item skill-react">
               <div class="skill-icon">⚛️</div>
@@ -248,15 +248,7 @@ import SectionHeader from './SectionHeader.astro';
       observer.observe(el);
     });
 
-    // Add animation class styles
-    const style = document.createElement('style');
-    style.textContent = `
-      .animate-in {
-        opacity: 1 !important;
-        transform: translateY(0) !important;
-      }
-    `;
-    document.head.appendChild(style);
+    // Styles for .animate-in are now provided globally in globals.css
 
     // Animate grid cells
     setInterval(() => {

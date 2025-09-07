@@ -88,9 +88,9 @@ const projects = [
 
   <div class="swiss-container">
     <SectionHeader
-      eyebrow="My Nordic Work 🎯❄️"
-      title="Projects I'm Proud Of"
-      description="Here's a glimpse into my creative journey — each project tells a story of problem-solving, late-night coding sessions, and the joy of bringing ideas to life with Nordic aesthetics ✨❄️"
+      eyebrow="Selected work"
+      title="Projects"
+      description="A sample of recent work across product, performance, and UI implementation."
       titleClass="projects-gradient"
       eyebrowClass="nordic-work-badge"
     />
@@ -140,14 +140,14 @@ const projects = [
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    🚀 See It Live
+                    🚀 Open site
                   </a>
                   <button
                     class="swiss-button swiss-button-outline open-gallery-btn"
                     data-title={project.title}
                     data-gallery={JSON.stringify(project.gallery)}
                   >
-                    📸 Browse Gallery ({project.gallery.length})
+                    📸 View gallery ({project.gallery.length})
                   </button>
                 </div>
               </div>
@@ -188,7 +188,7 @@ const projects = [
   </div>
 
   <!-- Enhanced Gallery Modal -->
-  <dialog class="gallery-modal" id="gallery-modal">
+  <dialog class="gallery-modal" id="gallery-modal" role="dialog" aria-modal="true" aria-labelledby="gallery-title">
     <div class="gallery-container">
       <!-- Top Header with Title, Language Switcher & Close -->
       <div class="gallery-header">
@@ -590,10 +590,12 @@ const projects = [
   }
 
   // Initialize when DOM is ready
+  const initProjects = () => {
+    if ((window as any).__projectsInit) return;
+    (window as any).__projectsInit = true;
+    new ProjectsController();
+  };
   document.readyState === 'loading'
-    ? document.addEventListener(
-        'DOMContentLoaded',
-        () => new ProjectsController()
-      )
-    : new ProjectsController();
+    ? document.addEventListener('DOMContentLoaded', initProjects)
+    : initProjects();
 </script>

@@ -39,8 +39,8 @@ import Footer from '../components/Footer.astro';
       document.head.appendChild(link);
     });
 
-    // Enhanced smooth scrolling
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    // Enhanced smooth scrolling (skip nav links handled by Navigation)
+    document.querySelectorAll('a[href^="#"]:not([data-nav-link])').forEach(anchor => {
       anchor.addEventListener('click', e => {
         e.preventDefault();
         const targetId = anchor.getAttribute('href')?.substring(1);

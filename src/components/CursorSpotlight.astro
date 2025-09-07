@@ -1,0 +1,36 @@
+---
+// Cursor-based radial spotlight following the pointer
+---
+
+<div id="cursor-spotlight" class="cursor-spotlight" aria-hidden="true"></div>
+
+<style>
+  .cursor-spotlight {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(120px 120px at var(--sx, -200px) var(--sy, -200px), rgba(129,161,193,0.16), transparent 60%);
+    transition: background 120ms ease;
+    mix-blend-mode: soft-light;
+  }
+
+  @media (max-width: 768px), (prefers-reduced-motion: reduce) {
+    .cursor-spotlight { display: none; }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if ((window as any).__cursorSpotInit) return;
+    (window as any).__cursorSpotInit = true;
+    const el = document.getElementById('cursor-spotlight') as HTMLElement | null;
+    if (!el) return;
+    window.addEventListener('pointermove', e => {
+      el.style.setProperty('--sx', `${e.clientX}px`);
+      el.style.setProperty('--sy', `${e.clientY}px`);
+    }, { passive: true });
+  });
+</script>
+
+

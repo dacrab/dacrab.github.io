@@ -61,16 +61,14 @@ import SectionHeader from './SectionHeader.astro';
       <div class="contact-cta-section">
         <h3 class="cta-title">Let's Create Something Extraordinary! 🌟</h3>
         <p class="cta-description">
-          Have a project in mind? Want to brainstorm ideas over coffee? Or just curious about Swiss design? 
+          Have a project in mind? Want to brainstorm ideas over coffee? Or just curious about Nordic design? 
           I'm always up for meaningful conversations and exciting challenges! Let's turn your vision into reality ✨
         </p>
         <div class="cta-actions">
-          <a href="mailto:vkavouras@proton.me" class="swiss-button swiss-button-primary">
-            💌 Start the Conversation
-          </a>
+          <a href="mailto:vkavouras@proton.me" class="swiss-button swiss-button-primary">📧 Email me</a>
           <div class="cv-dropdown-wrapper">
-            <button class="swiss-button swiss-button-outline cv-dropdown-trigger" id="contact-cv-dropdown" aria-haspopup="menu" aria-expanded="false">
-              📄 Grab My Resume
+            <button class="swiss-button swiss-button-outline cv-dropdown-trigger" id="contact-cv-dropdown" aria-haspopup="menu" aria-expanded="false" aria-controls="contact-cv-dropdown-menu">
+              📄 Download CV
               <span class="dropdown-arrow">▼</span>
             </button>
             <div class="cv-dropdown-menu" id="contact-cv-dropdown-menu">
@@ -123,21 +121,24 @@ import SectionHeader from './SectionHeader.astro';
 
     setupDropdown() {
       const trigger = document.getElementById('contact-cv-dropdown');
-      const wrapper = trigger?.parentElement;
+      const menu = document.getElementById('contact-cv-dropdown-menu');
 
-      if (!trigger || !wrapper) return;
+      if (!trigger || !menu) return;
 
       trigger.addEventListener('click', (e) => {
         e.preventDefault();
-        e.stopPropagation();
-        const willBeActive = !wrapper.classList.contains('active');
-        wrapper.classList.toggle('active');
+        const willBeActive = !(menu.classList.contains('active'));
+        menu.classList.toggle('active');
         trigger.setAttribute('aria-expanded', String(willBeActive));
       });
 
       document.addEventListener('click', (e) => {
-        if (!wrapper.contains(e.target as Node)) {
-          wrapper.classList.remove('active');
+        if (
+          trigger && menu &&
+          !trigger.contains(e.target as Node) &&
+          !menu.contains(e.target as Node)
+        ) {
+          menu.classList.remove('active');
           trigger.setAttribute('aria-expanded', 'false');
         }
       });
@@ -145,24 +146,41 @@ import SectionHeader from './SectionHeader.astro';
 
     animateCards() {
       const cards = document.querySelectorAll('.contact-card');
-      cards.forEach((card, index) => {
-        const element = card as HTMLElement;
-        element.style.opacity = '0';
-        element.style.transform = 'translateY(20px)';
-        element.style.transition = `opacity 0.5s ease ${index * 0.1}s, transform 0.5s ease ${index * 0.1}s`;
-
-        requestAnimationFrame(() => {
-          setTimeout(() => {
-            element.style.opacity = '1';
-            element.style.transform = 'translateY(0)';
-          }, 100);
+      const runReveal = () => {
+        cards.forEach((card, index) => {
+          const element = card as HTMLElement;
+          element.style.transition = `opacity 0.5s ease ${index * 0.1}s, transform 0.5s ease ${index * 0.1}s`;
+          element.style.opacity = '1';
+          element.style.transform = 'translateY(0)';
         });
-      });
+      };
+
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+        const io = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              runReveal();
+              io.disconnect();
+            }
+          });
+        }, { threshold: 0.2, rootMargin: '0px 0px -10% 0px' });
+        io.observe(contactSection);
+      } else {
+        // Fallback
+        runReveal();
+      }
     }
   }
 
-  // Initialize when DOM is ready
+  // Initialize when DOM is ready with guard against double-init
+  const initContact = () => {
+    if ((window as any).__contactInit) return;
+    (window as any).__contactInit = true;
+    new ContactController();
+  };
+
   document.readyState === 'loading' 
-    ? document.addEventListener('DOMContentLoaded', () => new ContactController())
-    : new ContactController();
+    ? document.addEventListener('DOMContentLoaded', initContact)
+    : initContact();
 </script>

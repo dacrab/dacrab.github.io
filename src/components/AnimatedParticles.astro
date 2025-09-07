@@ -1,0 +1,85 @@
+---
+// Simple lightweight canvas particles with idle drift
+---
+
+<canvas id="particles-canvas" class="particles-canvas" aria-hidden="true"></canvas>
+
+<style>
+  .particles-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.5;
+  }
+
+  @media (max-width: 768px) {
+    .particles-canvas { display: none; }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if ((window as any).__particlesInit) return;
+    (window as any).__particlesInit = true;
+
+    const canvasEl = document.getElementById('particles-canvas') as HTMLCanvasElement | null;
+    if (!canvasEl) return;
+    const ctx = canvasEl.getContext('2d') as CanvasRenderingContext2D | null;
+    if (!ctx) return;
+    const canvas = canvasEl as HTMLCanvasElement;
+    const context = ctx as CanvasRenderingContext2D;
+
+    const DPR = Math.min(window.devicePixelRatio || 1, 2);
+    let width = 0; let height = 0;
+    const particles: { x: number; y: number; vx: number; vy: number; r: number; a: number }[] = [];
+    const COUNT = 60;
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = Math.floor(width * DPR);
+      canvas.height = Math.floor(height * DPR);
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+      context.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
+
+    function initParticles() {
+      particles.length = 0;
+      for (let i = 0; i < COUNT; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          r: 1 + Math.random() * 1.5,
+          a: 0.2 + Math.random() * 0.5,
+        });
+      }
+    }
+
+    function step() {
+      context.clearRect(0, 0, width, height);
+      context.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--nord-frost-3').trim() || '#81a1c1';
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < -5) p.x = width + 5; if (p.x > width + 5) p.x = -5;
+        if (p.y < -5) p.y = height + 5; if (p.y > height + 5) p.y = -5;
+        context.globalAlpha = p.a;
+        context.beginPath();
+        context.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        context.fill();
+      });
+      context.globalAlpha = 1;
+      requestAnimationFrame(step);
+    }
+
+    resize();
+    initParticles();
+    step();
+    window.addEventListener('resize', () => { resize(); initParticles(); });
+  });
+</script>
+
+

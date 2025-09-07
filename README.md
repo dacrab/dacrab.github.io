@@ -1,6 +1,6 @@
 # 🚀 Modern Portfolio Website
 
-A professional portfolio website built with Astro, featuring Nordic-inspired Swiss design
+A professional portfolio website built with Astro, featuring Nordic-inspired design
 principles, enhanced animations, dynamic GitHub integration, and interactive project galleries with
 premium UX.
 
@@ -9,37 +9,36 @@ premium UX.
 ![Lightning CSS](https://img.shields.io/badge/Lightning_CSS-1.30.1-yellow)
 ![React](https://img.shields.io/badge/React-19.1.0-blue)
 
-## ✨ Features
+## Features
 
-- **❄️ Nordic-Swiss Design**: Clean layouts with Nord color palette and Swiss typography principles
-- **📱 Fully Responsive Design**: Optimized for all devices with premium mobile experience
-- **🖼️ Enhanced Project Gallery**: Modal galleries with language switching and smooth animations
-- **📥 Smart CV Download**: Interactive dropdown with flag indicators and hover effects
-- **💻 Live GitHub Integration**: Real-time repository data with error handling and loading states
-- **🎭 Premium Animations**: Scroll indicators, keyword highlights, and intersection-based reveals
-- **🌙 Nordic Dark Theme**: Beautiful dark mode with enhanced contrast and readability
-- **⚡ Lightning Performance**: Optimized code structure and minimal bundle size
-- **🔍 SEO Optimized**: Meta tags, semantic structure, and accessibility features
-- **🎯 Enhanced UX**: High-contrast text, keyword highlighting, and intuitive interactions
+- **Design system**: Nord palette, refined typography, and consistent UI patterns
+- **Responsive**: Optimized for mobile, tablet, and desktop
+- **Project gallery**: Modal galleries with language switching
+- **CV access**: Downloadable CV with language options
+- **GitHub integration**: Live repository data with graceful error handling
+- **Animations**: Intersection-based reveals and subtle motion
+- **Dark mode**: Accessible, high-contrast theme
+- **Performance**: Lean code and minimal bundle size
+- **SEO**: Semantic structure and metadata
 
 ## 🔥 Featured Projects
 
 The portfolio showcases professional projects with interactive galleries:
 
-### 🏆 Silver and Gold Money
+### Silver and Gold Money
 
 A modern pawn shop landing page with services like loans, gold/silver trading, and calculator tools.
 Built with Svelte and SvelteKit.
 
 - **Gallery**: 8 pages including home, services, calculators, and contact
 
-### 🏢 Argicon.gr
+### Argicon.gr
 
 Technical construction company website with professional portfolio showcase and service offerings.
 
 - **Gallery**: 4 pages featuring homepage, projects, services, and contact
 
-### 🎨 DesignDash.gr
+### DesignDash.gr
 
 Digital construction platform with comprehensive project galleries and technical specifications.
 
@@ -55,9 +54,9 @@ Digital construction platform with comprehensive project galleries and technical
 - **[React Intersection Observer](https://github.com/thebuilder/react-intersection-observer)**:
   Scroll-based animations
 
-## ❄️ Nordic-Swiss Design Philosophy
+## Nordic Design Philosophy
 
-This portfolio combines Swiss design principles with Nordic aesthetics:
+This portfolio combines Nordic design principles with modern aesthetics:
 
 - **Clean Typography**: Inter font with enhanced contrast and text shadows for optimal readability
 - **Grid-Based Layout**: Structured organization using precise grid systems and asymmetric balance
@@ -68,7 +67,7 @@ This portfolio combines Swiss design principles with Nordic aesthetics:
 - **Functional Beauty**: Every element serves a purpose while maintaining visual appeal
 - **Progressive Enhancement**: Graceful fallbacks and optimized performance across all devices
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -243,9 +242,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Lightning CSS](https://lightningcss.dev/) - Fast CSS processing
 - [Inter Font](https://rsms.me/inter/) - Professional typography
 - [React](https://react.dev/) - Component library
-- Swiss Design Movement - Design inspiration
+- Nordic Design Movement - Design inspiration
 
 ---
 
-Built with ❤️ by DaCrab using Nordic-Swiss design principles and cutting-edge web technologies.
+Built with ❤️ by DaCrab using Nordic design principles and cutting-edge web technologies.
 Featuring premium animations, enhanced accessibility, and optimized performance for the modern web.
