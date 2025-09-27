@@ -18,9 +18,10 @@
     "check": "bun run lint && bun run type-check && bun run format:check"
   },
   "dependencies": {
-    "@astrojs/react": "^4.3.0",
-    "astro": "^5.13.2",
+    "@astrojs/react": "4.4.0",
+    "astro": "5.14.1",
     "framer-motion": "^12.18.1",
+    "gsap": "^3.13.0",
     "lucide-react": "^0.540.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
