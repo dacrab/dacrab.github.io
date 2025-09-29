@@ -438,96 +438,84 @@ body {
   color: white;
 }
 
-/* Navigation */
+/* Navigation - Minimalistic */
 .swiss-nav {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: var(--z-fixed);
-  background-color: rgba(var(--color-background-rgb), 0.8);
-  border-bottom: 1px solid rgba(var(--color-background-rgb), 0.2);
+  background-color: rgba(var(--color-background-rgb), 0.85);
+  border-bottom: 1px solid transparent;
   transition: all var(--transition-normal);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  backdrop-filter: blur(8px);
 }
 
 .swiss-nav.scrolled {
   background-color: rgba(var(--color-background-rgb), 0.95);
   border-bottom-color: var(--color-border);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .swiss-nav-content {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 80px;
+  height: 60px;
 }
 
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
 }
 
 .theme-toggle {
-  border: 1px solid var(--color-border);
-  background: var(--color-background);
-  color: var(--color-text);
-  border-radius: 6px;
-  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  border-radius: 4px;
+  padding: 4px 8px;
   cursor: pointer;
   transition: all var(--transition-fast);
+  font-size: var(--font-size-lg);
 }
 
 .theme-toggle:hover {
-  border-color: var(--color-primary);
   color: var(--color-primary);
-  transform: translateY(-1px);
 }
 
 .swiss-nav-logo {
-  font-size: var(--font-size-xl);
+  font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--color-text);
   text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   transition: color var(--transition-fast);
-  animation: logoTint 8s ease-in-out infinite;
 }
 
 .swiss-nav-logo:hover {
   color: var(--color-primary);
 }
 
-@keyframes logoTint {
-  0%, 100% { text-shadow: 0 0 0 rgba(129,161,193,0); }
-  50% { text-shadow: 0 0 14px rgba(129,161,193,0.25); }
-}
-
 .swiss-nav-links {
   display: flex;
   align-items: center;
-  gap: var(--space-8);
+  gap: var(--space-6);
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .swiss-nav-link {
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   font-weight: 500;
   color: var(--color-text-secondary);
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: calc(var(--space-2) + 2px) var(--space-4);
+  padding: var(--space-2) var(--space-3);
   transition: color var(--transition-fast);
   position: relative;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  backdrop-filter: blur(4px);
 }
 
 .swiss-nav-link:hover,
@@ -535,23 +523,12 @@ body {
   color: var(--color-primary);
 }
 
-.swiss-nav-link:hover {
-  background-color: rgba(var(--color-background-rgb), 0.4);
-  border-color: rgba(var(--color-background-rgb), 0.6);
-}
-
-.swiss-nav-link.active {
-  background: linear-gradient(180deg, rgba(129,161,193,0.18), rgba(129,161,193,0.08));
-  border-color: var(--color-primary);
-  box-shadow: 0 4px 14px rgba(129,161,193,0.25);
-}
-
 .swiss-nav-link.active::after {
   content: '';
   position: absolute;
-  bottom: -1px;
-  left: var(--space-3);
-  right: var(--space-3);
+  bottom: 0;
+  left: 0;
+  right: 0;
   height: 2px;
   background-color: var(--color-primary);
 }
@@ -610,13 +587,13 @@ body {
 }
 
 .swiss-nav-mobile-link {
-  font-size: var(--font-size-base);
-  font-weight: 600;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
   color: var(--color-text);
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: var(--space-3) 0;
+  padding: var(--space-2) 0;
   display: block;
   transition: color var(--transition-fast);
 }
@@ -814,7 +791,9 @@ body {
   50% { box-shadow: 0 0 14px rgba(129, 161, 193, 0.18); }
 }
 
-.grid-square {
+/* Unified grid square/cell styles */
+.grid-square,
+.grid-cell {
   width: 60px;
   height: 60px;
   border: 2px solid var(--color-border);
@@ -823,7 +802,14 @@ body {
   position: relative;
 }
 
-.grid-square.active {
+.grid-cell {
+  width: 40px;
+  height: 40px;
+  background-color: var(--color-surface);
+}
+
+.grid-square.active,
+.grid-cell.active {
   background-color: var(--color-primary);
   border-color: var(--color-primary);
   animation: idleGlow 6s ease-in-out infinite;
@@ -1013,24 +999,11 @@ body {
   gap: var(--space-8);
 }
 
-.decoration-grid {
+.decoration-grid,
+.decoration-grid-large {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-2);
-}
-
-.grid-cell {
-  width: 40px;
-  height: 40px;
-  border: 2px solid var(--color-border);
-  background-color: var(--color-surface);
-  transition: all var(--transition-normal);
-}
-
-.grid-cell.active {
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
-  animation: idleGlow 6s ease-in-out infinite;
 }
 
 .decoration-lines {
@@ -1139,29 +1112,20 @@ body {
   margin-bottom: 1rem;
 }
 
-.project-number {
-  padding: 0;
-  border-radius: 0;
-  font-weight: 700;
-  color: var(--color-text-secondary);
-}
-.number-1,
-.number-2,
-.number-3 {
-  background: transparent;
-}
-
 .project-tech {
   margin-top: 0.5rem;
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 
 .tech-tag {
   border-radius: 12px;
   padding: 0.3rem 0.8rem;
-  color: var(--nord-snow-storm-3);
-  font-size: 0.85rem;
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  /* Color and background set at end of file for proper contrast */
 }
 
 .tech-1 {
@@ -1173,16 +1137,19 @@ body {
 }
 
 .project-title {
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   font-weight: 700;
   color: var(--color-text);
-  margin-bottom: 0.8rem;
+  margin-bottom: var(--space-2);
   word-wrap: break-word;
 }
 
 .project-subtitle {
+  font-size: var(--font-size-sm);
   font-weight: 600;
-  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-3);
   word-wrap: break-word;
 }
 
@@ -1199,25 +1166,26 @@ body {
 }
 
 .project-description {
-  margin: 1rem 0;
+  color: var(--color-text-secondary);
   line-height: 1.6;
+  margin: 1rem 0 var(--space-4);
   word-wrap: break-word;
   overflow-wrap: break-word;
-  color: var(--color-text-secondary);
 }
 
 .project-technologies {
-  margin: 1.2rem 0;
   display: flex;
+  gap: var(--space-2);
   flex-wrap: wrap;
-  gap: 0.5rem;
+  margin: 1.2rem 0 var(--space-6);
 }
 
 .tech-badge {
   border-radius: 12px;
   padding: 0.4rem 0.8rem;
-  font-size: 0.85rem;
+  font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
+  font-weight: 500;
 }
 
 .tech-badge-1 {
@@ -1242,17 +1210,18 @@ body {
 
 .project-actions {
   display: flex;
-  gap: 1rem;
+  gap: var(--space-3);
   margin-top: 1.2rem;
   flex-wrap: wrap;
 }
 
 .project-image {
+  position: relative;
   border-radius: 14px;
   overflow: hidden;
-  position: relative;
   width: 100%;
-  height: 400px;
+  height: 420px;
+  aspect-ratio: 9/16;
 }
 
 .project-image-1 {
@@ -1275,125 +1244,18 @@ body {
   order: 1;
 }
 
+.project-image img,
 .project-main-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-  filter: saturate(1.05);
-}
-
-.project-card:hover .project-main-image {
-  transform: scale(1.05);
-}
-
-.project-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(0,0,0,0.6), transparent);
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-end;
-  padding: 1rem;
-}
-
-.gallery-count {
-  color: var(--nord-snow-storm-3);
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.project-number {
-  font-size: var(--font-size-xl);
-  font-weight: 900;
-  color: var(--color-primary);
-}
-
-.project-tech {
-  display: flex;
-  gap: var(--space-2);
-}
-
-.tech-tag {
-  font-size: var(--font-size-xs);
-  padding: var(--space-1) var(--space-2);
-  background-color: transparent;
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 600;
-}
-
-.project-title {
-  font-size: var(--font-size-2xl);
-  font-weight: 700;
-  color: var(--color-text);
-  margin-bottom: var(--space-2);
-  word-wrap: break-word;
-}
-
-.project-subtitle {
-  font-size: var(--font-size-sm);
-  color: var(--color-primary);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: var(--space-3);
-  word-wrap: break-word;
-}
-
-.project-description {
-  color: var(--color-text-secondary);
-  line-height: 1.6;
-  margin-bottom: var(--space-4);
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-}
-
-.project-technologies {
-  display: flex;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-  margin-bottom: var(--space-6);
-}
-
-.tech-badge {
-  font-size: var(--font-size-xs);
-  padding: var(--space-1) var(--space-3);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-secondary);
-  font-weight: 500;
-}
-
-.project-actions {
-  display: flex;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-}
-
-.project-image {
-  position: relative;
-  border-radius: 8px;
-  overflow: hidden;
-  aspect-ratio: 9/16;
-  height: 420px;
-  width: 100%;
-}
-
-.project-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: top;
   transition: transform var(--transition-normal);
+  filter: saturate(1.05);
 }
 
-.project-card:hover .project-image img {
+.project-card:hover .project-image img,
+.project-card:hover .project-main-image {
   transform: scale(1.05);
 }
 
@@ -1406,6 +1268,7 @@ body {
   justify-content: center;
   opacity: 0;
   transition: opacity var(--transition-normal);
+  padding: 1rem;
 }
 
 .project-card:hover .project-overlay {
@@ -1421,6 +1284,8 @@ body {
   border-radius: 20px;
   backdrop-filter: blur(10px);
 }
+
+/* Project number styles moved to end of file for proper overrides */
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -1718,12 +1583,7 @@ body {
   transform: rotate(45deg);
 }
 
-.decoration-grid-large {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-3);
-}
-
+/* grid-item extends grid-cell with custom size */
 .grid-item {
   width: 50px;
   height: 50px;
@@ -1885,11 +1745,6 @@ body.loaded {
 }
 
 /* Shared animation utility */
-.animate-in {
-  opacity: 1 !important;
-  transform: translateY(0) !important;
-}
-
 .reveal-element,
 .project-card {
   opacity: 0;
@@ -2368,8 +2223,7 @@ dialog.gallery-modal::backdrop {
   outline-offset: 2px;
 }
 
-/* Tweaks: Project numbering, badges, and gallery options */
-/* Make project numbers prominent and readable on both themes */
+/* Project Number Enhancements */
 .project-number {
   width: 40px;
   height: 40px;
@@ -2382,21 +2236,33 @@ dialog.gallery-modal::backdrop {
   color: #fff;
   background: linear-gradient(135deg, var(--nord-frost-4), var(--nord-aurora-purple));
 }
+
 .number-1 { background: linear-gradient(135deg, var(--nord-aurora-red), var(--nord-aurora-orange)); }
 .number-2 { background: linear-gradient(135deg, var(--nord-aurora-purple), var(--nord-frost-2)); }
 .number-3 { background: linear-gradient(135deg, var(--nord-aurora-yellow), var(--nord-aurora-green)); }
 
-/* White font for small tech/language badges on project cards */
-.tech-tag { color: #fff; background-color: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.24); }
+/* Enhanced badge visibility */
+.tech-tag { 
+  color: #fff; 
+  background-color: rgba(255,255,255,0.12); 
+  border: 1px solid rgba(255,255,255,0.24); 
+}
 
-/* White font for the Projects eyebrow badge */
 .nordic-work-badge { color: #fff; }
 
-/* Gallery modal controls: white labels for better contrast over media */
-.gallery-language-switcher { background-color: transparent; border: 1px solid rgba(255,255,255,0.2); }
+/* Gallery modal enhanced contrast */
+.gallery-language-switcher { 
+  background-color: transparent; 
+  border: 1px solid rgba(255,255,255,0.2); 
+}
+
 .lang-btn { color: #fff; }
 .lang-btn:hover { background-color: rgba(255,255,255,0.1); color: #fff; }
-.gallery-page-btn { color: #fff; background-color: transparent; border: 1px solid rgba(255,255,255,0.3); }
+.gallery-page-btn { 
+  color: #fff; 
+  background-color: transparent; 
+  border: 1px solid rgba(255,255,255,0.3); 
+}
 
 /* Performance */
 .will-change-transform {

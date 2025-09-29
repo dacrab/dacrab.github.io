@@ -162,7 +162,7 @@ const navItems = [
 
         if (target) {
           closeMobileMenu();
-          const navHeight = 80;
+          const navHeight = 60;
           const elementPosition = (target as HTMLElement).getBoundingClientRect().top;
           const offsetPosition = elementPosition + window.pageYOffset - navHeight;
           window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
