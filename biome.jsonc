@@ -1,0 +1,28 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "extends": ["ultracite"],
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": { "useFilenamingConvention": "off" },
+      "correctness": { "noUnusedImports": "off", "noUnusedVariables": "off" }
+    }
+  },
+  "organizeImports": {
+    "enabled": true
+  },
+  "files": {
+    "include": ["**/*.{js,ts,tsx,mjs,cjs,json,jsonc,css,md}"],
+    "ignore": ["node_modules", "dist", "build", ".astro", "**/*.astro"]
+  },
+  "formatter": {
+    "ignore": ["src/**/*.astro"]
+  },
+  "overrides": [
+    {
+      "include": ["**/*.astro"],
+      "linter": { "enabled": false }
+    }
+  ]
+}

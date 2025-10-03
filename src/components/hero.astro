@@ -1,0 +1,40 @@
+---
+// Hero section (minimal)
+---
+
+<section id="home" class="swiss-hero hero-min">
+  <div class="swiss-container">
+    <div class="hero-wrap">
+      <header class="hero-head">
+        <h1 class="swiss-heading-1">Vaggelis Kavouras</h1>
+        <p class="swiss-body-large lead">
+          Web developer focused on <span class="khl">performance</span>, <span class="khl">accessibility</span>, and <span class="khl">design systems</span>.
+        </p>
+      </header>
+
+      <div class="hero-actions">
+        <a href="#projects" class="swiss-button swiss-button-primary">View Projects</a>
+        <a href="#contact" class="swiss-button swiss-button-outline">Get in touch</a>
+        <div class="cv-inline">
+          <a href="/cv/CV_Vaggelis_Kavouras_English.pdf" download class="cv-link">CV (EN)</a>
+          <span class="sep">/</span>
+          <a href="/cv/CV_Vaggelis_Kavouras_Greek.pdf" download class="cv-link">EL</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-min { min-height: 92vh; display: flex; align-items: center; padding: var(--space-20) 0; }
+  .hero-wrap { display: grid; gap: var(--space-6); }
+  .hero-head { display: grid; gap: var(--space-3); }
+  .lead { max-width: 68ch; color: var(--color-text-secondary); }
+  .hero-actions { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; }
+  .cv-inline { margin-left: var(--space-2); }
+
+  @media (max-width: 768px) {
+    .hero-min { min-height: 88vh; padding: var(--space-16) 0; }
+    .hero-actions { gap: var(--space-2); }
+  }
+</style>

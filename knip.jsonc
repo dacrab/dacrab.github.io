@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "entry": [
+    "src/pages/**/*.astro",
+    "**/*.astro"
+  ],
+  "ignore": [
+    "dist/**",
+    "public/**"
+  ],
+  "ignoreDependencies": [],
+  "ignoreBinaries": []
+}
