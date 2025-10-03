@@ -1,11 +1,11 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Navigation from '../components/Navigation.astro';
-import Hero from '../components/Hero.astro';
-import About from '../components/About.astro';
-import Projects from '../components/Projects.astro';
-import Contact from '../components/Contact.astro';
-import Footer from '../components/Footer.astro';
+import Layout from '../layouts/layout.astro';
+import Navigation from '../components/navigation.astro';
+import Hero from '../components/hero.astro';
+import About from '../components/about.astro';
+import Projects from '../components/projects.astro';
+import Contact from '../components/contact.astro';
+import Footer from '../components/footer.astro';
 ---
 
 <Layout title="Vaggelis Kavouras | Nordic Web Developer & Digital Craftsman">
@@ -20,24 +20,23 @@ import Footer from '../components/Footer.astro';
 </Layout>
 
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // Initialize page
+  document.addEventListener('DOMContentLoaded', async () => {
     document.body.classList.add('loaded');
 
-    // Preload critical project images
-    const criticalImages = [
-      '/gsm/home-en.png',
-      '/argicon/home-en.png', 
-      '/designdash/home-en.png'
-    ];
-
-    criticalImages.forEach(src => {
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'image';
-      link.href = src;
-      document.head.appendChild(link);
-    });
+    // Preload critical project cover images from assets
+    try {
+      const gsm = Object.values((import.meta as any).glob('/src/assets/gsm/*home-en.png', { eager: true }));
+      const arg = Object.values((import.meta as any).glob('/src/assets/argicon/*home-en.png', { eager: true }));
+      const des = Object.values((import.meta as any).glob('/src/assets/designdash/*home-en.png', { eager: true }));
+      const critical = [...gsm, ...arg, ...des].map((m: any) => m.default?.src || m?.src).filter(Boolean);
+      critical.forEach((src: string) => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = src;
+        document.head.appendChild(link);
+      });
+    } catch {}
 
     // Enhanced smooth scrolling (skip nav links handled by Navigation)
     document.querySelectorAll('a[href^="#"]:not([data-nav-link])').forEach(anchor => {

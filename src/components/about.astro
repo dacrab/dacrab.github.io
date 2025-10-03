@@ -1,0 +1,100 @@
+---
+import SectionHeader from './section-header.astro';
+---
+
+<section id="about" class="swiss-section">
+  <div class="swiss-container">
+    <SectionHeader
+      eyebrow="About"
+      title="Practical UI engineering"
+      description="I build fast, accessible interfaces with clear structure and maintainable code."
+    />
+
+    <div class="about-grid">
+      <div class="about-col">
+        <h3 class="swiss-heading-4">Profile</h3>
+        <p class="swiss-body">
+          I'm Vaggelis Kavouras, a <span class="khl">web developer</span> based in Greece. My work centers on
+          reliable <span class="khl">UI implementation</span>, sensible <span class="khl">architecture</span>, and
+          <span class="khl">performance</span> that holds up in production.
+        </p>
+
+        <h3 class="swiss-heading-4">Focus</h3>
+        <ul class="about-list">
+          <li><span class="khl">Frontend engineering</span> and <span class="khl">design systems</span></li>
+          <li><span class="khl">Performance</span>, <span class="khl">accessibility</span>, and <span class="khl">testing</span></li>
+          <li><span class="khl">Developer experience</span> and <span class="khl">tooling</span></li>
+        </ul>
+      </div>
+
+      <div class="about-col">
+        <div class="facts">
+          <div class="fact-item">
+            <span class="label">Role</span>
+            <span class="value">Web Developer</span>
+          </div>
+          <div class="fact-item">
+            <span class="label">Location</span>
+            <span class="value">Greece (EET)</span>
+          </div>
+          <div class="fact-item">
+            <span class="label">Stack</span>
+            <span class="value">TypeScript, React/Next.js, Astro, CSS</span>
+          </div>
+          <div class="fact-item">
+            <span class="label">Email</span>
+            <a class="value link" href="mailto:vkavouras@proton.me">vkavouras@proton.me</a>
+          </div>
+          <div class="fact-item">
+            <span class="label">Availability</span>
+            <span class="value">Freelance / consulting</span>
+          </div>
+        </div>
+
+        <div class="skills">
+          <h4 class="swiss-caption">Capabilities</h4>
+          <div class="tags">
+            <span class="tag">React</span>
+            <span class="tag">Next.js</span>
+            <span class="tag">Astro</span>
+            <span class="tag">TypeScript</span>
+            <span class="tag">CSS</span>
+            <span class="tag">Accessibility</span>
+            <span class="tag">Performance</span>
+            <span class="tag">Tooling</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: var(--space-8);
+  }
+
+  .about-col { display: grid; gap: var(--space-4); align-content: start; }
+
+  .about-list { margin: 0; padding-left: 1.1rem; display: grid; gap: var(--space-2); color: var(--color-text); }
+
+  .facts { display: grid; gap: var(--space-3); background: var(--color-surface); border: 1px solid var(--color-border); padding: var(--space-4); }
+  .fact-item { display: grid; grid-template-columns: 110px 1fr; align-items: baseline; gap: var(--space-2); }
+  .label { color: var(--color-text-secondary); font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+  .value { color: var(--color-text); font-weight: 500; }
+  .link { color: var(--color-primary); text-decoration: none; }
+  .link:hover { color: var(--color-text); }
+
+  .skills { display: grid; gap: var(--space-2); margin-top: var(--space-4); }
+  .tags { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .tag { border: 1px solid var(--color-border); background: var(--color-background); padding: 0.2rem 0.5rem; font-size: var(--font-size-xs); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+
+  /* keyword highlight handled globally via .khl */
+
+  @media (max-width: 992px) {
+    .about-grid { grid-template-columns: 1fr; gap: var(--space-6); }
+    .fact-item { grid-template-columns: 100px 1fr; }
+  }
+</style>

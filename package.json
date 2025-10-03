@@ -7,11 +7,12 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "lint": "eslint . --ext .js,.ts,.tsx,.astro",
-    "lint:fix": "eslint . --ext .js,.ts,.tsx,.astro --fix",
-    "format": "prettier --write .",
-    "format:auto": "prettier --check . || prettier --write .",
-    "format:check": "prettier --check .",
+    "lint": "ultracite lint .",
+    "lint:fix": "ultracite format .",
+    "format": "ultracite format .",
+    "format:auto": "ultracite format .",
+    "format:check": "ultracite lint .",
+    "knip": "knip",
     "type-check": "tsc --noEmit",
     "ci": "bun run format:auto && bun run lint && bun run type-check && bun run build",
     "fix": "bun run lint:fix && bun run format",
@@ -20,26 +21,13 @@
   "dependencies": {
     "@astrojs/react": "4.4.0",
     "astro": "5.14.1",
-    "framer-motion": "^12.18.1",
-    "gsap": "^3.13.0",
-    "lucide-react": "^0.540.0",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "react-intersection-observer": "^9.16.0"
+    "react-dom": "^19.1.1"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
-    "@eslint/js": "^9.34.0",
     "@types/node": "^24",
-    "@typescript-eslint/eslint-plugin": "^8.39.1",
-    "@typescript-eslint/parser": "^8.39.1",
-    "astro-eslint-parser": "^1.2.2",
-    "eslint": "^9",
-    "eslint-plugin-astro": "^1.3.1",
-    "lightningcss": "^1.30.1",
-    "prettier": "^3.2.5",
-    "prettier-plugin-astro": "^0.14.1",
-    "tsx": "^4.20.3",
-    "typescript": "^5"
+    "knip": "^5.64.1",
+    "typescript": "^5",
+    "ultracite": "^4.2.13"
   }
 }
