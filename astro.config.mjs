@@ -1,12 +1,12 @@
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
 // Note: React integration removed; no React components in this project
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://dacrab.github.io',
-  base: '/',
+  site: "https://dacrab.github.io",
+  base: "/",
   integrations: [],
   build: {
-    assets: 'assets',
+    assets: "assets",
   },
 });
