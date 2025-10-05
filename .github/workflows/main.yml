@@ -43,15 +43,9 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      # Parallel execution of quality checks
-      - name: Run lint check
+      # Run combined lint (Ultracite check + tsc + knip)
+      - name: Run lint suite
         run: bun run lint
-
-      - name: Run type check
-        run: bun run type-check
-
-      - name: Auto format code (Prettier)
-        run: bun run format:auto
 
       # Security dependency scan (only on PRs)
       - name: Dependency Review

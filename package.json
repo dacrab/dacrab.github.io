@@ -7,16 +7,9 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "lint": "ultracite check .",
-    "lint:fix": "ultracite format .",
-    "format": "ultracite format .",
-    "format:auto": "ultracite format .",
-    "format:check": "ultracite check .",
-    "knip": "knip",
-    "type-check": "tsc --noEmit",
-    "ci": "bun run format:auto && bun run lint && bun run type-check && bun run build",
-    "fix": "bun run lint:fix && bun run format",
-    "check": "bun run lint && bun run type-check && bun run format:check"
+    "lint": "ultracite check . && tsc --noEmit && knip",
+    "fix": "ultracite fix .",
+    "ci": "bun run lint && bun run build"
   },
   "dependencies": {
     "astro": "5.14.1"
