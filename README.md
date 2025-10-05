@@ -1,7 +1,8 @@
-# 🚀 Modern Portfolio Website
+# Swiss‑style Portfolio Website
 
-A professional portfolio website built with Astro, featuring Nordic-inspired design
-principles, enhanced animations, dynamic GitHub integration, and interactive project galleries with
+A professional portfolio built with Astro, following a modern Swiss‑style design system:
+grid‑first layout, high contrast, sans‑serif typography, and a Swiss red accent.
+Enhanced interactions, dynamic GitHub integration, and interactive project galleries with
 premium UX.
 
 ![Astro](https://img.shields.io/badge/Astro-5.13.2-FF5D01)
@@ -11,7 +12,7 @@ premium UX.
 
 ## Features
 
-- **Design system**: Nord palette, refined typography, and consistent UI patterns
+- **Design system**: Swiss palette (white/black/red accent #E31C1C), system sans, crisp type, hairline dividers
 - **Responsive**: Optimized for mobile, tablet, and desktop
 - **Project gallery**: Modal galleries with language switching
 - **CV access**: Downloadable CV with language options
@@ -54,16 +55,16 @@ Digital construction platform with comprehensive project galleries and technical
 - **[React Intersection Observer](https://github.com/thebuilder/react-intersection-observer)**:
   Scroll-based animations
 
-## Nordic Design Philosophy
+## Swiss Design System
 
-This portfolio combines Nordic design principles with modern aesthetics:
+This portfolio follows the International Typographic (Swiss) Style:
 
-- **Clean Typography**: Inter font with enhanced contrast and text shadows for optimal readability
+- **Crisp Typography**: System sans (Helvetica/Inter) with precise tracking; no decorative shadows
 - **Grid-Based Layout**: Structured organization using precise grid systems and asymmetric balance
-- **Nordic Color Palette**: Based on the Nord theme with frost blues, aurora colors, and snow whites
-- **Enhanced Contrast**: High-contrast text with subtle glows and shadows for better visibility
+- **Swiss Color Palette**: White/black foundation with a Swiss red accent (#E31C1C); high contrast in light and dark
+- **High Contrast**: Clear type without glows; emphasis through scale, weight, and spacing
 - **Keyword Highlighting**: Strategic highlights for important terms and skills
-- **Animated Elements**: Smooth scroll indicators, bouncing animations, and hover effects
+- **Minimal Motion**: Subtle transitions only; reduced blur and no ambient effects
 - **Functional Beauty**: Every element serves a purpose while maintaining visual appeal
 - **Progressive Enhancement**: Graceful fallbacks and optimized performance across all devices
 
@@ -146,7 +147,7 @@ src/
 
 ### User Experience Enhancements
 
-- **High Contrast Text**: Enhanced readability with text shadows and Nordic color improvements
+- **High Contrast Text**: Clear readability using the Swiss palette; no text shadows
 - **Keyword Highlighting**: Strategic highlighting for better content scanning
 - **Compact Layout**: Optimized spacing and content density in About section
 - **Interactive Elements**: Enhanced dropdowns, galleries, and navigation with smooth transitions
@@ -154,7 +155,7 @@ src/
 ### Technical Improvements
 
 - **TypeScript Safety**: Improved type checking and eliminated undefined object errors
-- **CSS Variables**: Consistent Nord color palette with CSS custom properties
+- **CSS Variables**: Swiss palette tokens (white/black/red) with light/dark mappings
 - **Performance Monitoring**: Optimized loading states and intersection observers
 - **Mobile Optimization**: Better responsive design with enhanced mobile interactions
 
@@ -242,9 +243,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Lightning CSS](https://lightningcss.dev/) - Fast CSS processing
 - [Inter Font](https://rsms.me/inter/) - Professional typography
 - [React](https://react.dev/) - Component library
-- Nordic Design Movement - Design inspiration
+- International Typographic Style (Swiss) - Design inspiration
 
 ---
 
-Built with ❤️ by DaCrab using Nordic design principles and cutting-edge web technologies.
+Built with care by DaCrab using Swiss design principles and cutting-edge web technologies.
 Featuring premium animations, enhanced accessibility, and optimized performance for the modern web.

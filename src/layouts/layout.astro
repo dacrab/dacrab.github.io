@@ -1,9 +1,5 @@
 ---
-import '../styles/globals.css';
-import AnimatedParticles from '../components/animated-particles.astro';
-import ScrollToTop from '../components/scroll-to-top.astro';
-import CursorSpotlight from '../components/cursor-spotlight.astro';
-import ScrollProgress from '../components/scroll-progress.astro';
+import "../styles/globals.css";
 
 export interface Props {
   title: string;
@@ -12,57 +8,91 @@ export interface Props {
 
 const {
   title,
-  description = 'Vaggelis Kavouras - Web Developer crafting Nordic-inspired digital experiences with Nordic precision and modern creativity.',
+  description = "Vaggelis Kavouras — Web developer building Swiss‑style, grid‑first interfaces focused on speed, clarity, and accessibility.",
 } = Astro.props;
+const canonical = Astro.url;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="author" content="Vaggelis Kavouras (DaCrab)" />
-    <meta name="keywords" content="web developer, Nordic design, React, Astro, TypeScript, portfolio" />
+    <meta
+      name="keywords"
+      content="web developer, Swiss style, React, Astro, TypeScript, portfolio"
+    />
     <meta name="generator" content={Astro.generator} />
-    
+    <meta name="color-scheme" content="light dark" />
+
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" sizes="any" />
     <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="mask-icon" href="/favicon.svg" color="#5e81ac" />
+    <link rel="mask-icon" href="/favicon.svg" color="#dc0000" />
     <link rel="apple-touch-icon" href="/favicon.svg" sizes="180x180" />
-    
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- JetBrains Mono as fallback for Nerd Font mono stack -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="canonical" href={canonical.href} />
+
+    <!-- No external fonts; rely on system sans for crisp Swiss typography -->
 
     <!-- Social Meta -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:site_name" content="Vaggelis Kavouras Portfolio" />
+    <meta
+      property="og:site_name"
+      content="Vaggelis Kavouras — Swiss‑style Portfolio"
+    />
+    <meta property="og:url" content={canonical.href} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
 
-    <!-- Theme Colors -->
-    <meta name="theme-color" content="#81a1c1" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#88c0d0" media="(prefers-color-scheme: dark)" />
+    <!-- Theme Colors – Swiss precision -->
+    <meta
+      name="theme-color"
+      content="#ffffff"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#0a0a0a"
+      media="(prefers-color-scheme: dark)"
+    />
 
     <title>{title}</title>
+
+    <!-- Minimal theme bootstrap to avoid FOUC -->
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem("theme");
+          if (t === "light" || t === "dark") {
+            document.documentElement.setAttribute("data-theme", t);
+          }
+          document.documentElement.classList.remove("no-js");
+          document.documentElement.classList.add("js");
+        } catch (_) {}
+      })();
+    </script>
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" is:inline>
+      {
+        JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: title,
+          url: canonical.href,
+        })
+      }
+    </script>
   </head>
-  <body>
-    <ScrollProgress />
+  <body class="shell">
     <a href="#main" class="skip-link">Skip to main content</a>
-    <div class="swiss-grid-pattern"></div>
-    <AnimatedParticles />
-    <CursorSpotlight />
-    <ScrollToTop />
-    <slot />
+    <main id="main">
+      <slot />
+    </main>
   </body>
 </html>

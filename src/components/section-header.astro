@@ -3,27 +3,126 @@ interface Props {
   eyebrow?: string;
   title: string;
   description?: string;
-  eyebrowClass?: string;
-  titleClass?: string;
+  className?: string;
 }
 
-const {
-  eyebrow,
-  title,
-  description,
-  eyebrowClass = '',
-  titleClass = '',
-} = Astro.props as Props;
+const { eyebrow, title, description, className = "" } = Astro.props as Props;
 ---
 
-<div class="swiss-section-header asymmetric-grid">
-  {eyebrow && <div class={`swiss-section-title asymmetric-item-3 ${eyebrowClass}`}>{eyebrow}</div>}
-  <h2 class={`swiss-heading-2 asymmetric-item-1 ${titleClass}`}>{title}</h2>
-  {description && (
-    <p class="swiss-section-description asymmetric-item-2">{description}</p>
-  )}
-  <slot />
+<header class={`section-head section-header-spacing ${className}`}>
+  <div class="section-head-grid">
+    <div class="section-head-content">
+      <div class="eyebrow-line">
+        {eyebrow && <span class="section-eyebrow">{eyebrow}</span>}
+        <div class="divider-line" aria-hidden="true"></div>
+      </div>
+      <h2 class="title swiss-heading-2">{title}</h2>
+      {description && <p class="desc">{description}</p>}
+      <slot />
+    </div>
+    <div class="section-head-mark" aria-hidden="true">
+      <span class="mark-text">—</span>
+    </div>
+  </div>
+</header>
+
+<style>
+  .section-head { 
+    position: relative;
+  }
+  .section-head-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-8);
+    align-items: start;
+  }
+  .section-head-content {
+    display: grid; 
+    gap: var(--space-4);
+  }
+
+  .eyebrow-line {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 2px;
+    background: var(--color-border);
+    position: relative;
+  }
+
+  .divider-line::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: -2px;
+    width: 6px;
+    height: 6px;
+    background: var(--color-primary);
+  }
+
+
+  .desc { 
+    color: var(--color-text-secondary); 
+    font-size: var(--font-size-base); 
+    max-width: 60ch; 
+    line-height: 1.6;
+  }
+  .section-head-mark {
+    width: 3px;
+    height: 120px;
+    background: linear-gradient(to bottom, var(--color-primary) 0%, var(--color-primary) 50%, transparent 50%, transparent 100%);
+    background-size: 100% 8px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mark-text {
+    position: absolute;
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--color-primary);
+    transform: rotate(90deg);
+    letter-spacing: 0.2em;
+  }
+
+  .section-head-mark::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    left: -4px;
+    width: 11px;
+    height: 11px;
+    border: 3px solid var(--color-primary);
+    background: var(--color-background);
+    transform: rotate(45deg);
+  }
+
+  .section-head-mark::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: -4px;
+    width: 11px;
+    height: 11px;
+    border: 3px solid var(--color-primary);
+    background: var(--color-background);
+    transform: rotate(45deg);
+  }
   
-</div>
-
-
+  @media (max-width: 768px) {
+    .section-head-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+    .section-head-mark {
+      width: 64px;
+      height: 3px;
+    }
+  }
+</style>
