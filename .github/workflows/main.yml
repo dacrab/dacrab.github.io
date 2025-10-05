@@ -78,7 +78,7 @@ jobs:
       # Upload artifacts for deployment (only if deploying)
       - name: Upload build artifacts
         if: steps.check-deploy.outputs.should-deploy == 'true'
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           path: './dist'
 
