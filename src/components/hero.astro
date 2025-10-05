@@ -1,40 +1,253 @@
 ---
-// Hero section (minimal)
+import CvLinks from "./cv-links.astro";
 ---
 
-<section id="home" class="swiss-hero hero-min">
-  <div class="swiss-container">
-    <div class="hero-wrap">
-      <header class="hero-head">
-        <h1 class="swiss-heading-1">Vaggelis Kavouras</h1>
-        <p class="swiss-body-large lead">
-          Web developer focused on <span class="khl">performance</span>, <span class="khl">accessibility</span>, and <span class="khl">design systems</span>.
-        </p>
-      </header>
-
-      <div class="hero-actions">
-        <a href="#projects" class="swiss-button swiss-button-primary">View Projects</a>
-        <a href="#contact" class="swiss-button swiss-button-outline">Get in touch</a>
-        <div class="cv-inline">
-          <a href="/cv/CV_Vaggelis_Kavouras_English.pdf" download class="cv-link">CV (EN)</a>
-          <span class="sep">/</span>
-          <a href="/cv/CV_Vaggelis_Kavouras_Greek.pdf" download class="cv-link">EL</a>
+<section id="home" class="hero-full scroll-offset">
+  <!-- Abstract background elements -->
+  <div class="hero-bg-shapes" aria-hidden="true">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+  
+  <div class="swiss-container hero-center">
+    <div class="hero-grid">
+      <div class="hero-content">
+        <div class="stack">
+          <div class="eyebrow-wrap">
+            <span class="section-eyebrow">Web Developer</span>
+          </div>
+          <div class="hero-rule"></div>
+          <h1 class="title">
+            <span class="title-line">Vaggelis</span>
+            <span class="title-line">Kavouras</span>
+          </h1>
+          <p class="lead">I build fast, accessible interfaces focused on clarity, performance, and maintainability.</p>
         </div>
+        <div class="actions">
+          <a href="#projects" class="cta-link">View projects</a>
+          <a href="#contact" class="cta-link cta-muted">Get in touch</a>
+        </div>
+      </div>
+      <div class="hero-aside">
+        <CvLinks englishLabel="CV—EN" greekLabel="CV—EL" />
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .hero-min { min-height: 92vh; display: flex; align-items: center; padding: var(--space-20) 0; }
-  .hero-wrap { display: grid; gap: var(--space-6); }
-  .hero-head { display: grid; gap: var(--space-3); }
-  .lead { max-width: 68ch; color: var(--color-text-secondary); }
-  .hero-actions { display: flex; gap: var(--space-3); align-items: center; flex-wrap: wrap; }
-  .cv-inline { margin-left: var(--space-2); }
+  .hero-full {
+    position: relative;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    padding-top: 64px;
+    background: var(--color-background);
+    overflow: hidden;
+  }
 
-  @media (max-width: 768px) {
-    .hero-min { min-height: 88vh; padding: var(--space-16) 0; }
-    .hero-actions { gap: var(--space-2); }
+  /* Abstract background elements */
+  .hero-bg-shapes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .shape {
+    position: absolute;
+    background: var(--color-primary);
+    opacity: 0.03;
+  }
+
+  .shape-1 {
+    width: 400px;
+    height: 400px;
+    top: -200px;
+    right: -100px;
+    transform: rotate(45deg);
+    animation: float 20s ease-in-out infinite;
+  }
+
+  .shape-2 {
+    width: 200px;
+    height: 200px;
+    bottom: 100px;
+    left: -50px;
+    animation: float 15s ease-in-out infinite 5s;
+  }
+
+  .shape-3 {
+    width: 120px;
+    height: 600px;
+    top: 50%;
+    right: 20%;
+    transform: translateY(-50%) rotate(12deg);
+    animation: float 25s ease-in-out infinite 10s;
+  }
+
+  .grid-overlay {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      repeating-linear-gradient(0deg, transparent, transparent 79px, var(--color-border) 79px, var(--color-border) 80px),
+      repeating-linear-gradient(90deg, transparent, transparent 79px, var(--color-border) 79px, var(--color-border) 80px);
+    opacity: 0.15;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(45deg); }
+    50% { transform: translateY(-30px) rotate(48deg); }
+  }
+
+  .hero-full::before {
+    content: "";
+    position: absolute;
+    top: 80px;
+    left: var(--container-padding);
+    width: 32px;
+    height: 3px;
+    background: var(--color-primary);
+  }
+
+  .hero-full::after {
+    content: "";
+    position: absolute;
+    top: 80px;
+    left: var(--container-padding);
+    width: 3px;
+    height: 32px;
+    background: var(--color-primary);
+  }
+  .hero-center {
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: var(--space-12);
+    align-items: center;
+  }
+  .hero-content {
+    display: grid;
+    gap: var(--space-8);
+  }
+  .stack {
+    display: grid;
+    gap: var(--space-6);
+    align-content: center;
+    justify-items: start;
+    position: relative;
+  }
+
+  .eyebrow-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+    width: 100%;
+  }
+
+  .hero-year {
+    font-size: var(--font-size-xs);
+    font-weight: 700;
+    color: var(--color-text-tertiary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hero-rule {
+    width: 64px;
+    height: 3px;
+    background: var(--color-primary);
+    margin: var(--space-2) 0;
+  }
+  .title {
+    font-family: var(--font-heading);
+    font-size: clamp(3rem, 8vw, 6rem);
+    font-weight: 700;
+    line-height: 0.85;
+    letter-spacing: -0.04em;
+    color: var(--color-text);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .title-line {
+    display: block;
+    position: relative;
+  }
+
+  .title-line:first-child {
+    margin-left: -0.02em;
+  }
+
+  .title-line:last-child {
+    margin-left: 0.08em;
+    font-weight: 300;
+    opacity: 0.7;
+  }
+  .lead {
+    max-width: 32ch;
+    color: var(--color-text);
+    font-size: var(--font-size-lg);
+    line-height: 1.6;
+    letter-spacing: -0.011em;
+  }
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .hero-aside {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    align-items: flex-start;
+    padding: var(--space-6);
+    border-left: 2px solid var(--color-border);
+    position: relative;
+  }
+
+  .aside-number {
+    position: absolute;
+    top: -48px;
+    right: 0;
+    font-size: 8rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    opacity: 0.08;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+  }
+
+
+  @media (max-width: 900px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+    .hero-aside {
+      border-left: none;
+      border-top: 2px solid var(--color-border);
+      padding: var(--space-5) 0 0 0;
+    }
+    .title {
+      max-width: 14ch;
+      font-size: var(--font-size-5xl);
+    }
+    .hero-full {
+      padding-top: 64px;
+    }
   }
 </style>

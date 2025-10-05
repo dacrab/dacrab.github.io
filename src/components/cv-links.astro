@@ -1,0 +1,41 @@
+---
+export interface Props {
+    variant?: "inline" | "block";
+    englishLabel?: string;
+    greekLabel?: string;
+}
+const {
+    variant = "inline",
+    englishLabel = "EN",
+    greekLabel = "EL",
+} = Astro.props as Props;
+---
+
+<div class={variant === "inline" ? "cv-inline" : "cv-block"}>
+    <a href="/cv/CV_Vaggelis_Kavouras_English.pdf" download class="cv-link">
+        {englishLabel}
+    </a>
+    <span class="cv-sep">•</span>
+    <a href="/cv/CV_Vaggelis_Kavouras_Greek.pdf" download class="cv-link">
+        {greekLabel}
+    </a>
+</div>
+
+<style>
+    .cv-block {
+        display: grid;
+        gap: var(--space-3);
+    }
+    .cv-block .cv-link {
+        width: 100%;
+        text-align: center;
+    }
+    .cv-block .cv-sep {
+        display: none;
+    }
+    .cv-sep {
+        color: var(--color-border-strong);
+        font-weight: 700;
+        user-select: none;
+    }
+</style>

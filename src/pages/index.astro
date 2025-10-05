@@ -1,16 +1,18 @@
 ---
-import Layout from '../layouts/layout.astro';
-import Navigation from '../components/navigation.astro';
-import Hero from '../components/hero.astro';
-import About from '../components/about.astro';
-import Projects from '../components/projects.astro';
-import Contact from '../components/contact.astro';
-import Footer from '../components/footer.astro';
+import Layout from "../layouts/layout.astro";
+import Navigation from "../components/navigation.astro";
+import ScrollProgress from "../components/scroll-progress.astro";
+import Hero from "../components/hero.astro";
+import About from "../components/about.astro";
+import Projects from "../components/projects.astro";
+import Contact from "../components/contact.astro";
+import Footer from "../components/footer.astro";
 ---
 
-<Layout title="Vaggelis Kavouras | Nordic Web Developer & Digital Craftsman">
+<Layout title="Vaggelis Kavouras | Web Developer">
   <main class="main-content" id="main" role="main">
     <Navigation />
+    <ScrollProgress />
     <Hero />
     <About />
     <Projects />
@@ -19,60 +21,7 @@ import Footer from '../components/footer.astro';
   </main>
 </Layout>
 
-<script>
-  document.addEventListener('DOMContentLoaded', async () => {
-    document.body.classList.add('loaded');
-
-    // Preload critical project cover images from assets
-    try {
-      const gsm = Object.values((import.meta as any).glob('/src/assets/gsm/*home-en.png', { eager: true }));
-      const arg = Object.values((import.meta as any).glob('/src/assets/argicon/*home-en.png', { eager: true }));
-      const des = Object.values((import.meta as any).glob('/src/assets/designdash/*home-en.png', { eager: true }));
-      const critical = [...gsm, ...arg, ...des].map((m: any) => m.default?.src || m?.src).filter(Boolean);
-      critical.forEach((src: string) => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.as = 'image';
-        link.href = src;
-        document.head.appendChild(link);
-      });
-    } catch {}
-
-    // Enhanced smooth scrolling (skip nav links handled by Navigation)
-    document.querySelectorAll('a[href^="#"]:not([data-nav-link])').forEach(anchor => {
-      anchor.addEventListener('click', e => {
-        e.preventDefault();
-        const targetId = anchor.getAttribute('href')?.substring(1);
-        const target = targetId ? document.getElementById(targetId) : null;
-
-        if (target) {
-          const navHeight = 60;
-          const elementPosition = target.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - navHeight;
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-        }
-      });
-    });
-
-    // Section reveal animations
-    const observer = new IntersectionObserver(
-      entries => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('revealed');
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
-    );
-
-    document.querySelectorAll('section').forEach(section => {
-      section.classList.add('reveal-element');
-      observer.observe(section);
-    });
-  });
+<script type="module">
+  import { initIndexEnhancements } from "@/utils/enhancements";
+  initIndexEnhancements();
 </script>
