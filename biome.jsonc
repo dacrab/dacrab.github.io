@@ -9,19 +9,12 @@
       "correctness": { "noUnusedImports": "off", "noUnusedVariables": "off" }
     }
   },
-  "organizeImports": {
-    "enabled": true
-  },
   "files": {
-    "include": ["**/*.{js,ts,tsx,mjs,cjs,json,jsonc,css,md}"],
-    "ignore": ["node_modules", "dist", "build", ".astro", "**/*.astro"]
-  },
-  "formatter": {
-    "ignore": ["src/**/*.astro"]
+    "includes": ["**/*.{js,ts,tsx,mjs,cjs,json,jsonc,css,md}"]
   },
   "overrides": [
     {
-      "include": ["**/*.astro"],
+      "includes": ["**/*.astro"],
       "linter": { "enabled": false }
     }
   ]
