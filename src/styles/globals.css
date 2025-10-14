@@ -185,7 +185,6 @@
    BASE
    ======================== */
 @layer base {
-
   /* Reset */
   *,
   *::before,
@@ -250,7 +249,6 @@
    COMPONENTS
    ======================== */
 @layer components {
-
   /* Typography – Swiss precision */
   .swiss-heading-2,
   .swiss-heading-3,
@@ -315,15 +313,17 @@
     left: 0;
     width: 2px;
     height: 100%;
-    background: linear-gradient(to bottom,
-        transparent 0%,
-        var(--color-border) 20%,
-        var(--color-border) 80%,
-        transparent 100%);
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      var(--color-border) 20%,
+      var(--color-border) 80%,
+      transparent 100%
+    );
     opacity: 0.5;
   }
 
-  .swiss-section+.swiss-section {
+  .swiss-section + .swiss-section {
     border-top: 1px solid var(--color-border);
   }
 
@@ -657,7 +657,6 @@
   }
 
   @keyframes pulseBadge {
-
     0%,
     100% {
       opacity: 1;
@@ -1083,7 +1082,6 @@
    UTILITIES
    ======================== */
 @layer utilities {
-
   /* Text Utilities */
   .khl {
     position: relative;
@@ -1275,7 +1273,6 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-
     *,
     *::before,
     *::after {
@@ -1350,7 +1347,6 @@
 
   /* Print Styles */
   @media print {
-
     *,
     *::before,
     *::after {
