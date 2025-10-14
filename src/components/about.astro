@@ -1,4 +1,3 @@
-
 <section id="about" class="swiss-section scroll-offset">
   <div class="section-number" aria-hidden="true">02</div>
   <div class="abstract-shapes" aria-hidden="true">
@@ -9,13 +8,21 @@
     <header class="head section-header-spacing">
       <span class="section-eyebrow">About</span>
       <h2 class="title swiss-heading-2">Practical UI engineering</h2>
-      <p class="desc">I build fast, accessible interfaces with clear structure and maintainable code.</p>
+      <p class="desc">
+        I build fast, accessible interfaces with clear structure and
+        maintainable code.
+      </p>
     </header>
 
     <div class="about-grid">
       <div class="about-main">
         <h3 class="swiss-heading-4">Profile</h3>
-        <p class="swiss-body">Web developer based in Greece. I focus on reliable <span class="khl">UI implementation</span>, pragmatic <span class="khl">architecture</span>, and production‑grade <span class="khl">performance</span>.</p>
+        <p class="swiss-body">
+          Web developer based in Greece. I focus on reliable <span class="khl"
+            >UI implementation</span
+          >, pragmatic <span class="khl">architecture</span>, and
+          production‑grade <span class="khl">performance</span>.
+        </p>
 
         <h3 class="swiss-heading-4">Focus</h3>
         <ul class="bullets">
@@ -39,11 +46,28 @@
 
       <aside class="about-aside">
         <dl class="facts">
-          <div class="row"><dt class="label label-normal">Role</dt><dd>Web Developer</dd></div>
-          <div class="row"><dt class="label label-normal">Location</dt><dd>Greece (EET)</dd></div>
-          <div class="row"><dt class="label label-normal">Stack</dt><dd>TypeScript, React/Next.js, Astro, CSS</dd></div>
-          <div class="row"><dt class="label label-normal">Email</dt><dd><a class="link" href="mailto:vkavouras@proton.me">vkavouras@proton.me</a></dd></div>
-          <div class="row"><dt class="label label-normal">Availability</dt><dd>Freelance / consulting</dd></div>
+          <div class="row">
+            <dt class="label label-normal">Role</dt><dd>Web Developer</dd>
+          </div>
+          <div class="row">
+            <dt class="label label-normal">Location</dt><dd>Greece (EET)</dd>
+          </div>
+          <div class="row">
+            <dt class="label label-normal">Stack</dt><dd>
+              TypeScript, React/Next.js, Astro, CSS
+            </dd>
+          </div>
+          <div class="row">
+            <dt class="label label-normal">Email</dt><dd>
+              <a class="link" href="mailto:vkavouras@proton.me"
+                >vkavouras@proton.me</a>
+            </dd>
+          </div>
+          <div class="row">
+            <dt class="label label-normal">Availability</dt><dd>
+              Freelance / consulting
+            </dd>
+          </div>
         </dl>
 
         <div class="skills">
@@ -94,83 +118,36 @@
     transform: rotate(-8deg);
   }
 
-  .head { 
-    position: relative; 
-    display: grid; 
-    gap: var(--space-6); 
-  }
-  .head::before { 
-    content: ""; 
-    position: absolute; 
-    left: 0; 
-    top: 0; 
-    width: 3px; 
-    height: 80px;
-    background: var(--color-primary); 
-  }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-4);
-    margin-top: var(--space-4);
-  }
-
-  .stat-box {
-    display: grid;
-    gap: var(--space-1);
-    border: 3px solid var(--color-text);
-    padding: var(--space-4);
-    background: var(--color-background);
+  .head {
     position: relative;
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    display: grid;
+    gap: var(--space-6);
   }
-
-  .stat-box:hover {
-    transform: translateY(-2px);
-    box-shadow: 4px 4px 0 var(--color-primary);
-  }
-
-  .stat-box::before {
+  .head::before {
     content: "";
     position: absolute;
-    top: -3px;
-    left: -3px;
-    width: 12px;
-    height: 12px;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 80px;
     background: var(--color-primary);
-    transition: transform var(--transition-fast);
   }
 
-  .stat-box:hover::before {
-    transform: scale(1.2);
-  }
-
-  .stat-num {
-    font-size: var(--font-size-4xl);
-    font-weight: 700;
-    line-height: 1;
-    color: var(--color-text);
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -0.02em;
-  }
-
-
-  .section-eyebrow { 
+  .section-eyebrow {
     padding-left: var(--space-6);
   }
-  .title { 
+  .title {
     padding-left: var(--space-6);
   }
-  .desc { 
-    color: var(--color-text-secondary); 
-    max-width: 60ch; 
+  .desc {
+    color: var(--color-text-secondary);
+    max-width: 60ch;
     padding-left: var(--space-6);
   }
 
-  .about-grid { 
-    display: grid; 
-    grid-template-columns: 1.5fr 1fr; 
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
     gap: var(--space-12);
     position: relative;
   }
@@ -180,72 +157,80 @@
     position: absolute;
     width: 2px;
     height: 100%;
-    background: linear-gradient(to bottom, transparent, var(--color-border) 20%, var(--color-border) 80%, transparent);
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--color-border) 20%,
+      var(--color-border) 80%,
+      transparent
+    );
     left: 50%;
     transform: translateX(-50%);
     opacity: 0.3;
   }
-  .about-main { 
-    display: grid; 
-    gap: var(--space-6); 
-    align-content: start; 
+  .about-main {
+    display: grid;
+    gap: var(--space-6);
+    align-content: start;
   }
-  .about-aside { 
-    display: grid; 
-    gap: var(--space-6); 
+  .about-aside {
+    display: grid;
+    gap: var(--space-6);
   }
-  .bullets { 
-    list-style: none; 
-    padding: 0; 
-    display: grid; 
-    gap: var(--space-2); 
-    color: var(--color-text); 
+  .bullets {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--space-2);
+    color: var(--color-text);
   }
-  .bullets li { 
-    position: relative; 
-    padding-left: var(--space-5); 
+  .bullets li {
+    position: relative;
+    padding-left: var(--space-5);
     line-height: 1.6;
   }
-  .bullets li::before { 
-    content: "+"; 
-    position: absolute; 
-    left: 0; 
-    top: 0; 
+  .bullets li::before {
+    content: "+";
+    position: absolute;
+    left: 0;
+    top: 0;
     font-size: var(--font-size-lg);
     line-height: 1.6;
     font-weight: 700;
-    color: var(--color-primary); 
+    color: var(--color-primary);
   }
 
-  .facts { 
-    display: grid; 
-    gap: 0; 
-    background: var(--color-background); 
-    border: 2px solid var(--color-border); 
+  .facts {
+    display: grid;
+    gap: 0;
+    background: var(--color-background);
+    border: 2px solid var(--color-border);
     padding: 0;
   }
-  .facts .row { 
-    display: grid; 
-    grid-template-columns: 120px 1fr; 
-    align-items: baseline; 
-    gap: var(--space-3); 
-    padding: var(--space-3) var(--space-4); 
-    border-bottom: 1px solid var(--color-border); 
+  .facts .row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    align-items: baseline;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
   }
-  .facts .row:last-child { 
-    border-bottom: 0; 
+  .facts .row:last-child {
+    border-bottom: 0;
   }
 
-  dd { 
+  dd {
     font-size: var(--font-size-sm);
   }
-  
+
   .link {
     color: var(--color-text);
     text-decoration: none;
     font-weight: 600;
     border-bottom: 2px solid var(--color-primary);
-    transition: color var(--transition-fast), border-color var(--transition-fast);
+    transition:
+      color var(--transition-fast),
+      border-color var(--transition-fast);
     position: relative;
     display: inline-block;
   }
@@ -274,7 +259,11 @@
     text-transform: uppercase;
     letter-spacing: 0.08em;
     font-weight: 700;
-    transition: border-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    transition:
+      border-color var(--transition-fast),
+      color var(--transition-fast),
+      transform var(--transition-fast),
+      box-shadow var(--transition-fast);
     cursor: default;
   }
   .tag:hover {
@@ -286,28 +275,15 @@
 
   /* keyword highlight handled globally via .khl */
 
-  @media (max-width: 768px) { 
-    .about-grid { 
-      grid-template-columns: 1fr; 
-      gap: var(--space-8); 
-    } 
-    .facts .row { 
-      grid-template-columns: 100px 1fr; 
+  @media (max-width: 768px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+    .facts .row {
+      grid-template-columns: 100px 1fr;
       gap: var(--space-2);
       padding: var(--space-3);
-    }
-    .stats-grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-3);
-    }
-    .stat-num {
-      font-size: var(--font-size-3xl);
-    }
-  }
-
-  @media (max-width: 640px) {
-    .stats-grid {
-      grid-template-columns: 1fr;
     }
   }
 </style>

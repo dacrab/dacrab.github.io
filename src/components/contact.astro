@@ -134,7 +134,10 @@ import SectionHeader from "./section-header.astro";
     top: 20%;
     left: 10%;
     opacity: 0.04;
-    background-image: radial-gradient(var(--color-primary) 2px, transparent 2px);
+    background-image: radial-gradient(
+      var(--color-primary) 2px,
+      transparent 2px
+    );
     background-size: 20px 20px;
   }
 
@@ -159,7 +162,10 @@ import SectionHeader from "./section-header.astro";
     background: var(--color-background);
     color: var(--color-text);
     text-decoration: none;
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+    transition:
+      border-color var(--transition-normal),
+      box-shadow var(--transition-normal),
+      transform var(--transition-normal);
     position: relative; /* For ::before pseudo-element */
   }
 
@@ -171,7 +177,9 @@ import SectionHeader from "./section-header.astro";
     bottom: 0;
     width: 3px;
     background: transparent;
-    transition: background var(--transition-fast), width var(--transition-fast);
+    transition:
+      background var(--transition-normal),
+      width var(--transition-normal);
   }
 
   .contact-item.primary::before {

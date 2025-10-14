@@ -9,15 +9,15 @@
     "preview": "astro preview",
     "lint": "ultracite check . && tsc --noEmit && knip",
     "fix": "ultracite fix .",
-    "ci": "bun run lint && bun run build"
+    "ci": "bun run lint && bunx astro check && bun run build"
   },
   "dependencies": {
     "astro": "5.14.4"
   },
   "devDependencies": {
-    "@types/node": "^24",
-    "knip": "^5.64.1",
-    "typescript": "^5",
-    "ultracite": "^5.5.0"
+    "@types/node": "^24.7.1",
+    "knip": "^5.64.3",
+    "typescript": "^5.9.3",
+    "ultracite": "^5.6.1"
   }
 }

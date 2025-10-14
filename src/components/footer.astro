@@ -34,9 +34,21 @@
   .abstract-bg {
     position: absolute;
     inset: 0;
-    background-image: 
-      repeating-linear-gradient(45deg, transparent, transparent 35px, var(--color-border) 35px, var(--color-border) 36px),
-      repeating-linear-gradient(-45deg, transparent, transparent 35px, var(--color-border) 35px, var(--color-border) 36px);
+    background-image:
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 35px,
+        var(--color-border) 35px,
+        var(--color-border) 36px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 35px,
+        var(--color-border) 35px,
+        var(--color-border) 36px
+      );
     opacity: 0.1;
     pointer-events: none;
   }
@@ -78,7 +90,7 @@
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: 700;
-    transition: color var(--transition-fast);
+    transition: color var(--transition-normal);
     position: relative;
   }
   .links a::after {
@@ -90,7 +102,7 @@
     height: 1px;
     background: var(--color-primary);
     transform: scaleX(0);
-    transition: transform var(--transition-fast);
+    transition: transform var(--transition-normal);
   }
   .links a:hover {
     color: var(--color-text);
