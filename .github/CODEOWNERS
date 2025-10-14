@@ -1,12 +1,8 @@
-# Global code owners
 * @dacrab
 
-# GitHub Actions workflows and configuration
 /.github/ @dacrab
-
-# Build and deployment configuration
 /astro.config.mjs @dacrab
 /package.json @dacrab
 /tsconfig.json @dacrab
-/eslint.config.mjs @dacrab
-/.prettierrc @dacrab
+/biome.jsonc @dacrab
+/knip.jsonc @dacrab

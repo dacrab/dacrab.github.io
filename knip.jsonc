@@ -2,6 +2,6 @@
   "$schema": "https://unpkg.com/knip@latest/schema.json",
   "entry": ["src/pages/**/*.astro"],
   "ignore": ["dist/**", "public/**"],
-  "ignoreDependencies": [],
+  "ignoreDependencies": ["@astrojs/check"],
   "ignoreBinaries": []
 }

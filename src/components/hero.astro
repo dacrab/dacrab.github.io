@@ -8,9 +8,10 @@ import CvLinks from "./cv-links.astro";
     <div class="shape shape-1"></div>
     <div class="shape shape-2"></div>
     <div class="shape shape-3"></div>
+    <div class="rule-overlay"></div>
     <div class="grid-overlay"></div>
   </div>
-  
+
   <div class="swiss-container hero-center">
     <div class="hero-grid">
       <div class="hero-content">
@@ -23,7 +24,10 @@ import CvLinks from "./cv-links.astro";
             <span class="title-line">Vaggelis</span>
             <span class="title-line">Kavouras</span>
           </h1>
-          <p class="lead">I build fast, accessible interfaces focused on clarity, performance, and maintainability.</p>
+          <p class="lead">
+            I build fast, accessible interfaces focused on clarity, performance,
+            and maintainability.
+          </p>
         </div>
         <div class="actions">
           <a href="#projects" class="cta-link">View projects</a>
@@ -69,7 +73,7 @@ import CvLinks from "./cv-links.astro";
     top: -200px;
     right: -100px;
     transform: rotate(45deg);
-    animation: float 20s ease-in-out infinite;
+    animation: float1 22s cubic-bezier(0.22, 1, 0.36, 1) infinite;
   }
 
   .shape-2 {
@@ -77,7 +81,7 @@ import CvLinks from "./cv-links.astro";
     height: 200px;
     bottom: 100px;
     left: -50px;
-    animation: float 15s ease-in-out infinite 5s;
+    animation: float2 18s cubic-bezier(0.22, 1, 0.36, 1) infinite 4s;
   }
 
   .shape-3 {
@@ -86,21 +90,109 @@ import CvLinks from "./cv-links.astro";
     top: 50%;
     right: 20%;
     transform: translateY(-50%) rotate(12deg);
-    animation: float 25s ease-in-out infinite 10s;
+    animation: float3 28s cubic-bezier(0.22, 1, 0.36, 1) infinite 8s;
   }
 
   .grid-overlay {
     position: absolute;
     inset: 0;
-    background-image: 
-      repeating-linear-gradient(0deg, transparent, transparent 79px, var(--color-border) 79px, var(--color-border) 80px),
-      repeating-linear-gradient(90deg, transparent, transparent 79px, var(--color-border) 79px, var(--color-border) 80px);
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 79px,
+        var(--color-border) 79px,
+        var(--color-border) 80px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 79px,
+        var(--color-border) 79px,
+        var(--color-border) 80px
+      );
     opacity: 0.15;
+    will-change: background-position;
+    animation: grid-drift 120s linear infinite;
   }
 
-  @keyframes float {
-    0%, 100% { transform: translateY(0) rotate(45deg); }
-    50% { transform: translateY(-30px) rotate(48deg); }
+  .rule-overlay {
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 22px,
+        var(--color-border) 22px,
+        var(--color-border) 23px
+      ),
+      repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 22px,
+        var(--color-border) 22px,
+        var(--color-border) 23px
+      );
+    opacity: 0.035;
+    will-change: background-position;
+    animation: rules-drift 90s linear infinite;
+  }
+
+  @keyframes float1 {
+    0%,
+    100% {
+      transform: translateY(0) rotate(45deg);
+    }
+    50% {
+      transform: translateY(-24px) rotate(47deg);
+    }
+  }
+
+  @keyframes float2 {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  @keyframes float3 {
+    0%,
+    100% {
+      transform: translateY(-50%) rotate(12deg);
+    }
+    50% {
+      transform: translateY(calc(-50% - 18px)) rotate(13deg);
+    }
+  }
+
+  @keyframes grid-drift {
+    0% {
+      background-position:
+        0 0,
+        0 0;
+    }
+    100% {
+      background-position:
+        0 80px,
+        80px 0;
+    }
+  }
+
+  @keyframes rules-drift {
+    0% {
+      background-position:
+        0 0,
+        0 0;
+    }
+    100% {
+      background-position:
+        60px 60px,
+        -60px -60px;
+    }
   }
 
   .hero-full::before {
@@ -150,16 +242,6 @@ import CvLinks from "./cv-links.astro";
     align-items: center;
     gap: var(--space-8);
     width: 100%;
-  }
-
-  .hero-year {
-    font-size: var(--font-size-xs);
-    font-weight: 700;
-    color: var(--color-text-tertiary);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-left: auto;
-    font-variant-numeric: tabular-nums;
   }
 
   .hero-rule {
@@ -218,20 +300,6 @@ import CvLinks from "./cv-links.astro";
     position: relative;
   }
 
-  .aside-number {
-    position: absolute;
-    top: -48px;
-    right: 0;
-    font-size: 8rem;
-    font-weight: 700;
-    color: var(--color-primary);
-    opacity: 0.08;
-    line-height: 1;
-    font-variant-numeric: tabular-nums;
-    pointer-events: none;
-  }
-
-
   @media (max-width: 900px) {
     .hero-grid {
       grid-template-columns: 1fr;
@@ -248,6 +316,13 @@ import CvLinks from "./cv-links.astro";
     }
     .hero-full {
       padding-top: 64px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .grid-overlay,
+    .rule-overlay {
+      animation: none !important;
     }
   }
 </style>

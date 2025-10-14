@@ -5,18 +5,16 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "04:00"
-    open-pull-requests-limit: 10
+    open-pull-requests-limit: 5
 
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
       day: "monday"
-      time: "04:00"
-    open-pull-requests-limit: 10
-    allow:
-      - dependency-type: "all"
-    ignore:
-      - dependency-name: "astro"
-        update-types: ["version-update:semver-major"]
+    open-pull-requests-limit: 5
+    groups:
+      dev-dependencies:
+        dependency-type: "development"
+      production-dependencies:
+        dependency-type: "production"

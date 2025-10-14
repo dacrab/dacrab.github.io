@@ -1,68 +1,25 @@
-# Kodiak configuration for auto-merging PRs
-# https://kodiakhq.com/docs/config-reference
-
 version = 1
 
 [merge]
-# Auto-merge method (merge, squash, rebase)
 method = "squash"
-
-# Delete branch after merging
 delete_branch_on_merge = true
-
-# Require all status checks to pass
-require_automerge_label = false
-
-# Block auto-merge if there are any blocking reviews
-block_on_reviews_requested = true
-
-# Block auto-merge if there are changes requested
-block_on_neutral_required_check_runs = true
-
-# Optimistic updates (merge as soon as checks pass, don't wait for all checks)
 optimistic_updates = true
-
-# Prioritize ready to merge PRs
 prioritize_ready_to_merge = true
 
 [merge.message]
-# Use PR title and body for squash commits
 title = "pull_request_title"
 body = "pull_request_body"
-
-# Include PR number in commit message
 include_pr_number = true
-
-# Include coauthors from PR commits
 include_coauthors = true
 
 [update]
-# Always update PRs to latest base branch
 always = true
 
-# Don't update if there are merge conflicts
-require_automerge_label = false
-
 [approve]
-# Auto-approve renovate PRs that pass all checks
-auto_approve_usernames = ["renovate[bot]"]
-
-# Only auto-approve if all checks pass
+auto_approve_usernames = ["dependabot[bot]", "renovate[bot]"]
 auto_approve_dependency_upgrades_minor = true
 auto_approve_dependency_upgrades_patch = true
 
 [checks]
-# Wait for all required checks to complete
 wait_for_checks = true
-
-# Don't merge if any checks are failing
-block_on_failing_checks = true
-
-# Required status checks (customize based on your CI)
-required_checks = [
-    "Quality Checks & Build"
-]
-
-[notification]
-# Don't notify on auto-merge
-push_notification = false
+required_checks = ["Quality Checks & Build"]
