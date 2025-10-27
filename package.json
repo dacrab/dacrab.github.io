@@ -9,7 +9,7 @@
     "preview": "astro preview",
     "lint": "ultracite check . && tsc --noEmit && knip",
     "fix": "ultracite fix .",
-    "ci": "bun run lint && bunx astro check && bun run build"
+    "ci": "npm run lint && npx astro check && npm run build"
   },
   "dependencies": {
     "astro": "5.15.1"
