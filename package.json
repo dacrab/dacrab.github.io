@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
-    "knip": "^5.65.0",
+    "knip": "^5.66.3",
     "typescript": "^5.9.3",
     "ultracite": "^6.0.3"
   }
