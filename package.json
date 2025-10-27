@@ -15,7 +15,7 @@
     "astro": "5.15.1"
   },
   "devDependencies": {
-    "@types/node": "^24.7.2",
+    "@types/node": "^24.9.1",
     "knip": "^5.66.3",
     "typescript": "^5.9.3",
     "@astrojs/check": "^0.9.5",
