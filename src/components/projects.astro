@@ -6,11 +6,6 @@ import SectionHeader from "./section-header.astro";
 
 <section id="projects" class="swiss-section scroll-offset">
   <div class="section-number" aria-hidden="true">03</div>
-  <div class="abstract-shapes" aria-hidden="true">
-    <div class="shape-square"></div>
-    <div class="shape-line-h"></div>
-    <div class="shape-line-v"></div>
-  </div>
   <div class="swiss-container">
     <SectionHeader
       eyebrow="Selected work"
@@ -56,7 +51,7 @@ import SectionHeader from "./section-header.astro";
                 <p class="blurb">{p.blurb}</p>
                 <div class="tech-chips">
                   {p.tech.map((t) => (
-                    <span class="chip">{t}</span>
+                    <span class="chip u-caps u-track-10">{t}</span>
                   ))}
                 </div>
               </div>
@@ -87,7 +82,7 @@ import SectionHeader from "./section-header.astro";
                   </svg>
                 </a>
                 <button
-                  class="gallery-open swiss-button swiss-button-primary swiss-button-sm"
+                  class="swiss-button swiss-button-primary swiss-button-sm"
                   type="button"
                   data-gallery-open
                   aria-label={`Open ${p.title} gallery`}
@@ -139,14 +134,12 @@ import SectionHeader from "./section-header.astro";
             <div id="gd-meta" class="gd-meta"></div>
           </div>
           <div class="gd-tabs" id="gd-tabs">
-            <button type="button" class="gd-tab active" data-lang="en"
-              >EN</button
-            >
-            <button type="button" class="gd-tab" data-lang="el">GR</button>
+            <button type="button" class="gd-tab u-caps-xs-10 active" data-lang="en">EN</button>
+            <button type="button" class="gd-tab u-caps-xs-10" data-lang="el">GR</button>
           </div>
           <button
             type="button"
-            class="gd-close"
+            class="gd-close u-caps-xs"
             data-gd-close
             aria-label="Close gallery">Close</button
           >
@@ -169,10 +162,10 @@ import SectionHeader from "./section-header.astro";
         <div class="divider-accent" aria-hidden="true"></div>
       </div>
       <div class="work-header">
-        <span class="work-badge" aria-hidden="true">LIVE</span>
+        <span class="work-badge u-caps-xs-10" aria-hidden="true">LIVE</span>
       </div>
       <div
-        class="current-work-grid creative"
+        class="current-work-grid"
         id="current-work-grid"
         aria-live="polite"
       >
@@ -253,7 +246,7 @@ import SectionHeader from "./section-header.astro";
               if (!wrap) return;
               const topics = data.names.slice(0, 6);
               wrap.innerHTML = topics
-                .map((t) => `<span class=\"work-topic\">${t}</span>`)
+                .map((t) => `<span class=\"work-topic u-caps-xs\">${t}</span>`)
                 .join("");
             })
             .catch(() => {});
@@ -400,7 +393,7 @@ import SectionHeader from "./section-header.astro";
         const pageName = getSectionTitleFromSrc(img.src);
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "gd-thumb";
+        btn.className = "gd-thumb u-caps-xs";
         btn.textContent = pageName;
         btn.setAttribute("aria-label", `Go to ${pageName}`);
         if (index === activeIndex) {

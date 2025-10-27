@@ -9,12 +9,6 @@ export function initIndexEnhancements() {
 	w.__indexEnhancements = true;
 
 	document.addEventListener("DOMContentLoaded", () => {
-		try {
-			document.body.classList.add("loaded");
-		} catch {
-			// Intentionally ignore if document/body not available
-		}
-
 		// Smooth anchor scrolling for non-nav links
 		const anchors = document.querySelectorAll<HTMLAnchorElement>(
 			'a[href^="#"]:not([data-nav-link])',

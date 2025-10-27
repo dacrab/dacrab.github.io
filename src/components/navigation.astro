@@ -8,12 +8,12 @@ const links = [
 
 <nav id="navigation" class="nav-swiss" aria-label="Primary">
   <div class="swiss-container nav-row">
-    <a href="#home" class="brand" aria-label="Go to home">VAGGELIS KAVOURAS</a>
+    <a href="#home" class="brand u-caps u-track-08" aria-label="Go to home">VAGGELIS KAVOURAS</a>
     <ul class="nav-links" role="list">
       {
         links.map((l) => (
           <li>
-            <a href={l.href} class="nav-link" data-nav-link>
+            <a href={l.href} class="nav-link u-caps-xs-10" data-nav-link>
               {l.label}
             </a>
           </li>
@@ -106,8 +106,6 @@ const links = [
     text-decoration: none;
     color: var(--color-text);
     font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
     font-size: var(--font-size-sm);
     transition:
       color var(--transition-normal),
@@ -129,10 +127,7 @@ const links = [
     list-style: none;
   }
   .nav-link {
-    font-size: var(--font-size-xs);
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
     color: var(--color-text-secondary);
     text-decoration: none;
     position: relative;
