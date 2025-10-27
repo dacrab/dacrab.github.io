@@ -2,13 +2,13 @@
 import "../styles/globals.css";
 
 export interface Props {
-  title: string;
-  description?: string;
+	title: string;
+	description?: string;
 }
 
 const {
-  title,
-  description = "Vaggelis Kavouras — Web developer building Swiss‑style, grid‑first interfaces focused on speed, clarity, and accessibility.",
+	title,
+	description = "Vaggelis Kavouras — Web developer building Swiss‑style, grid‑first interfaces focused on speed, clarity, and accessibility.",
 } = Astro.props;
 const canonical = Astro.url;
 ---

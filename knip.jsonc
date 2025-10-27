@@ -1,7 +1,7 @@
 {
-  "$schema": "https://unpkg.com/knip@latest/schema.json",
-  "entry": ["src/pages/**/*.astro"],
-  "ignore": ["dist/**", "public/**"],
-  "ignoreDependencies": ["@astrojs/check"],
-  "ignoreBinaries": []
+	"$schema": "https://unpkg.com/knip@latest/schema.json",
+	"entry": ["src/pages/**/*.astro"],
+	"ignore": ["dist/**", "public/**"],
+	"ignoreDependencies": ["@biomejs/biome"],
+	"ignoreBinaries": []
 }
