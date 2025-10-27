@@ -12,27 +12,20 @@ concurrency:
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   ci:
     name: Quality Checks & Build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
-      - uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
+      - name: Setup Bun & deps
+        uses: ./.github/actions/setup-bun
 
-      - uses: actions/cache@v4
-        with:
-          path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
-          restore-keys: ${{ runner.os }}-bun-
-
-      - run: bun install
-
-      - name: Run CI suite
+      - name: Run CI pipeline
         run: bun run ci
 
       - name: Dependency Review
@@ -53,6 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: ci
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    timeout-minutes: 10
     permissions:
       contents: read
       pages: write

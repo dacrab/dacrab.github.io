@@ -3,10 +3,18 @@ import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
-  site: "https://dacrab.github.io",
-  base: "/",
-  integrations: [],
-  build: {
-    assets: "assets",
-  },
+	site: "https://dacrab.github.io",
+	base: "/",
+	integrations: [],
+	build: {
+		assets: "assets",
+	},
+	vite: {
+		build: {
+			sourcemap: false,
+		},
+		css: {
+			devSourcemap: false,
+		},
+	},
 });
