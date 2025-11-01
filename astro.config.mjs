@@ -12,6 +12,20 @@ export default defineConfig({
 	vite: {
 		build: {
 			sourcemap: false,
+			rollupOptions: {
+				onwarn(warning, defaultHandler) {
+					// Silence unused external import warnings originating from node_modules
+					if (
+						warning &&
+						warning.code === "UNUSED_EXTERNAL_IMPORT" &&
+						typeof warning.id === "string" &&
+						warning.id.includes("node_modules")
+					) {
+						return;
+					}
+					defaultHandler(warning);
+				},
+			},
 		},
 		css: {
 			devSourcemap: false,
