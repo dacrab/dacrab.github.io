@@ -22,13 +22,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
-        with:
-          node-version: 'lts/*'
-
-      - name: Install dependencies
-        run: npm ci || npm install --no-audit --no-fund
+      - name: Setup Bun & install deps
+        uses: ./.github/actions/setup-bun
 
 
       - name: Build and measure performance
@@ -41,7 +36,7 @@ jobs:
           # Measure build time
           echo "Starting build measurement..." >> performance-report.txt
           start_time=$(date +%s%N)
-          npm run build
+          bun run build
           end_time=$(date +%s%N)
           build_time_ms=$(( (end_time - start_time) / 1000000 ))
           build_time_s=$(echo "scale=2; $build_time_ms / 1000" | bc -l)
@@ -59,9 +54,11 @@ jobs:
             echo "Files in bundle: $file_count" >> performance-report.txt
           fi
 
-          # Check dependency count
-          dep_count=$(npm ls --all --json 2>/dev/null | jq -r '.. | objects | select(has("version")) | .name' | wc -l || echo "N/A")
-          echo "Dependencies: $dep_count packages" >> performance-report.txt
+          # Check dependency count (sum of declared deps in package.json)
+          if command -v jq >/dev/null 2>&1; then
+            dep_count=$(jq '[.dependencies // {}, .devDependencies // {}, .optionalDependencies // {}] | add | length' package.json)
+            echo "Dependencies (declared): $dep_count" >> performance-report.txt
+          fi
 
           # Check node_modules size
           if [ -d "node_modules" ]; then
