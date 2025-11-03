@@ -17,9 +17,17 @@ export default defineConfig({
 					// Silence unused external import warnings originating from node_modules
 					if (
 						warning &&
-						warning.code === "UNUSED_EXTERNAL_IMPORT" &&
+						(warning.code === "UNUSED_EXTERNAL_IMPORT" || warning.code === "UNUSED_IMPORT") &&
 						typeof warning.id === "string" &&
 						warning.id.includes("node_modules")
+					) {
+						return;
+					}
+					// Silence specific warnings from @astrojs/internal-helpers
+					if (
+						warning &&
+						typeof warning.id === "string" &&
+						warning.id.includes("@astrojs/internal-helpers/remote")
 					) {
 						return;
 					}
