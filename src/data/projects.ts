@@ -13,15 +13,15 @@ type Project = {
 };
 
 const gsmImages = import.meta.glob<{ default: ImageMetadata }>(
-	"/src/assets/gsm/*.png",
+	"/src/assets/gsm/*.webp",
 	{ eager: true },
 ) as Record<string, { default: ImageMetadata }>;
 const argiconImages = import.meta.glob<{ default: ImageMetadata }>(
-	"/src/assets/argicon/*.png",
+	"/src/assets/argicon/*.webp",
 	{ eager: true },
 ) as Record<string, { default: ImageMetadata }>;
 const designdashImages = import.meta.glob<{ default: ImageMetadata }>(
-	"/src/assets/designdash/*.png",
+	"/src/assets/designdash/*.webp",
 	{ eager: true },
 ) as Record<string, { default: ImageMetadata }>;
 
