@@ -15,10 +15,10 @@
     "astro": "5.15.2"
   },
   "devDependencies": {
-    "@types/node": "^24.9.2",
-    "knip": "^5.66.4",
+    "@types/node": "^24.10.0",
+    "knip": "^5.67.1",
     "typescript": "^5.9.3",
     "@astrojs/check": "^0.9.5",
-    "ultracite": "^6.1.0"
+    "ultracite": "^6.3.0"
   }
 }
