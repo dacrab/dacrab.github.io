@@ -35,6 +35,27 @@ export default defineConfig({
 				},
 			},
 		},
+		plugins: [
+			{
+				name: "suppress-astro-unused-internal-import-warnings",
+				configResolved(config) {
+					const originalWarn = config.logger.warn;
+					config.logger.warn = (msg, options) => {
+						try {
+							const text = typeof msg === "string" ? msg : msg?.message || "";
+							if (
+								text.includes("@astrojs/internal-helpers/remote") ||
+								text.includes("node_modules/astro/dist/assets/utils/remotePattern.js") ||
+								text.includes("node_modules/astro/dist/assets/services/service.js")
+							) {
+								return; // swallow these specific warnings
+							}
+						} catch {}
+						return originalWarn(msg, options);
+					};
+				},
+			},
+		],
 		css: {
 			devSourcemap: false,
 		},

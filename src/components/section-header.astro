@@ -9,9 +9,9 @@ interface Props {
 const { eyebrow, title, description, className = "" } = Astro.props as Props;
 ---
 
-<header class={`section-head section-header-spacing ${className}`}>
+<header class={`section-head section-header-spacing reveal-group ${className}`}>
   <div class="section-head-grid">
-    <div class="section-head-content">
+    <div class="section-head-content reveal-child reveal-left">
       <div class="eyebrow-line">
         {eyebrow && <span class="section-eyebrow">{eyebrow}</span>}
         <div class="divider-line" aria-hidden="true"></div>
@@ -20,7 +20,7 @@ const { eyebrow, title, description, className = "" } = Astro.props as Props;
       {description && <p class="desc">{description}</p>}
       <slot />
     </div>
-    <div class="section-head-mark" aria-hidden="true">
+    <div class="section-head-mark reveal-child reveal-right" aria-hidden="true">
       <span class="mark-text">—</span>
     </div>
   </div>

@@ -13,7 +13,7 @@ import SectionHeader from "./section-header.astro";
       description="Minimal case cards with quick preview and gallery."
     />
 
-    <div class="proj-grid">
+    <div class="proj-grid reveal-group" style="--reveal-stagger: 70ms;">
       {
         projects.map((p) => {
           const gallery = JSON.stringify(
@@ -25,7 +25,7 @@ import SectionHeader from "./section-header.astro";
           );
           return (
             <article
-              class="proj-card"
+              class="proj-card reveal-child reveal-zoom"
               data-project={p.id}
               data-gallery={gallery}
               data-title={p.title}
@@ -165,7 +165,7 @@ import SectionHeader from "./section-header.astro";
         <span class="work-badge u-caps-xs-10" aria-hidden="true">LIVE</span>
       </div>
       <div
-        class="current-work-grid"
+        class="current-work-grid reveal-group"
         id="current-work-grid"
         aria-live="polite"
       >
@@ -218,7 +218,9 @@ import SectionHeader from "./section-header.astro";
         .slice(0, 8)
         .forEach((repo: any) => {
           const el = document.createElement("article");
-          el.className = "current-work-card";
+          // Alternate left/right variants for visual rhythm
+          const variant = grid?.children?.length % 2 === 0 ? "reveal-left" : "reveal-right";
+          el.className = `current-work-card reveal-child ${variant}`;
           el.innerHTML = `
             <div class="work-header">
               <h4 class="work-title">${repo.name}</h4>

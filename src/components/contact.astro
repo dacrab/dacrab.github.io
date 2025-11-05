@@ -16,8 +16,8 @@ import SectionHeader from "./section-header.astro";
       description="Best way to reach me is email. I usually reply within 24–48 hours."
     />
 
-    <div class="contact-grid">
-      <a class="contact-item primary" href="mailto:vkavouras@proton.me">
+    <div class="contact-grid reveal-group" style="--reveal-stagger: 85ms;">
+      <a class="contact-item primary reveal-child reveal-zoom" href="mailto:vkavouras@proton.me">
         <span class="icon" aria-hidden="true">
           <svg
             width="22"
@@ -49,7 +49,7 @@ import SectionHeader from "./section-header.astro";
       </a>
 
       <a
-        class="contact-item"
+        class="contact-item reveal-child reveal-left"
         href="https://github.com/dacrab"
         target="_blank"
         rel="noopener noreferrer"
@@ -74,7 +74,7 @@ import SectionHeader from "./section-header.astro";
       </a>
 
       <a
-        class="contact-item"
+        class="contact-item reveal-child reveal-right"
         href="https://linkedin.com/in/vkavouras"
         target="_blank"
         rel="noopener noreferrer"
@@ -99,9 +99,9 @@ import SectionHeader from "./section-header.astro";
       </a>
     </div>
 
-    <div class="contact-extra">
-      <span class="swiss-caption">CV</span>
-      <CvLinks />
+    <div class="contact-extra reveal-group" style="--reveal-stagger: 60ms;">
+      <span class="swiss-caption reveal-child reveal-fade">CV</span>
+      <div class="reveal-child reveal-up"><CvLinks /></div>
     </div>
   </div>
 </section>

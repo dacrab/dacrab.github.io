@@ -1144,7 +1144,59 @@
 	.reveal-element.revealed,
 	.animate-in {
 		opacity: 1 !important;
-		transform: translateY(0) !important;
+		transform: none !important;
+	}
+
+	/* Reveal groups with staggered children */
+	.reveal-group .reveal-child {
+		opacity: 0;
+		transform: translateY(16px);
+		transition:
+			opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+			transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+		will-change: opacity, transform;
+	}
+
+	.reveal-group.revealed .reveal-child {
+		opacity: 1;
+		transform: none;
+	}
+
+	/* Stagger via CSS variable set by JS: --i (index), --reveal-stagger (ms) */
+	.reveal-group.revealed .reveal-child {
+		transition-delay: calc(var(--reveal-stagger, 80ms) * var(--i, 0));
+	}
+
+	/* Directional/variant reveals (initial states) */
+	.reveal-left {
+		transform: translateX(-16px);
+	}
+	.reveal-right {
+		transform: translateX(16px);
+	}
+	.reveal-up {
+		transform: translateY(16px);
+	}
+	.reveal-zoom {
+		transform: scale(0.98);
+	}
+	.reveal-fade {
+		transform: none;
+	}
+
+	/* Intro sequence items (e.g., hero) */
+	.intro-item {
+		opacity: 0;
+		transform: translateY(14px);
+		transition:
+			opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+			transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+		will-change: opacity, transform;
+	}
+
+	.intro-item.animate-in {
+		opacity: 1;
+		transform: translateY(0);
 	}
 
 	*:focus-visible {
