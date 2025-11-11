@@ -19,6 +19,6 @@
     "knip": "^5.67.1",
     "typescript": "^5.9.3",
     "@astrojs/check": "^0.9.5",
-    "ultracite": "^6.3.0"
+    "ultracite": "^6.3.2"
   }
 }
