@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.10.0",
-    "knip": "^5.68.0",
+    "knip": "^5.69.1",
     "typescript": "^5.9.3",
     "@astrojs/check": "^0.9.5",
     "ultracite": "^6.3.2"
