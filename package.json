@@ -12,7 +12,7 @@
     "ci": "npm run lint && npx astro check && npm run build"
   },
   "dependencies": {
-    "astro": "5.15.8"
+    "astro": "5.16.0"
   },
   "devDependencies": {
     "@types/node": "^24.10.0",
