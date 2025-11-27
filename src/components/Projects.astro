@@ -1,0 +1,94 @@
+---
+import { projects } from "../data/projects";
+import { Image } from "astro:assets";
+---
+
+<section id="projects" class="py-32 px-6 md:px-12 border-t border-zinc-200">
+  <div class="max-w-7xl mx-auto">
+    <div class="flex items-end justify-between mb-24 reveal-text">
+      <h2 class="text-8xl md:text-9xl font-bold tracking-tighter text-zinc-200 select-none">WORK</h2>
+      <p class="text-zinc-500 text-lg mb-4">Selected Projects (0{projects.length})</p>
+    </div>
+
+    <div class="space-y-32">
+      {projects.map((project, index) => (
+        <div class="group relative grid grid-cols-1 lg:grid-cols-12 gap-8 items-center project-item">
+          <!-- Text Content -->
+          <div class="lg:col-span-5 order-2 lg:order-1 reveal-text z-10 mix-blend-multiply">
+            <div class="flex items-center gap-4 mb-6">
+              <span class="font-mono text-sm text-zinc-400">0{index + 1}</span>
+              <div class="h-px w-12 bg-zinc-200"></div>
+              <span class="uppercase tracking-widest text-xs font-bold text-zinc-500">{project.slug}</span>
+            </div>
+            
+            <h3 class="text-4xl md:text-5xl font-bold text-zinc-900 mb-6 group-hover:text-zinc-600 transition-colors">
+              {project.title}
+            </h3>
+            
+            <p class="text-xl text-zinc-500 leading-relaxed mb-8 max-w-md">
+              {project.blurb}
+            </p>
+            
+            <div class="flex flex-wrap gap-2 mb-10">
+              {project.tech.map(t => (
+                <span class="px-3 py-1 text-xs font-medium uppercase tracking-wider border border-zinc-200 rounded-full text-zinc-500">
+                  {t}
+                </span>
+              ))}
+            </div>
+
+            <a 
+              href={project.link} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              class="magnetic inline-flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-zinc-900 border-b border-zinc-900 pb-1 hover:opacity-60 transition-opacity"
+            >
+              View Live
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 11L11 1M11 1H1M11 1V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Image Content -->
+          <div class="lg:col-span-7 order-1 lg:order-2 reveal-text delay-200 relative">
+            <a href={project.link} target="_blank" rel="noopener noreferrer" class="block overflow-hidden rounded-sm bg-zinc-100 project-image-container h-[60vh] relative">
+              <div class="project-image-wrapper absolute inset-0 w-full h-[120%] -top-[10%]">
+                <Image 
+                  src={project.cover} 
+                  alt={project.title} 
+                  class="w-full h-full object-cover object-top grayscale group-hover:grayscale-0 transition-all duration-700"
+                  quality={95}
+                />
+              </div>
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .delay-200 { transition-delay: 200ms; }
+</style>
+
+<script>
+  import gsap from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  const images = document.querySelectorAll('.project-image-wrapper');
+
+  images.forEach((img) => {
+    gsap.to(img, {
+      y: '10%', // Move image slightly down within its container
+      ease: 'none',
+      scrollTrigger: {
+        trigger: img.parentElement,
+        start: 'top bottom', // when top of container hits bottom of viewport
+        end: 'bottom top', // when bottom of container hits top of viewport
+        scrub: true
+      }
+    });
+  });
+</script>
