@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @layer base {
   :root {
@@ -6,7 +6,8 @@
     --grid-color: rgba(0, 0, 0, 0.04);
   }
 
-  html.lenis, html.lenis body {
+  html.lenis,
+  html.lenis body {
     height: auto;
   }
 
@@ -28,7 +29,7 @@
 
   body {
     background-color: var(--bg-color);
-    background-image: 
+    background-image:
       linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
       linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
     background-size: 4rem 4rem;

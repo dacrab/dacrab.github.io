@@ -1,46 +1,46 @@
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
     open-pull-requests-limit: 5
     labels:
-      - "dependencies"
-      - "github-actions"
+      - 'dependencies'
+      - 'github-actions'
 
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
     open-pull-requests-limit: 5
     groups:
       dev-dependencies:
-        dependency-type: "development"
+        dependency-type: 'development'
         patterns:
-          - "@types/node"
-          - "knip"
-          - "typescript"
-          - "@biomejs/biome"
+          - '@types/node'
+          - 'knip'
+          - 'typescript'
+          - '@biomejs/biome'
       production-dependencies:
-        dependency-type: "production"
+        dependency-type: 'production'
         patterns:
-          - "astro"
+          - 'astro'
     labels:
-      - "dependencies"
-      - "npm"
+      - 'dependencies'
+      - 'npm'
 
-  - package-ecosystem: "bun"
-    directory: "/"
+  - package-ecosystem: 'bun'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
     open-pull-requests-limit: 3
     labels:
-      - "dependencies"
-      - "bun"
+      - 'dependencies'
+      - 'bun'

@@ -1,6 +1,6 @@
 # Vaggelis Kavouras — Portfolio
 
-A high-performance, cinematic personal portfolio website. Built with **Astro**, **Tailwind CSS**, and **GSAP**.
+A high-performance, cinematic personal portfolio website.
 
 ## ✨ Features
 
@@ -9,28 +9,37 @@ A high-performance, cinematic personal portfolio website. Built with **Astro**, 
 -   **Performance First**: Built on **Astro** for zero-runtime JavaScript overhead where possible, ensuring lightning-fast loads.
 -   **Smooth Experience**: **Lenis** integration for buttery smooth scrolling.
 -   **Responsive**: Massive, fluid typography and layouts that scale perfectly from mobile to desktop.
+-   **Strict Code Quality**: Enforced by strict **ESLint**, **Prettier**, and **TypeScript** configurations.
 
 ## 🛠️ Stack
 
+-   **Runtime**: [Bun](https://bun.sh)
 -   **Framework**: [Astro](https://astro.build)
 -   **Styling**: [Tailwind CSS](https://tailwindcss.com)
 -   **Animation**: [GSAP](https://greensock.com/gsap) (ScrollTrigger)
 -   **Scrolling**: [Lenis](https://lenis.studiofreight.com/)
+-   **Linting**: ESLint (Strict), Prettier
 -   **Typeface**: Geist Sans
 
 ## 🚀 Development
 
 1.  **Install dependencies**:
     ```bash
-    npm install
+    bun install
     ```
 
 2.  **Start dev server**:
     ```bash
-    npm run dev
+    bun run dev
     ```
 
 3.  **Build for production**:
     ```bash
-    npm run build
+    bun run build
+    ```
+
+4.  **Lint & Format**:
+    ```bash
+    bun run lint
+    bun run fix
     ```

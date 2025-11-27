@@ -1,85 +1,87 @@
 ---
-import "../styles/global.css";
-import "@fontsource/geist-sans";
+import '../styles/global.css';
+import '@fontsource/geist-sans';
 
 export interface Props {
-	title: string;
-	description?: string;
+  title: string;
+  description?: string;
 }
 
 const {
-	title,
-	description = "Vaggelis Kavouras — Web developer building fast, accessible interfaces.",
+  title,
+  description = 'Vaggelis Kavouras — Web developer building fast, accessible interfaces.',
 } = Astro.props;
 const canonical = Astro.url;
-import InteractiveCursor from "../components/InteractiveCursor.astro";
-import GrainOverlay from "../components/GrainOverlay.astro";
+import GrainOverlay from '../components/GrainOverlay.astro';
+import InteractiveCursor from '../components/InteractiveCursor.astro';
 ---
 
 <!doctype html>
 <html lang="en" class="scroll-smooth">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="description" content={description} />
-		<meta name="author" content="Vaggelis Kavouras" />
-		<meta name="generator" content={Astro.generator} />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="author" content="Vaggelis Kavouras" />
+    <meta name="generator" content={Astro.generator} />
 
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="canonical" href={canonical.href} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical.href} />
 
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content={title} />
-		<meta property="og:description" content={description} />
-		<meta property="og:url" content={canonical.href} />
-		<meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta name="twitter:card" content="summary_large_image" />
 
-		<title>{title}</title>
+    <title>{title}</title>
     <script>
-      import Lenis from 'lenis'
-      import gsap from 'gsap'
-      import { ScrollTrigger } from 'gsap/ScrollTrigger'
+      import gsap from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+      import Lenis from 'lenis';
 
-      gsap.registerPlugin(ScrollTrigger)
+      gsap.registerPlugin(ScrollTrigger);
 
       const lenis = new Lenis({
         lerp: 0.08, // Even smoother
         smoothWheel: true,
         wheelMultiplier: 0.8, // Slower, more cinematic scroll
-      })
+      });
 
-      function raf(time) {
-        lenis.raf(time)
-        requestAnimationFrame(raf)
+      function raf(time: number) {
+        lenis.raf(time);
+        requestAnimationFrame(raf);
       }
 
-      requestAnimationFrame(raf)
-      
+      requestAnimationFrame(raf);
+
       // Sync ScrollTrigger with Lenis
-      lenis.on('scroll', ScrollTrigger.update)
+      lenis.on('scroll', ScrollTrigger.update);
 
       gsap.ticker.add((time) => {
-        lenis.raf(time * 1000)
-      })
+        lenis.raf(time * 1000);
+      });
 
-      gsap.ticker.lagSmoothing(0)
+      gsap.ticker.lagSmoothing(0);
 
       // Global Reveal System
       const revealElements = document.querySelectorAll('.reveal-text');
-      
+
       revealElements.forEach((element) => {
         ScrollTrigger.create({
           trigger: element,
-          start: "top 85%",
+          start: 'top 85%',
           onEnter: () => element.classList.add('is-visible'),
-          once: true // Only reveal once for better performance
+          once: true, // Only reveal once for better performance
         });
       });
     </script>
-	</head>
-	<body class="bg-zinc-50 text-zinc-900 antialiased font-sans selection:bg-black selection:text-white cursor-none">
+  </head>
+  <body
+    class="cursor-none bg-zinc-50 font-sans text-zinc-900 antialiased selection:bg-black selection:text-white"
+  >
     <InteractiveCursor />
     <GrainOverlay />
-		<slot />
-	</body>
+    <slot />
+  </body>
 </html>

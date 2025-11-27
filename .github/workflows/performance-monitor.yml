@@ -25,7 +25,6 @@ jobs:
       - name: Setup Bun & install deps
         uses: ./.github/actions/setup-bun
 
-
       - name: Build and measure performance
         run: |
           echo "=== Build Performance Report ===" > performance-report.txt
@@ -40,7 +39,7 @@ jobs:
           end_time=$(date +%s%N)
           build_time_ms=$(( (end_time - start_time) / 1000000 ))
           build_time_s=$(echo "scale=2; $build_time_ms / 1000" | bc -l)
-          
+
           echo "Build time: ${build_time_s}s (${build_time_ms}ms)" >> performance-report.txt
 
           # Check bundle size
@@ -82,20 +81,20 @@ jobs:
           # Set performance thresholds (in seconds)
           BUILD_THRESHOLD=30
           SIZE_THRESHOLD_MB=10
-          
+
           build_time=$(grep "Build time:" performance-report.txt | sed 's/Build time: \([0-9.]*\)s.*/\1/')
           bundle_size_mb=$(grep "Bundle size:" performance-report.txt | sed 's/.*(\([0-9]*\) bytes).*/\1/' | awk '{print int($1/1024/1024)}')
-          
+
           echo "build-time=$build_time" >> $GITHUB_OUTPUT
           echo "bundle-size-mb=$bundle_size_mb" >> $GITHUB_OUTPUT
-          
+
           # Check if thresholds are exceeded
           if (( $(echo "$build_time > $BUILD_THRESHOLD" | bc -l) )); then
             echo "build-slow=true" >> $GITHUB_OUTPUT
           else
             echo "build-slow=false" >> $GITHUB_OUTPUT
           fi
-          
+
           if [ "$bundle_size_mb" -gt "$SIZE_THRESHOLD_MB" ]; then
             echo "bundle-large=true" >> $GITHUB_OUTPUT
           else
@@ -108,34 +107,34 @@ jobs:
         with:
           script: |
             const fs = require('fs');
-            
+
             // Read performance data
             const report = fs.readFileSync('performance-report.txt', 'utf8');
             const buildTime = '${{ steps.performance-check.outputs.build-time }}';
             const bundleSizeMb = '${{ steps.performance-check.outputs.bundle-size-mb }}';
             const buildSlow = '${{ steps.performance-check.outputs.build-slow }}' === 'true';
             const bundleLarge = '${{ steps.performance-check.outputs.bundle-large }}' === 'true';
-            
+
             // Create issue title and body
             let title = 'Performance Alert - ';
             let body = '## Performance Report\n\n';
             body += '```\n' + report + '\n```\n\n';
-            
+
             if (buildSlow) {
               title += 'Slow Build Time';
               body += '⚠️ **Build time exceeded threshold** (30s): ' + buildTime + 's\n\n';
             }
-            
+
             if (bundleLarge) {
               if (buildSlow) title += ' & ';
               title += 'Large Bundle Size';
               body += '⚠️ **Bundle size exceeded threshold** (10MB): ' + bundleSizeMb + 'MB\n\n';
             }
-            
+
             body += 'Please investigate the performance regression and consider optimizations.\n';
             body += '\n---\n';
             body += '*This issue was automatically created by the Performance Monitor workflow.*';
-            
+
             // Create or update issue
             github.rest.issues.create({
               owner: context.repo.owner,
