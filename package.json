@@ -7,9 +7,10 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "lint": "ultracite check . && tsc --noEmit && knip",
-    "fix": "ultracite fix .",
-    "ci": "npm run lint && npx astro check && npm run build"
+    "lint": "eslint .",
+    "fix": "eslint . --fix && prettier --write .",
+    "format": "prettier --write .",
+    "ci": "bun run lint && bun x astro check && bun run build"
   },
   "dependencies": {
     "@fontsource/geist-sans": "^5.2.5",
@@ -22,8 +23,18 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
     "@types/node": "^24.10.1",
+    "@typescript-eslint/eslint-plugin": "^8.48.0",
+    "@typescript-eslint/parser": "^8.48.0",
+    "eslint": "^9.39.1",
+    "eslint-plugin-astro": "^1.5.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "globals": "^16.5.0",
     "knip": "^5.70.2",
+    "prettier": "^3.7.1",
+    "prettier-plugin-astro": "^0.14.1",
+    "prettier-plugin-tailwindcss": "^0.7.1",
     "typescript": "^5.9.3",
-    "ultracite": "^6.3.7"
+    "typescript-eslint": "^8.48.0"
   }
 }

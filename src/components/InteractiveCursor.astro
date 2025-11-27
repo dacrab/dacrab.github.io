@@ -1,18 +1,20 @@
-<div 
-  id="cursor" 
-  class="fixed top-0 left-0 w-3 h-3 bg-white rounded-full pointer-events-none z-[100] mix-blend-difference transition-transform duration-100 ease-out -translate-x-1/2 -translate-y-1/2 hidden md:block"
-></div>
-<div 
-  id="cursor-follower" 
-  class="fixed top-0 left-0 w-10 h-10 border border-white/30 rounded-full pointer-events-none z-[99] mix-blend-difference transition-transform duration-300 ease-out -translate-x-1/2 -translate-y-1/2 hidden md:block"
-></div>
+<div
+  id="cursor"
+  class="pointer-events-none fixed top-0 left-0 z-[100] hidden h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white mix-blend-difference transition-transform duration-100 ease-out md:block"
+>
+</div>
+<div
+  id="cursor-follower"
+  class="pointer-events-none fixed top-0 left-0 z-[99] hidden h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/30 mix-blend-difference transition-transform duration-300 ease-out md:block"
+>
+</div>
 
 <script>
-  import gsap from "gsap";
+  import gsap from 'gsap';
 
-  const cursor = document.getElementById("cursor");
-  const follower = document.getElementById("cursor-follower");
-  
+  const cursor = document.getElementById('cursor');
+  const follower = document.getElementById('cursor-follower');
+
   let mouseX = 0;
   let mouseY = 0;
   let cursorX = 0;
@@ -20,7 +22,7 @@
   let followerX = 0;
   let followerY = 0;
 
-  document.addEventListener("mousemove", (e) => {
+  document.addEventListener('mousemove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
   });
@@ -31,7 +33,7 @@
 
     cursorX += (mouseX - cursorX) * dt;
     cursorY += (mouseY - cursorY) * dt;
-    
+
     followerX += (mouseX - followerX) * dtFollower;
     followerY += (mouseY - followerY) * dtFollower;
 
@@ -42,17 +44,17 @@
   });
 
   // Hover effects
-  const hoverables = document.querySelectorAll("a, button, .magnetic");
-  
+  const hoverables = document.querySelectorAll('a, button, .magnetic');
+
   hoverables.forEach((el) => {
-    el.addEventListener("mouseenter", () => {
+    el.addEventListener('mouseenter', () => {
       gsap.to(cursor, { scale: 0 });
-      gsap.to(follower, { scale: 1.5, backgroundColor: "white", mixBlendMode: "difference" });
+      gsap.to(follower, { scale: 1.5, backgroundColor: 'white', mixBlendMode: 'difference' });
     });
-    
-    el.addEventListener("mouseleave", () => {
+
+    el.addEventListener('mouseleave', () => {
       gsap.to(cursor, { scale: 1 });
-      gsap.to(follower, { scale: 1, backgroundColor: "transparent" });
+      gsap.to(follower, { scale: 1, backgroundColor: 'transparent' });
     });
   });
 </script>
