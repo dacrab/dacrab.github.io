@@ -1,45 +1,22 @@
-# Vaggelis Kavouras — Portfolio
+# Vaggelis Kavouras
 
-A high-performance, cinematic personal portfolio website.
+A high-performance, cinematic personal portfolio website featuring advanced motion and a moody aesthetic.
 
-## ✨ Features
+## Overview
 
--   **Cinematic Design**: Dark, moody aesthetic (`#050505`) with animated grain and grid overlays.
--   **Advanced Motion**: Complex split-text reveals, magnetic interactions, and parallax scrolling powered by **GSAP**.
--   **Performance First**: Built on **Astro** for zero-runtime JavaScript overhead where possible, ensuring lightning-fast loads.
--   **Smooth Experience**: **Lenis** integration for buttery smooth scrolling.
--   **Responsive**: Massive, fluid typography and layouts that scale perfectly from mobile to desktop.
--   **Strict Code Quality**: Enforced by strict **ESLint**, **Prettier**, and **TypeScript** configurations.
+- **Stack**: [Astro](https://astro.build), [Tailwind CSS v4](https://tailwindcss.com), [GSAP](https://greensock.com/gsap), [Lenis](https://lenis.studiofreight.com/).
+- **Design**: Cinematic dark mode (`#050505`), animated grain, and fluid typography.
+- **Performance**: Zero-runtime JS overhead where possible, smooth scrolling, and optimized assets.
 
-## 🛠️ Stack
+## Development
 
--   **Runtime**: [Bun](https://bun.sh)
--   **Framework**: [Astro](https://astro.build)
--   **Styling**: [Tailwind CSS](https://tailwindcss.com)
--   **Animation**: [GSAP](https://greensock.com/gsap) (ScrollTrigger)
--   **Scrolling**: [Lenis](https://lenis.studiofreight.com/)
--   **Linting**: ESLint (Strict), Prettier
--   **Typeface**: Geist Sans
+```bash
+# Install dependencies
+bun install
 
-## 🚀 Development
+# Start dev server
+bun dev
 
-1.  **Install dependencies**:
-    ```bash
-    bun install
-    ```
-
-2.  **Start dev server**:
-    ```bash
-    bun run dev
-    ```
-
-3.  **Build for production**:
-    ```bash
-    bun run build
-    ```
-
-4.  **Lint & Format**:
-    ```bash
-    bun run lint
-    bun run fix
-    ```
+# Build for production
+bun build
+```
