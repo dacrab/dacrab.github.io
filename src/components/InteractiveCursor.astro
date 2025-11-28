@@ -5,7 +5,7 @@
 </div>
 <div
   id="cursor-follower"
-  class="pointer-events-none fixed top-0 left-0 z-99 hidden h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/30 mix-blend-difference transition-transform duration-300 ease-out md:block"
+  class="pointer-events-none fixed top-0 left-0 z-99 hidden flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 mix-blend-difference transition-transform duration-300 ease-out md:block"
 >
 </div>
 
@@ -45,7 +45,9 @@
 
   // Hover effects
   const hoverables = document.querySelectorAll('a, button, .magnetic');
+  const crabTriggers = document.querySelectorAll('.crab-trigger');
 
+  // Standard Hover
   hoverables.forEach((el) => {
     el.addEventListener('mouseenter', () => {
       gsap.to(cursor, { scale: 0 });
@@ -54,7 +56,42 @@
 
     el.addEventListener('mouseleave', () => {
       gsap.to(cursor, { scale: 1 });
-      gsap.to(follower, { scale: 1, backgroundColor: 'transparent' });
+      gsap.to(follower, { scale: 1, backgroundColor: 'transparent', mixBlendMode: 'difference' });
+    });
+  });
+
+  // Crab Mode
+  crabTriggers.forEach((el) => {
+    el.addEventListener('mouseenter', () => {
+      if (follower) {
+        follower.innerText = '🦀';
+        follower.style.fontSize = '32px';
+        gsap.to(cursor, { scale: 0, duration: 0.6, ease: 'power3.out' });
+        gsap.to(follower, {
+          scale: 2,
+          backgroundColor: 'transparent',
+          borderColor: 'transparent',
+          mixBlendMode: 'normal',
+          duration: 0.8,
+          ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        });
+      }
+    });
+
+    el.addEventListener('mouseleave', () => {
+      if (follower) {
+        follower.innerText = '';
+        follower.style.fontSize = '';
+        gsap.to(cursor, { scale: 1, duration: 0.6, ease: 'power3.out' });
+        gsap.to(follower, {
+          scale: 1,
+          backgroundColor: 'transparent',
+          borderColor: 'rgba(255, 255, 255, 0.3)',
+          mixBlendMode: 'difference',
+          duration: 0.8,
+          ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        });
+      }
     });
   });
 </script>
