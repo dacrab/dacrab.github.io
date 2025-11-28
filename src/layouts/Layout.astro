@@ -43,9 +43,13 @@ import InteractiveCursor from '../components/InteractiveCursor.astro';
       gsap.registerPlugin(ScrollTrigger);
 
       const lenis = new Lenis({
-        lerp: 0.08, // Even smoother
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Exponential ease-out
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
         smoothWheel: true,
-        wheelMultiplier: 0.8, // Slower, more cinematic scroll
+        wheelMultiplier: 1,
+        touchMultiplier: 2,
       });
 
       function raf(time: number) {

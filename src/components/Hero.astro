@@ -11,12 +11,12 @@
   <div class="relative z-10 mx-auto w-full max-w-[90vw]">
     <div class="overflow-hidden">
       <h1 class="hero-title text-[12vw] leading-[0.85] font-bold tracking-tighter text-zinc-900">
-        <span class="inline-block">VAGGELIS</span>
+        <span class="inline-block translate-y-full opacity-0">VAGGELIS</span>
       </h1>
     </div>
     <div class="overflow-hidden">
       <h1 class="hero-title text-[12vw] leading-[0.85] font-bold tracking-tighter text-zinc-900">
-        <span class="inline-block">KAVOURAS</span>
+        <span class="inline-block translate-y-full opacity-0">KAVOURAS</span>
       </h1>
     </div>
 
@@ -33,24 +33,28 @@
       <div class="hero-actions flex translate-y-8 gap-4 opacity-0">
         <a
           href="#projects"
-          class="group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-full bg-zinc-900 px-8 font-medium text-white transition-all duration-300 hover:w-40 hover:bg-zinc-800"
+          class="group relative inline-flex h-12 items-center justify-center rounded-full bg-zinc-900 px-6 font-medium text-white transition-colors duration-500 hover:bg-zinc-800"
         >
-          <span class="mr-2 transition-all duration-300 group-hover:-translate-x-1">Work</span>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="-translate-x-2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100"
+          <span>Work</span>
+          <div
+            class="w-0 overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-6"
           >
-            <path d="M7 17L17 7"></path>
-            <path d="M7 7h10v10"></path>
-          </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="ml-2"
+            >
+              <path d="M7 17L17 7"></path>
+              <path d="M7 7h10v10"></path>
+            </svg>
+          </div>
         </a>
       </div>
     </div>
@@ -64,13 +68,14 @@
 
   // Initial Load Animation
   tl.to('.hero-line', { scaleY: 1, duration: 1.5 })
-    .from(
+    .to(
       '.hero-title span',
       {
-        y: '100%',
-        duration: 1.2,
-        stagger: 0.1,
-        rotate: 2,
+        y: 0,
+        opacity: 1,
+        duration: 1.5,
+        stagger: 0.2,
+        ease: 'power4.out',
       },
       '-=1'
     )
