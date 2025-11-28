@@ -1,46 +1,20 @@
 version: 2
 updates:
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '09:00'
-    open-pull-requests-limit: 5
-    labels:
-      - 'dependencies'
-      - 'github-actions'
-
-  - package-ecosystem: 'npm'
-    directory: '/'
-    schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '09:00'
-    open-pull-requests-limit: 5
+      interval: "weekly"
     groups:
-      dev-dependencies:
-        dependency-type: 'development'
+      actions:
         patterns:
-          - '@types/node'
-          - 'knip'
-          - 'typescript'
-          - '@biomejs/biome'
-      production-dependencies:
-        dependency-type: 'production'
-        patterns:
-          - 'astro'
-    labels:
-      - 'dependencies'
-      - 'npm'
+          - "*"
 
-  - package-ecosystem: 'bun'
-    directory: '/'
+  - package-ecosystem: "npm"
+    directory: "/"
     schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '09:00'
-    open-pull-requests-limit: 3
-    labels:
-      - 'dependencies'
-      - 'bun'
+      interval: "weekly"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+

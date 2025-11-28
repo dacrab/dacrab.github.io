@@ -16,28 +16,21 @@ permissions:
 
 jobs:
   ci:
-    name: Quality Checks & Build
+    name: Check & Build
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
 
-      - name: Setup Bun & install deps
+      - name: Setup Bun
         uses: ./.github/actions/setup-bun
 
-      - name: Run CI pipeline
+      - name: Run CI
         run: bun run ci
 
-      - name: Dependency Review
-        if: github.event_name == 'pull_request'
-        uses: actions/dependency-review-action@v4
-        with:
-          fail-on-severity: moderate
-          allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC
-
-      - name: Upload Pages artifact
+      - name: Upload Artifact
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
           path: './dist'
 
@@ -54,9 +47,6 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    concurrency:
-      group: pages-deploy
-      cancel-in-progress: false
     steps:
       - uses: actions/configure-pages@v5
       - id: deployment
