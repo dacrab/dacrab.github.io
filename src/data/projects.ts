@@ -2,7 +2,7 @@ import type { ImageMetadata } from 'astro';
 
 interface Project {
   id: number;
-  slug: 'gsm' | 'argicon' | 'designdash';
+  slug: 'aureus' | 'argicon' | 'designdash';
   title: string;
   meta: string;
   blurb: string;
@@ -12,14 +12,20 @@ interface Project {
   gallery: ImageMetadata[];
 }
 
-const gsmImages = import.meta.glob<{ default: ImageMetadata }>('/src/assets/gsm/*.webp', {
-  eager: true,
-}) as Record<string, { default: ImageMetadata }>;
-const argiconImages = import.meta.glob<{ default: ImageMetadata }>('/src/assets/argicon/*.webp', {
-  eager: true,
-}) as Record<string, { default: ImageMetadata }>;
+const aureusImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/aureus/home.webp',
+  {
+    eager: true,
+  }
+) as Record<string, { default: ImageMetadata }>;
+const argiconImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/argicon/home.webp',
+  {
+    eager: true,
+  }
+) as Record<string, { default: ImageMetadata }>;
 const designdashImages = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/designdash/*.webp',
+  '/src/assets/designdash/home.webp',
   { eager: true }
 ) as Record<string, { default: ImageMetadata }>;
 
@@ -27,7 +33,7 @@ function toList(record: Record<string, { default: ImageMetadata }>) {
   return Object.values(record).map((v) => v.default);
 }
 
-const gsmList = toList(gsmImages);
+const aureusList = toList(aureusImages);
 const argiconList = toList(argiconImages);
 const designdashList = toList(designdashImages);
 
@@ -47,14 +53,14 @@ function coverOrFallback(record: ImageMetadata[], nameIncludes: string): ImageMe
 export const projects: Project[] = [
   {
     id: 1,
-    slug: 'gsm',
-    title: 'Silver and Gold Money',
+    slug: 'aureus',
+    title: 'AUREUS & ARGENT',
     meta: 'Bilingual site · Calculators · SvelteKit',
     blurb: 'Trust-forward pawn shop website with interactive tools and a clear, compact UI.',
     tech: ['Svelte', 'SvelteKit', 'TailwindCSS', 'TypeScript'],
     link: 'https://gsm-beta.vercel.app/',
-    cover: coverOrFallback(gsmList, 'home-en'),
-    gallery: gsmList,
+    cover: coverOrFallback(aureusList, 'home'),
+    gallery: aureusList,
   },
   {
     id: 2,
@@ -64,18 +70,18 @@ export const projects: Project[] = [
     blurb: 'Professional services site presenting complex projects with clarity.',
     tech: ['TypeScript', 'NextJS', 'TailwindCSS', 'React'],
     link: 'https://argicon.gr',
-    cover: coverOrFallback(argiconList, 'home-en'),
+    cover: coverOrFallback(argiconList, 'home'),
     gallery: argiconList,
   },
   {
     id: 3,
     slug: 'designdash',
-    title: 'DesignDash',
+    title: 'DesignDASH',
     meta: 'Construction platform · Next.js',
     blurb: 'Showcasing construction work with structured galleries and specs.',
     tech: ['TypeScript', 'NextJS', 'TailwindCSS', 'React'],
     link: 'https://designdash.gr',
-    cover: coverOrFallback(designdashList, 'home-en'),
+    cover: coverOrFallback(designdashList, 'home'),
     gallery: designdashList,
   },
 ];
