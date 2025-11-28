@@ -10,16 +10,16 @@ const links = [
   <div class="flex items-center justify-between px-6 py-8 md:px-12">
     <a
       href="/"
-      class="magnetic inline-block text-sm font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
+      class="header-reveal magnetic inline-block -translate-y-full text-sm font-bold tracking-widest opacity-0 uppercase transition-opacity hover:opacity-70"
     >
-      Vaggelis Kavouras
+      Vaggelis <span class="crab-trigger inline-block">Kavouras</span>
     </a>
 
     <nav>
       <ul class="flex gap-8">
         {
           links.map((link) => (
-            <li>
+            <li class="header-reveal -translate-y-full opacity-0">
               <a
                 href={link.href}
                 class="magnetic group relative inline-block py-2 text-sm font-medium tracking-widest uppercase transition-opacity hover:opacity-70"
@@ -30,7 +30,7 @@ const links = [
             </li>
           ))
         }
-        <li class="group relative ml-4">
+        <li class="header-reveal group relative ml-4 -translate-y-full opacity-0">
           <span
             class="magnetic inline-block cursor-pointer rounded-full border border-white/30 bg-white/5 px-4 py-1.5 text-sm font-medium tracking-widest uppercase backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-black"
           >
@@ -63,3 +63,17 @@ const links = [
     </nav>
   </div>
 </header>
+
+<script>
+  import gsap from 'gsap';
+
+  // Wait for Hero animation to start, then reveal header
+  gsap.to('.header-reveal', {
+    y: 0,
+    opacity: 1,
+    duration: 1,
+    stagger: 0.1,
+    ease: 'power3.out',
+    delay: 1.5, // Syncs with Hero Text Reveal
+  });
+</script>
