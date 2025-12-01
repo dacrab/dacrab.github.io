@@ -22,7 +22,7 @@ import { projects } from '../data/projects';
             {/* Sticky Project Info */}
             <div class="reveal-text md:col-span-4 md:sticky md:top-32 md:h-fit md:py-4">
               <span class="mb-6 block font-mono text-xs text-zinc-500">0{index + 1} / PROJECT</span>
-              
+
               <h3 class="mb-6 text-4xl font-bold tracking-tight md:text-6xl">
                 {project.title}
               </h3>
@@ -77,11 +77,11 @@ import { projects } from '../data/projects';
                 class="relative block w-full overflow-hidden rounded-sm bg-zinc-900"
               >
                 <div class="absolute inset-0 z-10 bg-zinc-950/20 transition-opacity duration-500 group-hover:opacity-0"></div>
-                <div class="relative aspect-video w-full overflow-hidden">
+                <div class={`relative aspect-video w-full overflow-hidden ${project.slug === 'ioannislo' ? 'bg-[#0A0A0A]' : project.slug === 'email-scraper' ? 'bg-[#111727]' : 'bg-zinc-900'}`}>
                    <Image
                     src={project.cover}
                     alt={project.title}
-                    class="h-full w-full object-cover opacity-80 transition-all duration-700 group-hover:opacity-100"
+                    class={`h-full w-full opacity-80 transition-all duration-700 group-hover:opacity-100 ${project.slug === 'ioannislo' || project.slug === 'email-scraper' ? 'object-contain' : 'object-cover'}`}
                     quality={95}
                   />
                 </div>

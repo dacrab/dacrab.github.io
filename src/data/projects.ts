@@ -1,15 +1,24 @@
 import type { ImageMetadata } from 'astro';
 
-interface Project {
+type ProjectSlug = 'aureus' | 'argicon' | 'designdash' | 'ioannislo' | 'feedbackflow' | 'clubos' | 'email-scraper';
+
+interface ProjectBase {
   id: number;
-  slug: 'aureus' | 'argicon' | 'designdash';
+  slug: ProjectSlug;
   title: string;
   meta: string;
   blurb: string;
   tech: string[];
   link: string;
-  cover: ImageMetadata;
   gallery: ImageMetadata[];
+}
+
+interface ProjectWithCover extends ProjectBase {
+  cover: ImageMetadata;
+}
+
+interface ProjectMaybeCover extends ProjectBase {
+  cover: ImageMetadata | null;
 }
 
 const aureusImages = import.meta.glob<{ default: ImageMetadata }>(
@@ -28,6 +37,22 @@ const designdashImages = import.meta.glob<{ default: ImageMetadata }>(
   '/src/assets/designdash/home.webp',
   { eager: true }
 ) as Record<string, { default: ImageMetadata }>;
+const ioannisloImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/ioannislo/home.webp',
+  { eager: true }
+) as Record<string, { default: ImageMetadata }>;
+const feedbackflowImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/feedbackflow-ai/home.webp',
+  { eager: true }
+) as Record<string, { default: ImageMetadata }>;
+const clubosImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/clubos/home.webp',
+  { eager: true }
+) as Record<string, { default: ImageMetadata }>;
+const emailScraperImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/email-scraper/home.webp',
+  { eager: true }
+) as Record<string, { default: ImageMetadata }>;
 
 function toList(record: Record<string, { default: ImageMetadata }>) {
   return Object.values(record).map((v) => v.default);
@@ -36,21 +61,21 @@ function toList(record: Record<string, { default: ImageMetadata }>) {
 const aureusList = toList(aureusImages);
 const argiconList = toList(argiconImages);
 const designdashList = toList(designdashImages);
+const ioannisloList = toList(ioannisloImages);
+const feedbackflowList = toList(feedbackflowImages);
+const clubosList = toList(clubosImages);
+const emailScraperList = toList(emailScraperImages);
 
-function coverOrFallback(record: ImageMetadata[], nameIncludes: string): ImageMetadata {
+function coverOrFallback(record: ImageMetadata[], nameIncludes: string): ImageMetadata | null {
   if (record.length === 0) {
-    throw new Error('No images found for gallery');
+    return null;
   }
   const match = record.find((img) => (img.src as string).includes(nameIncludes));
   const fallback = record[0];
-  if (!fallback) {
-    // Should be unreachable due to the earlier length check; added for type safety
-    throw new Error('Unexpected empty gallery');
-  }
-  return match ?? fallback;
+  return match ?? fallback ?? null;
 }
 
-export const projects: Project[] = [
+const allProjects: ProjectMaybeCover[] = [
   {
     id: 1,
     slug: 'aureus',
@@ -84,4 +109,52 @@ export const projects: Project[] = [
     cover: coverOrFallback(designdashList, 'home'),
     gallery: designdashList,
   },
+  {
+    id: 4,
+    slug: 'ioannislo',
+    title: 'Ioannis Lo Portfolio',
+    meta: 'Client work · Astro · Minimalist',
+    blurb: 'Minimalist portfolio for a web enthusiast and creative professional.',
+    tech: ['Astro', 'TailwindCSS', 'GSAP', 'TypeScript'],
+    link: 'https://ioannislo.vercel.app',
+    cover: coverOrFallback(ioannisloList, 'home'),
+    gallery: ioannisloList,
+  },
+  {
+    id: 5,
+    slug: 'feedbackflow',
+    title: 'FeedbackFlow AI',
+    meta: 'Micro-SaaS · AI · Next.js',
+    blurb: 'Ingest public feedback, analyze with LLMs for sentiment, topics, and triage.',
+    tech: ['NextJS', 'Supabase', 'TypeScript', 'TailwindCSS'],
+    link: 'https://github.com/dacrab/feedbackflow-ai',
+    cover: coverOrFallback(feedbackflowList, 'home'),
+    gallery: feedbackflowList,
+  },
+  {
+    id: 6,
+    slug: 'clubos',
+    title: 'ClubOS',
+    meta: 'POS System · SvelteKit · Supabase',
+    blurb: 'Full-featured point-of-sale system built with SvelteKit and Supabase.',
+    tech: ['Svelte', 'SvelteKit', 'Supabase', 'TypeScript'],
+    link: 'https://github.com/dacrab/clubOS',
+    cover: coverOrFallback(clubosList, 'home'),
+    gallery: clubosList,
+  },
+  {
+    id: 7,
+    slug: 'email-scraper',
+    title: 'Email Scraper',
+    meta: 'Automation · Python · Docker',
+    blurb: 'Google Maps email scraper using Playwright with config-driven CSV output.',
+    tech: ['Python', 'Playwright', 'Docker', 'Railway'],
+    link: 'https://github.com/dacrab/email-scraper',
+    cover: coverOrFallback(emailScraperList, 'home'),
+    gallery: emailScraperList,
+  },
 ];
+
+export const projects: ProjectWithCover[] = allProjects.filter(
+  (p): p is ProjectWithCover => p.cover !== null
+);
