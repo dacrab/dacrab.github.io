@@ -15,49 +15,55 @@ const links = [
       Vaggelis <span class="crab-trigger inline-block">Kavouras</span>
     </a>
 
+    <button
+      id="menu-toggle"
+      class="header-reveal group relative z-50 flex h-8 w-12 flex-col items-end justify-center gap-1.5 -translate-y-full cursor-pointer opacity-0 mix-blend-difference"
+      aria-label="Toggle Menu"
+    >
+      <span class="h-[2px] w-full bg-white transition-all duration-300 group-hover:w-3/4"></span>
+      <span class="h-[2px] w-3/4 bg-white transition-all duration-300 group-hover:w-full"></span>
+    </button>
+  </div>
+
+  <div
+    id="menu-overlay"
+    class="fixed inset-0 z-40 flex translate-x-full flex-col items-center justify-center bg-zinc-950 text-white transition-transform duration-500 ease-in-out"
+  >
     <nav>
-      <ul class="flex gap-8">
+      <ul class="flex flex-col items-center gap-8">
         {
           links.map((link) => (
-            <li class="header-reveal -translate-y-full opacity-0">
+            <li class="menu-item translate-y-8 opacity-0">
               <a
                 href={link.href}
-                class="magnetic group relative inline-block py-2 text-sm font-medium tracking-widest uppercase transition-opacity hover:opacity-70"
+                class="magnetic group relative inline-block text-4xl font-bold tracking-tighter uppercase transition-colors hover:text-zinc-400 md:text-6xl"
               >
                 {link.label}
-                <span class="absolute bottom-1 left-0 h-px w-0 bg-white transition-all duration-300 group-hover:w-full" />
               </a>
             </li>
           ))
         }
-        <li class="header-reveal group relative ml-4 -translate-y-full opacity-0">
-          <span
-            class="magnetic inline-block cursor-pointer rounded-full border border-white/30 bg-white/5 px-4 py-1.5 text-sm font-medium tracking-widest uppercase backdrop-blur-sm transition-all duration-300 hover:bg-white hover:text-black"
-          >
-            CV
-          </span>
-          <div
-            class="pointer-events-none absolute top-full left-1/2 -translate-x-1/2 pt-2 opacity-0 transition-all duration-300 group-hover:pointer-events-auto group-hover:opacity-100"
-          >
-            <div
-              class="flex flex-col overflow-hidden rounded-xl border border-white/10 bg-zinc-950/90 backdrop-blur-md"
-            >
-              <a
+        <li class="menu-item translate-y-8 opacity-0">
+           <div class="flex flex-col items-center gap-4 mt-8">
+              <span class="text-sm font-medium tracking-widest uppercase text-zinc-500">Resume</span>
+              <div class="flex gap-4">
+                 <a
                 href="/CV/VAGGELIS_KAVOURAS_EN.pdf"
                 target="_blank"
-                class="whitespace-nowrap px-4 py-2 text-xs font-bold tracking-widest text-zinc-400 transition-colors hover:bg-white hover:text-black"
+                class="magnetic relative inline-block text-sm font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
               >
-                ENGLISH
+                EN
               </a>
+              <span class="text-zinc-600">/</span>
               <a
                 href="/CV/VAGGELIS_KAVOURAS_EL.pdf"
                 target="_blank"
-                class="whitespace-nowrap border-t border-white/5 px-4 py-2 text-xs font-bold tracking-widest text-zinc-400 transition-colors hover:bg-white hover:text-black"
+                class="magnetic relative inline-block text-sm font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
               >
-                GREEK
+                GR
               </a>
-            </div>
-          </div>
+              </div>
+           </div>
         </li>
       </ul>
     </nav>
@@ -67,13 +73,77 @@ const links = [
 <script>
   import gsap from 'gsap';
 
-  // Wait for Hero animation to start, then reveal header
+  const menuToggle = document.getElementById('menu-toggle');
+  const menuOverlay = document.getElementById('menu-overlay');
+  const menuItems = document.querySelectorAll('.menu-item');
+  let isMenuOpen = false;
+
+  // Initial Reveal
   gsap.to('.header-reveal', {
     y: 0,
     opacity: 1,
     duration: 1,
     stagger: 0.1,
     ease: 'power3.out',
-    delay: 1.5, // Syncs with Hero Text Reveal
+    delay: 1.5,
   });
+
+  // Menu Animation
+  if (menuToggle && menuOverlay) {
+    const topBar = menuToggle.children[0];
+    const bottomBar = menuToggle.children[1];
+
+    menuToggle.addEventListener('click', () => {
+      isMenuOpen = !isMenuOpen;
+      
+      if (isMenuOpen) {
+        // Open Menu
+        gsap.to(menuOverlay, {
+          x: '0%',
+          duration: 0.6,
+          ease: 'power3.inOut',
+        });
+        
+        gsap.to(menuItems, {
+          y: 0,
+          opacity: 1,
+          duration: 0.5,
+          stagger: 0.1,
+          delay: 0.3,
+          ease: 'power3.out',
+        });
+        
+        // Animate Hamburger to X
+        if (topBar) gsap.to(topBar, { rotate: 45, y: 4, width: '100%', duration: 0.3 });
+        if (bottomBar) gsap.to(bottomBar, { rotate: -45, y: -4, width: '100%', duration: 0.3 });
+        
+      } else {
+        // Close Menu
+        gsap.to(menuOverlay, {
+          x: '100%',
+          duration: 0.6,
+          ease: 'power3.inOut',
+        });
+        
+        gsap.to(menuItems, {
+          y: 8,
+          opacity: 0,
+          duration: 0.3,
+        });
+
+        // Reset Hamburger
+         if (topBar) gsap.to(topBar, { rotate: 0, y: 0, width: '100%', duration: 0.3 });
+         if (bottomBar) gsap.to(bottomBar, { rotate: 0, y: 0, width: '75%', duration: 0.3 });
+      }
+    });
+
+    // Close menu when clicking a link
+    menuItems.forEach(item => {
+        item.addEventListener('click', () => {
+             if(isMenuOpen) {
+                 menuToggle.click();
+             }
+        })
+    })
+  }
 </script>
