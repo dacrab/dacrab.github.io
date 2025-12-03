@@ -24,8 +24,9 @@ const links = [
       <span class="h-[2px] w-3/4 bg-white transition-all duration-300 group-hover:w-full"></span>
     </button>
   </div>
+</header>
 
-  <div
+<div
     id="menu-overlay"
     class="fixed inset-0 z-40 flex translate-x-full flex-col items-center justify-center bg-zinc-950 text-white transition-transform duration-500 ease-in-out"
   >
@@ -68,7 +69,6 @@ const links = [
       </ul>
     </nav>
   </div>
-</header>
 
 <script>
   import gsap from 'gsap';
@@ -97,6 +97,10 @@ const links = [
       isMenuOpen = !isMenuOpen;
       
       if (isMenuOpen) {
+        // Lock Scroll
+        document.body.style.overflow = 'hidden';
+        document.documentElement.classList.add('lenis-stopped'); // Stop Lenis if class-based
+
         // Open Menu
         gsap.to(menuOverlay, {
           x: '0%',
@@ -118,6 +122,10 @@ const links = [
         if (bottomBar) gsap.to(bottomBar, { rotate: -45, y: -4, width: '100%', duration: 0.3 });
         
       } else {
+        // Unlock Scroll
+        document.body.style.overflow = '';
+        document.documentElement.classList.remove('lenis-stopped'); // Resume Lenis
+
         // Close Menu
         gsap.to(menuOverlay, {
           x: '100%',
