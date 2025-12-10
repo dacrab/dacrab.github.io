@@ -1,6 +1,6 @@
 import type { ImageMetadata } from 'astro';
 
-type ProjectSlug = 'aureus' | 'argicon' | 'designdash' | 'ioannislo' | 'feedbackflow' | 'clubos' | 'email-scraper';
+type ProjectSlug = 'aureus' | 'apex' | 'designdash' | 'ioannislo' | 'feedbackflow' | 'clubos' | 'email-scraper';
 
 interface ProjectBase {
   id: number;
@@ -27,8 +27,8 @@ const aureusImages = import.meta.glob<{ default: ImageMetadata }>(
     eager: true,
   }
 ) as Record<string, { default: ImageMetadata }>;
-const argiconImages = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/argicon/home.webp',
+const apexImages = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/apex/home.webp',
   {
     eager: true,
   }
@@ -59,7 +59,7 @@ function toList(record: Record<string, { default: ImageMetadata }>) {
 }
 
 const aureusList = toList(aureusImages);
-const argiconList = toList(argiconImages);
+const apexList = toList(apexImages);
 const designdashList = toList(designdashImages);
 const ioannisloList = toList(ioannisloImages);
 const feedbackflowList = toList(feedbackflowImages);
@@ -89,14 +89,14 @@ const allProjects: ProjectMaybeCover[] = [
   },
   {
     id: 2,
-    slug: 'argicon',
-    title: 'Argicon',
-    meta: 'Engineering · Next.js · Bilingual',
+    slug: 'apex',
+    title: 'Apex',
+    meta: 'Engineering · AstroJS · Bilingual',
     blurb: 'Professional services site presenting complex projects with clarity.',
     tech: ['TypeScript', 'NextJS', 'TailwindCSS', 'React'],
-    link: 'https://argicon.gr',
-    cover: coverOrFallback(argiconList, 'home'),
-    gallery: argiconList,
+    link: 'https://apex-construction-pied.vercel.app/',
+    cover: coverOrFallback(apexList, 'home'),
+    gallery: apexList,
   },
   {
     id: 3,
