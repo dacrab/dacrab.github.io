@@ -64,23 +64,23 @@
 <script>
   import gsap from 'gsap';
 
-  const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+  const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
 
-  // Initial Load Animation
-  tl.to('.hero-line', { scaleY: 1, duration: 1.5 })
+  // Initial Load Animation - Cinematic Sequence
+  tl.to('.hero-line', { scaleY: 1, duration: 1.8 }) // Slightly longer drawing of the line
     .to(
       '.hero-title span',
       {
         y: 0,
         opacity: 1,
         duration: 1.5,
-        stagger: 0.2,
-        ease: 'power4.out',
+        stagger: 0.1, // Tighter stagger
+        ease: 'power4.out', // Keep power4 for text punch
       },
-      '-=1'
+      '-=1.4' // Overlap significantly with line
     )
-    .to('.hero-text', { opacity: 1, y: 0, duration: 1 }, '-=0.8')
-    .to('.hero-actions', { opacity: 1, y: 0, duration: 1 }, '-=0.8');
+    .to('.hero-text', { opacity: 1, y: 0, duration: 1.2 }, '-=1.0')
+    .to('.hero-actions', { opacity: 1, y: 0, duration: 1.2 }, '-=1.0');
 
   // Parallax Scroll Effect
   gsap.to('.hero-title', {
@@ -90,7 +90,7 @@
       trigger: '#hero-section',
       start: 'top top',
       end: 'bottom top',
-      scrub: true,
+      scrub: 1, // Add smoothing to the scrub
     },
   });
 </script>

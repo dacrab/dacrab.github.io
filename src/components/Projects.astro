@@ -101,4 +101,26 @@ import { projects } from '../data/projects';
   import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
   gsap.registerPlugin(ScrollTrigger);
+
+  // Parallax Images
+  const projectImages = document.querySelectorAll('#projects img');
+  
+  projectImages.forEach((img) => {
+    gsap.fromTo(img, 
+      { scale: 1.2 },
+      {
+        scale: 1,
+        scrollTrigger: {
+          trigger: img.parentElement, // The wrapper
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1,
+        },
+        ease: 'none'
+      }
+    );
+  });
+
+  // Pinning adjustments for smoother experience on mobile/desktop
+  // (Optional: if we wanted to enforce pin spacing or similar)
 </script>
