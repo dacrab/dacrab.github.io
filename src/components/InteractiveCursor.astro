@@ -1,97 +1,146 @@
 <div
   id="cursor"
-  class="pointer-events-none fixed top-0 left-0 z-100 hidden h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white mix-blend-difference transition-transform duration-100 ease-out md:block"
+  class="pointer-events-none fixed top-0 left-0 z-[9999] hidden -translate-x-1/2 -translate-y-1/2 items-center justify-center mix-blend-difference md:flex"
 >
-</div>
-<div
-  id="cursor-follower"
-  class="pointer-events-none fixed top-0 left-0 z-99 hidden flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 mix-blend-difference transition-transform duration-300 ease-out md:block"
->
+  <div
+    id="cursor-visual"
+    class="h-5 w-5 rounded-full bg-white transition-transform duration-300"
+  >
+  </div>
 </div>
 
 <script>
   import gsap from 'gsap';
 
   const cursor = document.getElementById('cursor');
-  const follower = document.getElementById('cursor-follower');
+  const cursorVisual = document.getElementById('cursor-visual');
+  let isHovering = false;
+  let isCrabMode = false;
 
-  let mouseX = 0;
-  let mouseY = 0;
-  let cursorX = 0;
-  let cursorY = 0;
-  let followerX = 0;
-  let followerY = 0;
+  // Mouse state
+  const mouse = { x: 0, y: 0 };
+  const pos = { x: 0, y: 0 };
+  const speed = 0.15; // Lower = smoother/more "weighty", Higher = snappier. 0.15 is a sweet spot.
 
-  document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
+  // Setup GSAP quickSetter for performance
+  const setX = gsap.quickSetter(cursor, 'x', 'px');
+  const setY = gsap.quickSetter(cursor, 'y', 'px');
+
+  // Update mouse position
+  window.addEventListener('mousemove', (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
   });
 
+  // Animation Loop - The "Sleekness" Engine
   gsap.ticker.add(() => {
-    const dt = 1.0 - Math.pow(1.0 - 0.2, gsap.ticker.deltaRatio());
-    const dtFollower = 1.0 - Math.pow(1.0 - 0.1, gsap.ticker.deltaRatio());
+    // Frame-rate independent smoothing
+    const dt = 1.0 - Math.pow(1.0 - speed, gsap.ticker.deltaRatio());
 
-    cursorX += (mouseX - cursorX) * dt;
-    cursorY += (mouseY - cursorY) * dt;
+    pos.x += (mouse.x - pos.x) * dt;
+    pos.y += (mouse.y - pos.y) * dt;
 
-    followerX += (mouseX - followerX) * dtFollower;
-    followerY += (mouseY - followerY) * dtFollower;
+    setX(pos.x);
+    setY(pos.y);
+  });
 
-    if (cursor && follower) {
-      cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
-      follower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0)`;
+  // State Management
+  const updateCursor = () => {
+    if (!cursorVisual) return;
+
+    if (isCrabMode) {
+      // Crab Mode
+      if (cursor) cursor.style.mixBlendMode = 'normal'; // Show emoji colors
+      cursorVisual.innerText = '🦀';
+      
+      gsap.to(cursorVisual, {
+        scale: 2.5,
+        backgroundColor: 'transparent',
+        duration: 0.4,
+        ease: 'back.out(1.7)', // Bouncy pop for the crab
+        overwrite: true, // Ensure we kill conflicting tweens
+      });
+      cursorVisual.style.fontSize = '16px'; 
+
+    } else if (isHovering) {
+      // Hover Mode
+      if (cursor) cursor.style.mixBlendMode = 'difference';
+      cursorVisual.innerText = '';
+      
+      gsap.to(cursorVisual, {
+        scale: 3, 
+        backgroundColor: 'white',
+        duration: 0.1, // Snappier zoom
+        ease: 'expo.out', 
+        overwrite: true,
+      });
+
+    } else {
+      // Default Mode
+      if (cursor) cursor.style.mixBlendMode = 'difference';
+      cursorVisual.innerText = '';
+      
+      gsap.to(cursorVisual, {
+        scale: 1,
+        backgroundColor: 'white',
+        duration: 0.1, // Snappier return
+        ease: 'expo.out',
+        overwrite: true,
+      });
+    }
+  };
+
+  // Click Feedback - Snappy & Satisfying
+  window.addEventListener('mousedown', () => {
+    if (!isCrabMode && cursorVisual) {
+      gsap.to(cursorVisual, {
+        scale: isHovering ? 2.5 : 0.8,
+        duration: 0.15,
+        ease: 'power3.out',
+        overwrite: 'auto'
+      });
     }
   });
 
-  // Hover effects
-  const hoverables = document.querySelectorAll('a, button, .magnetic');
-  const crabTriggers = document.querySelectorAll('.crab-trigger');
-
-  // Standard Hover
-  hoverables.forEach((el) => {
-    el.addEventListener('mouseenter', () => {
-      gsap.to(cursor, { scale: 0 });
-      gsap.to(follower, { scale: 1.5, backgroundColor: 'white', mixBlendMode: 'difference' });
-    });
-
-    el.addEventListener('mouseleave', () => {
-      gsap.to(cursor, { scale: 1 });
-      gsap.to(follower, { scale: 1, backgroundColor: 'transparent', mixBlendMode: 'difference' });
-    });
+  window.addEventListener('mouseup', () => {
+    if (!isCrabMode && cursorVisual) {
+      gsap.to(cursorVisual, {
+        scale: isHovering ? 3 : 1,
+        duration: 0.3,
+        ease: 'back.out(1.2)', // Subtle bounce back
+        overwrite: 'auto'
+      });
+    }
   });
 
-  // Crab Mode
-  crabTriggers.forEach((el) => {
-    el.addEventListener('mouseenter', () => {
-      if (follower) {
-        follower.innerText = '🦀';
-        follower.style.fontSize = '32px';
-        gsap.to(cursor, { scale: 0, duration: 0.6, ease: 'power3.out' });
-        gsap.to(follower, {
-          scale: 2,
-          backgroundColor: 'transparent',
-          borderColor: 'transparent',
-          mixBlendMode: 'normal',
-          duration: 0.8,
-          ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
-        });
-      }
+  // Element Tracking
+  const initListeners = () => {
+    const hoverables = document.querySelectorAll('a, button, .magnetic, [data-cursor="hover"]');
+    const crabTriggers = document.querySelectorAll('.crab-trigger');
+
+    hoverables.forEach((el) => {
+      el.addEventListener('mouseenter', () => {
+        isHovering = true;
+        updateCursor();
+      });
+      el.addEventListener('mouseleave', () => {
+        isHovering = false;
+        updateCursor();
+      });
     });
 
-    el.addEventListener('mouseleave', () => {
-      if (follower) {
-        follower.innerText = '';
-        follower.style.fontSize = '';
-        gsap.to(cursor, { scale: 1, duration: 0.6, ease: 'power3.out' });
-        gsap.to(follower, {
-          scale: 1,
-          backgroundColor: 'transparent',
-          borderColor: 'rgba(255, 255, 255, 0.3)',
-          mixBlendMode: 'difference',
-          duration: 0.8,
-          ease: 'cubic-bezier(0.16, 1, 0.3, 1)',
-        });
-      }
+    crabTriggers.forEach((el) => {
+      el.addEventListener('mouseenter', () => {
+        isCrabMode = true;
+        updateCursor();
+      });
+      el.addEventListener('mouseleave', () => {
+        isCrabMode = false;
+        updateCursor();
+      });
     });
-  });
+  };
+
+  // Init
+  initListeners();
 </script>

@@ -68,16 +68,29 @@ import InteractiveCursor from '../components/InteractiveCursor.astro';
 
       gsap.ticker.lagSmoothing(0);
 
-      // Global Reveal System
-      const revealElements = document.querySelectorAll('.reveal-text');
-
-      revealElements.forEach((element) => {
-        ScrollTrigger.create({
-          trigger: element,
-          start: 'top 85%',
-          onEnter: () => element.classList.add('is-visible'),
-          once: true, // Only reveal once for better performance
-        });
+      // Global Reveal System - Cinematic Batching
+      ScrollTrigger.batch('.reveal-text', {
+        start: 'top 85%',
+        onEnter: (batch) => {
+          gsap.fromTo(
+            batch,
+            {
+              opacity: 0,
+              y: 60, // Slightly deeper start for more drama
+              filter: 'blur(10px)',
+            },
+            {
+              opacity: 1,
+              y: 0,
+              filter: 'blur(0px)',
+              duration: 1.2,
+              stagger: 0.15, // Stagger elements in the same batch
+              ease: 'expo.out',
+              overwrite: 'auto',
+            }
+          );
+        },
+        once: true,
       });
 
 
