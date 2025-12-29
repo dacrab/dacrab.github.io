@@ -48,9 +48,9 @@ const schema = {
     <meta property="og:url" content={canonical.href} />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <script type="application/ld+json" is:inline>
-      {JSON.stringify(schema)}
-    </script>
+    {/* Safe: Hardcoded schema object stringified for JSON-LD. set:html is required for injection. */}
+    {/* eslint-disable-next-line astro/no-set-html-directive */}
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
 
     <title>{title}</title>
     <script>
