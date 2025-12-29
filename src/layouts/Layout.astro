@@ -9,11 +9,24 @@ export interface Props {
 
 const {
   title,
-  description = 'Vaggelis Kavouras — Web developer building fast, accessible interfaces.',
+  description = 'Full-Stack Web Developer specialized in Next.js, Astro, and SvelteKit. Building high-performance, accessible web applications with a focus on engineering precision.',
 } = Astro.props;
 const canonical = Astro.url;
 import GrainOverlay from '../components/GrainOverlay.astro';
 import InteractiveCursor from '../components/InteractiveCursor.astro';
+
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Vaggelis Kavouras",
+  "url": "https://dacrab.github.io",
+  "jobTitle": "Web Developer",
+  "sameAs": [
+    "https://github.com/dacrab",
+    "https://linkedin.com/in/vkavouras"
+  ],
+  "knowsAbout": ["Next.js", "Astro", "SvelteKit", "TypeScript", "Tailwind CSS", "Supabase", "PostgreSQL"]
+};
 ---
 
 <!doctype html>
@@ -22,6 +35,7 @@ import InteractiveCursor from '../components/InteractiveCursor.astro';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <meta name="keywords" content="Vaggelis Kavouras, Web Developer, Frontend Engineer, Next.js, Astro, SvelteKit, TypeScript, Supabase, PostgreSQL, Greece" />
     <meta name="author" content="Vaggelis Kavouras" />
     <meta name="generator" content={Astro.generator} />
 
@@ -33,6 +47,8 @@ import InteractiveCursor from '../components/InteractiveCursor.astro';
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical.href} />
     <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
 
     <title>{title}</title>
     <script>
