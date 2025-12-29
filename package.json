@@ -13,6 +13,7 @@
     "ci": "bun run lint && bun x astro check && bun run build"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.6.0",
     "@fontsource/geist-sans": "^5.2.5",
     "@tailwindcss/vite": "^4.1.17",
     "astro": "5.16.6",
