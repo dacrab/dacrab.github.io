@@ -1,17 +1,10 @@
 name: Setup Bun and install dependencies
 description: Sets up Bun, caches Bun downloads, and installs dependencies with a frozen lockfile
-inputs:
-  bun-version:
-    description: Bun version to install
-    required: false
-    default: latest
 runs:
   using: composite
   steps:
     - name: Setup Bun
       uses: oven-sh/setup-bun@v2
-      with:
-        bun-version: ${{ inputs.bun-version }}
 
     - name: Cache Bun downloads
       uses: actions/cache@v4
