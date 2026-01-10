@@ -2,7 +2,6 @@ name: Performance Monitor
 
 on:
   schedule:
-    # Run weekly performance check on Mondays at 6 AM UTC
     - cron: '0 6 * * 1'
   workflow_dispatch:
 
@@ -11,115 +10,31 @@ permissions:
   issues: write
 
 jobs:
-  performance-audit:
-    name: Performance Audit
+  audit:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    concurrency:
-      group: performance-monitor-${{ github.ref }}
-      cancel-in-progress: true
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-      - name: Setup Bun
-        uses: ./.github/actions/setup-bun
+      - uses: ./.github/actions/setup-bun
 
-      - name: Build and measure performance
+      - name: Build and check
+        id: build
         run: |
-          echo "=== Build Performance Report ===" > performance-report.txt
-          echo "Date: $(date)" >> performance-report.txt
-          echo "Commit: ${{ github.sha }}" >> performance-report.txt
-          echo "" >> performance-report.txt
-
-          # Measure build time
-          echo "Starting build measurement..." >> performance-report.txt
-          start_time=$(date +%s%N)
+          start=$(date +%s)
           bun run build
-          end_time=$(date +%s%N)
-          build_time_ms=$(( (end_time - start_time) / 1000000 ))
-          build_time_s=$(echo "scale=2; $build_time_ms / 1000" | bc -l)
+          echo "time=$(($(date +%s) - start))" >> $GITHUB_OUTPUT
+          echo "size=$(du -sb dist | cut -f1)" >> $GITHUB_OUTPUT
 
-          echo "Build time: ${build_time_s}s (${build_time_ms}ms)" >> performance-report.txt
-
-          # Check bundle size
-          if [ -d "dist" ]; then
-            total_size=$(du -sh dist | cut -f1)
-            total_size_bytes=$(du -sb dist | cut -f1)
-            echo "Bundle size: $total_size ($total_size_bytes bytes)" >> performance-report.txt
-            
-            # Count files in dist
-            file_count=$(find dist -type f | wc -l)
-            echo "Files in bundle: $file_count" >> performance-report.txt
-          fi
-
-          # Check dependency count
-          if command -v jq >/dev/null 2>&1; then
-            dep_count=$(jq '[.dependencies // {}, .devDependencies // {}, .optionalDependencies // {}] | add | length' package.json)
-            echo "Dependencies (declared): $dep_count" >> performance-report.txt
-          fi
-
-          # Check node_modules size
-          if [ -d "node_modules" ]; then
-            node_modules_size=$(du -sh node_modules | cut -f1)
-            echo "Node modules size: $node_modules_size" >> performance-report.txt
-          fi
-
-          echo "" >> performance-report.txt
-          echo "=== Performance Report ===" >> performance-report.txt
-          cat performance-report.txt
-
-      - name: Upload report
-        uses: actions/upload-artifact@v6
-        with:
-          name: performance-report
-          path: performance-report.txt
-
-      - name: Check thresholds
-        id: check
-        run: |
-          # Thresholds
-          BUILD_THRESHOLD=30
-          SIZE_THRESHOLD_MB=10
-
-          build_time=$(grep "Build time:" performance-report.txt | sed 's/Build time: \([0-9.]*\)s.*/\1/')
-          bundle_size_mb=$(grep "Bundle size:" performance-report.txt | sed 's/.*(\([0-9]*\) bytes).*/\1/' | awk '{print int($1/1024/1024)}')
-
-          echo "build-time=$build_time" >> $GITHUB_OUTPUT
-          echo "bundle-size-mb=$bundle_size_mb" >> $GITHUB_OUTPUT
-
-          if (( $(echo "$build_time > $BUILD_THRESHOLD" | bc -l) )); then
-            echo "build-slow=true" >> $GITHUB_OUTPUT
-          fi
-
-          if [ "$bundle_size_mb" -gt "$SIZE_THRESHOLD_MB" ]; then
-            echo "bundle-large=true" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Create Issue
-        if: steps.check.outputs.build-slow == 'true' || steps.check.outputs.bundle-large == 'true'
-        uses: actions/github-script@v8
+      - name: Alert if slow
+        if: steps.build.outputs.time > 30 || steps.build.outputs.size > 10485760
+        uses: actions/github-script@v7
         with:
           script: |
-            const fs = require('fs');
-            const report = fs.readFileSync('performance-report.txt', 'utf8');
-            const buildTime = '${{ steps.check.outputs.build-time }}';
-            const bundleSizeMb = '${{ steps.check.outputs.bundle-size-mb }}';
-            
-            let title = 'Performance Alert';
-            let body = '## Performance Report\n\n```\n' + report + '\n```\n\n';
-
-            if ('${{ steps.check.outputs.build-slow }}' === 'true') {
-              body += '⚠️ **Slow Build**: ' + buildTime + 's (> 30s)\n';
-            }
-            if ('${{ steps.check.outputs.bundle-large }}' === 'true') {
-              body += '⚠️ **Large Bundle**: ' + bundleSizeMb + 'MB (> 10MB)\n';
-            }
-
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: title,
-              body: body,
+              title: 'Performance Alert',
+              body: `Build: ${{ steps.build.outputs.time }}s, Size: ${{ steps.build.outputs.size }} bytes`,
               labels: ['performance']
             });
