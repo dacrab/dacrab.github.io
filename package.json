@@ -13,22 +13,22 @@
     "ci": "bun run lint && bun x astro check && bun run build"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.6.0",
+    "@astrojs/sitemap": "^3.6.1",
     "@fontsource/geist-sans": "^5.2.5",
     "@tailwindcss/vite": "^4.1.18",
-    "astro": "5.16.6",
+    "astro": "5.16.8",
     "gsap": "^3.14.2",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
-    "@types/node": "^25.0.3",
+    "@types/node": "^25.0.6",
     "eslint": "^9.39.2",
     "eslint-plugin-astro": "^1.5.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "globals": "^17.0.0",
-    "knip": "^5.80.0",
+    "knip": "^5.80.2",
     "prettier": "^3.7.4",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
