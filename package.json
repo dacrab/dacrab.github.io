@@ -11,22 +11,22 @@
     "ci": "bun run lint && bun x astro check && bun run build"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3.6.1",
+    "@astrojs/sitemap": "^3.7.0",
     "@fontsource/geist-sans": "^5.2.5",
     "@tailwindcss/vite": "^4.1.18",
-    "astro": "5.16.8",
+    "astro": "5.16.10",
     "gsap": "^3.14.2",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
-    "@types/node": "^25.0.6",
+    "@types/node": "^25.0.9",
     "eslint": "^9.39.2",
     "eslint-plugin-astro": "^1.5.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "globals": "^17.0.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.52.0"
+    "typescript-eslint": "^8.53.0"
   }
 }
