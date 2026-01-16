@@ -5,7 +5,7 @@ import BrowserMockup from './BrowserMockup.astro';
 
 <section id="projects" class="relative border-t border-white/10 bg-zinc-950 px-6 py-32 text-white md:px-12">
   <div class="mx-auto max-w-7xl">
-    <div class="reveal-text mb-24 flex items-end justify-between border-b border-white/10 pb-8">
+    <div class="projects-header mb-24 flex items-end justify-between border-b border-white/10 pb-8">
       <h2 class="text-6xl font-bold tracking-tighter text-white md:text-8xl">
         SELECTED<br />WORKS
       </h2>
@@ -17,7 +17,7 @@ import BrowserMockup from './BrowserMockup.astro';
     <div class="flex flex-col gap-32">
       {
         projects.map((project, index) => (
-          <article class="reveal-text group">
+          <article class="project-card group" data-index={index}>
             <!-- Project Header -->
             <div class="mb-8 flex flex-wrap items-baseline justify-between gap-4">
               <div class="flex items-baseline gap-4">
@@ -60,15 +60,15 @@ import BrowserMockup from './BrowserMockup.astro';
                 href={project.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="magnetic inline-flex items-center gap-2 text-sm font-bold tracking-widest uppercase transition-colors hover:text-zinc-400"
+                class="project-link magnetic inline-flex items-center gap-2 text-sm font-bold tracking-widest uppercase"
               >
                 <span>View Project</span>
                 <svg
+                  class="project-arrow"
                   width="12"
                   height="12"
                   viewBox="0 0 10 10"
                   fill="none"
-                  class="transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
                 >
                   <path
                     d="M1 9L9 1M9 1H1M9 1V9"
@@ -90,12 +90,49 @@ import BrowserMockup from './BrowserMockup.astro';
 <script>
   import gsap from 'gsap';
 
+  // Projects header - horizontal line wipe
+  gsap.fromTo('.projects-header',
+    { opacity: 0, clipPath: 'inset(0 100% 0 0)' },
+    {
+      opacity: 1,
+      clipPath: 'inset(0 0% 0 0)',
+      duration: 1.2,
+      ease: 'power4.inOut',
+      scrollTrigger: {
+        trigger: '.projects-header',
+        start: 'top 80%',
+        once: true,
+      },
+    }
+  );
+
+  // Project cards - alternating slide from left/right
+  document.querySelectorAll('.project-card').forEach((card) => {
+    const index = Number(card.getAttribute('data-index'));
+    const fromX = index % 2 === 0 ? -60 : 60;
+
+    gsap.fromTo(card,
+      { opacity: 0, x: fromX },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 85%',
+          once: true,
+        },
+      }
+    );
+  });
+
   // Parallax on browser mockups
   document.querySelectorAll('.browser-mockup img').forEach((img) => {
     gsap.fromTo(img,
-      { y: 30 },
+      { y: 20 },
       {
-        y: -30,
+        y: -20,
         ease: 'none',
         scrollTrigger: {
           trigger: img.closest('article'),
@@ -105,5 +142,20 @@ import BrowserMockup from './BrowserMockup.astro';
         },
       }
     );
+  });
+
+  // Project link hover
+  document.querySelectorAll('.project-link').forEach((link) => {
+    const arrow = link.querySelector('.project-arrow');
+    
+    link.addEventListener('mouseenter', () => {
+      gsap.to(link, { color: '#a1a1aa', duration: 0.3 });
+      gsap.to(arrow, { x: 3, y: -3, duration: 0.3, ease: 'power2.out' });
+    });
+    
+    link.addEventListener('mouseleave', () => {
+      gsap.to(link, { color: '#ffffff', duration: 0.3 });
+      gsap.to(arrow, { x: 0, y: 0, duration: 0.3, ease: 'power2.out' });
+    });
   });
 </script>

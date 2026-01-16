@@ -28,15 +28,29 @@ const { src, alt, url, class: className } = Astro.props;
   </div>
   
   <!-- Screen -->
-  <div class="relative overflow-hidden rounded-b-lg bg-zinc-900">
+  <div class="mockup-screen relative overflow-hidden rounded-b-lg bg-zinc-900">
     <Image
       src={src}
       alt={alt}
-      class="w-full transition-transform duration-700 ease-out group-hover:scale-105"
+      class="mockup-image w-full"
       quality={90}
     />
   </div>
-  
-  <!-- Hover glow effect -->
-  <div class="pointer-events-none absolute inset-0 rounded-lg opacity-0 shadow-2xl shadow-white/5 transition-opacity duration-500 group-hover:opacity-100"></div>
 </div>
+
+<script>
+  import gsap from 'gsap';
+
+  document.querySelectorAll('.browser-mockup').forEach((mockup) => {
+    const image = mockup.querySelector('.mockup-image');
+    if (!image) return;
+
+    mockup.addEventListener('mouseenter', () => {
+      gsap.to(image, { scale: 1.05, duration: 0.6, ease: 'power2.out' });
+    });
+
+    mockup.addEventListener('mouseleave', () => {
+      gsap.to(image, { scale: 1, duration: 0.6, ease: 'power2.out' });
+    });
+  });
+</script>

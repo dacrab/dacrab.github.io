@@ -10,7 +10,7 @@ const links = [
   <div class="flex items-center justify-between px-6 py-8 md:px-12">
     <a
       href="/"
-      class="header-reveal magnetic inline-block -translate-y-full text-sm font-bold tracking-widest uppercase opacity-0 transition-opacity hover:opacity-70"
+      class="header-reveal magnetic inline-block -translate-y-full text-sm font-bold tracking-widest uppercase opacity-0"
     >
       Vaggelis <span class="crab-trigger inline-block">Kavouras</span>
     </a>
@@ -22,15 +22,15 @@ const links = [
       aria-expanded="false"
       aria-controls="menu-overlay"
     >
-      <span class="h-[2px] w-full bg-white transition-all duration-300 group-hover:w-3/4"></span>
-      <span class="h-[2px] w-3/4 bg-white transition-all duration-300 group-hover:w-full"></span>
+      <span id="bar-top" class="h-[2px] w-full bg-white"></span>
+      <span id="bar-bottom" class="h-[2px] w-3/4 bg-white"></span>
     </button>
   </div>
 </header>
 
 <div
   id="menu-overlay"
-  class="fixed inset-0 z-40 flex translate-x-full flex-col items-center justify-center bg-zinc-950 text-white transition-transform duration-500 ease-in-out"
+  class="fixed inset-0 z-40 flex translate-x-full flex-col items-center justify-center bg-zinc-950 text-white"
 >
   <nav>
     <ul class="flex flex-col items-center gap-8">
@@ -39,7 +39,7 @@ const links = [
           <li class="menu-item translate-y-8 opacity-0">
             <a
               href={link.href}
-              class="magnetic group relative inline-block text-4xl font-bold tracking-tighter uppercase transition-colors hover:text-zinc-400 md:text-6xl"
+              class="magnetic group relative inline-block text-4xl font-bold tracking-tighter uppercase md:text-6xl"
             >
               {link.label}
             </a>
@@ -53,7 +53,8 @@ const links = [
             <a
               href="/CV/VAGGELIS_KAVOURAS_EN.pdf"
               target="_blank"
-              class="magnetic relative inline-block text-sm font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
+              rel="noopener noreferrer"
+              class="magnetic relative inline-block text-sm font-bold tracking-widest uppercase"
             >
               EN
             </a>
@@ -61,7 +62,8 @@ const links = [
             <a
               href="/CV/VAGGELIS_KAVOURAS_EL.pdf"
               target="_blank"
-              class="magnetic relative inline-block text-sm font-bold tracking-widest uppercase transition-opacity hover:opacity-70"
+              rel="noopener noreferrer"
+              class="magnetic relative inline-block text-sm font-bold tracking-widest uppercase"
             >
               GR
             </a>
@@ -78,92 +80,61 @@ const links = [
   const menuToggle = document.getElementById('menu-toggle');
   const menuOverlay = document.getElementById('menu-overlay');
   const menuItems = document.querySelectorAll('.menu-item');
+  const topBar = document.getElementById('bar-top');
+  const bottomBar = document.getElementById('bar-bottom');
   let isMenuOpen = false;
 
-  // Initial Reveal
+  // Header reveal
   gsap.to('.header-reveal', {
     y: 0,
     opacity: 1,
     duration: 1.5,
     stagger: 0.1,
     ease: 'expo.out',
-    delay: 1.0, // Start slightly earlier
+    delay: 1.0,
   });
 
-  // Menu Animation
-  if (menuToggle && menuOverlay) {
-    const topBar = menuToggle.children[0];
-    const bottomBar = menuToggle.children[1];
+  // Hamburger hover
+  if (menuToggle && topBar && bottomBar) {
+    menuToggle.addEventListener('mouseenter', () => {
+      if (isMenuOpen) return;
+      gsap.to(topBar, { width: '75%', duration: 0.3, ease: 'power2.out' });
+      gsap.to(bottomBar, { width: '100%', duration: 0.3, ease: 'power2.out' });
+    });
 
+    menuToggle.addEventListener('mouseleave', () => {
+      if (isMenuOpen) return;
+      gsap.to(topBar, { width: '100%', duration: 0.3, ease: 'power2.out' });
+      gsap.to(bottomBar, { width: '75%', duration: 0.3, ease: 'power2.out' });
+    });
+  }
+
+  // Menu toggle
+  if (menuToggle && menuOverlay) {
     menuToggle.addEventListener('click', () => {
       isMenuOpen = !isMenuOpen;
       menuToggle.setAttribute('aria-expanded', String(isMenuOpen));
 
       if (isMenuOpen) {
-        // Lock Scroll
         document.body.style.overflow = 'hidden';
-        document.documentElement.classList.add('lenis-stopped');
 
-        // Open Menu
-        gsap.to(menuOverlay, {
-          x: '0%',
-          duration: 0.8, // Slightly longer for dramatic effect
-          ease: 'expo.inOut',
-        });
-
-        gsap.to(menuItems, {
-          y: 0,
-          opacity: 1,
-          duration: 1,
-          stagger: 0.1,
-          delay: 0.4,
-          ease: 'expo.out',
-        });
-
-        // Animate Hamburger to X
-        if (topBar)
-          gsap.to(topBar, { rotate: 45, y: 4, width: '100%', duration: 0.4, ease: 'expo.out' });
-        if (bottomBar)
-          gsap.to(bottomBar, {
-            rotate: -45,
-            y: -4,
-            width: '100%',
-            duration: 0.4,
-            ease: 'expo.out',
-          });
+        gsap.to(menuOverlay, { x: '0%', duration: 0.8, ease: 'expo.inOut' });
+        gsap.to(menuItems, { y: 0, opacity: 1, duration: 1, stagger: 0.1, delay: 0.4, ease: 'expo.out' });
+        gsap.to(topBar, { rotate: 45, y: 4, width: '100%', duration: 0.4, ease: 'expo.out' });
+        gsap.to(bottomBar, { rotate: -45, y: -4, width: '100%', duration: 0.4, ease: 'expo.out' });
       } else {
-        // Unlock Scroll
         document.body.style.overflow = '';
-        document.documentElement.classList.remove('lenis-stopped');
 
-        // Close Menu
-        gsap.to(menuOverlay, {
-          x: '100%',
-          duration: 0.8,
-          ease: 'expo.inOut',
-        });
-
-        gsap.to(menuItems, {
-          y: 20, // Move down a bit more on exit
-          opacity: 0,
-          duration: 0.4,
-          ease: 'expo.in',
-        });
-
-        // Reset Hamburger
-        if (topBar)
-          gsap.to(topBar, { rotate: 0, y: 0, width: '100%', duration: 0.4, ease: 'expo.out' });
-        if (bottomBar)
-          gsap.to(bottomBar, { rotate: 0, y: 0, width: '75%', duration: 0.4, ease: 'expo.out' });
+        gsap.to(menuOverlay, { x: '100%', duration: 0.8, ease: 'expo.inOut' });
+        gsap.to(menuItems, { y: 20, opacity: 0, duration: 0.4, ease: 'expo.in' });
+        gsap.to(topBar, { rotate: 0, y: 0, width: '100%', duration: 0.4, ease: 'expo.out' });
+        gsap.to(bottomBar, { rotate: 0, y: 0, width: '75%', duration: 0.4, ease: 'expo.out' });
       }
     });
 
-    // Close menu when clicking a link
     menuItems.forEach((item) => {
       item.addEventListener('click', () => {
-        if (isMenuOpen) {
-          menuToggle.click();
-        }
+        if (isMenuOpen) menuToggle.click();
       });
     });
   }

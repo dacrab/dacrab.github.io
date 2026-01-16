@@ -1,8 +1,8 @@
 <div
   id="cursor"
-  class="pointer-events-none fixed top-0 left-0 z-[9999] hidden -translate-x-1/2 -translate-y-1/2 items-center justify-center mix-blend-difference md:flex"
+  class="pointer-events-none fixed top-0 left-0 z-[9999] -translate-x-1/2 -translate-y-1/2 items-center justify-center opacity-0 mix-blend-difference md:flex"
 >
-  <div id="cursor-visual" class="h-5 w-5 rounded-full bg-white transition-transform duration-300">
+  <div id="cursor-visual" class="h-5 w-5 rounded-full bg-white">
   </div>
 </div>
 
@@ -13,79 +13,77 @@
   const cursorVisual = document.getElementById('cursor-visual');
   let isHovering = false;
   let isCrabMode = false;
+  let hasMovedOnce = false;
 
-  // Mouse state
   const mouse = { x: 0, y: 0 };
   const pos = { x: 0, y: 0 };
-  const speed = 0.15; // Lower = smoother/more "weighty", Higher = snappier. 0.15 is a sweet spot.
+  const speed = 0.15;
 
-  // Setup GSAP quickSetter for performance
   const setX = gsap.quickSetter(cursor, 'x', 'px');
   const setY = gsap.quickSetter(cursor, 'y', 'px');
 
-  // Update mouse position
   window.addEventListener('mousemove', (e) => {
     mouse.x = e.clientX;
     mouse.y = e.clientY;
+
+    // First move: snap to position and reveal
+    if (!hasMovedOnce && cursor) {
+      hasMovedOnce = true;
+      pos.x = mouse.x;
+      pos.y = mouse.y;
+      setX(pos.x);
+      setY(pos.y);
+      gsap.to(cursor, { opacity: 1, duration: 0.3 });
+    }
   });
 
-  // Animation Loop - The "Sleekness" Engine
   gsap.ticker.add(() => {
-    // Frame-rate independent smoothing
+    if (!hasMovedOnce) return;
+    
     const dt = 1.0 - Math.pow(1.0 - speed, gsap.ticker.deltaRatio());
-
     pos.x += (mouse.x - pos.x) * dt;
     pos.y += (mouse.y - pos.y) * dt;
-
     setX(pos.x);
     setY(pos.y);
   });
 
-  // State Management
   const updateCursor = () => {
     if (!cursorVisual) return;
 
     if (isCrabMode) {
-      // Crab Mode
-      if (cursor) cursor.style.mixBlendMode = 'normal'; // Show emoji colors
+      if (cursor) cursor.style.mixBlendMode = 'normal';
       cursorVisual.innerText = '🦀';
-
       gsap.to(cursorVisual, {
         scale: 2.5,
         backgroundColor: 'transparent',
         duration: 0.4,
-        ease: 'back.out(1.7)', // Bouncy pop for the crab
-        overwrite: true, // Ensure we kill conflicting tweens
+        ease: 'back.out(1.7)',
+        overwrite: true,
       });
       cursorVisual.style.fontSize = '16px';
     } else if (isHovering) {
-      // Hover Mode
       if (cursor) cursor.style.mixBlendMode = 'difference';
       cursorVisual.innerText = '';
-
       gsap.to(cursorVisual, {
         scale: 3,
         backgroundColor: 'white',
-        duration: 0.1, // Snappier zoom
+        duration: 0.1,
         ease: 'expo.out',
         overwrite: true,
       });
     } else {
-      // Default Mode
       if (cursor) cursor.style.mixBlendMode = 'difference';
       cursorVisual.innerText = '';
-
       gsap.to(cursorVisual, {
         scale: 1,
         backgroundColor: 'white',
-        duration: 0.1, // Snappier return
+        duration: 0.1,
         ease: 'expo.out',
         overwrite: true,
       });
     }
   };
 
-  // Click Feedback - Snappy & Satisfying
   window.addEventListener('mousedown', () => {
     if (!isCrabMode && cursorVisual) {
       gsap.to(cursorVisual, {
@@ -102,13 +100,12 @@
       gsap.to(cursorVisual, {
         scale: isHovering ? 3 : 1,
         duration: 0.3,
-        ease: 'back.out(1.2)', // Subtle bounce back
+        ease: 'back.out(1.2)',
         overwrite: 'auto',
       });
     }
   });
 
-  // Element Tracking
   const initListeners = () => {
     const hoverables = document.querySelectorAll('a, button, .magnetic, [data-cursor="hover"]');
     const crabTriggers = document.querySelectorAll('.crab-trigger');
@@ -136,6 +133,5 @@
     });
   };
 
-  // Init
   initListeners();
 </script>
