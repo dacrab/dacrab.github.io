@@ -2,10 +2,7 @@
   id="cursor"
   class="pointer-events-none fixed top-0 left-0 z-[9999] hidden -translate-x-1/2 -translate-y-1/2 items-center justify-center mix-blend-difference md:flex"
 >
-  <div
-    id="cursor-visual"
-    class="h-5 w-5 rounded-full bg-white transition-transform duration-300"
-  >
+  <div id="cursor-visual" class="h-5 w-5 rounded-full bg-white transition-transform duration-300">
   </div>
 </div>
 
@@ -52,7 +49,7 @@
       // Crab Mode
       if (cursor) cursor.style.mixBlendMode = 'normal'; // Show emoji colors
       cursorVisual.innerText = '🦀';
-      
+
       gsap.to(cursorVisual, {
         scale: 2.5,
         backgroundColor: 'transparent',
@@ -60,26 +57,24 @@
         ease: 'back.out(1.7)', // Bouncy pop for the crab
         overwrite: true, // Ensure we kill conflicting tweens
       });
-      cursorVisual.style.fontSize = '16px'; 
-
+      cursorVisual.style.fontSize = '16px';
     } else if (isHovering) {
       // Hover Mode
       if (cursor) cursor.style.mixBlendMode = 'difference';
       cursorVisual.innerText = '';
-      
+
       gsap.to(cursorVisual, {
-        scale: 3, 
+        scale: 3,
         backgroundColor: 'white',
         duration: 0.1, // Snappier zoom
-        ease: 'expo.out', 
+        ease: 'expo.out',
         overwrite: true,
       });
-
     } else {
       // Default Mode
       if (cursor) cursor.style.mixBlendMode = 'difference';
       cursorVisual.innerText = '';
-      
+
       gsap.to(cursorVisual, {
         scale: 1,
         backgroundColor: 'white',
@@ -97,7 +92,7 @@
         scale: isHovering ? 2.5 : 0.8,
         duration: 0.15,
         ease: 'power3.out',
-        overwrite: 'auto'
+        overwrite: 'auto',
       });
     }
   });
@@ -108,7 +103,7 @@
         scale: isHovering ? 3 : 1,
         duration: 0.3,
         ease: 'back.out(1.2)', // Subtle bounce back
-        overwrite: 'auto'
+        overwrite: 'auto',
       });
     }
   });
