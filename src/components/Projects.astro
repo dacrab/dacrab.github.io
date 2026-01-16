@@ -4,7 +4,10 @@ import { Image } from 'astro:assets';
 import { projects } from '../data/projects';
 ---
 
-<section id="projects" class="relative border-t border-white/10 bg-zinc-950 px-6 py-32 text-white md:px-12">
+<section
+  id="projects"
+  class="relative border-t border-white/10 bg-zinc-950 px-6 py-32 text-white md:px-12"
+>
   <div class="mx-auto max-w-[90vw]">
     <div class="reveal-text mb-32 flex items-end justify-between border-b border-white/10 pb-8">
       <h2 class="text-7xl font-bold tracking-tighter text-white md:text-9xl">
@@ -20,12 +23,12 @@ import { projects } from '../data/projects';
         projects.map((project, index) => (
           <div class="group relative grid grid-cols-1 gap-12 md:grid-cols-12 md:gap-8">
             {/* Sticky Project Info */}
-            <div class="reveal-text md:col-span-4 md:sticky md:top-32 md:h-fit md:py-4">
-              <span class="mb-6 block font-mono text-xs text-zinc-400">0{index + 1} / PROJECT</span>
+            <div class="reveal-text md:sticky md:top-32 md:col-span-4 md:h-fit md:py-4">
+              <span class="mb-6 block font-mono text-xs text-zinc-400">
+                {String(index + 1).padStart(2, '0')} / PROJECT
+              </span>
 
-              <h3 class="mb-6 text-4xl font-bold tracking-tight md:text-6xl">
-                {project.title}
-              </h3>
+              <h3 class="mb-6 text-4xl font-bold tracking-tight md:text-6xl">{project.title}</h3>
 
               <div class="mb-8 flex flex-wrap gap-2">
                 {project.tech.map((t) => (
@@ -35,9 +38,7 @@ import { projects } from '../data/projects';
                 ))}
               </div>
 
-              <p class="mb-10 max-w-sm text-lg leading-relaxed text-zinc-400">
-                {project.blurb}
-              </p>
+              <p class="mb-10 max-w-sm text-lg leading-relaxed text-zinc-400">{project.blurb}</p>
 
               <a
                 href={project.link}
@@ -46,8 +47,12 @@ import { projects } from '../data/projects';
                 class="magnetic group/btn inline-flex items-center gap-3 text-sm font-bold tracking-widest uppercase"
               >
                 <span class="relative overflow-hidden">
-                  <span class="block transition-transform duration-300 group-hover/btn:-translate-y-full">View Live</span>
-                  <span class="absolute top-full left-0 block transition-transform duration-300 group-hover/btn:-translate-y-full text-zinc-400">View Live</span>
+                  <span class="block transition-transform duration-300 group-hover/btn:-translate-y-full">
+                    View Live
+                  </span>
+                  <span class="absolute top-full left-0 block text-zinc-400 transition-transform duration-300 group-hover/btn:-translate-y-full">
+                    View Live
+                  </span>
                 </span>
                 <svg
                   width="10"
@@ -76,9 +81,11 @@ import { projects } from '../data/projects';
                 rel="noopener noreferrer"
                 class="relative block w-full overflow-hidden rounded-sm bg-zinc-900"
               >
-                <div class="absolute inset-0 z-10 bg-zinc-950/20 transition-opacity duration-500 group-hover:opacity-0"></div>
-                <div class={`relative aspect-video w-full overflow-hidden ${project.slug === 'ioannislo' ? 'bg-[#0A0A0A]' : project.slug === 'email-scraper' ? 'bg-[#111727]' : 'bg-zinc-900'}`}>
-                   <Image
+                <div class="absolute inset-0 z-10 bg-zinc-950/20 transition-opacity duration-500 group-hover:opacity-0" />
+                <div
+                  class={`relative aspect-video w-full overflow-hidden ${project.slug === 'ioannislo' ? 'bg-[#0A0A0A]' : project.slug === 'email-scraper' ? 'bg-[#111727]' : 'bg-zinc-900'}`}
+                >
+                  <Image
                     src={project.cover}
                     alt={project.title}
                     class={`h-full w-full opacity-80 transition-all duration-700 group-hover:opacity-100 ${project.slug === 'ioannislo' || project.slug === 'email-scraper' ? 'object-contain' : 'object-cover'}`}
@@ -94,19 +101,15 @@ import { projects } from '../data/projects';
   </div>
 </section>
 
-
-
 <script>
   import gsap from 'gsap';
-  import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-  gsap.registerPlugin(ScrollTrigger);
-
-  // Parallax Images
+  // Parallax Images (ScrollTrigger already registered in Layout)
   const projectImages = document.querySelectorAll('#projects img');
-  
+
   projectImages.forEach((img) => {
-    gsap.fromTo(img, 
+    gsap.fromTo(
+      img,
       { scale: 1.2 },
       {
         scale: 1,
@@ -116,7 +119,7 @@ import { projects } from '../data/projects';
           end: 'bottom top',
           scrub: 1,
         },
-        ease: 'none'
+        ease: 'none',
       }
     );
   });

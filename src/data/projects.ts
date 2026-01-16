@@ -1,6 +1,13 @@
 import type { ImageMetadata } from 'astro';
 
-type ProjectSlug = 'aureus' | 'apex' | 'designdash' | 'ioannislo' | 'feedbackflow' | 'clubos' | 'email-scraper';
+type ProjectSlug =
+  | 'aureus'
+  | 'apex'
+  | 'designdash'
+  | 'ioannislo'
+  | 'feedbackflow'
+  | 'clubos'
+  | 'email-scraper';
 
 interface ProjectBase {
   id: number;
@@ -21,18 +28,12 @@ interface ProjectMaybeCover extends ProjectBase {
   cover: ImageMetadata | null;
 }
 
-const aureusImages = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/aureus/home.webp',
-  {
-    eager: true,
-  }
-) as Record<string, { default: ImageMetadata }>;
-const apexImages = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/apex/home.webp',
-  {
-    eager: true,
-  }
-) as Record<string, { default: ImageMetadata }>;
+const aureusImages = import.meta.glob<{ default: ImageMetadata }>('/src/assets/aureus/home.webp', {
+  eager: true,
+}) as Record<string, { default: ImageMetadata }>;
+const apexImages = import.meta.glob<{ default: ImageMetadata }>('/src/assets/apex/home.webp', {
+  eager: true,
+}) as Record<string, { default: ImageMetadata }>;
 const designdashImages = import.meta.glob<{ default: ImageMetadata }>(
   '/src/assets/designdash/home.webp',
   { eager: true }
@@ -45,10 +46,9 @@ const feedbackflowImages = import.meta.glob<{ default: ImageMetadata }>(
   '/src/assets/feedbackflow-ai/home.webp',
   { eager: true }
 ) as Record<string, { default: ImageMetadata }>;
-const clubosImages = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/clubos/home.webp',
-  { eager: true }
-) as Record<string, { default: ImageMetadata }>;
+const clubosImages = import.meta.glob<{ default: ImageMetadata }>('/src/assets/clubos/home.webp', {
+  eager: true,
+}) as Record<string, { default: ImageMetadata }>;
 const emailScraperImages = import.meta.glob<{ default: ImageMetadata }>(
   '/src/assets/email-scraper/home.webp',
   { eager: true }

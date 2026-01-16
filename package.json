@@ -4,12 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "lint": "eslint .",
-    "fix": "eslint . --fix && prettier --write .",
-    "format": "prettier --write .",
+    "fix": "eslint . --fix",
     "ci": "bun run lint && bun x astro check && bun run build"
   },
   "dependencies": {
@@ -28,10 +26,6 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-simple-import-sort": "^12.1.1",
     "globals": "^17.0.0",
-    "knip": "^5.80.2",
-    "prettier": "^3.7.4",
-    "prettier-plugin-astro": "^0.14.1",
-    "prettier-plugin-tailwindcss": "^0.7.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.52.0"
   }
