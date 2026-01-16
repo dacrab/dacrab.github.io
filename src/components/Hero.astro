@@ -33,12 +33,10 @@
       <div class="hero-actions flex translate-y-8 gap-4 opacity-0">
         <a
           href="#projects"
-          class="group relative inline-flex h-12 items-center justify-center rounded-full bg-zinc-900 px-6 font-medium text-white transition-colors duration-500 hover:bg-zinc-800"
+          class="hero-btn group relative inline-flex h-12 items-center justify-center overflow-hidden rounded-full bg-zinc-900 px-6 font-medium text-white"
         >
           <span>View Projects</span>
-          <div
-            class="w-0 overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:w-6"
-          >
+          <span class="hero-btn-arrow ml-0 w-0 overflow-hidden">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"
@@ -54,7 +52,7 @@
               <path d="M7 17L17 7"></path>
               <path d="M7 7h10v10"></path>
             </svg>
-          </div>
+          </span>
         </a>
       </div>
     </div>
@@ -66,23 +64,13 @@
 
   const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
 
-  // Initial Load Animation - Cinematic Sequence
-  tl.to('.hero-line', { scaleY: 1, duration: 1.8 }) // Slightly longer drawing of the line
-    .to(
-      '.hero-title span',
-      {
-        y: 0,
-        opacity: 1,
-        duration: 1.5,
-        stagger: 0.1, // Tighter stagger
-        ease: 'power4.out', // Keep power4 for text punch
-      },
-      '-=1.4' // Overlap significantly with line
-    )
+  // Initial Load Animation
+  tl.to('.hero-line', { scaleY: 1, duration: 1.8 })
+    .to('.hero-title span', { y: 0, opacity: 1, duration: 1.5, stagger: 0.1, ease: 'power4.out' }, '-=1.4')
     .to('.hero-text', { opacity: 1, y: 0, duration: 1.2 }, '-=1.0')
     .to('.hero-actions', { opacity: 1, y: 0, duration: 1.2 }, '-=1.0');
 
-  // Parallax Scroll Effect
+  // Parallax Scroll
   gsap.to('.hero-title', {
     y: 100,
     opacity: 0.5,
@@ -90,7 +78,22 @@
       trigger: '#hero-section',
       start: 'top top',
       end: 'bottom top',
-      scrub: 1, // Add smoothing to the scrub
+      scrub: 1,
     },
   });
+
+  // Button hover
+  const heroBtn = document.querySelector('.hero-btn');
+  const heroArrow = document.querySelector('.hero-btn-arrow');
+  
+  if (heroBtn && heroArrow) {
+    heroBtn.addEventListener('mouseenter', () => {
+      gsap.to(heroBtn, { backgroundColor: '#27272a', duration: 0.3 });
+      gsap.to(heroArrow, { width: 24, duration: 0.5, ease: 'power3.out' });
+    });
+    heroBtn.addEventListener('mouseleave', () => {
+      gsap.to(heroBtn, { backgroundColor: '#18181b', duration: 0.3 });
+      gsap.to(heroArrow, { width: 0, duration: 0.5, ease: 'power3.out' });
+    });
+  }
 </script>

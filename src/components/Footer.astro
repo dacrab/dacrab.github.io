@@ -2,11 +2,11 @@
 const year = new Date().getFullYear();
 ---
 
-<footer class="overflow-hidden border-t border-white/10 bg-zinc-950 px-6 py-12 md:px-12">
+<footer class="footer-section overflow-hidden border-t border-white/10 bg-zinc-950 px-6 py-12 md:px-12">
   <div
     class="mx-auto flex w-full max-w-[90vw] flex-col items-center justify-between gap-8 md:flex-row md:items-end"
   >
-    <div>
+    <div class="footer-name">
       <h3
         class="crab-trigger pointer-events-auto text-center text-[12vw] leading-none font-bold tracking-tighter text-zinc-900 transition-colors duration-500 select-none hover:text-zinc-800 md:text-left"
       >
@@ -14,7 +14,7 @@ const year = new Date().getFullYear();
       </h3>
     </div>
 
-    <div class="flex flex-col gap-4 text-center md:text-right">
+    <div class="footer-links flex flex-col gap-4 text-center md:text-right">
       <div
         class="flex flex-wrap justify-center gap-6 font-mono text-sm text-zinc-500 md:justify-end"
       >
@@ -40,3 +40,38 @@ const year = new Date().getFullYear();
     </div>
   </div>
 </footer>
+
+<script>
+  import gsap from 'gsap';
+
+  gsap.fromTo('.footer-name',
+    { opacity: 0, y: 40 },
+    {
+      opacity: 1,
+      y: 0,
+      duration: 0.8,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.footer-section',
+        start: 'top 90%',
+        once: true,
+      },
+    }
+  );
+
+  gsap.fromTo('.footer-links',
+    { opacity: 0, y: 20 },
+    {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      delay: 0.2,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: '.footer-section',
+        start: 'top 90%',
+        once: true,
+      },
+    }
+  );
+</script>

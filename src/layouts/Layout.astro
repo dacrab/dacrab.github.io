@@ -76,18 +76,13 @@ const schema = {
         onEnter: (batch) => {
           gsap.fromTo(
             batch,
-            {
-              opacity: 0,
-              y: 60, // Slightly deeper start for more drama
-              filter: 'blur(10px)',
-            },
+            { opacity: 0, y: 40 },
             {
               opacity: 1,
               y: 0,
-              filter: 'blur(0px)',
-              duration: 1.2,
-              stagger: 0.15, // Stagger elements in the same batch
-              ease: 'expo.out',
+              duration: 1,
+              stagger: 0.1,
+              ease: 'power3.out',
               overwrite: 'auto',
             }
           );
