@@ -1,37 +1,37 @@
 version: 2
 updates:
-  - package-ecosystem: 'bun'
-    directory: '/'
+  - package-ecosystem: "bun"
+    directory: "/"
     schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '02:00'
-      timezone: 'UTC'
+      interval: "weekly"
+      day: "monday"
+      time: "02:00"
+      timezone: "Europe/Athens"
     open-pull-requests-limit: 10
     groups:
       dependencies:
         patterns:
-          - '*'
+          - "*"
         update-types:
-          - 'minor'
-          - 'patch'
+          - "minor"
+          - "patch"
     labels:
-      - 'dependencies'
+      - "dependencies"
 
-  - package-ecosystem: 'github-actions'
-    directory: '/'
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
-      interval: 'weekly'
-      day: 'monday'
-      time: '02:00'
-      timezone: 'UTC'
+      interval: "weekly"
+      day: "monday"
+      time: "02:00"
+      timezone: "Europe/Athens"
     open-pull-requests-limit: 10
     groups:
       dependencies:
         patterns:
-          - '*'
+          - "*"
         update-types:
-          - 'minor'
-          - 'patch'
+          - "minor"
+          - "patch"
     labels:
-      - 'dependencies'
+      - "dependencies"
