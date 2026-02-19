@@ -1,137 +1,132 @@
 <div
   id="cursor"
-  class="pointer-events-none fixed top-0 left-0 z-[9999] -translate-x-1/2 -translate-y-1/2 items-center justify-center opacity-0 mix-blend-difference md:flex"
+  class="pointer-events-none fixed top-0 left-0 z-[9999] -translate-x-1/2 -translate-y-1/2 hidden items-center justify-center opacity-0 mix-blend-difference md:flex"
 >
-  <div id="cursor-visual" class="h-5 w-5 rounded-full bg-white">
-  </div>
+  <div id="cursor-visual" class="h-5 w-5 rounded-full bg-white"></div>
 </div>
 
 <script>
   import gsap from 'gsap';
 
-  const cursor = document.getElementById('cursor');
-  const cursorVisual = document.getElementById('cursor-visual');
-  let isHovering = false;
-  let isCrabMode = false;
-  let hasMovedOnce = false;
+import { DURATION, EASE } from '../utils/animations';
 
-  const mouse = { x: 0, y: 0 };
-  const pos = { x: 0, y: 0 };
-  const speed = 0.15;
+  if (!window.matchMedia('(hover: none)').matches) {
+    const cursorEl = document.getElementById('cursor');
+    const cursorVisualEl = document.getElementById('cursor-visual');
+    if (!cursorEl || !cursorVisualEl) throw new Error('Cursor elements not found');
+    const cursor = cursorEl;
+    const cursorVisual = cursorVisualEl;
 
-  const setX = gsap.quickSetter(cursor, 'x', 'px');
-  const setY = gsap.quickSetter(cursor, 'y', 'px');
+    let isHovering = false;
+    let isCrabMode = false;
+    let hasMovedOnce = false;
 
-  window.addEventListener('mousemove', (e) => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
+    const mouse = { x: 0, y: 0 };
+    const pos = { x: 0, y: 0 };
+    const LERP_SPEED = 0.15;
 
-    // First move: snap to position and reveal
-    if (!hasMovedOnce && cursor) {
-      hasMovedOnce = true;
-      pos.x = mouse.x;
-      pos.y = mouse.y;
+    const setX = gsap.quickSetter(cursor, 'x', 'px');
+    const setY = gsap.quickSetter(cursor, 'y', 'px');
+
+    window.addEventListener('mousemove', (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+
+      if (!hasMovedOnce) {
+        hasMovedOnce = true;
+        pos.x = mouse.x;
+        pos.y = mouse.y;
+        setX(pos.x);
+        setY(pos.y);
+        gsap.to(cursor, { opacity: 1, duration: DURATION.DEFAULT });
+      }
+    });
+
+    gsap.ticker.add(() => {
+      if (!hasMovedOnce) return;
+      const dt = 1.0 - Math.pow(1.0 - LERP_SPEED, gsap.ticker.deltaRatio());
+      pos.x += (mouse.x - pos.x) * dt;
+      pos.y += (mouse.y - pos.y) * dt;
       setX(pos.x);
       setY(pos.y);
-      gsap.to(cursor, { opacity: 1, duration: 0.3 });
-    }
-  });
+    });
 
-  gsap.ticker.add(() => {
-    if (!hasMovedOnce) return;
-    
-    const dt = 1.0 - Math.pow(1.0 - speed, gsap.ticker.deltaRatio());
-    pos.x += (mouse.x - pos.x) * dt;
-    pos.y += (mouse.y - pos.y) * dt;
-    setX(pos.x);
-    setY(pos.y);
-  });
-
-  const updateCursor = () => {
-    if (!cursorVisual) return;
-
-    if (isCrabMode) {
-      if (cursor) cursor.style.mixBlendMode = 'normal';
-      cursorVisual.innerText = '🦀';
-      gsap.to(cursorVisual, {
+    const STATES = {
+      crab: {
+        blendMode: 'normal',
+        text: '\u{1F980}',
+        fontSize: '16px',
         scale: 2.5,
         backgroundColor: 'transparent',
-        duration: 0.4,
-        ease: 'back.out(1.7)',
-        overwrite: true,
-      });
-      cursorVisual.style.fontSize = '16px';
-    } else if (isHovering) {
-      if (cursor) cursor.style.mixBlendMode = 'difference';
-      cursorVisual.innerText = '';
-      gsap.to(cursorVisual, {
+        duration: DURATION.MEDIUM,
+        ease: EASE.BACK,
+      },
+      hover: {
+        blendMode: 'difference',
+        text: '',
+        fontSize: '',
         scale: 3,
         backgroundColor: 'white',
         duration: 0.1,
-        ease: 'expo.out',
-        overwrite: true,
-      });
-    } else {
-      if (cursor) cursor.style.mixBlendMode = 'difference';
-      cursorVisual.innerText = '';
-      gsap.to(cursorVisual, {
+        ease: EASE.EXPO,
+      },
+      default: {
+        blendMode: 'difference',
+        text: '',
+        fontSize: '',
         scale: 1,
         backgroundColor: 'white',
         duration: 0.1,
-        ease: 'expo.out',
-        overwrite: true,
-      });
-    }
-  };
+        ease: EASE.EXPO,
+      },
+    };
 
-  window.addEventListener('mousedown', () => {
-    if (!isCrabMode && cursorVisual) {
+    function getState() {
+      if (isCrabMode) return 'crab' as const;
+      if (isHovering) return 'hover' as const;
+      return 'default' as const;
+    }
+
+    function updateCursor() {
+      const { blendMode, text, fontSize, scale, backgroundColor, duration, ease } =
+        STATES[getState()];
+      cursor.style.mixBlendMode = blendMode;
+      cursorVisual.innerText = text;
+      cursorVisual.style.fontSize = fontSize;
+      gsap.to(cursorVisual, { scale, backgroundColor, duration, ease, overwrite: true });
+    }
+
+    window.addEventListener('mousedown', () => {
+      if (isCrabMode) return;
       gsap.to(cursorVisual, {
         scale: isHovering ? 2.5 : 0.8,
-        duration: 0.15,
-        ease: 'power3.out',
+        duration: DURATION.FAST,
+        ease: EASE.SMOOTH,
         overwrite: 'auto',
       });
-    }
-  });
+    });
 
-  window.addEventListener('mouseup', () => {
-    if (!isCrabMode && cursorVisual) {
+    window.addEventListener('mouseup', () => {
+      if (isCrabMode) return;
       gsap.to(cursorVisual, {
         scale: isHovering ? 3 : 1,
-        duration: 0.3,
-        ease: 'back.out(1.2)',
+        duration: DURATION.DEFAULT,
+        ease: EASE.BACK_MILD,
         overwrite: 'auto',
       });
-    }
-  });
+    });
 
-  const initListeners = () => {
     const hoverables = document.querySelectorAll('a, button, .magnetic, [data-cursor="hover"]');
     const crabTriggers = document.querySelectorAll('.crab-trigger');
 
-    hoverables.forEach((el) => {
-      el.addEventListener('mouseenter', () => {
-        isHovering = true;
-        updateCursor();
-      });
-      el.addEventListener('mouseleave', () => {
-        isHovering = false;
-        updateCursor();
-      });
-    });
+    for (const el of hoverables) {
+      el.addEventListener('mouseenter', () => { isHovering = true; updateCursor(); });
+      el.addEventListener('mouseleave', () => { isHovering = false; updateCursor(); });
+    }
 
-    crabTriggers.forEach((el) => {
-      el.addEventListener('mouseenter', () => {
-        isCrabMode = true;
-        updateCursor();
-      });
-      el.addEventListener('mouseleave', () => {
-        isCrabMode = false;
-        updateCursor();
-      });
-    });
-  };
-
-  initListeners();
+    for (const el of crabTriggers) {
+      el.addEventListener('mouseenter', () => { isCrabMode = true; updateCursor(); });
+      el.addEventListener('mouseleave', () => { isCrabMode = false; updateCursor(); });
+    }
+  }
 </script>

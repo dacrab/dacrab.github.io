@@ -1,38 +1,31 @@
 ---
 const year = new Date().getFullYear();
+
+const socials = [
+  { label: 'GITHUB', href: 'https://github.com/dacrab' },
+  { label: 'LINKEDIN', href: 'https://linkedin.com/in/vkavouras' },
+  { label: 'EMAIL', href: 'mailto:vkavouras@proton.me' },
+] as const;
 ---
 
 <footer class="footer-section overflow-hidden border-t border-white/10 bg-zinc-950 px-6 py-12 md:px-12">
   <div
     class="mx-auto flex w-full max-w-[90vw] flex-col items-center justify-between gap-8 md:flex-row md:items-end"
   >
-    <div class="footer-name">
-      <h3
-        class="crab-trigger pointer-events-auto text-center text-[12vw] leading-none font-bold tracking-tighter text-zinc-900 transition-colors duration-500 select-none hover:text-zinc-800 md:text-left"
-      >
-        KAVOURAS
-      </h3>
-    </div>
+    <p class="footer-name crab-trigger pointer-events-auto text-center text-[12vw] leading-none font-bold tracking-tighter text-zinc-900 transition-colors duration-500 select-none hover:text-zinc-800 md:text-left">
+      KAVOURAS
+    </p>
 
     <div class="footer-links flex flex-col gap-4 text-center md:text-right">
-      <div
-        class="flex flex-wrap justify-center gap-6 font-mono text-sm text-zinc-500 md:justify-end"
-      >
-        <a
-          href="https://github.com/dacrab"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="magnetic transition-colors hover:text-white">GITHUB</a
-        >
-        <a
-          href="https://linkedin.com/in/vkavouras"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="magnetic transition-colors hover:text-white">LINKEDIN</a
-        >
-        <a href="mailto:vkavouras@proton.me" class="magnetic transition-colors hover:text-white"
-          >EMAIL</a
-        >
+      <div class="flex flex-wrap justify-center gap-6 font-mono text-sm text-zinc-500 md:justify-end">
+        {socials.map(({ label, href }) => (
+          <a
+            href={href}
+            target={href.startsWith('mailto') ? undefined : '_blank'}
+            rel={href.startsWith('mailto') ? undefined : 'noopener noreferrer'}
+            class="magnetic transition-colors hover:text-white"
+          >{label}</a>
+        ))}
       </div>
       <p class="text-xs tracking-widest text-zinc-600 uppercase">
         &copy; {year} Vaggelis Kavouras
@@ -44,34 +37,20 @@ const year = new Date().getFullYear();
 <script>
   import gsap from 'gsap';
 
-  gsap.fromTo('.footer-name',
-    { opacity: 0, y: 40 },
-    {
-      opacity: 1,
-      y: 0,
-      duration: 0.8,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: '.footer-section',
-        start: 'top 90%',
-        once: true,
-      },
-    }
-  );
+import { DURATION, EASE, isMobile } from '../utils/animations';
 
-  gsap.fromTo('.footer-links',
-    { opacity: 0, y: 20 },
-    {
-      opacity: 1,
-      y: 0,
-      duration: 0.6,
-      delay: 0.2,
-      ease: 'power2.out',
-      scrollTrigger: {
-        trigger: '.footer-section',
-        start: 'top 90%',
-        once: true,
-      },
-    }
-  );
+  if (isMobile) {
+    gsap.fromTo('.footer-section',
+      { opacity: 0 },
+      { opacity: 1, duration: 0.5, ease: EASE.DEFAULT,
+        scrollTrigger: { trigger: '.footer-section', start: 'top 90%', once: true } },
+    );
+  } else {
+    gsap.timeline({
+      defaults: { ease: EASE.DEFAULT },
+      scrollTrigger: { trigger: '.footer-section', start: 'top 90%', once: true },
+    })
+      .fromTo('.footer-name', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: DURATION.SLOWER })
+      .fromTo('.footer-links', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: DURATION.SLOW }, '-=0.4');
+  }
 </script>

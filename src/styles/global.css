@@ -6,6 +6,13 @@
     --grid-color: rgba(0, 0, 0, 0.04);
   }
 
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   body {
     background-color: var(--bg-color);
     background-image:
@@ -14,9 +21,4 @@
     background-size: 4rem 4rem;
   }
 
-  /* Reveal Animation Classes - Initial state, GSAP handles animation */
-  .reveal-text {
-    opacity: 0;
-    transform: translateY(20px);
-  }
 }

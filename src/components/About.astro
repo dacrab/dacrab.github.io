@@ -1,9 +1,5 @@
 <section id="about" class="bg-zinc-900 px-6 py-32 text-zinc-50 md:px-12">
   <div class="mx-auto max-w-4xl">
-    <span class="about-label mb-8 block font-mono text-xs tracking-widest text-zinc-400 uppercase"
-      >03 / Profile</span
-    >
-
     <h2 class="about-heading mb-16 text-4xl leading-tight font-bold tracking-tight md:text-6xl">
       I build digital products with a focus on <span class="text-zinc-400">simplicity</span> and <span
         class="text-zinc-400">purpose</span
@@ -54,41 +50,33 @@
 <script>
   import gsap from 'gsap';
 
-  const aboutTl = gsap.timeline({
-    scrollTrigger: {
-      trigger: '#about',
-      start: 'top 75%',
-      once: true,
-    },
-  });
+import { DURATION, EASE, isMobile } from '../utils/animations';
 
-  // Label fades in
-  aboutTl.fromTo('.about-label',
-    { opacity: 0, x: -20 },
-    { opacity: 1, x: 0, duration: 0.6, ease: 'power2.out' }
-  )
-  // Heading scales up from slightly smaller
-  .fromTo('.about-heading',
-    { opacity: 0, scale: 0.95 },
-    { opacity: 1, scale: 1, duration: 0.8, ease: 'power2.out' },
-    '-=0.3'
-  )
-  // Text paragraph slides up
-  .fromTo('.about-text',
-    { opacity: 0, y: 30 },
-    { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' },
-    '-=0.4'
-  )
-  // Stack items stagger in
-  .fromTo('.about-stack li',
-    { opacity: 0, x: 20 },
-    { opacity: 1, x: 0, duration: 0.4, stagger: 0.1, ease: 'power2.out' },
-    '-=0.4'
-  )
-  // Contact fades in last
-  .fromTo('.about-contact',
-    { opacity: 0, y: 20 },
-    { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
-    '-=0.2'
-  );
+  if (isMobile) {
+    gsap.fromTo('#about',
+      { opacity: 0 },
+      { opacity: 1, duration: 0.5, ease: EASE.DEFAULT,
+        scrollTrigger: { trigger: '#about', start: 'top 85%', once: true } },
+    );
+  } else {
+    gsap.timeline({
+      defaults: { ease: EASE.DEFAULT },
+      scrollTrigger: { trigger: '#about', start: 'top 65%', once: true },
+    })
+      .fromTo('.about-heading',
+        { opacity: 0, scale: 0.95 },
+        { opacity: 1, scale: 1, duration: DURATION.SLOWER })
+      .fromTo('.about-text',
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: DURATION.SLOWER },
+        '-=0.4')
+      .fromTo('.about-stack li',
+        { opacity: 0, x: 20 },
+        { opacity: 1, x: 0, duration: DURATION.MEDIUM, stagger: 0.1 },
+        '-=0.4')
+      .fromTo('.about-contact',
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: DURATION.SLOW },
+        '-=0.2');
+  }
 </script>
