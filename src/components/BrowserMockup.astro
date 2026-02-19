@@ -26,7 +26,7 @@ const { src, alt, url, class: className } = Astro.props;
       </div>
     )}
   </div>
-  
+
   <!-- Screen -->
   <div class="mockup-screen relative overflow-hidden rounded-b-lg bg-zinc-900">
     <Image
@@ -39,18 +39,19 @@ const { src, alt, url, class: className } = Astro.props;
 </div>
 
 <script>
-  import gsap from 'gsap';
+  import { addHoverAnimation, DURATION, EASE, isMobile } from '../utils/animations';
 
-  document.querySelectorAll('.browser-mockup').forEach((mockup) => {
-    const image = mockup.querySelector('.mockup-image');
-    if (!image) return;
-
-    mockup.addEventListener('mouseenter', () => {
-      gsap.to(image, { scale: 1.05, duration: 0.6, ease: 'power2.out' });
-    });
-
-    mockup.addEventListener('mouseleave', () => {
-      gsap.to(image, { scale: 1, duration: 0.6, ease: 'power2.out' });
-    });
-  });
+  if (!isMobile) {
+    for (const mockup of document.querySelectorAll('.browser-mockup')) {
+      const image = mockup.querySelector('.mockup-image');
+      if (!image) continue;
+      addHoverAnimation(mockup as Element, [
+        {
+          target: image,
+          enter: { scale: 1.05, duration: DURATION.SLOW, ease: EASE.DEFAULT },
+          leave: { scale: 1, duration: DURATION.SLOW, ease: EASE.DEFAULT },
+        },
+      ]);
+    }
+  }
 </script>

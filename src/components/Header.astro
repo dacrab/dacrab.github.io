@@ -9,7 +9,8 @@ const links = [
 <header class="fixed top-0 right-0 left-0 z-50 text-white mix-blend-difference">
   <div class="flex items-center justify-between px-6 py-8 md:px-12">
     <a
-      href="/"
+      href="#hero-section"
+      aria-label="Back to top"
       class="header-reveal magnetic inline-block -translate-y-full text-sm font-bold tracking-widest uppercase opacity-0"
     >
       Vaggelis <span class="crab-trigger inline-block">Kavouras</span>
@@ -77,6 +78,8 @@ const links = [
 <script>
   import gsap from 'gsap';
 
+import { DURATION, EASE } from '../utils/animations';
+
   const menuToggle = document.getElementById('menu-toggle');
   const menuOverlay = document.getElementById('menu-overlay');
   const menuItems = document.querySelectorAll('.menu-item');
@@ -84,58 +87,64 @@ const links = [
   const bottomBar = document.getElementById('bar-bottom');
   let isMenuOpen = false;
 
-  // Header reveal
   gsap.to('.header-reveal', {
     y: 0,
     opacity: 1,
-    duration: 1.5,
-    stagger: 0.1,
-    ease: 'expo.out',
-    delay: 1.0,
+    duration: 1.2,
+    stagger: 0.15,
+    ease: EASE.EXPO,
+    delay: 0.3,
   });
 
-  // Hamburger hover
-  if (menuToggle && topBar && bottomBar) {
-    menuToggle.addEventListener('mouseenter', () => {
-      if (isMenuOpen) return;
-      gsap.to(topBar, { width: '75%', duration: 0.3, ease: 'power2.out' });
-      gsap.to(bottomBar, { width: '100%', duration: 0.3, ease: 'power2.out' });
-    });
-
-    menuToggle.addEventListener('mouseleave', () => {
-      if (isMenuOpen) return;
-      gsap.to(topBar, { width: '100%', duration: 0.3, ease: 'power2.out' });
-      gsap.to(bottomBar, { width: '75%', duration: 0.3, ease: 'power2.out' });
-    });
+  if (!menuToggle || !menuOverlay || !topBar || !bottomBar) {
+    throw new Error('Header: required menu elements not found');
   }
 
-  // Menu toggle
-  if (menuToggle && menuOverlay) {
-    menuToggle.addEventListener('click', () => {
-      isMenuOpen = !isMenuOpen;
-      menuToggle.setAttribute('aria-expanded', String(isMenuOpen));
+  menuToggle.addEventListener('mouseenter', () => {
+    if (isMenuOpen) return;
+    gsap.to(topBar, { width: '75%', duration: DURATION.DEFAULT, ease: EASE.DEFAULT, overwrite: 'auto' });
+    gsap.to(bottomBar, { width: '100%', duration: DURATION.DEFAULT, ease: EASE.DEFAULT, overwrite: 'auto' });
+  });
 
-      if (isMenuOpen) {
-        document.body.style.overflow = 'hidden';
+  menuToggle.addEventListener('mouseleave', () => {
+    if (isMenuOpen) return;
+    gsap.to(topBar, { width: '100%', duration: DURATION.DEFAULT, ease: EASE.DEFAULT, overwrite: 'auto' });
+    gsap.to(bottomBar, { width: '75%', duration: DURATION.DEFAULT, ease: EASE.DEFAULT, overwrite: 'auto' });
+  });
 
-        gsap.to(menuOverlay, { x: '0%', duration: 0.8, ease: 'expo.inOut' });
-        gsap.to(menuItems, { y: 0, opacity: 1, duration: 1, stagger: 0.1, delay: 0.4, ease: 'expo.out' });
-        gsap.to(topBar, { rotate: 45, y: 4, width: '100%', duration: 0.4, ease: 'expo.out' });
-        gsap.to(bottomBar, { rotate: -45, y: -4, width: '100%', duration: 0.4, ease: 'expo.out' });
-      } else {
-        document.body.style.overflow = '';
+  const MENU = {
+    open: {
+      body: 'hidden',
+      overlay: { x: '0%', duration: DURATION.SLOWER, ease: EASE.EXPO_IN_OUT },
+      items: { y: 0, opacity: 1, duration: 1, stagger: 0.1, delay: DURATION.MEDIUM, ease: EASE.EXPO },
+      topBar: { rotate: 45, y: 4, width: '100%', duration: DURATION.MEDIUM, ease: EASE.EXPO },
+      bottomBar: { rotate: -45, y: -4, width: '100%', duration: DURATION.MEDIUM, ease: EASE.EXPO },
+    },
+    closed: {
+      body: '',
+      overlay: { x: '100%', duration: DURATION.SLOWER, ease: EASE.EXPO_IN_OUT },
+      items: { y: 20, opacity: 0, duration: DURATION.MEDIUM, ease: EASE.EXPO_IN },
+      topBar: { rotate: 0, y: 0, width: '100%', duration: DURATION.MEDIUM, ease: EASE.EXPO },
+      bottomBar: { rotate: 0, y: 0, width: '75%', duration: DURATION.MEDIUM, ease: EASE.EXPO },
+    },
+  } as const;
 
-        gsap.to(menuOverlay, { x: '100%', duration: 0.8, ease: 'expo.inOut' });
-        gsap.to(menuItems, { y: 20, opacity: 0, duration: 0.4, ease: 'expo.in' });
-        gsap.to(topBar, { rotate: 0, y: 0, width: '100%', duration: 0.4, ease: 'expo.out' });
-        gsap.to(bottomBar, { rotate: 0, y: 0, width: '75%', duration: 0.4, ease: 'expo.out' });
-      }
-    });
+  menuToggle.addEventListener('click', () => {
+    isMenuOpen = !isMenuOpen;
+    menuToggle.setAttribute('aria-expanded', String(isMenuOpen));
 
-    menuItems.forEach((item) => {
-      item.addEventListener('click', () => {
-        if (isMenuOpen) menuToggle.click();
-      });
+    const state = isMenuOpen ? MENU.open : MENU.closed;
+    document.body.style.overflow = state.body;
+    gsap.to(menuOverlay, state.overlay);
+    gsap.to(menuItems, state.items);
+    gsap.to(topBar, state.topBar);
+    gsap.to(bottomBar, state.bottomBar);
+  });
+
+  // Close menu when clicking nav items
+  for (const item of menuItems) {
+    item.addEventListener('click', () => {
+      if (isMenuOpen) menuToggle.click();
     });
   }
 </script>

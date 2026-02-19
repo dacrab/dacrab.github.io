@@ -64,36 +64,15 @@ const schema = {
     <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
 
     <title>{title}</title>
-    <script>
-      import gsap from 'gsap';
-      import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-      gsap.registerPlugin(ScrollTrigger);
-
-      // Global Reveal System - Cinematic Batching
-      ScrollTrigger.batch('.reveal-text', {
-        start: 'top 85%',
-        onEnter: (batch) => {
-          gsap.fromTo(
-            batch,
-            { opacity: 0, y: 40 },
-            {
-              opacity: 1,
-              y: 0,
-              duration: 1,
-              stagger: 0.1,
-              ease: 'power3.out',
-              overwrite: 'auto',
-            }
-          );
-        },
-        once: true,
-      });
-    </script>
   </head>
   <body
     class="bg-zinc-50 font-sans text-zinc-900 antialiased selection:bg-black selection:text-white md:cursor-none"
   >
+    <script>
+      import gsap from 'gsap';
+      import { ScrollTrigger } from 'gsap/ScrollTrigger';
+      gsap.registerPlugin(ScrollTrigger);
+    </script>
     <InteractiveCursor />
     <GrainOverlay />
     <slot />

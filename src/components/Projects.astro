@@ -18,7 +18,7 @@ import BrowserMockup from './BrowserMockup.astro';
       {
         projects.map((project, index) => (
           <article class="project-card group" data-index={index}>
-            <!-- Project Header -->
+            {/* Project Header */}
             <div class="mb-8 flex flex-wrap items-baseline justify-between gap-4">
               <div class="flex items-baseline gap-4">
                 <span class="font-mono text-sm text-zinc-500">
@@ -37,7 +37,7 @@ import BrowserMockup from './BrowserMockup.astro';
               </div>
             </div>
 
-            <!-- Browser Mockup -->
+            {/* Browser Mockup */}
             <a
               href={project.link}
               target="_blank"
@@ -51,7 +51,7 @@ import BrowserMockup from './BrowserMockup.astro';
               />
             </a>
 
-            <!-- Project Footer -->
+            {/* Project Footer */}
             <div class="mt-8 flex flex-wrap items-end justify-between gap-6">
               <p class="max-w-xl text-lg leading-relaxed text-zinc-400">
                 {project.blurb}
@@ -90,72 +90,72 @@ import BrowserMockup from './BrowserMockup.astro';
 <script>
   import gsap from 'gsap';
 
-  // Projects header - horizontal line wipe
-  gsap.fromTo('.projects-header',
-    { opacity: 0, clipPath: 'inset(0 100% 0 0)' },
-    {
-      opacity: 1,
-      clipPath: 'inset(0 0% 0 0)',
-      duration: 1.2,
-      ease: 'power4.inOut',
-      scrollTrigger: {
-        trigger: '.projects-header',
-        start: 'top 80%',
-        once: true,
-      },
+import { addHoverAnimation, COLOR, DURATION, EASE, isMobile } from '../utils/animations';
+
+  if (isMobile) {
+    gsap.fromTo('.projects-header',
+      { opacity: 0 },
+      { opacity: 1, duration: 0.5, ease: EASE.DEFAULT,
+        scrollTrigger: { trigger: '.projects-header', start: 'top 85%', once: true } },
+    );
+  } else {
+    gsap.fromTo('.projects-header',
+      { opacity: 0, clipPath: 'inset(0 100% 0 0)' },
+      { opacity: 1, clipPath: 'inset(0 0% 0 0)', duration: 1.2, ease: EASE.STRONG_IN_OUT,
+        scrollTrigger: { trigger: '.projects-header', start: 'top 80%', once: true } },
+    );
+  }
+
+  for (const card of document.querySelectorAll('.project-card')) {
+    if (isMobile) {
+      gsap.fromTo(card,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.5, ease: EASE.DEFAULT, overwrite: true,
+          scrollTrigger: { trigger: card, start: 'top 90%', once: true } },
+      );
+    } else {
+      const index = Number(card.getAttribute('data-index'));
+      const fromX = index % 2 === 0 ? -60 : 60;
+      gsap.fromTo(card,
+        { opacity: 0, x: fromX },
+        { opacity: 1, x: 0, duration: 1, ease: EASE.SMOOTH, overwrite: true,
+          scrollTrigger: { trigger: card, start: 'top 85%', once: true } },
+      );
     }
-  );
+  }
 
-  // Project cards - alternating slide from left/right
-  document.querySelectorAll('.project-card').forEach((card) => {
-    const index = Number(card.getAttribute('data-index'));
-    const fromX = index % 2 === 0 ? -60 : 60;
-
-    gsap.fromTo(card,
-      { opacity: 0, x: fromX },
-      {
-        opacity: 1,
-        x: 0,
-        duration: 1,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: card,
-          start: 'top 85%',
-          once: true,
+  if (!isMobile) {
+    for (const screen of document.querySelectorAll('.mockup-screen')) {
+      gsap.fromTo(screen,
+        { y: 16 },
+        {
+          y: -16,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: screen.closest('article'),
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: 1.5,
+          },
         },
-      }
-    );
-  });
+      );
+    }
 
-  // Parallax on browser mockups
-  document.querySelectorAll('.browser-mockup img').forEach((img) => {
-    gsap.fromTo(img,
-      { y: 20 },
-      {
-        y: -20,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: img.closest('article'),
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: 1,
+    for (const link of document.querySelectorAll('.project-link')) {
+      const arrow = link.querySelector('.project-arrow');
+      if (!arrow) continue;
+      addHoverAnimation(link as Element, [
+        {
+          target: link as Element,
+          enter: { color: COLOR.ZINC_400, duration: DURATION.DEFAULT },
+          leave: { color: COLOR.WHITE, duration: DURATION.DEFAULT },
         },
-      }
-    );
-  });
-
-  // Project link hover
-  document.querySelectorAll('.project-link').forEach((link) => {
-    const arrow = link.querySelector('.project-arrow');
-    
-    link.addEventListener('mouseenter', () => {
-      gsap.to(link, { color: '#a1a1aa', duration: 0.3 });
-      gsap.to(arrow, { x: 3, y: -3, duration: 0.3, ease: 'power2.out' });
-    });
-    
-    link.addEventListener('mouseleave', () => {
-      gsap.to(link, { color: '#ffffff', duration: 0.3 });
-      gsap.to(arrow, { x: 0, y: 0, duration: 0.3, ease: 'power2.out' });
-    });
-  });
+        {
+          target: arrow,
+          enter: { x: 3, y: -3, duration: DURATION.DEFAULT, ease: EASE.DEFAULT },
+          leave: { x: 0, y: 0, duration: DURATION.DEFAULT, ease: EASE.DEFAULT },
+        },
+      ]);
+    }
+  }
 </script>
