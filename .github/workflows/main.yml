@@ -36,7 +36,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: ./.github/actions/setup-bun
       - run: bun run build
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: dist
       - uses: actions/deploy-pages@v4
