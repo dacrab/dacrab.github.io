@@ -20,8 +20,8 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.6",
-    "@types/node": "^25.3.3",
-    "eslint": "^10.0.2",
+    "@types/node": "^25.3.5",
+    "eslint": "^10.0.3",
     "eslint-plugin-astro": "^1.6.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-simple-import-sort": "^12.1.1",
