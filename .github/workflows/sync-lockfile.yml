@@ -3,26 +3,19 @@ name: Sync Lockfile
 on:
   pull_request:
     paths: ["package.json"]
-  push:
-    branches: [main, master]
-    paths: ["package.json"]
 
 permissions:
   contents: write
 
 jobs:
   sync:
-    if: >
-      github.event_name == 'push' ||
-      (github.event_name == 'pull_request' &&
-       github.event.pull_request.user.login == 'dependabot[bot]' &&
-       github.event.pull_request.state == 'open')
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.event.pull_request.state == 'open'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: ${{ github.event_name == 'push' && github.ref || github.head_ref }}
+          ref: ${{ github.head_ref }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: oven-sh/setup-bun@v2
@@ -39,5 +32,5 @@ jobs:
             exit 0
           fi
           git commit -m "chore: sync bun.lock"
-          git pull --rebase origin ${{ github.event_name == 'push' && github.ref_name || github.head_ref }}
+          git pull --rebase origin ${{ github.head_ref }}
           git push
