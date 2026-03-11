@@ -2,65 +2,60 @@
   class="relative flex min-h-screen flex-col justify-center overflow-hidden px-6 pt-32 md:px-12"
   id="hero-section"
 >
-  <!-- Minimal grid line accent -->
-  <div
-    class="hero-line absolute top-0 left-6 h-full w-px origin-top scale-y-0 bg-zinc-200 md:left-12"
-  >
-  </div>
+  <div class="hero-line absolute top-0 left-6 h-full w-px origin-top bg-zinc-200 md:left-12" style="will-change: transform;"></div>
 
   <div class="relative z-10 mx-auto w-full max-w-[90vw]">
-    <h1 class="hero-title text-[12vw] leading-[0.85] font-bold tracking-tighter text-zinc-900">
+    <h1 class="hero-title text-[12vw] leading-[0.85] font-bold tracking-tighter text-zinc-900" style="will-change: transform;">
       <span class="block overflow-hidden">
-      <span class="word inline-block translate-y-full opacity-0">VAGGELIS</span>
+      <span class="word inline-block">VAGGELIS</span>
       </span>
       <span class="block overflow-hidden">
-        <span class="word crab-trigger inline-block translate-y-full opacity-0">KAVOURAS</span>
+        <span class="word crab-trigger inline-block">KAVOURAS</span>
       </span>
     </h1>
 
     <div class="mt-12 ml-auto flex max-w-4xl flex-col items-start gap-8 md:flex-row md:gap-24">
       <div class="overflow-hidden">
-        <p
-          class="hero-text max-w-md translate-y-8 text-xl leading-relaxed text-zinc-600 opacity-0 md:text-2xl"
-        >
+        <p class="hero-text max-w-md text-xl leading-relaxed text-zinc-600 md:text-2xl">
           Full-Stack Web Developer specialized in building high-performance applications with
           Next.js, Astro, and SvelteKit.
         </p>
       </div>
 
-      <div class="hero-actions flex translate-y-8 gap-4 opacity-0">
-        <a
-          href="#projects"
-          class="hero-btn relative inline-flex h-12 items-center justify-center overflow-hidden rounded-full bg-zinc-900 px-6 font-medium text-white"
-        >
-          <span>View Projects</span>
-          <span class="hero-btn-arrow ml-0 w-0 overflow-hidden">
-            <svg class="ml-2" width="16" height="16" viewBox="0 0 10 10" fill="none">
-              <path d="M1 9L9 1M9 1H1M9 1V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </span>
-        </a>
-      </div>
+      <a
+        href="#projects"
+        class="hero-actions hero-btn relative inline-flex h-12 items-center justify-center overflow-hidden rounded-full bg-zinc-900 px-6 font-medium text-white"
+      >
+        <span>View Projects</span>
+        <span class="hero-btn-arrow ml-0 w-0 overflow-hidden">
+          <svg class="ml-2" width="16" height="16" viewBox="0 0 10 10" fill="none">
+            <path d="M1 9L9 1M9 1H1M9 1V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+      </a>
     </div>
   </div>
 </section>
 
 <script>
   import gsap from 'gsap';
+  import { addHoverAnimation, DURATION, EASE, isMobile } from '../utils/animations';
 
-import { addHoverAnimation, COLOR, DURATION, EASE, isMobile } from '../utils/animations';
+  gsap.set('.hero-line', { scaleY: 0 });
+  gsap.set('.hero-title .word', { y: '100%', opacity: 0 });
+  gsap.set(['.hero-text', '.hero-actions'], { opacity: 0, y: 32 });
 
   if (isMobile) {
     gsap.timeline()
-      .fromTo('.hero-line', { scaleY: 0 }, { scaleY: 1, duration: 0.6, ease: EASE.DEFAULT })
-      .fromTo('.hero-title .word', { y: '100%', opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: EASE.DEFAULT }, '-=0.3')
-      .fromTo(['.hero-text', '.hero-actions'], { opacity: 0, y: 32 }, { opacity: 1, y: 0, duration: 0.4, ease: EASE.DEFAULT }, '-=0.2');
+      .to('.hero-line', { scaleY: 1, duration: 0.6, ease: EASE.DEFAULT })
+      .to('.hero-title .word', { y: 0, opacity: 1, duration: 0.5, ease: EASE.DEFAULT }, '-=0.3')
+      .to(['.hero-text', '.hero-actions'], { opacity: 1, y: 0, duration: 0.4, ease: EASE.DEFAULT }, '-=0.2');
   } else {
     gsap.timeline({ defaults: { ease: EASE.EXPO } })
-      .fromTo('.hero-line', { scaleY: 0 }, { scaleY: 1, duration: 1.8 })
-      .fromTo('.hero-title .word', { y: '100%', opacity: 0 }, { y: 0, opacity: 1, duration: 1.5, stagger: 0.1, ease: EASE.STRONG }, '-=1.4')
-      .fromTo('.hero-text', { opacity: 0, y: 32 }, { opacity: 1, y: 0, duration: 1.2 }, '-=1.0')
-      .fromTo('.hero-actions', { opacity: 0, y: 32 }, { opacity: 1, y: 0, duration: 1.2 }, '-=1.0');
+      .to('.hero-line', { scaleY: 1, duration: 1.8 })
+      .to('.hero-title .word', { y: 0, opacity: 1, duration: 1.5, stagger: 0.1, ease: EASE.STRONG }, '-=1.4')
+      .to('.hero-text', { opacity: 1, y: 0, duration: 1.2 }, '-=1.0')
+      .to('.hero-actions', { opacity: 1, y: 0, duration: 1.2 }, '-=1.0');
 
     gsap.to('.hero-title', {
       y: 80,
@@ -79,8 +74,8 @@ import { addHoverAnimation, COLOR, DURATION, EASE, isMobile } from '../utils/ani
       addHoverAnimation(heroBtn, [
         {
           target: heroBtn,
-          enter: { backgroundColor: COLOR.ZINC_800, duration: DURATION.DEFAULT },
-          leave: { backgroundColor: COLOR.ZINC_900, duration: DURATION.DEFAULT },
+          enter: { backgroundColor: '#27272a', duration: DURATION.DEFAULT },
+          leave: { backgroundColor: '#18181b', duration: DURATION.DEFAULT },
         },
         {
           target: heroArrow,

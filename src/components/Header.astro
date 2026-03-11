@@ -11,14 +11,14 @@ const links = [
     <a
       href="#hero-section"
       aria-label="Back to top"
-      class="header-reveal magnetic inline-block -translate-y-full text-sm font-bold tracking-widest uppercase opacity-0"
+      class="header-reveal magnetic inline-block text-sm font-bold tracking-widest uppercase"
     >
       Vaggelis <span class="crab-trigger inline-block">Kavouras</span>
     </a>
 
     <button
       id="menu-toggle"
-      class="header-reveal group relative z-50 flex h-8 w-12 -translate-y-full cursor-pointer flex-col items-end justify-center gap-1.5 opacity-0 mix-blend-difference"
+      class="header-reveal relative z-50 flex h-8 w-12 cursor-pointer flex-col items-end justify-center gap-1.5 mix-blend-difference"
       aria-label="Toggle Menu"
       aria-expanded="false"
       aria-controls="menu-overlay"
@@ -37,17 +37,17 @@ const links = [
     <ul class="flex flex-col items-center gap-8">
       {
         links.map((link) => (
-          <li class="menu-item translate-y-8 opacity-0">
+          <li class="menu-item">
             <a
               href={link.href}
-              class="magnetic group relative inline-block text-4xl font-bold tracking-tighter uppercase md:text-6xl"
+              class="magnetic inline-block text-4xl font-bold tracking-tighter uppercase md:text-6xl"
             >
               {link.label}
             </a>
           </li>
         ))
       }
-      <li class="menu-item translate-y-8 opacity-0">
+      <li class="menu-item">
         <div class="mt-8 flex flex-col items-center gap-4">
           <span class="text-sm font-medium tracking-widest text-zinc-500 uppercase">Resume</span>
           <div class="flex gap-4">
@@ -77,16 +77,17 @@ const links = [
 
 <script>
   import gsap from 'gsap';
+  import { DURATION, EASE } from '../utils/animations';
 
-import { DURATION, EASE } from '../utils/animations';
-
-  const menuToggle = document.getElementById('menu-toggle');
-  const menuOverlay = document.getElementById('menu-overlay');
+  const menuToggle = document.getElementById('menu-toggle')!;
+  const menuOverlay = document.getElementById('menu-overlay')!;
   const menuItems = document.querySelectorAll('.menu-item');
-  const topBar = document.getElementById('bar-top');
-  const bottomBar = document.getElementById('bar-bottom');
+  const topBar = document.getElementById('bar-top')!;
+  const bottomBar = document.getElementById('bar-bottom')!;
   let isMenuOpen = false;
 
+  gsap.set('.header-reveal', { y: -40, opacity: 0 });
+  gsap.set('.menu-item', { y: 20, opacity: 0 });
   gsap.to('.header-reveal', {
     y: 0,
     opacity: 1,
@@ -95,10 +96,6 @@ import { DURATION, EASE } from '../utils/animations';
     ease: EASE.EXPO,
     delay: 0.3,
   });
-
-  if (!menuToggle || !menuOverlay || !topBar || !bottomBar) {
-    throw new Error('Header: required menu elements not found');
-  }
 
   menuToggle.addEventListener('mouseenter', () => {
     if (isMenuOpen) return;
@@ -115,7 +112,7 @@ import { DURATION, EASE } from '../utils/animations';
   const MENU = {
     open: {
       body: 'hidden',
-      overlay: { x: '0%', duration: DURATION.SLOWER, ease: EASE.EXPO_IN_OUT },
+      overlay: { x: 0, duration: DURATION.SLOWER, ease: EASE.EXPO_IN_OUT },
       items: { y: 0, opacity: 1, duration: 1, stagger: 0.1, delay: DURATION.MEDIUM, ease: EASE.EXPO },
       topBar: { rotate: 45, y: 4, width: '100%', duration: DURATION.MEDIUM, ease: EASE.EXPO },
       bottomBar: { rotate: -45, y: -4, width: '100%', duration: DURATION.MEDIUM, ease: EASE.EXPO },
@@ -123,7 +120,7 @@ import { DURATION, EASE } from '../utils/animations';
     closed: {
       body: '',
       overlay: { x: '100%', duration: DURATION.SLOWER, ease: EASE.EXPO_IN_OUT },
-      items: { y: 20, opacity: 0, duration: DURATION.MEDIUM, ease: EASE.EXPO_IN },
+      items: { y: 20, opacity: 0, duration: DURATION.MEDIUM, ease: EASE.EXPO },
       topBar: { rotate: 0, y: 0, width: '100%', duration: DURATION.MEDIUM, ease: EASE.EXPO },
       bottomBar: { rotate: 0, y: 0, width: '75%', duration: DURATION.MEDIUM, ease: EASE.EXPO },
     },

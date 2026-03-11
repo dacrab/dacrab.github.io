@@ -6,13 +6,12 @@ interface Props {
   src: ImageMetadata;
   alt: string;
   url?: string;
-  class?: string;
 }
 
-const { src, alt, url, class: className } = Astro.props;
+const { src, alt, url } = Astro.props;
 ---
 
-<div class:list={['browser-mockup group relative', className]}>
+<div class="browser-mockup group relative">
   <!-- Browser Chrome -->
   <div class="flex items-center gap-2 rounded-t-lg bg-zinc-800 px-4 py-3">
     <div class="flex gap-1.5">

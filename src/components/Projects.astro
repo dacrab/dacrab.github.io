@@ -18,7 +18,6 @@ import BrowserMockup from './BrowserMockup.astro';
       {
         projects.map((project, index) => (
           <article class="project-card group" data-index={index}>
-            {/* Project Header */}
             <div class="mb-8 flex flex-wrap items-baseline justify-between gap-4">
               <div class="flex items-baseline gap-4">
                 <span class="font-mono text-sm text-zinc-500">
@@ -89,55 +88,46 @@ import BrowserMockup from './BrowserMockup.astro';
 
 <script>
   import gsap from 'gsap';
-
-import { addHoverAnimation, COLOR, DURATION, EASE, isMobile } from '../utils/animations';
+  import { addHoverAnimation, DURATION, EASE, isMobile } from '../utils/animations';
 
   if (isMobile) {
-    gsap.fromTo('.projects-header',
-      { opacity: 0 },
-      { opacity: 1, duration: 0.5, ease: EASE.DEFAULT,
-        scrollTrigger: { trigger: '.projects-header', start: 'top 85%', once: true } },
-    );
-  } else {
-    gsap.fromTo('.projects-header',
-      { opacity: 0, clipPath: 'inset(0 100% 0 0)' },
-      { opacity: 1, clipPath: 'inset(0 0% 0 0)', duration: 1.2, ease: EASE.STRONG_IN_OUT,
-        scrollTrigger: { trigger: '.projects-header', start: 'top 80%', once: true } },
-    );
-  }
-
-  for (const card of document.querySelectorAll('.project-card')) {
-    if (isMobile) {
+    gsap.set('.projects-header', { opacity: 0 });
+    gsap.to('.projects-header', {
+      opacity: 1, duration: 0.5, ease: EASE.DEFAULT,
+      scrollTrigger: { trigger: '.projects-header', start: 'top 85%', once: true },
+    });
+    for (const card of document.querySelectorAll('.project-card')) {
       gsap.fromTo(card,
         { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.5, ease: EASE.DEFAULT, overwrite: true,
+        { opacity: 1, y: 0, duration: 0.5, ease: EASE.DEFAULT,
           scrollTrigger: { trigger: card, start: 'top 90%', once: true } },
       );
-    } else {
-      const index = Number(card.getAttribute('data-index'));
-      const fromX = index % 2 === 0 ? -60 : 60;
+    }
+  } else {
+    gsap.set('.projects-header', { opacity: 0, clipPath: 'inset(0 100% 0 0)' });
+    gsap.to('.projects-header', {
+      opacity: 1, clipPath: 'inset(0 0% 0 0)', duration: 1.2, ease: EASE.STRONG_IN_OUT,
+      scrollTrigger: { trigger: '.projects-header', start: 'top 80%', once: true },
+    });
+
+    for (const card of document.querySelectorAll('.project-card')) {
+      const fromX = Number(card.getAttribute('data-index')) % 2 === 0 ? -60 : 60;
       gsap.fromTo(card,
         { opacity: 0, x: fromX },
-        { opacity: 1, x: 0, duration: 1, ease: EASE.SMOOTH, overwrite: true,
+        { opacity: 1, x: 0, duration: 1, ease: EASE.SMOOTH,
           scrollTrigger: { trigger: card, start: 'top 85%', once: true } },
       );
     }
-  }
 
-  if (!isMobile) {
     for (const screen of document.querySelectorAll('.mockup-screen')) {
       gsap.fromTo(screen,
         { y: 16 },
-        {
-          y: -16,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: screen.closest('article'),
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1.5,
-          },
-        },
+        { y: -16, ease: 'none', scrollTrigger: {
+          trigger: screen.closest('article'),
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1.5,
+        }},
       );
     }
 
@@ -147,8 +137,8 @@ import { addHoverAnimation, COLOR, DURATION, EASE, isMobile } from '../utils/ani
       addHoverAnimation(link as Element, [
         {
           target: link as Element,
-          enter: { color: COLOR.ZINC_400, duration: DURATION.DEFAULT },
-          leave: { color: COLOR.WHITE, duration: DURATION.DEFAULT },
+          enter: { color: '#a1a1aa', duration: DURATION.DEFAULT },
+          leave: { color: '#ffffff', duration: DURATION.DEFAULT },
         },
         {
           target: arrow,
