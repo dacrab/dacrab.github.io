@@ -86,7 +86,7 @@ const links = [
   const bottomBar = document.getElementById('bar-bottom')!;
   let isMenuOpen = false;
 
-  gsap.set('.header-reveal', { y: -40, opacity: 0 });
+  gsap.set('.header-reveal', { y: -40, opacity: 0, visibility: 'visible' });
   gsap.set('.menu-item', { y: 20, opacity: 0 });
   gsap.to('.header-reveal', {
     y: 0,

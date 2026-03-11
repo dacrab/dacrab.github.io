@@ -41,9 +41,9 @@
   import gsap from 'gsap';
   import { addHoverAnimation, DURATION, EASE, isMobile } from '../utils/animations';
 
-  gsap.set('.hero-line', { scaleY: 0 });
-  gsap.set('.hero-title .word', { y: '100%', opacity: 0 });
-  gsap.set(['.hero-text', '.hero-actions'], { opacity: 0, y: 32 });
+  gsap.set('.hero-line', { scaleY: 0, visibility: 'visible' });
+  gsap.set('.hero-title .word', { y: '100%', opacity: 0, visibility: 'visible' });
+  gsap.set(['.hero-text', '.hero-actions'], { opacity: 0, y: 32, visibility: 'visible' });
 
   if (isMobile) {
     gsap.timeline()
