@@ -49,34 +49,19 @@
 
 <script>
   import gsap from 'gsap';
+  import { DURATION, EASE } from '../utils/animations';
 
-import { DURATION, EASE, isMobile } from '../utils/animations';
+  gsap.set('.about-heading', { opacity: 0, scale: 0.95 });
+  gsap.set('.about-text', { opacity: 0, y: 30 });
+  gsap.set('.about-stack li', { opacity: 0, x: 20 });
+  gsap.set('.about-contact', { opacity: 0, y: 20 });
 
-  if (isMobile) {
-    gsap.fromTo('#about',
-      { opacity: 0 },
-      { opacity: 1, duration: 0.5, ease: EASE.DEFAULT,
-        scrollTrigger: { trigger: '#about', start: 'top 85%', once: true } },
-    );
-  } else {
-    gsap.timeline({
-      defaults: { ease: EASE.DEFAULT },
-      scrollTrigger: { trigger: '#about', start: 'top 65%', once: true },
-    })
-      .fromTo('.about-heading',
-        { opacity: 0, scale: 0.95 },
-        { opacity: 1, scale: 1, duration: DURATION.SLOWER })
-      .fromTo('.about-text',
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: DURATION.SLOWER },
-        '-=0.4')
-      .fromTo('.about-stack li',
-        { opacity: 0, x: 20 },
-        { opacity: 1, x: 0, duration: DURATION.MEDIUM, stagger: 0.1 },
-        '-=0.4')
-      .fromTo('.about-contact',
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: DURATION.SLOW },
-        '-=0.2');
-  }
+  gsap.timeline({
+    defaults: { ease: EASE.DEFAULT },
+    scrollTrigger: { trigger: '#about', start: 'top 70%', once: true },
+  })
+    .to('.about-heading', { opacity: 1, scale: 1, duration: DURATION.SLOWER })
+    .to('.about-text', { opacity: 1, y: 0, duration: DURATION.SLOWER }, '-=0.4')
+    .to('.about-stack li', { opacity: 1, x: 0, duration: DURATION.MEDIUM, stagger: 0.1 }, '-=0.4')
+    .to('.about-contact', { opacity: 1, y: 0, duration: DURATION.SLOW }, '-=0.2');
 </script>

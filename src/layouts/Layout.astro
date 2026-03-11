@@ -1,11 +1,10 @@
 ---
-import '@fontsource/geist-sans';
 import '../styles/global.css';
 
 import GrainOverlay from '../components/GrainOverlay.astro';
 import InteractiveCursor from '../components/InteractiveCursor.astro';
 
-export interface Props {
+interface Props {
   title: string;
   description?: string;
 }
@@ -21,7 +20,7 @@ const schema = {
   '@type': 'Person',
   name: 'Vaggelis Kavouras',
   url: 'https://dacrab.github.io',
-  jobTitle: 'Web Developer',
+  jobTitle: 'Full-Stack Web Developer',
   sameAs: ['https://github.com/dacrab', 'https://linkedin.com/in/vkavouras'],
   knowsAbout: [
     'Next.js',
@@ -41,26 +40,28 @@ const schema = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta
-      name="keywords"
-      content="Vaggelis Kavouras, Web Developer, Frontend Engineer, Next.js, Astro, SvelteKit, TypeScript, Supabase, PostgreSQL, Greece"
-    />
     <meta name="author" content="Vaggelis Kavouras" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#050505" />
     <meta name="generator" content={Astro.generator} />
 
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;900&display=swap" media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;900&display=swap" /></noscript>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonical.href} />
+    <link rel="sitemap" href="/sitemap.xml" />
 
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Vaggelis Kavouras" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical.href} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
 
-    {
-      /* Safe: Hardcoded schema object stringified for JSON-LD. set:html is required for injection. */
-    }
-    {/* eslint-disable-next-line astro/no-set-html-directive */}
     <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
 
     <title>{title}</title>

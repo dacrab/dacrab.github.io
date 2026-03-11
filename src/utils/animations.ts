@@ -17,17 +17,9 @@ export const EASE = {
   STRONG: 'power4.out',
   STRONG_IN_OUT: 'power4.inOut',
   EXPO: 'expo.out',
-  EXPO_IN: 'expo.in',
   EXPO_IN_OUT: 'expo.inOut',
   BACK: 'back.out(1.7)',
   BACK_MILD: 'back.out(1)',
-} as const;
-
-export const COLOR = {
-  WHITE: '#ffffff',
-  ZINC_400: '#a1a1aa',
-  ZINC_800: '#27272a',
-  ZINC_900: '#18181b',
 } as const;
 
 interface HoverTarget {

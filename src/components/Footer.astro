@@ -12,7 +12,7 @@ const socials = [
   <div
     class="mx-auto flex w-full max-w-[90vw] flex-col items-center justify-between gap-8 md:flex-row md:items-end"
   >
-    <p class="footer-name crab-trigger pointer-events-auto text-center text-[12vw] leading-none font-bold tracking-tighter text-zinc-900 transition-colors duration-500 select-none hover:text-zinc-800 md:text-left">
+    <p class="footer-name crab-trigger pointer-events-auto text-center text-[12vw] leading-none font-bold tracking-tighter text-zinc-900 transition-colors select-none hover:text-zinc-800 md:text-left">
       KAVOURAS
     </p>
 
@@ -36,21 +36,15 @@ const socials = [
 
 <script>
   import gsap from 'gsap';
+  import { DURATION, EASE } from '../utils/animations';
 
-import { DURATION, EASE, isMobile } from '../utils/animations';
+  gsap.set('.footer-name', { opacity: 0, y: 40 });
+  gsap.set('.footer-links', { opacity: 0, y: 20 });
 
-  if (isMobile) {
-    gsap.fromTo('.footer-section',
-      { opacity: 0 },
-      { opacity: 1, duration: 0.5, ease: EASE.DEFAULT,
-        scrollTrigger: { trigger: '.footer-section', start: 'top 90%', once: true } },
-    );
-  } else {
-    gsap.timeline({
-      defaults: { ease: EASE.DEFAULT },
-      scrollTrigger: { trigger: '.footer-section', start: 'top 90%', once: true },
-    })
-      .fromTo('.footer-name', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: DURATION.SLOWER })
-      .fromTo('.footer-links', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: DURATION.SLOW }, '-=0.4');
-  }
+  gsap.timeline({
+    defaults: { ease: EASE.DEFAULT },
+    scrollTrigger: { trigger: '.footer-section', start: 'top 90%', once: true },
+  })
+    .to('.footer-name', { opacity: 1, y: 0, duration: DURATION.SLOWER })
+    .to('.footer-links', { opacity: 1, y: 0, duration: DURATION.SLOW }, '-=0.4');
 </script>

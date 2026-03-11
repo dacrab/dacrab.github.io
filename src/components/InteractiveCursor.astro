@@ -1,21 +1,18 @@
 <div
   id="cursor"
   class="pointer-events-none fixed top-0 left-0 z-[9999] -translate-x-1/2 -translate-y-1/2 hidden items-center justify-center opacity-0 mix-blend-difference md:flex"
+  style="will-change: transform;"
 >
   <div id="cursor-visual" class="h-5 w-5 rounded-full bg-white"></div>
 </div>
 
 <script>
   import gsap from 'gsap';
-
-import { DURATION, EASE } from '../utils/animations';
+  import { DURATION, EASE } from '../utils/animations';
 
   if (!window.matchMedia('(hover: none)').matches) {
-    const cursorEl = document.getElementById('cursor');
-    const cursorVisualEl = document.getElementById('cursor-visual');
-    if (!cursorEl || !cursorVisualEl) throw new Error('Cursor elements not found');
-    const cursor = cursorEl;
-    const cursorVisual = cursorVisualEl;
+    const cursor = document.getElementById('cursor')!;
+    const cursorVisual = document.getElementById('cursor-visual')!;
 
     let isHovering = false;
     let isCrabMode = false;
@@ -44,56 +41,25 @@ import { DURATION, EASE } from '../utils/animations';
 
     gsap.ticker.add(() => {
       if (!hasMovedOnce) return;
-      const dt = 1.0 - Math.pow(1.0 - LERP_SPEED, gsap.ticker.deltaRatio());
+      const dt = 1 - Math.pow(1 - LERP_SPEED, gsap.ticker.deltaRatio());
       pos.x += (mouse.x - pos.x) * dt;
       pos.y += (mouse.y - pos.y) * dt;
       setX(pos.x);
       setY(pos.y);
     });
 
-    const STATES = {
-      crab: {
-        blendMode: 'normal',
-        text: '\u{1F980}',
-        fontSize: '16px',
-        scale: 2.5,
-        backgroundColor: 'transparent',
-        duration: DURATION.MEDIUM,
-        ease: EASE.BACK,
-      },
-      hover: {
-        blendMode: 'difference',
-        text: '',
-        fontSize: '',
-        scale: 3,
-        backgroundColor: 'white',
-        duration: 0.1,
-        ease: EASE.EXPO,
-      },
-      default: {
-        blendMode: 'difference',
-        text: '',
-        fontSize: '',
-        scale: 1,
-        backgroundColor: 'white',
-        duration: 0.1,
-        ease: EASE.EXPO,
-      },
-    };
-
-    function getState() {
-      if (isCrabMode) return 'crab' as const;
-      if (isHovering) return 'hover' as const;
-      return 'default' as const;
-    }
-
     function updateCursor() {
-      const { blendMode, text, fontSize, scale, backgroundColor, duration, ease } =
-        STATES[getState()];
-      cursor.style.mixBlendMode = blendMode;
-      cursorVisual.innerText = text;
-      cursorVisual.style.fontSize = fontSize;
-      gsap.to(cursorVisual, { scale, backgroundColor, duration, ease, overwrite: true });
+      if (isCrabMode) {
+        cursor.style.mixBlendMode = 'normal';
+        cursorVisual.innerText = '🦀';
+        cursorVisual.style.fontSize = '16px';
+        gsap.to(cursorVisual, { scale: 2.5, backgroundColor: 'transparent', duration: DURATION.MEDIUM, ease: EASE.BACK, overwrite: true });
+      } else {
+        cursor.style.mixBlendMode = 'difference';
+        cursorVisual.innerText = '';
+        cursorVisual.style.fontSize = '';
+        gsap.to(cursorVisual, { scale: isHovering ? 3 : 1, backgroundColor: 'white', duration: 0.1, ease: EASE.EXPO, overwrite: true });
+      }
     }
 
     window.addEventListener('mousedown', () => {

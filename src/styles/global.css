@@ -1,11 +1,6 @@
 @import 'tailwindcss';
 
 @layer base {
-  :root {
-    --bg-color: #fafafa;
-    --grid-color: rgba(0, 0, 0, 0.04);
-  }
-
   html,
   body {
     width: 100%;
@@ -14,11 +9,10 @@
   }
 
   body {
-    background-color: var(--bg-color);
+    background-color: #fafafa;
     background-image:
-      linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
-      linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+      linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
     background-size: 4rem 4rem;
   }
-
 }
