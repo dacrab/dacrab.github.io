@@ -9,10 +9,10 @@
     "ci": "bun x astro check && bun run build"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.2.2",
-    "astro": "6.1.8",
+    "@tailwindcss/vite": "^4.2.4",
+    "astro": "6.1.9",
     "gsap": "^3.15.0",
-    "tailwindcss": "^4.2.2"
+    "tailwindcss": "^4.2.4"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.8",
