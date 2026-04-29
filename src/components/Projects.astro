@@ -68,6 +68,7 @@ import BrowserMockup from './BrowserMockup.astro';
                   height="12"
                   viewBox="0 0 10 10"
                   fill="none"
+                  aria-hidden="true"
                 >
                   <path
                     d="M1 9L9 1M9 1H1M9 1V9"
@@ -88,25 +89,25 @@ import BrowserMockup from './BrowserMockup.astro';
 
 <script>
   import gsap from 'gsap';
-  import { addHoverAnimation, DURATION, EASE, isMobile } from '../utils/animations';
 
+  const isMobile = window.matchMedia('(hover: none)').matches;
   if (isMobile) {
     gsap.set('.projects-header', { opacity: 0 });
     gsap.to('.projects-header', {
-      opacity: 1, duration: 0.5, ease: EASE.DEFAULT,
+      opacity: 1, duration: 0.5,
       scrollTrigger: { trigger: '.projects-header', start: 'top 85%', once: true },
     });
     for (const card of document.querySelectorAll('.project-card')) {
       gsap.fromTo(card,
         { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.5, ease: EASE.DEFAULT,
+        { opacity: 1, y: 0, duration: 0.5,
           scrollTrigger: { trigger: card, start: 'top 90%', once: true } },
       );
     }
   } else {
     gsap.set('.projects-header', { opacity: 0, clipPath: 'inset(0 100% 0 0)' });
     gsap.to('.projects-header', {
-      opacity: 1, clipPath: 'inset(0 0% 0 0)', duration: 1.2, ease: EASE.STRONG_IN_OUT,
+      opacity: 1, clipPath: 'inset(0 0% 0 0)', duration: 1.2, ease: 'power4.inOut',
       scrollTrigger: { trigger: '.projects-header', start: 'top 80%', once: true },
     });
 
@@ -114,7 +115,7 @@ import BrowserMockup from './BrowserMockup.astro';
       const fromX = Number(card.getAttribute('data-index')) % 2 === 0 ? -60 : 60;
       gsap.fromTo(card,
         { opacity: 0, x: fromX },
-        { opacity: 1, x: 0, duration: 1, ease: EASE.SMOOTH,
+        { opacity: 1, x: 0, duration: 1, ease: 'power3.out',
           scrollTrigger: { trigger: card, start: 'top 85%', once: true } },
       );
     }
@@ -134,18 +135,14 @@ import BrowserMockup from './BrowserMockup.astro';
     for (const link of document.querySelectorAll('.project-link')) {
       const arrow = link.querySelector('.project-arrow');
       if (!arrow) continue;
-      addHoverAnimation(link as Element, [
-        {
-          target: link as Element,
-          enter: { color: '#a1a1aa', duration: DURATION.DEFAULT },
-          leave: { color: '#ffffff', duration: DURATION.DEFAULT },
-        },
-        {
-          target: arrow,
-          enter: { x: 3, y: -3, duration: DURATION.DEFAULT, ease: EASE.DEFAULT },
-          leave: { x: 0, y: 0, duration: DURATION.DEFAULT, ease: EASE.DEFAULT },
-        },
-      ]);
+      link.addEventListener('mouseenter', () => {
+        gsap.to(link, { color: '#a1a1aa', duration: 0.3 });
+        gsap.to(arrow, { x: 3, y: -3, duration: 0.3 });
+      });
+      link.addEventListener('mouseleave', () => {
+        gsap.to(link, { color: '#ffffff', duration: 0.3 });
+        gsap.to(arrow, { x: 0, y: 0, duration: 0.3 });
+      });
     }
   }
 </script>

@@ -49,7 +49,6 @@
 
 <script>
   import gsap from 'gsap';
-  import { DURATION, EASE } from '../utils/animations';
 
   gsap.set('.about-heading', { opacity: 0, scale: 0.95 });
   gsap.set('.about-text', { opacity: 0, y: 30 });
@@ -57,11 +56,10 @@
   gsap.set('.about-contact', { opacity: 0, y: 20 });
 
   gsap.timeline({
-    defaults: { ease: EASE.DEFAULT },
     scrollTrigger: { trigger: '#about', start: 'top 70%', once: true },
   })
-    .to('.about-heading', { opacity: 1, scale: 1, duration: DURATION.SLOWER })
-    .to('.about-text', { opacity: 1, y: 0, duration: DURATION.SLOWER }, '-=0.4')
-    .to('.about-stack li', { opacity: 1, x: 0, duration: DURATION.MEDIUM, stagger: 0.1 }, '-=0.4')
-    .to('.about-contact', { opacity: 1, y: 0, duration: DURATION.SLOW }, '-=0.2');
+    .to('.about-heading', { opacity: 1, scale: 1, duration: 0.8 })
+    .to('.about-text', { opacity: 1, y: 0, duration: 0.8 }, '-=0.4')
+    .to('.about-stack li', { opacity: 1, x: 0, duration: 0.4, stagger: 0.1 }, '-=0.4')
+    .to('.about-contact', { opacity: 1, y: 0, duration: 0.6 }, '-=0.2');
 </script>

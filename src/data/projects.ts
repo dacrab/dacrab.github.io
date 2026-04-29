@@ -8,15 +8,11 @@ interface Project {
   cover: ImageMetadata;
 }
 
-// Single glob loads all project screenshots at build time.
-const projectImages = import.meta.glob<{ default: ImageMetadata }>(
-  '/src/assets/*/home.webp',
-  { eager: true },
-);
+const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/*/home.webp', { eager: true });
 
-function getCover(assetFolder: string): ImageMetadata | null {
-  const key = Object.keys(projectImages).find((k) => k.includes(`/${assetFolder}/`));
-  return key ? (projectImages[key]?.default ?? null) : null;
+function getCover(folder: string): ImageMetadata | null {
+  const key = Object.keys(images).find((k) => k.includes(`/${folder}/`));
+  return key ? images[key]?.default ?? null : null;
 }
 
 const allProjects = [
@@ -71,6 +67,4 @@ const allProjects = [
   },
 ];
 
-export const projects: Project[] = allProjects.filter(
-  (p): p is Project => p.cover !== null,
-);
+export const projects: Project[] = allProjects.filter((p): p is Project => p.cover !== null);

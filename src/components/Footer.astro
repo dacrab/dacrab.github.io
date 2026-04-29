@@ -36,15 +36,13 @@ const socials = [
 
 <script>
   import gsap from 'gsap';
-  import { DURATION, EASE } from '../utils/animations';
 
   gsap.set('.footer-name', { opacity: 0, y: 40 });
   gsap.set('.footer-links', { opacity: 0, y: 20 });
 
   gsap.timeline({
-    defaults: { ease: EASE.DEFAULT },
     scrollTrigger: { trigger: '.footer-section', start: 'top 90%', once: true },
   })
-    .to('.footer-name', { opacity: 1, y: 0, duration: DURATION.SLOWER })
-    .to('.footer-links', { opacity: 1, y: 0, duration: DURATION.SLOW }, '-=0.4');
+    .to('.footer-name', { opacity: 1, y: 0, duration: 0.8 })
+    .to('.footer-links', { opacity: 1, y: 0, duration: 0.6 }, '-=0.4');
 </script>

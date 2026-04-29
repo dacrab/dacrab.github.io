@@ -2,10 +2,8 @@
   class="relative flex min-h-screen flex-col justify-center overflow-hidden px-6 pt-32 md:px-12"
   id="hero-section"
 >
-  <div class="hero-line absolute top-0 left-6 h-full w-px origin-top bg-zinc-200 md:left-12" style="will-change: transform;"></div>
-
   <div class="relative z-10 mx-auto w-full max-w-[90vw]">
-    <h1 class="hero-title text-[12vw] leading-[0.85] font-bold tracking-tighter text-zinc-900" style="will-change: transform;">
+    <h1 class="hero-title text-[12vw] leading-[0.85] font-bold tracking-tighter text-zinc-900">
       <span class="block overflow-hidden">
       <span class="word inline-block">VAGGELIS</span>
       </span>
@@ -28,8 +26,10 @@
       >
         <span>View Projects</span>
         <span class="hero-btn-arrow ml-0 w-0 overflow-hidden">
-          <svg class="ml-2" width="16" height="16" viewBox="0 0 10 10" fill="none">
+          <svg class="ml-2" width="16" height="16" viewBox="0 0 10 10" fill="none" aria-hidden="true">
             <path d="M1 9L9 1M9 1H1M9 1V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
           </svg>
         </span>
       </a>
@@ -39,50 +39,39 @@
 
 <script>
   import gsap from 'gsap';
-  import { addHoverAnimation, DURATION, EASE, isMobile } from '../utils/animations';
 
-  gsap.set('.hero-line', { scaleY: 0, visibility: 'visible' });
-  gsap.set('.hero-title .word', { y: '100%', opacity: 0, visibility: 'visible' });
-  gsap.set(['.hero-text', '.hero-actions'], { opacity: 0, y: 32, visibility: 'visible' });
+  const isMobile = window.matchMedia('(hover: none)').matches;
+
+  gsap.set('.hero-title .word', { y: '100%', autoAlpha: 0 });
+  gsap.set(['.hero-text', '.hero-actions'], { autoAlpha: 0, y: 32 });
 
   if (isMobile) {
-    gsap.timeline()
-      .to('.hero-line', { scaleY: 1, duration: 0.6, ease: EASE.DEFAULT })
-      .to('.hero-title .word', { y: 0, opacity: 1, duration: 0.5, ease: EASE.DEFAULT }, '-=0.3')
-      .to(['.hero-text', '.hero-actions'], { opacity: 1, y: 0, duration: 0.4, ease: EASE.DEFAULT }, '-=0.2');
+    gsap.timeline({ delay: 0.1 })
+      .to('.hero-title .word', { y: 0, autoAlpha: 1, duration: 0.5 })
+      .to(['.hero-text', '.hero-actions'], { autoAlpha: 1, y: 0, duration: 0.4 }, '-=0.2');
   } else {
-    gsap.timeline({ defaults: { ease: EASE.EXPO } })
-      .to('.hero-line', { scaleY: 1, duration: 1.8 })
-      .to('.hero-title .word', { y: 0, opacity: 1, duration: 1.5, stagger: 0.1, ease: EASE.STRONG }, '-=1.4')
-      .to('.hero-text', { opacity: 1, y: 0, duration: 1.2 }, '-=1.0')
-      .to('.hero-actions', { opacity: 1, y: 0, duration: 1.2 }, '-=1.0');
+    gsap.timeline({ defaults: { ease: 'expo.out' }, delay: 0.3 })
+      .to('.hero-title .word', { y: 0, autoAlpha: 1, duration: 1.5, stagger: 0.1, ease: 'power4.out' })
+      .to('.hero-text', { autoAlpha: 1, y: 0, duration: 1.2 }, '-=1.0')
+      .to('.hero-actions', { autoAlpha: 1, y: 0, duration: 1.2 }, '-=1.0');
 
     gsap.to('.hero-title', {
       y: 80,
       ease: 'none',
-      scrollTrigger: {
-        trigger: '#hero-section',
-        start: 'top top',
-        end: 'bottom top',
-        scrub: 1.5,
-      },
+      scrollTrigger: { trigger: '#hero-section', start: 'top top', end: 'bottom top', scrub: 1.5 },
     });
 
-    const heroBtn = document.querySelector<HTMLElement>('.hero-btn');
-    const heroArrow = document.querySelector('.hero-btn-arrow');
-    if (heroBtn && heroArrow) {
-      addHoverAnimation(heroBtn, [
-        {
-          target: heroBtn,
-          enter: { backgroundColor: '#27272a', duration: DURATION.DEFAULT },
-          leave: { backgroundColor: '#18181b', duration: DURATION.DEFAULT },
-        },
-        {
-          target: heroArrow,
-          enter: { width: 24, duration: 0.5, ease: EASE.SMOOTH },
-          leave: { width: 0, duration: 0.5, ease: EASE.SMOOTH },
-        },
-      ]);
+    const btn = document.querySelector('.hero-btn');
+    const arrow = btn?.querySelector('.hero-btn-arrow');
+    if (btn && arrow) {
+      btn.addEventListener('mouseenter', () => {
+        gsap.to(btn, { backgroundColor: '#27272a', duration: 0.3 });
+        gsap.to(arrow, { width: 24, duration: 0.5, ease: 'power3.out' });
+      });
+      btn.addEventListener('mouseleave', () => {
+        gsap.to(btn, { backgroundColor: '#18181b', duration: 0.3 });
+        gsap.to(arrow, { width: 0, duration: 0.5, ease: 'power3.out' });
+      });
     }
   }
 </script>
