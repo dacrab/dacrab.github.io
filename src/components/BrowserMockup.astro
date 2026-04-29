@@ -38,19 +38,14 @@ const { src, alt, url } = Astro.props;
 </div>
 
 <script>
-  import { addHoverAnimation, DURATION, EASE, isMobile } from '../utils/animations';
+  import gsap from 'gsap';
 
-  if (!isMobile) {
+  if (!window.matchMedia('(hover: none)').matches) {
     for (const mockup of document.querySelectorAll('.browser-mockup')) {
       const image = mockup.querySelector('.mockup-image');
       if (!image) continue;
-      addHoverAnimation(mockup as Element, [
-        {
-          target: image,
-          enter: { scale: 1.05, duration: DURATION.SLOW, ease: EASE.DEFAULT },
-          leave: { scale: 1, duration: DURATION.SLOW, ease: EASE.DEFAULT },
-        },
-      ]);
+      mockup.addEventListener('mouseenter', () => gsap.to(image, { scale: 1.05, duration: 0.6 }));
+      mockup.addEventListener('mouseleave', () => gsap.to(image, { scale: 1, duration: 0.6 }));
     }
   }
 </script>
