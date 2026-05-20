@@ -1,70 +1,51 @@
-import type { ImageMetadata } from 'astro';
-
 interface Project {
   title: string;
   blurb: string;
   tech: string[];
   link: string;
-  cover: ImageMetadata;
 }
 
-const images = import.meta.glob<{ default: ImageMetadata }>('/src/assets/*/home.webp', { eager: true });
-
-function getCover(folder: string): ImageMetadata | null {
-  const key = Object.keys(images).find((k) => k.includes(`/${folder}/`));
-  return key ? images[key]?.default ?? null : null;
-}
-
-const allProjects = [
+export const projects: Project[] = [
   {
     title: 'AUREUS & ARGENT',
     blurb: 'Trust-forward pawn shop website with interactive tools and a clear, compact UI.',
     tech: ['Svelte', 'SvelteKit', 'TailwindCSS', 'TypeScript'],
     link: 'https://gsm-beta.vercel.app/',
-    cover: getCover('aureus'),
   },
   {
-    title: 'Apex',
-    blurb: 'Professional services site presenting complex projects with clarity.',
-    tech: ['TypeScript', 'NextJS', 'TailwindCSS', 'React'],
-    link: 'https://apex-construction-pied.vercel.app/',
-    cover: getCover('apex'),
+    title: 'VoidHaus',
+    blurb: 'Production-ready luxury fashion website benchmarked against Rick Owens and Maison Margiela.',
+    tech: ['Astro', 'Svelte', 'GSAP', 'TypeScript'],
+    link: 'https://voidhaus.vercel.app',
   },
   {
     title: 'DesignDASH',
     blurb: 'Showcasing construction work with structured galleries and specs.',
-    tech: ['TypeScript', 'NextJS', 'TailwindCSS', 'React'],
-    link: 'https://designdash.gr',
-    cover: getCover('designdash'),
-  },
-  {
-    title: 'Ioannis Lo Portfolio',
-    blurb: 'Minimalist portfolio for a web enthusiast and creative professional.',
     tech: ['Astro', 'TailwindCSS', 'GSAP', 'TypeScript'],
-    link: 'https://ioannislo.vercel.app',
-    cover: getCover('ioannislo'),
+    link: 'https://designdash.gr',
   },
   {
     title: 'FeedbackFlow AI',
-    blurb: 'Ingest public feedback, analyze with LLMs for sentiment, topics, and triage.',
-    tech: ['NextJS', 'Supabase', 'TypeScript', 'TailwindCSS'],
-    link: 'https://github.com/dacrab/feedbackflow-ai',
-    cover: getCover('feedbackflow-ai'),
+    blurb: 'Micro-SaaS to ingest public feedback, analyze with LLMs for sentiment, topics, and triage.',
+    tech: ['NextJS', 'Neon', 'TypeScript', 'TailwindCSS'],
+    link: 'https://feedbackflow-ai.vercel.app',
   },
   {
     title: 'ClubOS',
-    blurb: 'Full-featured point-of-sale system built with SvelteKit and Supabase.',
+    blurb: 'Modern point-of-sale system for clubs and venues with real-time inventory.',
     tech: ['Svelte', 'SvelteKit', 'Supabase', 'TypeScript'],
-    link: 'https://github.com/dacrab/clubOS',
-    cover: getCover('clubos'),
+    link: 'https://clubos.vercel.app',
   },
   {
-    title: 'Email Scraper',
-    blurb: 'Google Maps email scraper using Playwright with config-driven CSV output.',
-    tech: ['Python', 'Playwright', 'Docker', 'Railway'],
-    link: 'https://github.com/dacrab/email-scraper',
-    cover: getCover('email-scraper'),
+    title: 'Mise',
+    blurb: 'Recipe sharing platform with social interactions, real-time presence, and ingredient scaling.',
+    tech: ['TanStack Start', 'React', 'Convex', 'TypeScript'],
+    link: 'https://mise-tan.vercel.app',
+  },
+  {
+    title: 'Planet Pulse',
+    blurb: 'Real-time global event monitoring — earthquakes, news, space, weather, crypto, and sports.',
+    tech: ['NextJS', 'TypeScript', 'TailwindCSS', 'APIs'],
+    link: 'https://planet-pulse-pi.vercel.app',
   },
 ];
-
-export const projects: Project[] = allProjects.filter((p): p is Project => p.cover !== null);

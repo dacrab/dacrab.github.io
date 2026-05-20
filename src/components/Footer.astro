@@ -8,16 +8,16 @@ const socials = [
 ] as const;
 ---
 
-<footer class="footer-section overflow-hidden border-t border-white/10 bg-zinc-950 px-6 py-12 md:px-12">
-  <div
-    class="mx-auto flex w-full max-w-[90vw] flex-col items-center justify-between gap-8 md:flex-row md:items-end"
-  >
-    <p class="footer-name crab-trigger pointer-events-auto text-center text-[12vw] leading-none font-bold tracking-tighter text-zinc-900 transition-colors select-none hover:text-zinc-800 md:text-left">
+<footer class="footer-section overflow-hidden border-t border-white/10 bg-zinc-950 px-6 pt-20 pb-8 md:px-12">
+  <div class="mx-auto max-w-[90vw]">
+    <!-- Giant ghost text with stroke effect -->
+    <p class="footer-name crab-trigger pointer-events-auto mb-12 text-center text-[16vw] leading-none font-black tracking-tighter text-transparent select-none [-webkit-text-stroke:2px_rgba(255,255,255,0.12)] md:text-left">
       KAVOURAS
     </p>
 
-    <div class="footer-links flex flex-col gap-4 text-center md:text-right">
-      <div class="flex flex-wrap justify-center gap-6 font-mono text-sm text-zinc-500 md:justify-end">
+    <!-- Bottom bar -->
+    <div class="flex flex-col items-center justify-between gap-6 border-t border-white/5 pt-8 md:flex-row">
+      <div class="flex gap-6 font-mono text-sm text-zinc-600">
         {socials.map(({ label, href }) => (
           <a
             href={href}
@@ -27,6 +27,7 @@ const socials = [
           >{label}</a>
         ))}
       </div>
+
       <p class="text-xs tracking-widest text-zinc-600 uppercase">
         &copy; {year} Vaggelis Kavouras
       </p>
@@ -37,12 +38,10 @@ const socials = [
 <script>
   import gsap from 'gsap';
 
-  gsap.set('.footer-name', { opacity: 0, y: 40 });
-  gsap.set('.footer-links', { opacity: 0, y: 20 });
+  gsap.set('.footer-name', { opacity: 0, y: 60 });
 
-  gsap.timeline({
-    scrollTrigger: { trigger: '.footer-section', start: 'top 90%', once: true },
-  })
-    .to('.footer-name', { opacity: 1, y: 0, duration: 0.8 })
-    .to('.footer-links', { opacity: 1, y: 0, duration: 0.6 }, '-=0.4');
+  gsap.to('.footer-name', {
+    opacity: 1, y: 0, duration: 1.2, ease: 'power3.out',
+    scrollTrigger: { trigger: '.footer-section', start: 'top 85%', once: true },
+  });
 </script>

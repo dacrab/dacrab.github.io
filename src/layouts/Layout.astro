@@ -32,7 +32,7 @@ const schema = {
 ---
 
 <!doctype html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -71,13 +71,41 @@ const schema = {
     <script>
       import gsap from 'gsap';
       import { ScrollTrigger } from 'gsap/ScrollTrigger';
+      import Lenis from 'lenis';
+
       gsap.registerPlugin(ScrollTrigger);
 
-      // Crab cursor
+      // Lenis smooth scroll
+      const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+
+      // Crab cursor on KAVOURAS text
       if (!window.matchMedia('(hover: none)').matches) {
+        const crab = document.createElement('div');
+        crab.textContent = '🦀';
+        crab.className = 'pointer-events-none fixed z-[100] text-4xl opacity-0 transition-none';
+        crab.style.transform = 'translate(-50%, -50%) scale(0.5)';
+        document.body.appendChild(crab);
+
+        let onCrab = false;
+
         for (const el of document.querySelectorAll('.crab-trigger')) {
-          el.addEventListener('mouseenter', () => document.body.style.cursor = 'url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\'><text y=\'24\' font-size=\'24\'>🦀</text></svg>") 16 16, auto');
-          el.addEventListener('mouseleave', () => document.body.style.cursor = '');
+          el.addEventListener('mouseenter', () => {
+            onCrab = true;
+            document.body.style.cursor = 'none';
+            gsap.to(crab, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(2)' });
+          });
+          el.addEventListener('mouseleave', () => {
+            onCrab = false;
+            document.body.style.cursor = '';
+            gsap.to(crab, { opacity: 0, scale: 0.5, duration: 0.2, ease: 'power2.in' });
+          });
+          el.addEventListener('mousemove', (e) => {
+            const me = e as MouseEvent;
+            if (onCrab) gsap.set(crab, { left: me.clientX, top: me.clientY });
+          });
         }
       }
     </script>
