@@ -12,7 +12,7 @@ runs:
       uses: oven-sh/setup-bun@v2
 
     - name: Cache Bun downloads
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ~/.bun/install/cache
         key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
