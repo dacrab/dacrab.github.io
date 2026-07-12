@@ -9,17 +9,5 @@
   "ignoreDeps": [
     "vite",
     "knip"
-  ],
-  "packageRules": [
-    {
-      "description": "Block TypeScript v7 major bump until @astrojs/check & Next.js support it",
-      "matchPackageNames": [
-        "typescript"
-      ],
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "enabled": false
-    }
   ]
 }
