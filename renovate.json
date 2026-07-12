@@ -1,6 +1,25 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>dacrab/renovate-config"],
-  "schedule": ["before 6am on Sunday"],
-  "ignoreDeps": ["vite", "knip"]
+  "extends": [
+    "github>dacrab/renovate-config"
+  ],
+  "schedule": [
+    "before 6am on Sunday"
+  ],
+  "ignoreDeps": [
+    "vite",
+    "knip"
+  ],
+  "packageRules": [
+    {
+      "description": "Block TypeScript v7 major bump until @astrojs/check & Next.js support it",
+      "matchPackageNames": [
+        "typescript"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
+    }
+  ]
 }
