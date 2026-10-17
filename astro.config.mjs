@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://dacrab.github.io',
+  site: 'https://dacrab.is-a.dev',
   base: '/',
   trailingSlash: 'never',
   compressHTML: true,
