@@ -90,7 +90,7 @@ export const projects: Project[] = [
     blurb:
       'Recipe sharing platform with social interactions, real-time presence, and ingredient scaling.',
     tech: ['TanStack Start', 'React', 'Convex', 'TypeScript'],
-    link: 'https://github.com/dacrab/mise',
+    link: 'https://mise-tan.vercel.app',
   },
   {
     title: 'Aureus & Argent',
