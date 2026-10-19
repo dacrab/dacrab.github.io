@@ -3,11 +3,17 @@
   "extends": [
     "github>dacrab/renovate-config"
   ],
-  "schedule": [
-    "before 6am on Sunday"
-  ],
-  "ignoreDeps": [
-    "vite",
-    "knip"
+  "packageRules": [
+    {
+      "description": "Block the broken major until it is fixed; minor/patch updates (including security fixes) still flow",
+      "matchPackageNames": [
+        "vite",
+        "knip"
+      ],
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false
+    }
   ]
 }
