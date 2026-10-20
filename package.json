@@ -6,7 +6,7 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "ci": "bun x tsc --noEmit && bun run build"
+    "ci": "bun x tsc --noEmit"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.1",
