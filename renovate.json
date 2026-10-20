@@ -7,8 +7,7 @@
     {
       "description": "Block the broken major until it is fixed; minor/patch updates (including security fixes) still flow",
       "matchPackageNames": [
-        "vite",
-        "knip"
+        "vite"
       ],
       "matchUpdateTypes": [
         "major"

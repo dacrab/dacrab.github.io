@@ -18,5 +18,5 @@ bun install
 bun dev
 
 # Build for production
-bun build
+bun run build
 ```

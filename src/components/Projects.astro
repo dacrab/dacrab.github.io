@@ -13,14 +13,14 @@ import { projects } from '../data/projects';
       </span>
     </div>
 
-    <div class="projects-list">
+    <div>
       {projects.map((project, index) => (
         <a
           href={project.link}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={project.title}
           class="project-row group block border-b border-white/5 py-6 md:py-8"
-          data-index={index}
         >
           <!-- Main row -->
           <div class="flex items-center justify-between gap-4">
@@ -28,7 +28,7 @@ import { projects } from '../data/projects';
               <span class="font-mono text-sm text-zinc-600 transition-colors duration-300 group-hover:text-zinc-400">
                 {String(index + 1).padStart(2, '0')}
               </span>
-              <h3 class="project-title text-2xl font-bold tracking-tight transition-all duration-500 group-hover:tracking-normal md:text-5xl lg:text-6xl">
+              <h3 class="text-2xl font-bold tracking-tight transition-all duration-500 group-hover:tracking-normal md:text-5xl lg:text-6xl">
                 {project.title}
               </h3>
             </div>
@@ -92,20 +92,25 @@ import { projects } from '../data/projects';
     );
   }
 
-  // Hover expand (desktop only)
+  // Hover/focus expand (desktop only)
   if (!isMobile) {
     for (const row of document.querySelectorAll<HTMLElement>('.project-row')) {
       const detail = row.querySelector<HTMLElement>('.project-detail');
       if (!detail) continue;
 
-      row.addEventListener('mouseenter', () => {
+      const expand = () => {
         gsap.killTweensOf(detail);
         gsap.to(detail, { height: 'auto', opacity: 1, duration: 0.4, ease: 'power3.out' });
-      });
-      row.addEventListener('mouseleave', () => {
+      };
+      const collapse = () => {
         gsap.killTweensOf(detail);
         gsap.to(detail, { height: 0, opacity: 0, duration: 0.3, ease: 'power3.in' });
-      });
+      };
+
+      row.addEventListener('mouseenter', expand);
+      row.addEventListener('mouseleave', collapse);
+      row.addEventListener('focusin', expand);
+      row.addEventListener('focusout', collapse);
     }
   } else {
     // On mobile, show details always
