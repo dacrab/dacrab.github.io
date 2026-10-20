@@ -18,10 +18,13 @@
 
   /* Hide elements that GSAP animates in on load — prevents flash before JS runs */
   .header-reveal,
-  .hero-line,
   .hero-title .word,
   .hero-text,
   .hero-actions {
     visibility: hidden;
+  }
+
+  #contact {
+    scroll-margin-top: 6rem;
   }
 }

@@ -4,11 +4,13 @@ import '../styles/global.css';
 interface Props {
   title: string;
   description?: string;
+  noindex?: boolean;
 }
 
 const {
   title,
   description = 'Full-Stack Web Developer specialized in Next.js, Astro, and SvelteKit. Building high-performance, accessible web applications with a focus on engineering precision.',
+  noindex = false,
 } = Astro.props;
 const canonical = Astro.url;
 
@@ -38,16 +40,12 @@ const schema = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="author" content="Vaggelis Kavouras" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
     <meta name="theme-color" content="#050505" />
     <meta name="generator" content={Astro.generator} />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;900&display=swap" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;700;900&display=swap" /></noscript>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href={canonical.href} />
+    {!noindex && <link rel="canonical" href={canonical.href} />}
     <link rel="sitemap" href="/sitemap.xml" />
 
     <meta property="og:type" content="website" />
@@ -55,17 +53,34 @@ const schema = {
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical.href} />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
 
     <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
 
     <title>{title}</title>
+
+    <noscript>
+      <style is:inline>
+        .header-reveal,
+        .hero-title .word,
+        .hero-text,
+        .hero-actions {
+          visibility: visible !important;
+        }
+      </style>
+    </noscript>
   </head>
   <body
     class="bg-zinc-50 font-sans text-zinc-900 antialiased selection:bg-black selection:text-white"
   >
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:font-medium focus:text-zinc-900"
+    >
+      Skip to content
+    </a>
     <div class="grain-overlay pointer-events-none fixed inset-0 z-[90] opacity-[0.03] mix-blend-overlay"></div>
     
     <script>
@@ -77,6 +92,7 @@ const schema = {
 
       // Lenis smooth scroll
       const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
+      (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
       lenis.on('scroll', ScrollTrigger.update);
       gsap.ticker.add((time) => lenis.raf(time * 1000));
       gsap.ticker.lagSmoothing(0);

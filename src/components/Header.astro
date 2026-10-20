@@ -10,7 +10,7 @@ const links = [
   <div class="flex items-center justify-between px-6 py-8 md:px-12">
     <a
       href="#hero-section"
-      aria-label="Back to top"
+      aria-label="Vaggelis Kavouras — back to top"
       class="header-reveal inline-block text-sm font-bold tracking-widest uppercase"
     >
       Vaggelis Kavouras
@@ -31,7 +31,10 @@ const links = [
 
 <div
   id="menu-overlay"
-  class="fixed inset-0 z-40 flex translate-x-full flex-col items-center justify-center bg-zinc-950 text-white"
+  class="fixed inset-0 z-40 flex flex-col items-center justify-center bg-zinc-950 text-white"
+  style="transform: translateX(100%)"
+  aria-hidden="true"
+  inert
 >
   <nav>
     <ul class="flex flex-col items-center gap-8">
@@ -78,16 +81,51 @@ const links = [
 <script>
   import gsap from 'gsap';
 
+  interface LenisControls {
+    stop: () => void;
+    start: () => void;
+  }
+
   const menuToggle = document.getElementById('menu-toggle')!;
   const menuOverlay = document.getElementById('menu-overlay')!;
   const menuItems = document.querySelectorAll('.menu-item');
   const topBar = document.getElementById('bar-top')!;
   const bottomBar = document.getElementById('bar-bottom')!;
+  const getLenis = () => (window as unknown as { __lenis?: LenisControls }).__lenis;
   let isMenuOpen = false;
 
   gsap.set('.header-reveal', { y: -40, autoAlpha: 0 });
   gsap.set('.menu-item', { y: 20, opacity: 0 });
+  gsap.set(menuOverlay, { x: 0, xPercent: 100 });
   gsap.to('.header-reveal', { y: 0, autoAlpha: 1, duration: 1.2, stagger: 0.15, ease: 'expo.out', delay: 0.3 });
+
+  const setMenuState = (open: boolean) => {
+    isMenuOpen = open;
+    menuToggle.setAttribute('aria-expanded', String(open));
+    menuOverlay.toggleAttribute('inert', !open);
+    menuOverlay.setAttribute('aria-hidden', String(!open));
+    document.body.style.overflow = open ? 'hidden' : '';
+    if (open) getLenis()?.stop();
+    else getLenis()?.start();
+  };
+
+  const openMenu = () => {
+    setMenuState(true);
+    gsap.to(menuOverlay, { xPercent: 0, duration: 0.8, ease: 'expo.inOut' });
+    gsap.to(menuItems, { y: 0, opacity: 1, duration: 1, stagger: 0.1, delay: 0.4, ease: 'expo.out' });
+    gsap.to(topBar, { rotate: 45, y: 4, width: '100%', duration: 0.4, ease: 'expo.out' });
+    gsap.to(bottomBar, { rotate: -45, y: -4, width: '100%', duration: 0.4, ease: 'expo.out' });
+    menuOverlay.querySelector('a')?.focus({ preventScroll: true });
+  };
+
+  const closeMenu = (restoreFocus = true) => {
+    setMenuState(false);
+    gsap.to(menuOverlay, { xPercent: 100, duration: 0.8, ease: 'expo.inOut' });
+    gsap.to(menuItems, { y: 20, opacity: 0, duration: 0.4, ease: 'expo.out' });
+    gsap.to(topBar, { rotate: 0, y: 0, width: '100%', duration: 0.4, ease: 'expo.out' });
+    gsap.to(bottomBar, { rotate: 0, y: 0, width: '75%', duration: 0.4, ease: 'expo.out' });
+    if (restoreFocus) menuToggle.focus({ preventScroll: true });
+  };
 
   menuToggle.addEventListener('mouseenter', () => {
     if (!isMenuOpen) {
@@ -104,26 +142,18 @@ const links = [
   });
 
   menuToggle.addEventListener('click', () => {
-    isMenuOpen = !isMenuOpen;
-    menuToggle.setAttribute('aria-expanded', String(isMenuOpen));
-    document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+    if (isMenuOpen) closeMenu();
+    else openMenu();
+  });
 
-    if (isMenuOpen) {
-      gsap.to(menuOverlay, { x: 0, duration: 0.8, ease: 'expo.inOut' });
-      gsap.to(menuItems, { y: 0, opacity: 1, duration: 1, stagger: 0.1, delay: 0.4, ease: 'expo.out' });
-      gsap.to(topBar, { rotate: 45, y: 4, width: '100%', duration: 0.4, ease: 'expo.out' });
-      gsap.to(bottomBar, { rotate: -45, y: -4, width: '100%', duration: 0.4, ease: 'expo.out' });
-    } else {
-      gsap.to(menuOverlay, { x: '100%', duration: 0.8, ease: 'expo.inOut' });
-      gsap.to(menuItems, { y: 20, opacity: 0, duration: 0.4, ease: 'expo.out' });
-      gsap.to(topBar, { rotate: 0, y: 0, width: '100%', duration: 0.4, ease: 'expo.out' });
-      gsap.to(bottomBar, { rotate: 0, y: 0, width: '75%', duration: 0.4, ease: 'expo.out' });
-    }
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && isMenuOpen) closeMenu();
   });
 
   for (const item of menuItems) {
     item.addEventListener('click', () => {
-      if (isMenuOpen) menuToggle.click();
+      // Close after the anchor's default navigation so inert doesn't interfere with it.
+      if (isMenuOpen) requestAnimationFrame(() => closeMenu(false));
     });
   }
 </script>

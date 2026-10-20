@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dacrab.is-a.dev/sitemap.xml
