@@ -1,4 +1,6 @@
 ---
+import { site } from '../data/site';
+
 const links = [
   { label: 'Work', href: '#projects' },
   { label: 'About', href: '#about' },
@@ -10,10 +12,10 @@ const links = [
   <div class="flex items-center justify-between px-6 py-8 md:px-12">
     <a
       href="#hero-section"
-      aria-label="Vaggelis Kavouras — back to top"
+      aria-label={`${site.name} — back to top`}
       class="header-reveal inline-block text-sm font-bold tracking-widest uppercase"
     >
-      Vaggelis Kavouras
+      {site.name}
     </a>
 
     <button
@@ -55,7 +57,7 @@ const links = [
           <span class="text-sm font-medium tracking-widest text-zinc-500 uppercase">Resume</span>
           <div class="flex gap-4">
             <a
-              href="/CV/VAGGELIS_KAVOURAS_EN.pdf"
+              href={site.cv.en}
               target="_blank"
               rel="noopener noreferrer"
               class="relative inline-block text-sm font-bold tracking-widest uppercase"
@@ -64,7 +66,7 @@ const links = [
             </a>
             <span class="text-zinc-600">/</span>
             <a
-              href="/CV/VAGGELIS_KAVOURAS_EL.pdf"
+              href={site.cv.gr}
               target="_blank"
               rel="noopener noreferrer"
               class="relative inline-block text-sm font-bold tracking-widest uppercase"
@@ -80,6 +82,8 @@ const links = [
 
 <script>
   import gsap from 'gsap';
+  import { reveal } from '../lib/reveal';
+  import { getLenis } from '../lib/scroll';
 
   const menuToggle = document.getElementById('menu-toggle');
   const menuOverlay = document.getElementById('menu-overlay');
@@ -93,10 +97,19 @@ const links = [
 
   let isMenuOpen = false;
 
-  gsap.set('.header-reveal', { y: -40, autoAlpha: 0 });
   gsap.set('.menu-item', { y: 20, opacity: 0 });
   gsap.set(menuOverlay, { x: 0, xPercent: 100 });
-  gsap.to('.header-reveal', { y: 0, autoAlpha: 1, duration: 1.2, stagger: 0.15, ease: 'expo.out', delay: 0.3 });
+
+  reveal(
+    [
+      {
+        targets: '.header-reveal',
+        set: { y: -40, autoAlpha: 0 },
+        to: { y: 0, autoAlpha: 1, duration: 1.2, stagger: 0.15, ease: 'expo.out' },
+      },
+    ],
+    { delay: 0.3 },
+  );
 
   const setMenuState = (open: boolean) => {
     isMenuOpen = open;
@@ -104,8 +117,8 @@ const links = [
     menuOverlay.toggleAttribute('inert', !open);
     menuOverlay.setAttribute('aria-hidden', String(!open));
     document.body.style.overflow = open ? 'hidden' : '';
-    if (open) window.__lenis?.stop();
-    else window.__lenis?.start();
+    if (open) getLenis().stop();
+    else getLenis().start();
   };
 
   const openMenu = () => {

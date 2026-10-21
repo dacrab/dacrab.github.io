@@ -1,3 +1,7 @@
+---
+import { site } from '../data/site';
+---
+
 <section id="about" class="border-t border-white/10 bg-zinc-900 px-6 py-32 text-zinc-50 md:px-12">
   <div class="mx-auto max-w-5xl">
     <h2 class="about-heading mb-20 text-4xl leading-tight font-bold tracking-tight md:text-6xl">
@@ -32,10 +36,10 @@
         <div id="contact" class="about-contact">
           <h3 class="mb-4 text-xs font-bold tracking-widest text-zinc-500 uppercase">Let's work together</h3>
           <a
-            href="mailto:vkavouras@proton.me"
+            href={`mailto:${site.email}`}
             class="inline-block text-xl font-bold text-white transition-colors hover:text-zinc-400"
           >
-            vkavouras@proton.me
+            {site.email}
           </a>
         </div>
       </div>
@@ -44,18 +48,24 @@
 </section>
 
 <script>
-  import gsap from 'gsap';
+  import { reveal } from '../lib/reveal';
 
-  gsap.set('.about-heading', { opacity: 0, y: 40 });
-  gsap.set('.about-text', { opacity: 0, y: 30 });
-  gsap.set('.stack-item', { opacity: 0, scale: 0.8 });
-  gsap.set('.about-contact', { opacity: 0, y: 20 });
-
-  gsap.timeline({
-    scrollTrigger: { trigger: '#about', start: 'top 70%', once: true },
-  })
-    .to('.about-heading', { opacity: 1, y: 0, duration: 1, ease: 'power3.out' })
-    .to('.about-text', { opacity: 1, y: 0, duration: 0.8 }, '-=0.5')
-    .to('.stack-item', { opacity: 1, scale: 1, duration: 0.4, stagger: 0.05 }, '-=0.4')
-    .to('.about-contact', { opacity: 1, y: 0, duration: 0.6 }, '-=0.2');
+  reveal(
+    [
+      {
+        targets: '.about-heading',
+        set: { opacity: 0, y: 40 },
+        to: { opacity: 1, y: 0, duration: 1, ease: 'power3.out' },
+      },
+      { targets: '.about-text', set: { opacity: 0, y: 30 }, to: { opacity: 1, y: 0, duration: 0.8 }, at: '-=0.5' },
+      {
+        targets: '.stack-item',
+        set: { opacity: 0, scale: 0.8 },
+        to: { opacity: 1, scale: 1, duration: 0.4, stagger: 0.05 },
+        at: '-=0.4',
+      },
+      { targets: '.about-contact', set: { opacity: 0, y: 20 }, to: { opacity: 1, y: 0, duration: 0.6 }, at: '-=0.2' },
+    ],
+    { scrollTrigger: { trigger: '#about', start: 'top 70%' } },
+  );
 </script>

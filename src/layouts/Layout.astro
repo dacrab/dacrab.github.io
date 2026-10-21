@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { site } from '../data/site';
 
 interface Props {
   title: string;
@@ -7,20 +8,16 @@ interface Props {
   noindex?: boolean;
 }
 
-const {
-  title,
-  description = 'Full-Stack Web Developer specialized in Next.js, Astro, and SvelteKit. Building high-performance, accessible web applications with a focus on engineering precision.',
-  noindex = false,
-} = Astro.props;
+const { title, description = 'Full-Stack Web Developer specialized in Next.js, Astro, and SvelteKit. Building high-performance, accessible web applications with a focus on engineering precision.', noindex = false } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'Person',
-  name: 'Vaggelis Kavouras',
-  url: 'https://dacrab.is-a.dev',
-  jobTitle: 'Full-Stack Web Developer',
-  sameAs: ['https://github.com/dacrab', 'https://linkedin.com/in/vkavouras'],
+  name: site.name,
+  url: site.url,
+  jobTitle: site.role,
+  sameAs: [site.socials.github, site.socials.linkedin],
   knowsAbout: [
     'Next.js',
     'Astro',
@@ -39,17 +36,17 @@ const schema = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <meta name="author" content="Vaggelis Kavouras" />
+    <meta name="author" content={site.name} />
     <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
-    <meta name="theme-color" content="#050505" />
+    <meta name="theme-color" content="#fafafa" />
     <meta name="generator" content={Astro.generator} />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     {!noindex && <link rel="canonical" href={canonical.href} />}
-    <link rel="sitemap" href="/sitemap.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Vaggelis Kavouras" />
+    <meta property="og:site_name" content={site.name} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical.href} />
@@ -86,17 +83,9 @@ const schema = {
 
     <script>
       import gsap from 'gsap';
-      import { ScrollTrigger } from 'gsap/ScrollTrigger';
-      import Lenis from 'lenis';
+      import { getLenis } from '../lib/scroll';
 
-      gsap.registerPlugin(ScrollTrigger);
-
-      // Lenis smooth scroll
-      const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
-      window.__lenis = lenis;
-      lenis.on('scroll', ScrollTrigger.update);
-      gsap.ticker.add((time) => lenis.raf(time * 1000));
-      gsap.ticker.lagSmoothing(0);
+      getLenis();
 
       // Crab cursor on KAVOURAS text
       const crab = document.getElementById('crab-cursor');

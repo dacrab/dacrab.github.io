@@ -73,24 +73,28 @@ import { projects } from '../data/projects';
 
 <script>
   import gsap from 'gsap';
+  import { reveal, revealEach } from '../lib/reveal';
 
   const isMobile = window.matchMedia('(hover: none)').matches;
 
   // Header reveal
-  gsap.set('.projects-header', { opacity: 0, clipPath: 'inset(0 100% 0 0)' });
-  gsap.to('.projects-header', {
-    opacity: 1, clipPath: 'inset(0 0% 0 0)', duration: 1.2, ease: 'power4.inOut',
-    scrollTrigger: { trigger: '.projects-header', start: 'top 80%', once: true },
-  });
+  reveal(
+    [
+      {
+        targets: '.projects-header',
+        set: { opacity: 0, clipPath: 'inset(0 100% 0 0)' },
+        to: { opacity: 1, clipPath: 'inset(0 0% 0 0)', duration: 1.2, ease: 'power4.inOut' },
+      },
+    ],
+    { scrollTrigger: { trigger: '.projects-header', start: 'top 80%' } },
+  );
 
-  // Row reveals
-  for (const row of document.querySelectorAll('.project-row')) {
-    gsap.fromTo(row,
-      { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out',
-        scrollTrigger: { trigger: row, start: 'top 90%', once: true } },
-    );
-  }
+  // Row reveals, each as it enters the viewport
+  revealEach('.project-row', {
+    set: { opacity: 0, y: 20 },
+    to: { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' },
+    scrollTrigger: { start: 'top 90%' },
+  });
 
   // Hover/focus expand (desktop only)
   if (!isMobile) {

@@ -22,10 +22,12 @@
 
       <a
         href="#projects"
-        class="hero-actions hero-btn relative inline-flex h-12 items-center justify-center overflow-hidden rounded-full bg-zinc-900 px-6 font-medium text-white"
+        class="group hero-actions hero-btn relative inline-flex h-12 items-center justify-center overflow-hidden rounded-full bg-zinc-900 px-6 font-medium text-white transition-[background-color] duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] hover:bg-zinc-800"
       >
         <span>View Projects</span>
-        <span class="hero-btn-arrow ml-0 w-0 overflow-hidden">
+        <span
+          class="hero-btn-arrow ml-0 w-0 overflow-hidden transition-[width] duration-500 ease-[cubic-bezier(0.215,0.61,0.355,1)] group-hover:w-6"
+        >
           <svg class="ml-2" width="16" height="16" viewBox="0 0 10 10" fill="none" aria-hidden="true">
             <path d="M1 9L9 1M9 1H1M9 1V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
@@ -37,39 +39,49 @@
 
 <script>
   import gsap from 'gsap';
+  import { reveal } from '../lib/reveal';
 
   const isMobile = window.matchMedia('(hover: none)').matches;
 
-  gsap.set('.hero-title .word', { y: '100%', autoAlpha: 0 });
-  gsap.set(['.hero-text', '.hero-actions'], { autoAlpha: 0, y: 32 });
+  const wordSet = { y: '100%', autoAlpha: 0 };
+  const textSet = { autoAlpha: 0, y: 32 };
 
   if (isMobile) {
-    gsap.timeline({ delay: 0.1 })
-      .to('.hero-title .word', { y: 0, autoAlpha: 1, duration: 0.5 })
-      .to(['.hero-text', '.hero-actions'], { autoAlpha: 1, y: 0, duration: 0.4 }, '-=0.2');
+    reveal(
+      [
+        {
+          targets: '.hero-title .word',
+          set: wordSet,
+          to: { y: 0, autoAlpha: 1, duration: 0.5 },
+        },
+        {
+          targets: ['.hero-text', '.hero-actions'],
+          set: textSet,
+          to: { autoAlpha: 1, y: 0, duration: 0.4 },
+          at: '-=0.2',
+        },
+      ],
+      { delay: 0.1 },
+    );
   } else {
-    gsap.timeline({ defaults: { ease: 'expo.out' }, delay: 0.3 })
-      .to('.hero-title .word', { y: 0, autoAlpha: 1, duration: 1.5, stagger: 0.1, ease: 'power4.out' })
-      .to('.hero-text', { autoAlpha: 1, y: 0, duration: 1.2 }, '-=1.0')
-      .to('.hero-actions', { autoAlpha: 1, y: 0, duration: 1.2 }, '-=1.0');
+    reveal(
+      [
+        {
+          targets: '.hero-title .word',
+          set: wordSet,
+          to: { y: 0, autoAlpha: 1, duration: 1.5, stagger: 0.1, ease: 'power4.out' },
+        },
+        { targets: '.hero-text', set: textSet, to: { autoAlpha: 1, y: 0, duration: 1.2 }, at: '-=1.0' },
+        { targets: '.hero-actions', set: textSet, to: { autoAlpha: 1, y: 0, duration: 1.2 }, at: '-=1.0' },
+      ],
+      { delay: 0.3, defaults: { ease: 'expo.out' } },
+    );
 
+    // Parallax: the title drifts down as the hero scrolls away.
     gsap.to('.hero-title', {
       y: 80,
       ease: 'none',
       scrollTrigger: { trigger: '#hero-section', start: 'top top', end: 'bottom top', scrub: 1.5 },
     });
-
-    const btn = document.querySelector('.hero-btn');
-    const arrow = btn?.querySelector('.hero-btn-arrow');
-    if (btn && arrow) {
-      btn.addEventListener('mouseenter', () => {
-        gsap.to(btn, { backgroundColor: '#27272a', duration: 0.3 });
-        gsap.to(arrow, { width: 24, duration: 0.5, ease: 'power3.out' });
-      });
-      btn.addEventListener('mouseleave', () => {
-        gsap.to(btn, { backgroundColor: '#18181b', duration: 0.3 });
-        gsap.to(arrow, { width: 0, duration: 0.5, ease: 'power3.out' });
-      });
-    }
   }
 </script>
