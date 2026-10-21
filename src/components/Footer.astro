@@ -1,10 +1,12 @@
 ---
+import { site } from '../data/site';
+
 const year = new Date().getFullYear();
 
 const socials = [
-  { label: 'GITHUB', href: 'https://github.com/dacrab' },
-  { label: 'LINKEDIN', href: 'https://linkedin.com/in/vkavouras' },
-  { label: 'EMAIL', href: 'mailto:vkavouras@proton.me' },
+  { label: 'GITHUB', href: site.socials.github },
+  { label: 'LINKEDIN', href: site.socials.linkedin },
+  { label: 'EMAIL', href: `mailto:${site.email}` },
 ] as const;
 ---
 
@@ -29,19 +31,23 @@ const socials = [
       </div>
 
       <p class="text-xs tracking-widest text-zinc-600 uppercase">
-        &copy; {year} Vaggelis Kavouras
+        &copy; {year} {site.name}
       </p>
     </div>
   </div>
 </footer>
 
 <script>
-  import gsap from 'gsap';
+  import { reveal } from '../lib/reveal';
 
-  gsap.set('.footer-name', { opacity: 0, y: 60 });
-
-  gsap.to('.footer-name', {
-    opacity: 1, y: 0, duration: 1.2, ease: 'power3.out',
-    scrollTrigger: { trigger: '.footer-section', start: 'top 85%', once: true },
-  });
+  reveal(
+    [
+      {
+        targets: '.footer-name',
+        set: { opacity: 0, y: 60 },
+        to: { opacity: 1, y: 0, duration: 1.2, ease: 'power3.out' },
+      },
+    ],
+    { scrollTrigger: { trigger: '.footer-section', start: 'top 85%' } },
+  );
 </script>
