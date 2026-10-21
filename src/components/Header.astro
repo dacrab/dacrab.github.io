@@ -81,17 +81,16 @@ const links = [
 <script>
   import gsap from 'gsap';
 
-  interface LenisControls {
-    stop: () => void;
-    start: () => void;
+  const menuToggle = document.getElementById('menu-toggle');
+  const menuOverlay = document.getElementById('menu-overlay');
+  const menuItems = document.querySelectorAll('.menu-item');
+  const topBar = document.getElementById('bar-top');
+  const bottomBar = document.getElementById('bar-bottom');
+
+  if (!menuToggle || !menuOverlay || !topBar || !bottomBar) {
+    throw new Error('Menu markup is missing');
   }
 
-  const menuToggle = document.getElementById('menu-toggle')!;
-  const menuOverlay = document.getElementById('menu-overlay')!;
-  const menuItems = document.querySelectorAll('.menu-item');
-  const topBar = document.getElementById('bar-top')!;
-  const bottomBar = document.getElementById('bar-bottom')!;
-  const getLenis = () => (window as unknown as { __lenis?: LenisControls }).__lenis;
   let isMenuOpen = false;
 
   gsap.set('.header-reveal', { y: -40, autoAlpha: 0 });
@@ -105,8 +104,8 @@ const links = [
     menuOverlay.toggleAttribute('inert', !open);
     menuOverlay.setAttribute('aria-hidden', String(!open));
     document.body.style.overflow = open ? 'hidden' : '';
-    if (open) getLenis()?.stop();
-    else getLenis()?.start();
+    if (open) window.__lenis?.stop();
+    else window.__lenis?.start();
   };
 
   const openMenu = () => {

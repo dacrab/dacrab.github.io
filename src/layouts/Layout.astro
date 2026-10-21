@@ -12,7 +12,7 @@ const {
   description = 'Full-Stack Web Developer specialized in Next.js, Astro, and SvelteKit. Building high-performance, accessible web applications with a focus on engineering precision.',
   noindex = false,
 } = Astro.props;
-const canonical = Astro.url;
+const canonical = new URL(Astro.url.pathname, Astro.site);
 
 const schema = {
   '@context': 'https://schema.org',
@@ -82,7 +82,8 @@ const schema = {
       Skip to content
     </a>
     <div class="grain-overlay pointer-events-none fixed inset-0 z-[90] opacity-[0.03] mix-blend-overlay"></div>
-    
+    <div id="crab-cursor" class="crab-cursor" aria-hidden="true">🦀</div>
+
     <script>
       import gsap from 'gsap';
       import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -92,22 +93,17 @@ const schema = {
 
       // Lenis smooth scroll
       const lenis = new Lenis({ lerp: 0.1, smoothWheel: true });
-      (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
+      window.__lenis = lenis;
       lenis.on('scroll', ScrollTrigger.update);
       gsap.ticker.add((time) => lenis.raf(time * 1000));
       gsap.ticker.lagSmoothing(0);
 
       // Crab cursor on KAVOURAS text
-      if (!window.matchMedia('(hover: none)').matches) {
-        const crab = document.createElement('div');
-        crab.textContent = '🦀';
-        crab.className = 'pointer-events-none fixed z-[100] text-4xl opacity-0 transition-none';
-        crab.style.transform = 'translate(-50%, -50%) scale(0.5)';
-        document.body.appendChild(crab);
-
+      const crab = document.getElementById('crab-cursor');
+      if (crab && !window.matchMedia('(hover: none)').matches) {
         let onCrab = false;
 
-        for (const el of document.querySelectorAll('.crab-trigger')) {
+        for (const el of document.querySelectorAll<HTMLElement>('.crab-trigger')) {
           el.addEventListener('mouseenter', () => {
             onCrab = true;
             document.body.style.cursor = 'none';
@@ -118,9 +114,8 @@ const schema = {
             document.body.style.cursor = '';
             gsap.to(crab, { opacity: 0, scale: 0.5, duration: 0.2, ease: 'power2.in' });
           });
-          el.addEventListener('mousemove', (e) => {
-            const me = e as MouseEvent;
-            if (onCrab) gsap.set(crab, { left: me.clientX, top: me.clientY });
+          el.addEventListener('mousemove', (event) => {
+            if (onCrab) gsap.set(crab, { left: event.clientX, top: event.clientY });
           });
         }
       }
@@ -130,6 +125,16 @@ const schema = {
 </html>
 
 <style>
+  .crab-cursor {
+    position: fixed;
+    z-index: 100;
+    pointer-events: none;
+    font-size: 2.25rem;
+    line-height: 1;
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+
   .grain-overlay {
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     animation: grain 8s steps(10) infinite;
