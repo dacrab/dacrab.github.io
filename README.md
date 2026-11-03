@@ -1,22 +1,35 @@
 # Vaggelis Kavouras
 
-A high-performance, cinematic personal portfolio website featuring advanced motion and a moody aesthetic.
+Personal portfolio for Vaggelis Kavouras, a full-stack web developer.
 
-## Overview
+**Live demo:** https://dacrab.github.io — also served at [dacrab.is-a.dev](https://dacrab.is-a.dev)
 
-- **Stack**: [Astro](https://astro.build), [Tailwind CSS v4](https://tailwindcss.com), [GSAP](https://greensock.com/gsap), [Lenis](https://lenis.darkroom.engineering).
-- **Design**: Light base (`#fafafa`) with dark contrast sections, animated grain, and fluid typography.
-- **Performance**: Zero-runtime JS overhead where possible, smooth scrolling, and optimized assets.
+It's one long page: a brief introduction, a list of selected projects with links, and a few words about how he works. His CV is available in English and Greek, alongside GitHub, LinkedIn, and email.
 
-## Development
+## What's on it
+
+- A short intro with the CV downloads
+- Selected projects, ordered strongest first, each linking to the live site or repo
+- An about section and contact details
+- A light opening that gives way to dark, high-contrast sections, with smooth scrolling and subtle motion
+
+## Running it
 
 ```bash
-# Install dependencies
 bun install
-
-# Start dev server
-bun dev
-
-# Build for production
-bun run build
+bun run dev
 ```
+
+`bun run build` generates the static site.
+
+## Editing content
+
+- `src/data/site.ts` holds the name, role, social links, email, and CV paths
+- `src/data/projects.ts` holds the selected work
+- The CVs themselves are PDFs in `public/CV/`
+
+Built with Astro, Tailwind CSS v4, GSAP, and Lenis.
+
+## License
+
+MIT
