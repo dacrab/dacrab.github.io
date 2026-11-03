@@ -1,7 +1,8 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { reduceMotion } from './motion';
 
-gsap.registerPlugin(ScrollTrigger);
+if (!reduceMotion) gsap.registerPlugin(ScrollTrigger);
 
 export interface RevealStep {
   targets: gsap.TweenTarget;
@@ -35,7 +36,10 @@ export interface RevealOptions {
 export function reveal(
   steps: RevealStep[],
   { scrollTrigger, delay = 0, defaults }: RevealOptions = {},
-): gsap.core.Timeline {
+): gsap.core.Timeline | null {
+  // Leave content in its natural, visible state when motion is reduced.
+  if (reduceMotion) return null;
+
   const tl = gsap.timeline({
     delay,
     defaults,
@@ -64,6 +68,8 @@ export function revealEach(
     scrollTrigger: Omit<NonNullable<RevealOptions['scrollTrigger']>, 'trigger'>;
   },
 ): gsap.core.Tween[] {
+  if (reduceMotion) return [];
+
   const els: Element[] =
     typeof targets === 'string' ? [...document.querySelectorAll(targets)] : [targets as Element];
   return els.map((el) =>

@@ -39,49 +39,52 @@
 
 <script>
   import gsap from 'gsap';
+  import { reduceMotion } from '../lib/motion';
   import { reveal } from '../lib/reveal';
 
-  const isMobile = window.matchMedia('(hover: none)').matches;
+  if (!reduceMotion) {
+    const isMobile = window.matchMedia('(hover: none)').matches;
 
-  const wordSet = { y: '100%', autoAlpha: 0 };
-  const textSet = { autoAlpha: 0, y: 32 };
+    const wordSet = { y: '100%', autoAlpha: 0 };
+    const textSet = { autoAlpha: 0, y: 32 };
 
-  if (isMobile) {
-    reveal(
-      [
-        {
-          targets: '.hero-title .word',
-          set: wordSet,
-          to: { y: 0, autoAlpha: 1, duration: 0.5 },
-        },
-        {
-          targets: ['.hero-text', '.hero-actions'],
-          set: textSet,
-          to: { autoAlpha: 1, y: 0, duration: 0.4 },
-          at: '-=0.2',
-        },
-      ],
-      { delay: 0.1 },
-    );
-  } else {
-    reveal(
-      [
-        {
-          targets: '.hero-title .word',
-          set: wordSet,
-          to: { y: 0, autoAlpha: 1, duration: 1.5, stagger: 0.1, ease: 'power4.out' },
-        },
-        { targets: '.hero-text', set: textSet, to: { autoAlpha: 1, y: 0, duration: 1.2 }, at: '-=1.0' },
-        { targets: '.hero-actions', set: textSet, to: { autoAlpha: 1, y: 0, duration: 1.2 }, at: '-=1.0' },
-      ],
-      { delay: 0.3, defaults: { ease: 'expo.out' } },
-    );
+    if (isMobile) {
+      reveal(
+        [
+          {
+            targets: '.hero-title .word',
+            set: wordSet,
+            to: { y: 0, autoAlpha: 1, duration: 0.5 },
+          },
+          {
+            targets: ['.hero-text', '.hero-actions'],
+            set: textSet,
+            to: { autoAlpha: 1, y: 0, duration: 0.4 },
+            at: '-=0.2',
+          },
+        ],
+        { delay: 0.1 },
+      );
+    } else {
+      reveal(
+        [
+          {
+            targets: '.hero-title .word',
+            set: wordSet,
+            to: { y: 0, autoAlpha: 1, duration: 1.5, stagger: 0.1, ease: 'power4.out' },
+          },
+          { targets: '.hero-text', set: textSet, to: { autoAlpha: 1, y: 0, duration: 1.2 }, at: '-=1.0' },
+          { targets: '.hero-actions', set: textSet, to: { autoAlpha: 1, y: 0, duration: 1.2 }, at: '-=1.0' },
+        ],
+        { delay: 0.3, defaults: { ease: 'expo.out' } },
+      );
 
-    // Parallax: the title drifts down as the hero scrolls away.
-    gsap.to('.hero-title', {
-      y: 80,
-      ease: 'none',
-      scrollTrigger: { trigger: '#hero-section', start: 'top top', end: 'bottom top', scrub: 1.5 },
-    });
+      // Parallax: the title drifts down as the hero scrolls away.
+      gsap.to('.hero-title', {
+        y: 80,
+        ease: 'none',
+        scrollTrigger: { trigger: '#hero-section', start: 'top top', end: 'bottom top', scrub: 1.5 },
+      });
+    }
   }
 </script>

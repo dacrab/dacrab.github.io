@@ -21,9 +21,6 @@ npm-debug.log*
 # env files (can opt-in for committing if needed)
 .env*
 
-# vercel
-.vercel
-
 # typescript
 *.tsbuildinfo
 package-lock.json

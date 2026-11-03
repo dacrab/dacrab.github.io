@@ -82,6 +82,7 @@ const links = [
 
 <script>
   import gsap from 'gsap';
+  import { reduceMotion } from '../lib/motion';
   import { reveal } from '../lib/reveal';
   import { getLenis } from '../lib/scroll';
 
@@ -96,6 +97,9 @@ const links = [
   }
 
   let isMenuOpen = false;
+
+  // Reduced motion keeps the same state changes but applies them instantly.
+  const motionDuration = (duration: number) => (reduceMotion ? 0 : duration);
 
   gsap.set('.menu-item', { y: 20, opacity: 0 });
   gsap.set(menuOverlay, { x: 0, xPercent: 100 });
@@ -117,39 +121,46 @@ const links = [
     menuOverlay.toggleAttribute('inert', !open);
     menuOverlay.setAttribute('aria-hidden', String(!open));
     document.body.style.overflow = open ? 'hidden' : '';
-    if (open) getLenis().stop();
-    else getLenis().start();
+    if (open) getLenis()?.stop();
+    else getLenis()?.start();
   };
 
   const openMenu = () => {
     setMenuState(true);
-    gsap.to(menuOverlay, { xPercent: 0, duration: 0.8, ease: 'expo.inOut' });
-    gsap.to(menuItems, { y: 0, opacity: 1, duration: 1, stagger: 0.1, delay: 0.4, ease: 'expo.out' });
-    gsap.to(topBar, { rotate: 45, y: 4, width: '100%', duration: 0.4, ease: 'expo.out' });
-    gsap.to(bottomBar, { rotate: -45, y: -4, width: '100%', duration: 0.4, ease: 'expo.out' });
+    gsap.to(menuOverlay, { xPercent: 0, duration: motionDuration(0.8), ease: 'expo.inOut' });
+    gsap.to(menuItems, {
+      y: 0,
+      opacity: 1,
+      duration: motionDuration(1),
+      stagger: 0.1,
+      delay: reduceMotion ? 0 : 0.4,
+      ease: 'expo.out',
+    });
+    gsap.to(topBar, { rotate: 45, y: 4, width: '100%', duration: motionDuration(0.4), ease: 'expo.out' });
+    gsap.to(bottomBar, { rotate: -45, y: -4, width: '100%', duration: motionDuration(0.4), ease: 'expo.out' });
     menuOverlay.querySelector('a')?.focus({ preventScroll: true });
   };
 
   const closeMenu = (restoreFocus = true) => {
     setMenuState(false);
-    gsap.to(menuOverlay, { xPercent: 100, duration: 0.8, ease: 'expo.inOut' });
-    gsap.to(menuItems, { y: 20, opacity: 0, duration: 0.4, ease: 'expo.out' });
-    gsap.to(topBar, { rotate: 0, y: 0, width: '100%', duration: 0.4, ease: 'expo.out' });
-    gsap.to(bottomBar, { rotate: 0, y: 0, width: '75%', duration: 0.4, ease: 'expo.out' });
+    gsap.to(menuOverlay, { xPercent: 100, duration: motionDuration(0.8), ease: 'expo.inOut' });
+    gsap.to(menuItems, { y: 20, opacity: 0, duration: motionDuration(0.4), ease: 'expo.out' });
+    gsap.to(topBar, { rotate: 0, y: 0, width: '100%', duration: motionDuration(0.4), ease: 'expo.out' });
+    gsap.to(bottomBar, { rotate: 0, y: 0, width: '75%', duration: motionDuration(0.4), ease: 'expo.out' });
     if (restoreFocus) menuToggle.focus({ preventScroll: true });
   };
 
   menuToggle.addEventListener('mouseenter', () => {
     if (!isMenuOpen) {
-      gsap.to(topBar, { width: '75%', duration: 0.3 });
-      gsap.to(bottomBar, { width: '100%', duration: 0.3 });
+      gsap.to(topBar, { width: '75%', duration: motionDuration(0.3) });
+      gsap.to(bottomBar, { width: '100%', duration: motionDuration(0.3) });
     }
   });
 
   menuToggle.addEventListener('mouseleave', () => {
     if (!isMenuOpen) {
-      gsap.to(topBar, { width: '100%', duration: 0.3 });
-      gsap.to(bottomBar, { width: '75%', duration: 0.3 });
+      gsap.to(topBar, { width: '100%', duration: motionDuration(0.3) });
+      gsap.to(bottomBar, { width: '75%', duration: motionDuration(0.3) });
     }
   });
 

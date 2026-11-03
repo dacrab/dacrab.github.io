@@ -83,29 +83,32 @@ const schema = {
 
     <script>
       import gsap from 'gsap';
+      import { reduceMotion } from '../lib/motion';
       import { getLenis } from '../lib/scroll';
 
-      getLenis();
+      if (!reduceMotion) {
+        getLenis();
 
-      // Crab cursor on KAVOURAS text
-      const crab = document.getElementById('crab-cursor');
-      if (crab && !window.matchMedia('(hover: none)').matches) {
-        let onCrab = false;
+        // Crab cursor on KAVOURAS text
+        const crab = document.getElementById('crab-cursor');
+        if (crab && !window.matchMedia('(hover: none)').matches) {
+          let onCrab = false;
 
-        for (const el of document.querySelectorAll<HTMLElement>('.crab-trigger')) {
-          el.addEventListener('mouseenter', () => {
-            onCrab = true;
-            document.body.style.cursor = 'none';
-            gsap.to(crab, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(2)' });
-          });
-          el.addEventListener('mouseleave', () => {
-            onCrab = false;
-            document.body.style.cursor = '';
-            gsap.to(crab, { opacity: 0, scale: 0.5, duration: 0.2, ease: 'power2.in' });
-          });
-          el.addEventListener('mousemove', (event) => {
-            if (onCrab) gsap.set(crab, { left: event.clientX, top: event.clientY });
-          });
+          for (const el of document.querySelectorAll<HTMLElement>('.crab-trigger')) {
+            el.addEventListener('mouseenter', () => {
+              onCrab = true;
+              document.body.style.cursor = 'none';
+              gsap.to(crab, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(2)' });
+            });
+            el.addEventListener('mouseleave', () => {
+              onCrab = false;
+              document.body.style.cursor = '';
+              gsap.to(crab, { opacity: 0, scale: 0.5, duration: 0.2, ease: 'power2.in' });
+            });
+            el.addEventListener('mousemove', (event) => {
+              if (onCrab) gsap.set(crab, { left: event.clientX, top: event.clientY });
+            });
+          }
         }
       }
     </script>
@@ -127,6 +130,12 @@ const schema = {
   .grain-overlay {
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     animation: grain 8s steps(10) infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .grain-overlay {
+      animation: none !important;
+    }
   }
 
   @keyframes grain {

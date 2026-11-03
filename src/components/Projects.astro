@@ -73,6 +73,7 @@ import { projects } from '../data/projects';
 
 <script>
   import gsap from 'gsap';
+  import { reduceMotion } from '../lib/motion';
   import { reveal, revealEach } from '../lib/reveal';
 
   const isMobile = window.matchMedia('(hover: none)').matches;
@@ -104,11 +105,21 @@ import { projects } from '../data/projects';
 
       const expand = () => {
         gsap.killTweensOf(detail);
-        gsap.to(detail, { height: 'auto', opacity: 1, duration: 0.4, ease: 'power3.out' });
+        gsap.to(detail, {
+          height: 'auto',
+          opacity: 1,
+          duration: reduceMotion ? 0 : 0.4,
+          ease: 'power3.out',
+        });
       };
       const collapse = () => {
         gsap.killTweensOf(detail);
-        gsap.to(detail, { height: 0, opacity: 0, duration: 0.3, ease: 'power3.in' });
+        gsap.to(detail, {
+          height: 0,
+          opacity: 0,
+          duration: reduceMotion ? 0 : 0.3,
+          ease: 'power3.in',
+        });
       };
 
       row.addEventListener('mouseenter', expand);

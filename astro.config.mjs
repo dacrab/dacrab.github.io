@@ -8,7 +8,6 @@ export default defineConfig({
   site: 'https://dacrab.is-a.dev',
   trailingSlash: 'never',
   integrations: [sitemap()],
-  prefetch: { prefetchAll: true },
   build: {
     assets: 'assets',
   },
